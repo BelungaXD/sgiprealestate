@@ -3,6 +3,10 @@ node_modules/
 /.pnp
 .pnp.js
 
+# Node.js binaries (large files)
+node-v*/
+*.tar.gz
+
 # Testing
 /coverage
 
