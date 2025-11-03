@@ -1,142 +1,334 @@
 # SGIP Real Estate Website
 
-A premium real estate website for SGIP Real Estate agency, targeting international markets (UAE, EU, Russia) with multi-language support and modern design.
+Корпоративный сайт агентства элитной недвижимости SGIP Real Estate для международного рынка (ОАЭ, ЕС, РФ).
 
-## Features
+## 📋 Общие сведения о проекте
 
-- 🏠 **Property Listings** - Advanced property catalog with filtering
-- 🌍 **Multi-language** - English and Russian support
-- 📱 **Responsive Design** - Mobile-first approach
-- ⚡ **Performance** - Optimized for speed and SEO
-- 🎨 **Modern UI** - Premium design with Tailwind CSS
-- 🔧 **Admin Panel** - Easy property management
-- 📊 **Analytics** - Google Analytics 4 and Yandex Metrica ready
-- 💬 **WhatsApp Integration** - Direct communication widget
+**Название проекта**: Корпоративный сайт агентства элитной недвижимости SGIP Real Estate  
+**Цель**: Разработка функционального, адаптивного и визуально премиального сайта с каталогом объектов, интеграцией форм и аналитикой  
+**Платформа**: Самописный сайт  
+**Основной домен**: sgiprealestate.com (через Cloudflare)  
+**Зеркало для РФ**: sgiprealestate.ru (с редиректом по GeoIP)  
+**Срок реализации**: 8 недель (34 рабочих дня)
 
-## Technology Stack
+## 🏗️ Структура сайта
 
-- **Frontend**: Next.js 14 + React 18 + TypeScript
-- **Styling**: Tailwind CSS + Headless UI
-- **Database**: PostgreSQL + Prisma ORM
-- **Deployment**: Docker + Docker Compose
+### Основные разделы
+
+- **Главная (Home)**: оффер, статистика (10+ лет, 500+ объектов), преимущества, CTA, топ-проекты, партнёры
+- **Каталог (Properties)**: фильтры по району, застройщику, цене, типу, количеству комнат, дате готовности
+- **Карточка объекта**: галерея, параметры, планировки, инфраструктура, запрос расчёта, SEO-разметка
+- **Раздел Areas**: SEO-страницы по районам
+- **Раздел Developers**: описание 10–15 застройщиков (Emaar, Damac, Sobha и др.) с логотипами
+- **Раздел Partners**: банки, страховые, консалтинг
+- **Раздел Services**: покупка, продажа, аренда, управление, ипотека, бизнес в ОАЭ, Swiss Investment
+- **Раздел Market/Blog**: аналитика и новости
+- **Раздел Contacts**: карта Google Maps, офисы, форма с GDPR
+- **Раздел About**: о компании, команда, отчёты о рынке
+
+### Юридические страницы
+
+- Privacy Policy
+- Cookies Policy
+- Terms & Conditions
+
+## ✨ Функциональные требования
+
+### 1. Дизайн и UX
+- ✅ Адаптация под мобильные устройства
+- ✅ Фиксированный Header с CTA
+- ✅ Плавные анимации без перегрузки интерфейса
+
+### 2. Интеграция связи
+- ✅ Плавающий виджет мессенджеров (WhatsApp, Telegram) на всех страницах
+- ✅ Кнопка WhatsApp в Header и карточках объектов
+
+### 3. Лидогенерация
+- ✅ Формы заявок с экспортом в Google Sheets
+- ✅ Загрузка PDF-лид-магнита
+- ✅ GDPR-согласие в формах
+
+### 4. CRM-интеграция
+- ✅ Webhooks/API для передачи лидов в AmoCRM или Bitrix24
+- ✅ Настраиваемые через environment variables
+
+### 5. SEO и аналитика
+- ✅ Мультиязычность: RU/EN/AR
+- ✅ Настройка GA4 и Яндекс.Метрики через GTM
+- ✅ Sitemap.xml и robots.txt
+- ✅ Schema Markup (Organization, ItemList, RealEstateListing)
+
+### 6. Производительность
+- ✅ Скорость загрузки <2 секунд
+- ✅ Lazy-load изображений
+- ✅ Изображения в WebP
+- ✅ Оптимизация по PageSpeed Insights
+
+## 🎨 Дизайн и контент
+
+### Цветовая палитра
+- **Графит**: #1E1F24
+- **Шампанское золото**: #C9A86A
+- **Белый**: #F7F7F8
+
+### Шрифты
+- Manrope / Inter
+
+### Изображения
+- Премиальные, светлые, без избыточного HDR
+- Логотипы партнёров и застройщиков: SVG/PNG с прозрачным фоном
+
+### Контент
+- Тексты на русском, английском и арабском языках
+- Анимации: плавные, лёгкие
+
+## 🛠️ Технологический стек
+
+### Frontend
+- **Framework**: Next.js 14 (Pages Router)
+- **UI Library**: React 18
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Headless UI
+- **Icons**: Heroicons
+
+### Backend
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **API**: Next.js API Routes
+
+### Интеграции
 - **Internationalization**: next-i18next
+- **Analytics**: Google Analytics 4, Yandex Metrica, Google Tag Manager
+- **CRM**: AmoCRM, Bitrix24 (через webhooks)
+- **Email**: SMTP (настраиваемый)
+- **Maps**: Google Maps API
+- **Security**: Cloudflare Turnstile (CAPTCHA)
 
-## Getting Started
+### Deployment
+- **Containerization**: Docker + Docker Compose
+- **CDN**: Cloudflare
+- **Hosting**: Cloudflare (с поддержкой .ru зеркала)
+
+## 🚀 Быстрый старт
 
 ### Prerequisites
 
 - Node.js 20+
-- Docker and Docker Compose
-- PostgreSQL (or use Docker)
+- Docker and Docker Compose (опционально)
+- PostgreSQL (или используйте Docker)
 
 ### Installation
 
-1. Clone the repository:
+1. Клонируйте репозиторий:
 ```bash
-git clone <repository-url>
+git clone https://github.com/BelungaCZ/sgiprealestate.git
 cd sgiprealestate.com
 ```
 
-2. Install dependencies:
+2. Установите зависимости:
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
+3. Настройте environment variables:
 ```bash
 cp .env.example .env.local
-# Edit .env.local with your configuration
+# Отредактируйте .env.local с вашей конфигурацией
 ```
 
-4. Start the database:
+4. Запустите базу данных (если используете Docker):
 ```bash
 docker-compose -f docker-compose.dev.yml up -d postgres
 ```
 
-5. Run database migrations:
+5. Выполните миграции базы данных:
 ```bash
 npm run db:push
 ```
 
-6. Start the development server:
+6. Запустите dev сервер:
 ```bash
 npm run dev
 ```
 
-7. Open [http://localhost:3000](http://localhost:3000) in your browser.
+7. Откройте [http://localhost:3000](http://localhost:3000) в браузере.
 
-## Project Structure
+## 📁 Структура проекта
 
 ```
 src/
-├── components/          # React components
-│   ├── ui/             # Reusable UI components
-│   ├── layout/         # Layout components (Header, Footer)
-│   ├── property/       # Property-related components
-│   └── sections/       # Page sections
-├── pages/              # Next.js pages
-│   ├── api/            # API routes
-│   └── admin/          # Admin panel pages
-├── styles/             # Global styles
-├── lib/                # Utility functions
-├── hooks/              # Custom React hooks
-├── types/              # TypeScript type definitions
-└── utils/              # Helper functions
+├── components/          # React компоненты
+│   ├── ui/             # Переиспользуемые UI компоненты
+│   ├── layout/         # Компоненты макета (Header, Footer)
+│   ├── property/       # Компоненты для объектов недвижимости
+│   ├── areas/          # Компоненты для районов
+│   ├── developers/     # Компоненты для застройщиков
+│   ├── services/       # Компоненты для услуг
+│   ├── contact/        # Компоненты контактов
+│   ├── about/          # Компоненты "О нас"
+│   ├── sections/       # Секции страниц
+│   ├── analytics/      # Компоненты аналитики
+│   └── admin/          # Компоненты админ-панели
+├── pages/              # Next.js страницы
+│   ├── api/            # API маршруты
+│   │   ├── email/      # Email отправка
+│   │   ├── crm/        # CRM интеграция
+│   │   └── sheets/     # Google Sheets интеграция
+│   ├── admin/          # Страницы админ-панели
+│   ├── areas/          # Страницы районов
+│   ├── properties/     # Страницы объектов
+│   └── market/         # Блог/рынок
+├── styles/             # Глобальные стили
+├── lib/                # Утилиты
+├── hooks/              # Кастомные React хуки
+├── types/              # TypeScript типы
+└── utils/              # Вспомогательные функции
 ```
 
-## Available Scripts
+## 📜 Доступные команды
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:push` - Push database schema
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Prisma Studio
+- `npm run dev` - Запуск dev сервера
+- `npm run build` - Сборка для production
+- `npm run start` - Запуск production сервера
+- `npm run lint` - Запуск ESLint
+- `npm run db:generate` - Генерация Prisma client
+- `npm run db:push` - Применение схемы базы данных
+- `npm run db:migrate` - Запуск миграций базы данных
+- `npm run db:studio` - Открытие Prisma Studio
 
-## Environment Variables
+## 🔐 Environment Variables
 
-See `.env.example` for all required environment variables.
+См. `.env.example` для всех необходимых переменных окружения. Основные переменные:
 
-## Deployment
+### Analytics
+- `NEXT_PUBLIC_GTM_ID` - Google Tag Manager ID
 
-### Using Docker
+### Communication
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` - WhatsApp номер
+- `NEXT_PUBLIC_TELEGRAM_USERNAME` - Telegram username
 
-1. Build the production image:
+### Maps
+- `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` - Google Maps API ключ
+
+### Security
+- `TURNSTILE_SITE_KEY` - Cloudflare Turnstile site key
+- `TURNSTILE_SECRET_KEY` - Cloudflare Turnstile secret key
+
+### Integrations
+- `GOOGLE_SHEETS_WEBHOOK_URL` - Google Sheets webhook URL
+- `AMOCRM_WEBHOOK_URL` - AmoCRM webhook URL
+- `AMOCRM_API_KEY` - AmoCRM API ключ
+- `BITRIX_WEBHOOK_URL` - Bitrix24 webhook URL
+
+### Email
+- `SMTP_HOST` - SMTP хост
+- `SMTP_PORT` - SMTP порт
+- `SMTP_USER` - SMTP пользователь
+- `SMTP_PASSWORD` - SMTP пароль
+- `ADMIN_EMAIL` - Email администратора
+
+## 🌐 Развёртывание
+
+### Использование Docker
+
+1. Соберите production образ:
 ```bash
 docker build -t sgip-real-estate .
 ```
 
-2. Start with Docker Compose:
+2. Запустите с Docker Compose:
 ```bash
 docker-compose up -d
 ```
 
-### Manual Deployment
+### Ручное развёртывание
 
-1. Build the application:
+1. Соберите приложение:
 ```bash
 npm run build
 ```
 
-2. Start the production server:
+2. Запустите production сервер:
 ```bash
 npm run start
 ```
 
-## Contributing
+## ⚙️ Техническая настройка
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
+### Домен и хостинг
 
-## License
+1. Перенос sgiprealestate.com на Cloudflare
+2. Настройка DNS и SSL
+3. Зеркало .ru: регистрация и настройка редиректа для пользователей из РФ
 
-This project is proprietary and confidential.
+### Почта
 
-## Support
+1. Создание корпоративных ящиков
+2. Настройка SPF, DKIM, DMARC
 
-For support, email info@sgiprealestate.com or contact us through the website.
+### CDN
+
+- Использование Cloudflare для ускорения загрузки (Европа, ОАЭ, США)
+
+### Безопасность
+
+- HTTPS
+- Защита форм и базовых данных
+- Cloudflare Turnstile для защиты от спама
+
+### Интеграция аналитики
+
+- Установка GA4 и Яндекс.Метрики через GTM
+- Настройка событий и конверсий
+
+## ✅ Критерии приёмки
+
+1. ✅ Сайт полностью функционален и адаптивен на всех устройствах
+2. ✅ Все формы работают и передают данные в указанные хранилища (Google Sheets/CRM)
+3. ✅ SEO-разметка и мультиязычность функционируют корректно
+4. ✅ Скорость загрузки ≤ 2 сек по PageSpeed Insights (мобильная версия не ниже 85 баллов)
+5. ✅ Контент, изображения и структура соответствуют ТЗ
+6. ✅ Почта и домены корректно настроены (SPF/DKIM/DMARC пройдены)
+7. ✅ Визуальное исполнение соответствует бренд-гайду SGIP Real Estate
+
+## 📊 Мультиязычность
+
+Сайт поддерживает три языка:
+- **Русский (ru)** - основной язык для РФ
+- **Английский (en)** - основной язык для международного рынка
+- **Арабский (ar)** - для рынка ОАЭ
+
+Переводы хранятся в `public/locales/{locale}/` директории.
+
+## 🔗 Интеграции
+
+### CRM
+- AmoCRM (через webhook)
+- Bitrix24 (через webhook)
+
+### Analytics
+- Google Analytics 4
+- Yandex Metrica
+- Google Tag Manager
+
+### Forms
+- Google Sheets (для экспорта лидов)
+- Email отправка (SMTP)
+
+### Maps
+- Google Maps API
+
+## 📝 Лицензия
+
+Этот проект является проприетарным и конфиденциальным.
+
+## 💬 Поддержка
+
+Для поддержки обращайтесь по email: info@sgiprealestate.com или через форму на сайте.
+
+## 📞 Контакты
+
+- **Website**: https://sgiprealestate.com
+- **Email**: info@sgiprealestate.com
+- **GitHub**: https://github.com/BelungaCZ/sgiprealestate
