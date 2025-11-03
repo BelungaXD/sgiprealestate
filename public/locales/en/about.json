@@ -1,0 +1,148 @@
+{
+  "title": "About Us",
+  "description": "Learn about SGIP Real Estate - your trusted partner in luxury real estate across UAE, Europe, and Russia.",
+  "hero": {
+    "title": "Your Trusted Real Estate Partner",
+    "subtitle": "Over a decade of excellence in luxury real estate investments across UAE, Europe, and Russia.",
+    "yearsExperience": "Years Experience",
+    "propertiesSold": "Properties Sold",
+    "developers": "Partner Developers",
+    "clientSatisfaction": "Client Satisfaction"
+  },
+  "story": {
+    "title": "Our Story",
+    "paragraph1": "Founded in 2014, SGIP Real Estate began as a vision to bridge the gap between international investors and premium real estate opportunities. What started as a small team with big dreams has grown into one of the most trusted names in luxury real estate across three continents.",
+    "paragraph2": "Our journey has been marked by unwavering commitment to excellence, integrity, and client satisfaction. We believe that every property transaction is more than just a business deal – it's about helping our clients achieve their dreams and build lasting wealth through strategic real estate investments.",
+    "paragraph3": "Today, with over 500 successful transactions and a 98% client satisfaction rate, we continue to set new standards in the industry while maintaining the personal touch that has defined us from the beginning."
+  },
+  "values": {
+    "title": "Our Values",
+    "subtitle": "The principles that guide everything we do",
+    "integrity": {
+      "title": "Integrity",
+      "description": "We conduct business with the highest ethical standards, ensuring transparency and honesty in all our dealings."
+    },
+    "innovation": {
+      "title": "Innovation",
+      "description": "We embrace cutting-edge technology and innovative approaches to provide superior service and market insights."
+    },
+    "clientFocus": {
+      "title": "Client Focus",
+      "description": "Our clients' success is our success. We prioritize their needs and work tirelessly to exceed their expectations."
+    },
+    "excellence": {
+      "title": "Excellence",
+      "description": "We strive for excellence in every aspect of our service, from initial consultation to final transaction completion."
+    },
+    "reliability": {
+      "title": "Reliability",
+      "description": "Our clients can count on us to deliver consistent, dependable service and support throughout their journey."
+    },
+    "results": {
+      "title": "Results",
+      "description": "We focus on delivering measurable results and long-term value for our clients' real estate investments."
+    }
+  },
+  "team": {
+    "title": "Meet Our Team",
+    "subtitle": "Experienced professionals dedicated to your success",
+    "experience": "Experience",
+    "years": "years",
+    "languages": "Languages",
+    "specialties": "Specialties"
+  },
+  "history": {
+    "title": "Our Journey",
+    "subtitle": "Key milestones in our company's growth and success",
+    "2014": {
+      "title": "Company Founded",
+      "description": "SGIP Real Estate was established with a vision to revolutionize luxury real estate services.",
+      "achievement1": "Launched with 3 team members",
+      "achievement2": "First office in Dubai",
+      "achievement3": "Completed first luxury property sale"
+    },
+    "2016": {
+      "title": "International Expansion",
+      "description": "Expanded operations to Europe and Russia, establishing our global presence.",
+      "achievement1": "Opened offices in London and Moscow",
+      "achievement2": "Reached 100 successful transactions",
+      "achievement3": "Launched online property platform"
+    },
+    "2018": {
+      "title": "Technology Integration",
+      "description": "Integrated advanced technology and digital tools to enhance client experience.",
+      "achievement1": "Launched virtual property tours",
+      "achievement2": "Implemented AI-powered market analysis",
+      "achievement3": "Reached 250 properties sold"
+    },
+    "2020": {
+      "title": "Digital Transformation",
+      "description": "Adapted to the digital age with innovative online services and remote consultations.",
+      "achievement1": "Launched mobile app",
+      "achievement2": "Introduced virtual reality property viewing",
+      "achievement3": "Achieved 95% client satisfaction rate"
+    },
+    "2022": {
+      "title": "Market Leadership",
+      "description": "Established ourselves as a leading player in luxury real estate across all markets.",
+      "achievement1": "Reached 400 properties sold",
+      "achievement2": "Won 'Best Real Estate Agency' award",
+      "achievement3": "Expanded to 50+ team members"
+    },
+    "2024": {
+      "title": "Future Vision",
+      "description": "Continuing to innovate and expand while maintaining our commitment to excellence.",
+      "achievement1": "Launched sustainable property initiative",
+      "achievement2": "Reached 500+ properties sold",
+      "achievement3": "Achieved 98% client satisfaction rate"
+    }
+  },
+  "awards": {
+    "title": "Awards & Recognition",
+    "subtitle": "Industry recognition for our commitment to excellence",
+    "bestDeveloper": {
+      "title": "Best Real Estate Developer",
+      "organization": "Dubai Property Awards 2023",
+      "description": "Recognized for outstanding development projects and market innovation."
+    },
+    "excellence": {
+      "title": "Excellence in Service",
+      "organization": "International Property Awards 2022",
+      "description": "Awarded for exceptional customer service and client satisfaction."
+    },
+    "trusted": {
+      "title": "Most Trusted Agency",
+      "organization": "Real Estate Excellence Awards 2021",
+      "description": "Voted by clients as the most trustworthy real estate agency."
+    },
+    "innovation": {
+      "title": "Innovation in Technology",
+      "organization": "Property Technology Awards 2020",
+      "description": "Recognized for pioneering digital solutions in real estate."
+    },
+    "customerService": {
+      "title": "Customer Service Excellence",
+      "organization": "Service Excellence Awards 2019",
+      "description": "Awarded for outstanding customer service and support."
+    },
+    "sustainability": {
+      "title": "Sustainable Development",
+      "organization": "Green Building Council 2018",
+      "description": "Recognized for promoting sustainable and eco-friendly properties."
+    },
+    "additional": {
+      "title": "Additional Recognition",
+      "description": "Our commitment to excellence has been recognized across multiple categories",
+      "awards": "Industry Awards",
+      "years": "Consecutive Years",
+      "satisfaction": "Client Satisfaction",
+      "clients": "Happy Clients"
+    }
+  },
+  "cta": {
+    "title": "Ready to Work With Us?",
+    "description": "Join hundreds of satisfied clients who have achieved their real estate goals with SGIP.",
+    "contactUs": "Contact Us",
+    "viewProperties": "View Properties"
+  }
+}

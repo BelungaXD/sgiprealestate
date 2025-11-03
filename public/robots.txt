@@ -1,0 +1,39 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sgiprealestate.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /properties
+Allow: /areas
+Allow: /developers
+Allow: /services
+Allow: /about
+Allow: /contact
+
+# Block specific file types
+Disallow: *.json$
+Disallow: *.xml$
+Disallow: *.txt$
+
+# Allow images and assets
+Allow: /images/
+Allow: /public/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.webp

@@ -1,0 +1,43 @@
+{
+  "login": {
+    "title": "Admin Login",
+    "subtitle": "Sign in to access the admin dashboard",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign In",
+    "signingIn": "Signing In...",
+    "invalidCredentials": "Invalid username or password",
+    "demoCredentials": "Demo Credentials"
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "subtitle": "Manage your real estate properties and leads",
+    "logout": "Logout",
+    "properties": "Properties",
+    "leads": "Leads",
+    "analytics": "Analytics",
+    "totalProperties": "Total Properties",
+    "activeListings": "Active Listings",
+    "totalViews": "Total Views",
+    "leads": "Leads"
+  },
+  "properties": {
+    "title": "Property Management",
+    "addProperty": "Add Property",
+    "property": "Property",
+    "price": "Price",
+    "status": "Status",
+    "views": "Views",
+    "actions": "Actions"
+  },
+  "leads": {
+    "title": "Lead Management",
+    "comingSoon": "Lead management features coming soon..."
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "comingSoon": "Analytics features coming soon..."
+  }
+}

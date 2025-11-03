@@ -1,0 +1,55 @@
+{
+  "bedrooms": "Bedrooms",
+  "bathrooms": "Bathrooms",
+  "featured": "Featured",
+  "pricePerSqft": "Price per sq ft",
+  "requestInfo": "Request Information",
+  "scheduleViewing": "Schedule Viewing",
+  "saved": "Saved",
+  "save": "Save",
+  "share": "Share",
+  "tabs": {
+    "overview": "Overview",
+    "floorPlans": "Floor Plans",
+    "infrastructure": "Infrastructure",
+    "contact": "Contact"
+  },
+  "description": "Description",
+  "keyDetails": "Key Details",
+  "area": "Area",
+  "yearBuilt": "Year Built",
+  "parking": "Parking",
+  "spaces": "spaces",
+  "developer": "Developer",
+  "features": "Features",
+  "amenities": "Amenities",
+  "location": "Location",
+  "developerDescription": "A leading developer with a proven track record of delivering exceptional properties.",
+  "contactForm": {
+    "title": "Get in Touch",
+    "description": "Interested in this property? Fill out the form below and our team will contact you within 24 hours.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "preferredContact": "Preferred Contact Method",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your requirements, questions, or any specific information you need about this property...",
+    "scheduleViewing": "I would like to schedule a viewing",
+    "requestInfo": "Send me more information about this property",
+    "budget": "Budget Range",
+    "timeline": "When are you looking to purchase?",
+    "submit": "Send Inquiry",
+    "submitting": "Sending..."
+  },
+  "quickContact": {
+    "title": "Quick Contact"
+  },
+  "propertyInfo": {
+    "title": "Property Information"
+  },
+  "relatedProperties": {
+    "title": "Similar Properties",
+    "description": "You might also be interested in these properties in the same area or with similar features.",
+    "viewAll": "View All Properties"
+  }
+}

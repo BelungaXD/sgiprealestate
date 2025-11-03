@@ -1,0 +1,41 @@
+{
+  "title": "العقارات",
+  "description": "اكتشف مجموعتنا المميزة من العقارات الفاخرة في الإمارات.",
+  "showing": "عرض",
+  "of": "من",
+  "properties": "عقارات",
+  "noProperties": "لا توجد عقارات",
+  "noPropertiesDescription": "حاول تعديل عوامل التصفية لعرض المزيد من النتائج.",
+  "filters": "عوامل التصفية",
+  "clearAll": "إزالة الكل",
+  "propertyType": "نوع العقار",
+  "district": "المنطقة",
+  "developer": "المطور",
+  "priceRange": "نطاق السعر",
+  "minPrice": "الحد الأدنى",
+  "maxPrice": "الحد الأقصى",
+  "bedrooms": "غرف النوم",
+  "bathrooms": "الحمامات",
+  "areaRange": "المساحة",
+  "minArea": "الحد الأدنى للمساحة",
+  "maxArea": "الحد الأقصى للمساحة",
+  "yearBuilt": "سنة البناء",
+  "anyYear": "أي سنة",
+  "allDistricts": "كل المناطق",
+  "allDevelopers": "كل المطورين",
+  "applyFilters": "تطبيق",
+  "featured": "مميز",
+  "viewDetails": "عرض التفاصيل",
+  "contact": "اتصال",
+  "save": "حفظ",
+  "sort": {
+    "priceAsc": "السعر: من الأقل إلى الأعلى",
+    "priceDesc": "السعر: من الأعلى إلى الأقل",
+    "areaAsc": "المساحة: من الأصغر إلى الأكبر",
+    "areaDesc": "المساحة: من الأكبر إلى الأصغر",
+    "newest": "الأحدث أولاً",
+    "oldest": "الأقدم أولاً"
+  }
+}
+
+

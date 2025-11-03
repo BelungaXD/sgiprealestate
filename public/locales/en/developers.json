@@ -1,0 +1,41 @@
+{
+  "title": "Developers",
+  "description": "Discover the world's leading real estate developers. Partner with the best to find your perfect property investment.",
+  "developers": "Developers",
+  "properties": "Properties",
+  "premiumDevelopers": "Premium Developers",
+  "founded": "Founded",
+  "averagePrice": "Avg. Price",
+  "marketShare": "Market Share",
+  "specialties": "Specialties",
+  "more": "more",
+  "notableProjects": "Notable Projects",
+  "moreProjects": "more projects",
+  "learnMore": "Learn More",
+  "cta": {
+    "title": "Partner with the Best Developers",
+    "description": "Work with our network of premium developers to find exclusive investment opportunities and off-plan properties.",
+    "viewProperties": "View All Properties",
+    "contactUs": "Contact Us"
+  },
+  "stats": {
+    "title": "Developer Statistics",
+    "description": "Comprehensive data about our network of premium developers and their market presence.",
+    "developers": "Total Developers",
+    "developersDescription": "In our network",
+    "properties": "Total Properties",
+    "propertiesDescription": "Available units",
+    "averageRating": "Average Rating",
+    "averageRatingDescription": "Quality score",
+    "countries": "Countries",
+    "countriesDescription": "Global presence",
+    "awards": "Awards",
+    "awardsDescription": "Industry recognition",
+    "marketShare": "Market Share",
+    "marketShareDescription": "Combined coverage"
+  },
+  "topDevelopers": {
+    "title": "Top Performing Developers"
+  },
+  "average": "Average"
+}

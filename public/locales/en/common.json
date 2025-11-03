@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "areas": "Areas",
+    "developers": "Developers",
+    "services": "Services",
+    "about": "About",
+    "contact": "Contact",
+    "getQuote": "Get Quote"
+  },
+  "footer": {
+    "description": "Your trusted partner in luxury real estate across UAE. We provide exceptional service and expertise in premium property investments.",
+    "company": "Company",
+    "services": "Services",
+    "support": "Support",
+    "about": "About Us",
+    "team": "Our Team",
+    "careers": "Careers",
+    "news": "News",
+    "buy": "Buy Property",
+    "sell": "Sell Property",
+    "rent": "Rent Property",
+    "investment": "Investment",
+    "contact": "Contact Us",
+    "faq": "FAQ",
+    "support": "Support",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "cookies": "Cookie Policy",
+    "allRightsReserved": "All rights reserved."
+  },
+  "whatsapp": {
+    "title": "Chat with us on WhatsApp",
+    "description": "Get instant answers to your questions about our properties and services.",
+    "message": "Hello! I'm interested in your real estate services.",
+    "openChat": "Open WhatsApp Chat"
+  }
+}

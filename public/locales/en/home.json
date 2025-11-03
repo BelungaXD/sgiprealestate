@@ -1,0 +1,79 @@
+{
+  "title": "Luxury Real Estate Investment",
+  "description": "Discover premium properties in UAE, Europe, and Russia. Expert guidance for your luxury real estate investments.",
+  "hero": {
+    "title": "Elite Real Estate Investment Solutions",
+    "subtitle": "Exclusive luxury properties in UAE. Expert guidance for premium real estate investments with guaranteed returns.",
+    "exploreProperties": "View Our Portfolio",
+    "watchVideo": "Watch Presentation"
+  },
+  "stats": {
+    "title": "Proven Track Record",
+    "subtitle": "10+ years of excellence in luxury real estate across global markets",
+    "yearsExperience": "Years Experience",
+    "yearsDescription": "In luxury real estate",
+    "propertiesSold": "Properties Sold",
+    "propertiesDescription": "Elite properties",
+    "developers": "Partner Developers",
+    "developersDescription": "Premium developers",
+    "clientSatisfaction": "Client Satisfaction",
+    "satisfactionDescription": "Satisfied clients"
+  },
+  "advantages": {
+    "title": "Why Choose SGIP Real Estate",
+    "subtitle": "We provide exceptional service and expertise in premium property investments",
+    "trust": {
+      "title": "Trusted Expertise",
+      "description": "Over 10 years of experience in luxury real estate with a proven track record of successful transactions."
+    },
+    "investment": {
+      "title": "Smart Investment",
+      "description": "Expert market analysis and investment strategies to maximize your property investment returns."
+    },
+    "global": {
+      "title": "Global Presence",
+      "description": "Extensive network across UAE, Europe, and Russia with local expertise in each market."
+    },
+    "expertise": {
+      "title": "Expert Team",
+      "description": "Professional team of real estate experts with deep market knowledge and client-focused approach."
+    },
+    "service": {
+      "title": "24/7 Support",
+      "description": "Round-the-clock support and assistance throughout your property investment journey."
+    },
+    "market": {
+      "title": "Market Insights",
+      "description": "Access to exclusive market data and trends to make informed investment decisions."
+    }
+  },
+  "featured": {
+    "title": "Featured Properties",
+    "subtitle": "Discover our handpicked selection of premium properties",
+    "viewDetails": "View Details",
+    "viewAllProperties": "View All Properties"
+  },
+  "partners": {
+    "title": "Trusted Partners",
+    "subtitle": "We work with the most prestigious developers and partners in the industry"
+  },
+  "cta": {
+    "title": "Ready to Start Your Investment Journey?",
+    "subtitle": "Contact our experts today for personalized guidance and exclusive property opportunities",
+    "phone": {
+      "title": "Call Us",
+      "description": "Speak directly with our experts"
+    },
+    "email": {
+      "title": "Email Us",
+      "description": "Send us your requirements"
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "description": "Quick chat and instant support",
+      "button": "Start Chat"
+    },
+    "getQuote": "Get Free Quote",
+    "browseProperties": "Browse Properties"
+  }
+}

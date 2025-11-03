@@ -1,0 +1,162 @@
+{
+  "title": "Our Services",
+  "description": "Comprehensive real estate services to meet all your property needs",
+  "hero": {
+    "title": "Complete Real Estate Solutions",
+    "subtitle": "From buying and selling to investment consultation, we provide end-to-end real estate services",
+    "services": "Core Services",
+    "yearsExperience": "Years Experience",
+    "successfulTransactions": "Successful Transactions"
+  },
+  "buy": {
+    "title": "Buy Property",
+    "description": "Find your dream property with our expert guidance and extensive market knowledge",
+    "features": {
+      "propertySearch": "Comprehensive property search",
+      "marketAnalysis": "Detailed market analysis",
+      "negotiation": "Expert negotiation support",
+      "legalSupport": "Complete legal assistance",
+      "financing": "Financing guidance",
+      "afterSales": "After-sales support"
+    },
+    "process": {
+      "consultation": "Initial consultation",
+      "search": "Property search",
+      "viewing": "Property viewings",
+      "negotiation": "Price negotiation",
+      "legal": "Legal documentation",
+      "completion": "Transaction completion"
+    },
+    "benefits": {
+      "expertise": "Expert market knowledge",
+      "access": "Access to exclusive listings",
+      "negotiation": "Best price negotiation",
+      "support": "End-to-end support"
+    }
+  },
+  "sell": {
+    "title": "Sell Property",
+    "description": "Maximize your property value with our professional marketing and sales expertise",
+    "features": {
+      "valuation": "Professional property valuation",
+      "marketing": "Comprehensive marketing strategy",
+      "showings": "Organized property showings",
+      "negotiation": "Expert price negotiation",
+      "legal": "Legal documentation support",
+      "completion": "Smooth transaction completion"
+    },
+    "process": {
+      "valuation": "Property valuation",
+      "preparation": "Property preparation",
+      "marketing": "Marketing campaign",
+      "showings": "Property showings",
+      "offers": "Offer evaluation",
+      "completion": "Transaction completion"
+    },
+    "benefits": {
+      "maximumValue": "Maximum property value",
+      "marketing": "Professional marketing",
+      "negotiation": "Expert negotiation",
+      "speed": "Faster sales process"
+    }
+  },
+  "rent": {
+    "title": "Rent Property",
+    "description": "Find the perfect rental property or list your property for rent",
+    "features": {
+      "search": "Extensive rental search",
+      "viewing": "Property viewings",
+      "application": "Application assistance",
+      "contract": "Lease agreement support",
+      "moveIn": "Move-in coordination",
+      "support": "Ongoing tenant support"
+    },
+    "process": {
+      "requirements": "Requirements assessment",
+      "search": "Property search",
+      "viewing": "Property viewings",
+      "application": "Application process",
+      "contract": "Lease agreement",
+      "moveIn": "Move-in process"
+    },
+    "benefits": {
+      "variety": "Wide variety of options",
+      "flexibility": "Flexible terms",
+      "support": "Complete support",
+      "quality": "Quality properties only"
+    }
+  },
+  "investment": {
+    "title": "Investment Consultation",
+    "description": "Strategic investment advice to maximize your real estate returns",
+    "features": {
+      "analysis": "Market analysis",
+      "strategy": "Investment strategy",
+      "opportunities": "Opportunity identification",
+      "risk": "Risk assessment",
+      "portfolio": "Portfolio management",
+      "monitoring": "Performance monitoring"
+    },
+    "process": {
+      "assessment": "Investment assessment",
+      "strategy": "Strategy development",
+      "research": "Market research",
+      "selection": "Property selection",
+      "acquisition": "Property acquisition",
+      "management": "Portfolio management"
+    },
+    "benefits": {
+      "expertise": "Investment expertise",
+      "opportunities": "Exclusive opportunities",
+      "returns": "Maximized returns",
+      "management": "Professional management"
+    }
+  },
+  "features": {
+    "title": "What's Included"
+  },
+  "process": {
+    "title": "Our Process"
+  },
+  "benefits": {
+    "title": "Key Benefits"
+  },
+  "process": {
+    "title": "Our Service Process",
+    "subtitle": "Step-by-step approach to delivering exceptional real estate services"
+  },
+  "benefits": {
+    "title": "Why Choose Our Services",
+    "subtitle": "Comprehensive benefits that set us apart from the competition",
+    "trust": {
+      "title": "Trusted Expertise",
+      "description": "Over 10 years of experience with proven track record in luxury real estate"
+    },
+    "speed": {
+      "title": "Fast Service",
+      "description": "Efficient processes and quick response times to meet your urgent needs"
+    },
+    "value": {
+      "title": "Best Value",
+      "description": "Competitive pricing and maximum value for your real estate investments"
+    },
+    "expertise": {
+      "title": "Expert Team",
+      "description": "Professional team with deep market knowledge and industry expertise"
+    },
+    "analytics": {
+      "title": "Market Insights",
+      "description": "Data-driven approach with comprehensive market analysis and trends"
+    },
+    "global": {
+      "title": "Global Reach",
+      "description": "International presence across UAE, Europe, and Russia markets"
+    }
+  },
+  "cta": {
+    "title": "Ready to Get Started?",
+    "description": "Contact us today to discuss your real estate needs and let us help you achieve your goals",
+    "contactUs": "Contact Us",
+    "viewProperties": "View Properties"
+  }
+}

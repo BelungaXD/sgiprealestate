@@ -1,0 +1,59 @@
+{
+  "title": "Contact Us",
+  "description": "Get in touch with our real estate experts. We're here to help you find your perfect property investment.",
+  "form": {
+    "title": "Send us a Message",
+    "description": "Fill out the form below and our team will contact you within 24 hours.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "subject": "Subject",
+    "selectSubject": "Select a subject",
+    "subjects": {
+      "buy": "I want to buy a property",
+      "sell": "I want to sell a property",
+      "rent": "I want to rent a property",
+      "investment": "Investment consultation",
+      "general": "General inquiry"
+    },
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your requirements, questions, or any specific information you need...",
+    "preferredContact": "Preferred Contact Method",
+    "propertyInterest": "Property Interest",
+    "propertyInterestPlaceholder": "e.g., Downtown Dubai apartments",
+    "budget": "Budget Range",
+    "submit": "Send Message",
+    "submitting": "Sending...",
+    "successMessage": "We've received your message and will contact you within 24 hours."
+  },
+  "info": {
+    "title": "Get in Touch",
+    "description": "We're here to help you with all your real estate needs. Contact us through any of the methods below.",
+    "phone": {
+      "title": "Phone",
+      "description": "Call us for immediate assistance"
+    },
+    "email": {
+      "title": "Email",
+      "description": "Send us your detailed requirements"
+    },
+    "address": {
+      "title": "Office Address",
+      "description": "Visit our office for in-person consultation"
+    },
+    "hours": {
+      "title": "Business Hours",
+      "description": "We're available during these hours"
+    },
+    "social": {
+      "title": "Follow Us"
+    },
+    "map": {
+      "title": "Find Us"
+    },
+    "emergency": {
+      "title": "Emergency Contact",
+      "description": "For urgent matters outside business hours"
+    }
+  }
+}

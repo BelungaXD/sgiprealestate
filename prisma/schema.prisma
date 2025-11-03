@@ -1,0 +1,255 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  price       Float
+  currency    String   @default("AED")
+  type        PropertyType
+  status      PropertyStatus @default("AVAILABLE")
+  area        Float
+  bedrooms    Int
+  bathrooms   Int
+  parking     Int?
+  floor       Int?
+  totalFloors Int?
+  yearBuilt   Int?
+  completionDate DateTime?
+  
+  // Location
+  address     String
+  city        String
+  district    String
+  coordinates Json? // { lat: number, lng: number }
+  
+  // Relations
+  areaId      String
+  area        Area @relation(fields: [areaId], references: [id])
+  developerId String?
+  developer   Developer? @relation(fields: [developerId], references: [id])
+  
+  // Media
+  images      PropertyImage[]
+  floorPlans  FloorPlan[]
+  
+  // Features
+  features    String[]
+  amenities   String[]
+  
+  // SEO
+  slug        String @unique
+  metaTitle   String?
+  metaDescription String?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Admin
+  isPublished Boolean @default(false)
+  isFeatured  Boolean @default(false)
+  
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         String @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  alt        String?
+  order      Int @default(0)
+  isMain     Boolean @default(false)
+  
+  createdAt  DateTime @default(now())
+  
+  @@map("property_images")
+}
+
+model FloorPlan {
+  id         String @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  title      String
+  area       Float?
+  bedrooms   Int?
+  bathrooms  Int?
+  order      Int @default(0)
+  
+  createdAt  DateTime @default(now())
+  
+  @@map("floor_plans")
+}
+
+model Area {
+  id          String @id @default(cuid())
+  name        String
+  nameEn      String?
+  description String?
+  descriptionEn String?
+  
+  // Location
+  city        String
+  coordinates Json? // { lat: number, lng: number }
+  
+  // SEO
+  slug        String @unique
+  metaTitle   String?
+  metaDescription String?
+  
+  // Relations
+  properties  Property[]
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("areas")
+}
+
+model Developer {
+  id          String @id @default(cuid())
+  name        String
+  nameEn      String?
+  description String?
+  descriptionEn String?
+  logo        String?
+  website     String?
+  email       String?
+  phone       String?
+  
+  // Location
+  address     String?
+  city        String?
+  
+  // SEO
+  slug        String @unique
+  metaTitle   String?
+  metaDescription String?
+  
+  // Relations
+  properties  Property[]
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("developers")
+}
+
+model Lead {
+  id          String @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  message     String?
+  
+  // Property interest
+  propertyId  String?
+  property    Property? @relation(fields: [propertyId], references: [id])
+  
+  // Lead source
+  source      String? // website, whatsapp, phone, etc.
+  page        String? // which page the lead came from
+  
+  // Status
+  status      LeadStatus @default("NEW")
+  notes       String?
+  
+  // CRM
+  crmId       String? // ID in external CRM
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("leads")
+}
+
+model Partner {
+  id          String @id @default(cuid())
+  name        String
+  nameEn      String?
+  type        PartnerType
+  logo        String?
+  website     String?
+  description String?
+  descriptionEn String?
+  
+  // Contact
+  email       String?
+  phone       String?
+  
+  // SEO
+  slug        String @unique
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("partners")
+}
+
+model Admin {
+  id        String @id @default(cuid())
+  email     String @unique
+  password  String
+  name      String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("admins")
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  TOWNHOUSE
+  PENTHOUSE
+  STUDIO
+  OFFICE
+  RETAIL
+  WAREHOUSE
+  LAND
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  RENTED
+  RESERVED
+  UNAVAILABLE
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum PartnerType {
+  BANK
+  INSURANCE
+  CONSULTING
+  LEGAL
+  CONSTRUCTION
+  OTHER
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Areas",
+  "description": "Explore premium locations across UAE, Europe, and Russia. Discover the best areas for luxury real estate investments.",
+  "areas": "Areas",
+  "properties": "Properties",
+  "premiumLocations": "Premium Locations",
+  "explore": "Explore",
+  "viewProperties": "View Properties",
+  "more": "more",
+  "learnMore": "Learn More",
+  "cta": {
+    "title": "Ready to Explore Your Dream Location?",
+    "description": "Our experts can help you find the perfect area that matches your lifestyle and investment goals.",
+    "viewProperties": "View All Properties",
+    "contactUs": "Contact Us"
+  },
+  "stats": {
+    "title": "Area Statistics",
+    "description": "Comprehensive data about our premium locations and their real estate markets.",
+    "areas": "Premium Areas",
+    "areasDescription": "Curated locations",
+    "properties": "Total Properties",
+    "propertiesDescription": "Available units",
+    "averagePrice": "Average Price",
+    "averagePriceDescription": "Market average",
+    "landmarks": "Landmarks",
+    "landmarksDescription": "Famous attractions",
+    "amenities": "Amenities",
+    "amenitiesDescription": "Facilities available",
+    "growth": "Price Growth",
+    "growthDescription": "Annual increase"
+  },
+  "topAreas": {
+    "title": "Most Popular Areas"
+  },
+  "average": "Average",
+  "city": "City",
+  "averagePrice": "Average Price",
+  "investmentRating": "Investment Rating",
+  "priceGrowth": "Price Growth",
+  "rentalYield": "Rental Yield",
+  "demand": "Demand",
+  "properties": "Properties",
+  "areas": "Areas"
+}
