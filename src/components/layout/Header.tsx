@@ -47,13 +47,13 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-2 group">
             {logoError ? (
               <>
-                <div className="w-10 h-10 bg-champagne rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                  <span className="text-white font-bold text-xl">S</span>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="text-xl font-bold text-graphite">SGIP</div>
-                  <div className="text-xs text-gray-500 -mt-1">{t('nav.companyName')}</div>
-                </div>
+            <div className="w-10 h-10 bg-champagne rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <span className="text-white font-bold text-xl">S</span>
+            </div>
+            <div className="hidden sm:block">
+              <div className="text-xl font-bold text-graphite">SGIP</div>
+              <div className="text-xs text-gray-500 -mt-1">{t('nav.companyName')}</div>
+            </div>
               </>
             ) : (
               <img

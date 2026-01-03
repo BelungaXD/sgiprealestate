@@ -94,30 +94,30 @@ export default function Developers() {
         <meta property="og:description" content={t('description')} />
         <meta property="og:type" content="website" />
         {developers.length > 0 && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "ItemList",
-                "name": t('title'),
-                "description": t('description'),
-                "numberOfItems": developers.length,
-                "itemListElement": developers.map((developer, index) => ({
-                  "@type": "Organization",
-                  "position": index + 1,
-                  "name": developer.nameEn,
-                  "description": developer.descriptionEn,
-                  "url": `/developers/${developer.slug}`,
-                  "logo": developer.logo,
-                  "address": {
-                    "@type": "PostalAddress",
-                    "addressLocality": developer.headquarters
-                  }
-                }))
-              })
-            }}
-          />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              "name": t('title'),
+              "description": t('description'),
+              "numberOfItems": developers.length,
+              "itemListElement": developers.map((developer, index) => ({
+                "@type": "Organization",
+                "position": index + 1,
+                "name": developer.nameEn,
+                "description": developer.descriptionEn,
+                "url": `/developers/${developer.slug}`,
+                "logo": developer.logo,
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": developer.headquarters
+                }
+              }))
+            })
+          }}
+        />
         )}
       </Head>
 
@@ -151,7 +151,7 @@ export default function Developers() {
           {/* Developers Grid */}
           <div className="container-custom py-16">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="card animate-pulse">
                     <div className="h-64 bg-gray-200 rounded-t-lg"></div>
