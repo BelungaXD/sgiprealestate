@@ -4,6 +4,7 @@ const { i18n } = require('./next-i18next.config.js');
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  pageExtensions: ['page.tsx', 'page.ts', 'tsx', 'ts', 'api.ts', 'api.tsx'],
   i18n: {
     ...i18n,
     localeDetection: false,
