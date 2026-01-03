@@ -518,7 +518,7 @@ export default async function handler(
     let processedFolders = 0
     const totalFolders = filesByFolder.size
     
-    for (const [folderName, folderFiles] of filesByFolder.entries()) {
+    for (const [folderName, folderFiles] of Array.from(filesByFolder.entries())) {
       processedFolders++
       try {
         console.log(`[IMPORT] [${processedFolders}/${totalFolders}] Processing folder: ${folderName} with ${folderFiles.length} files`)
