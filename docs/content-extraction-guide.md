@@ -1,5 +1,7 @@
 # Content Extraction Guide for sgiprealestate.ru
 
+> 📖 **См. также**: [CONTENT_TRANSFER_GUIDE.md](./CONTENT_TRANSFER_GUIDE.md) - Полное руководство по переносу контента
+
 ## Step-by-Step Content Transfer Process
 
 ### 1. Website Structure Analysis

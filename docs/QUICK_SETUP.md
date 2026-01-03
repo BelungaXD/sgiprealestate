@@ -1,5 +1,7 @@
 # Быстрая настройка прав для деплоя
 
+> 📖 **См. также**: [INDEX.md](./INDEX.md) - Индекс всей документации
+
 ## Проблема
 Пользователь `belunga` не может получить доступ к скриптам деплоя в `/home/alfares/nginx-microservice/scripts/blue-green/deploy-smart.sh` из-за прав доступа.
 
@@ -9,7 +11,7 @@
 
 ```bash
 # 1. Скопировать скрипт на сервер
-scp setup-deploy-permissions.sh alfares:/tmp/
+scp scripts/setup-deploy-permissions.sh alfares:/tmp/
 
 # 2. Подключиться к серверу
 ssh alfares
@@ -57,4 +59,4 @@ cd /home/alfares/nginx-microservice/scripts/blue-green
 ./deploy-smart.sh sgiprealestate-service
 ```
 
-Подробная документация: `DEPLOYMENT_PERMISSIONS_SETUP.md`
+Подробная документация: [DEPLOYMENT_PERMISSIONS_SETUP.md](./DEPLOYMENT_PERMISSIONS_SETUP.md)

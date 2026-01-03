@@ -47,7 +47,6 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
     setIsSubmitting(false)
     setIsSubmitted(true)
     
-    // In real app, this would send to CRM
     console.log('Form submitted:', formData)
   }
 

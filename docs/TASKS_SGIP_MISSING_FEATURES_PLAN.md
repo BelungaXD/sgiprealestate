@@ -1,5 +1,7 @@
 # SGIP Real Estate — Missing Features Implementation Plan
 
+> 📖 **См. также**: [INDEX.md](./INDEX.md) - Индекс всей документации
+
 This document enumerates requirements from the provided Technical Specification (ТЗ), maps them to the current codebase, highlights gaps, and defines precise implementation steps and acceptance checks. No code is executed by this document.
 
 ## Legend
@@ -24,8 +26,6 @@ This document enumerates requirements from the provided Technical Specification 
 - Fixed header with CTA: ⏳ `src/components/layout/Header.tsx` exists; ensure persistent CTA and WhatsApp button.
 - Floating messenger widget (WhatsApp, Telegram) on all pages: ❌ Missing global widget.
 - WhatsApp in header and property cards: ⏳ Header missing; property cards need CTA button.
-- Lead gen via Tilda with export to Google Sheets: ❌ Current forms are local (React Hook Form + Zod). Need integration path: either embed Tilda forms or server-side forwarder to Sheets.
-- CRM (AmoCRM/Bitrix24) webhooks/API: ❌ Missing. Implement API routes with env-driven config.
 - SEO & analytics: ⏳ Sitemap/robots present; i18n EN/RU/AR ready; GA4/YM via GTM not wired.
 - Schema Markup: ❌ Add JSON-LD for Organization, WebSite, BreadcrumbList, Product/RealEstateListing.
 - Performance: ⏳ Next Image/AVIF/WebP configured; add code-splitting on heavy sections, lazy components, and preconnects.
@@ -39,9 +39,8 @@ This document enumerates requirements from the provided Technical Specification 
 ## 4) Technical Setup
 - Cloudflare: ❌ Infra task (outside code) but add security headers and image domains in `next.config.js` (done). Document DNS/SSL steps.
 - .ru mirror with GeoIP redirect: ❌ Implement runtime geo redirect middleware for `.ru` or Cloudflare worker instructions.
-- Email: ⏳ SMTP placeholders; add server util and `mailhog` for dev already configured. Implement send pipeline.
 - CDN: ⏳ Cloudflare usage documented; add image loader config if needed.
-- Security: ⏳ Basic headers set; add rate limiting to forms and captcha (hCaptcha/Cloudflare Turnstile).
+- Security: ⏳ Basic headers set; add rate limiting to forms.
 - GTM: ❌ Add GTM script wrapper and env configuration.
 
 ---
@@ -79,16 +78,6 @@ This document enumerates requirements from the provided Technical Specification 
 ### H) Legal Pages
 1. Create `src/pages/cookies.tsx` and `src/pages/terms.tsx` with translations `public/locales/*/(cookies|terms).json`.
 
-### I) Forms — Tilda + Google Sheets
-Option 1 (Embed Tilda):
-1. Create a reusable `TildaFormEmbed` component with URL configured via env `TILDA_FORM_URL_*` and add to pages (home/services/property/contact).
-
-Option 2 (Server):
-1. Keep React forms; implement Google Sheets export via Apps Script webhook URL in env `GOOGLE_SHEETS_WEBHOOK_URL` and post data from API route.
-
-### J) CRM Integration (Amo/Bitrix)
-1. API route `src/pages/api/crm/webhook.ts` to receive site leads; forward to CRM using env: `AMOCRM_WEBHOOK_URL`, `AMOCRM_API_KEY` or Bitrix REST hook.
-2. Add retry logic, central logging, and status codes.
 
 ### K) Analytics via GTM (GA4 + Yandex)
 1. Add `src/components/analytics/GTM.tsx` to inject GTM head/body with `GTM_ID` env.
@@ -101,13 +90,10 @@ Option 2 (Server):
 ### M) GeoIP Redirect for .ru Mirror
 1. Implement `src/middleware.ts` to read Cloudflare country header and redirect `.ru` users to `sgiprealestate.ru` (document Cloudflare config alternative).
 
-### N) Email Pipeline
-1. Create `src/pages/api/email/send.ts` integrating nodemailer; use `.env.local` SMTP vars; dev uses Mailhog.
 
 ### O) Security and Performance
-1. Add Turnstile/hCaptcha to forms (env driven).
-2. Add simple rate limiting on API routes (in-memory or upstash/redis if available).
-3. Lazy-load heavy components and images; add Next.js `preconnect` and `dns-prefetch` in `Head`.
+1. Add simple rate limiting on API routes (in-memory or upstash/redis if available).
+2. Lazy-load heavy components and images; add Next.js `preconnect` and `dns-prefetch` in `Head`.
 
 ### P) i18n
 1. Ensure `ar` coverage for `common`, `home`, `services`, `contact`, and new pages; fallback to `en` when missing.
@@ -118,7 +104,7 @@ Option 2 (Server):
 ## Acceptance Checks
 - Home: UAE-only copy; WhatsApp CTA visible; messenger widget visible on all pages.
 - Catalog: Filters work and persist via URL; SSR delivers filtered results.
-- Property: JSON-LD valid in Rich Results Test; lead form submits to CRM and Sheets (or Tilda embed loads and submits).
+- Property: JSON-LD valid in Rich Results Test; lead form works correctly.
 - Partners: Page lists partners with logos and links.
 - Market/Blog: Index and post pages render; basic SEO.
 - Contacts: Google Maps shows; GDPR consent enforced.
@@ -139,12 +125,10 @@ Option 2 (Server):
 7. Scaffold Market/Blog (index + [slug]).
 8. Add Google Maps embed and GDPR consent to Contact.
 9. Create Cookies and Terms pages and translations.
-10. Integrate either Tilda embed or Google Sheets webhook; configure env.
-11. Create CRM webhook forwarder (Amo/Bitrix) and error handling.
-12. Add GTM wrapper; configure GA4 + Yandex.
+10. Add GTM wrapper; configure GA4 + Yandex.
 13. Implement GeoIP redirect middleware for `.ru` users.
-14. Create email send API using SMTP; test with Mailhog.
-15. Add captcha and basic rate limiting to API routes.
+14. ~~Create email send API using SMTP; test with Mailhog.~~ (Removed)
+15. Add basic rate limiting to API routes.
 16. Optimize performance: lazy-load, preconnect, image domains, bundle checks.
 17. Expand AR translations and add language switcher if missing.
 

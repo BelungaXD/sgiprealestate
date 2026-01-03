@@ -1,5 +1,7 @@
 # SGIP Real Estate Website - Implementation Plan
 
+> 📖 **См. также**: [INDEX.md](./INDEX.md) - Индекс всей документации
+
 ## Project Overview
 Corporate website for SGIP Real Estate agency targeting UAE, EU, and Russia markets.
 
@@ -166,10 +168,6 @@ sgiprealestate.com/
 - [ ] Newsletter subscription
 - [ ] Form validation and error handling
 
-### 5.2 CRM Integration
-- [ ] AmoCRM webhook integration
-- [ ] Lead data formatting
-- [ ] Error handling and retry logic
 
 ### 5.3 Analytics Integration
 - [ ] Google Analytics 4 setup

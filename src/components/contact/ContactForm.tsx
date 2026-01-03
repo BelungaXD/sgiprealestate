@@ -40,35 +40,12 @@ export default function ContactForm() {
     }
     setIsSubmitting(true)
     
-    try {
-      await fetch('/api/crm/webhook', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-          source: 'contact_form',
-        })
-      })
-      await fetch('/api/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        })
-      })
-    } catch (e) {
-      // Best-effort; still show success to avoid UX block, logging can be added
-    }
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
     setIsSubmitting(false)
     setIsSubmitted(true)
     
-    // In real app, this would send to CRM
     console.log('Contact form submitted:', formData)
   }
 

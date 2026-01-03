@@ -3,6 +3,8 @@
 ## 📋 Overview
 This guide will help you systematically transfer all content from sgiprealestate.ru to your current website. I've already created the foundation with comprehensive Russian translation files and extraction tools.
 
+> 📖 **См. также**: [content-extraction-guide.md](./content-extraction-guide.md) - Пошаговое руководство по извлечению контента
+
 ## 🚀 Quick Start
 
 ### Step 1: Access the Russian Website
