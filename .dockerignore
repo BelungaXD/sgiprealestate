@@ -11,6 +11,9 @@ build
 # Testing
 coverage
 .nyc_output
+**/__tests__/**
+**/*.test.*
+**/*.spec.*
 
 # Misc
 .DS_Store
