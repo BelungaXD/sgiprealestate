@@ -1,4 +1,4 @@
-import { MapPinIcon, ClockIcon, TruckIcon, ShoppingBagIcon, AcademicCapIcon, HospitalIcon, CakeIcon } from '@heroicons/react/24/outline'
+import { MapPinIcon, ClockIcon, TruckIcon, ShoppingBagIcon, AcademicCapIcon, BuildingOffice2Icon, CakeIcon } from '@heroicons/react/24/outline'
 
 interface InfrastructureItem {
   name: string
@@ -18,7 +18,7 @@ interface PropertyInfrastructureProps {
 const categoryIcons: { [key: string]: any } = {
   'Shopping': ShoppingBagIcon,
   'Education': AcademicCapIcon,
-  'Healthcare': HospitalIcon,
+  'Healthcare': BuildingOffice2Icon,
   'Dining': CakeIcon,
   'Transportation': TruckIcon,
   'Entertainment': ClockIcon,
