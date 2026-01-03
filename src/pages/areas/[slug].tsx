@@ -118,7 +118,7 @@ export default function AreaDetail({ area }: AreaDetailProps) {
           {/* Area Properties */}
           <div className="bg-gray-50 py-16">
             <div className="container-custom">
-              <AreaProperties area={area} />
+              <AreaProperties properties={[]} areaName={displayName} />
             </div>
           </div>
 
