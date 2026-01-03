@@ -6,7 +6,7 @@ import {
   HeartIcon,
   TruckIcon,
   SignalIcon,
-  BuildingOfficeIcon,
+  BuildingStorefrontIcon,
   MapPinIcon,
   StarIcon
 } from '@heroicons/react/24/outline'
@@ -96,7 +96,7 @@ export default function AreaAmenities({ amenities, highlights }: AreaAmenitiesPr
     },
     {
       title: t('amenities.recreation', 'Recreation'),
-      icon: BuildingOfficeIcon,
+      icon: BuildingStorefrontIcon,
       amenities: categorizedAmenities.recreation,
       color: 'text-teal-600',
       bgColor: 'bg-teal-100'
