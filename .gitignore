@@ -60,3 +60,25 @@ logs
 tmp/
 temp/
 
+# Uploaded files (local data)
+# Ignore large property uploads, but keep developer logos
+public/uploads/properties/
+public/uploads/videos/
+public/uploads/files/
+
+# Large media files in uploads (prevent future commits of large files)
+public/uploads/**/*.mp4
+public/uploads/**/*.mov
+public/uploads/**/*.avi
+public/uploads/**/*.mkv
+public/uploads/**/*.webm
+public/uploads/**/*.pdf
+public/uploads/**/*.doc
+public/uploads/**/*.docx
+
+# Backup files
+*.bak
+*.bak2
+.env.local.bak*
+node.tar.gz
+
