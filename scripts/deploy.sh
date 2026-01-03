@@ -10,7 +10,7 @@ set -e
 
 # Конфигурация
 SERVICE_NAME="${SERVICE_NAME:-sgiprealestate-service}"
-NGINX_MICROSERVICE_PATH="/home/alfares/nginx-microservice"
+NGINX_MICROSERVICE_PATH="${NGINX_MICROSERVICE_PATH:-/home/alfares/nginx-microservice}"
 DEPLOY_SCRIPT_PATH="$NGINX_MICROSERVICE_PATH/scripts/blue-green/deploy-smart.sh"
 
 # Цвета для вывода
@@ -45,7 +45,8 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "  SERVICE_NAME    Имя сервиса для деплоя (по умолчанию: sgiprealestate-service)"
     echo ""
     echo "Переменные окружения:"
-    echo "  SERVICE_NAME    Имя сервиса (имеет приоритет над аргументом)"
+    echo "  SERVICE_NAME            Имя сервиса (имеет приоритет над аргументом)"
+    echo "  NGINX_MICROSERVICE_PATH Путь к nginx-microservice (по умолчанию: /home/alfares/nginx-microservice)"
     echo ""
     echo "Примеры:"
     echo "  ./deploy.sh"
@@ -68,11 +69,33 @@ info "Сервис: $SERVICE_NAME"
 info "Скрипт деплоя: $DEPLOY_SCRIPT_PATH"
 echo ""
 
+# Проверка доступа к директории nginx-microservice
+info "Проверка доступа к nginx-microservice..."
+if [ ! -r "$NGINX_MICROSERVICE_PATH" ] 2>/dev/null; then
+    error "Нет доступа к директории: $NGINX_MICROSERVICE_PATH"
+    echo ""
+    warning "Проблема с правами доступа. Для решения выполните на сервере:"
+    echo ""
+    echo "  sudo groupadd deployers"
+    echo "  sudo usermod -a -G deployers alfares"
+    echo "  sudo usermod -a -G deployers belunga"
+    echo "  sudo chgrp -R deployers $NGINX_MICROSERVICE_PATH"
+    echo "  sudo chmod -R 775 $NGINX_MICROSERVICE_PATH"
+    echo "  sudo chmod g+s $NGINX_MICROSERVICE_PATH"
+    echo ""
+    info "После настройки перелогиньтесь: exit && ssh alfares"
+    exit 1
+fi
+success "Доступ к директории есть"
+
 # Проверка существования скрипта деплоя
 info "Проверка наличия скрипта деплоя..."
 if [ ! -f "$DEPLOY_SCRIPT_PATH" ]; then
     error "Скрипт деплоя не найден: $DEPLOY_SCRIPT_PATH"
     error "Убедитесь, что nginx-microservice установлен и настроен"
+    echo ""
+    info "Проверьте путь или укажите через переменную окружения:"
+    echo "  NGINX_MICROSERVICE_PATH=/path/to/nginx-microservice ./scripts/deploy.sh"
     exit 1
 fi
 success "Скрипт деплоя найден"
@@ -85,7 +108,7 @@ if [ ! -x "$DEPLOY_SCRIPT_PATH" ]; then
         success "Права на выполнение установлены"
     else
         error "Не удалось установить права на выполнение"
-        error "Возможно, нужны права sudo или настройка группы deployers"
+        error "Нужна настройка группы deployers (см. инструкцию выше)"
         exit 1
     fi
 else
