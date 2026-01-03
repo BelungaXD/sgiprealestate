@@ -21,7 +21,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
           media="print"
-          onLoad="this.media='all'"
+          onLoad={(e) => { (e.target as HTMLLinkElement).media = 'all' }}
         />
         <noscript>
         <link
