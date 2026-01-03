@@ -1,11 +1,11 @@
 import { useTranslation } from 'next-i18next'
 import { 
   MapPinIcon, 
-  HomeIcon, 
+  BuildingStorefrontIcon, 
   CurrencyDollarIcon, 
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   StarIcon,
-  BuildingOfficeIcon
+  BuildingOffice2Icon
 } from '@heroicons/react/24/outline'
 
 interface Area {
@@ -50,7 +50,7 @@ export default function AreaStats({ areas }: AreaStatsProps) {
       bgColor: 'bg-blue-100'
     },
     {
-      icon: HomeIcon,
+      icon: BuildingStorefrontIcon,
       value: totalProperties,
       label: t('stats.properties'),
       description: t('stats.propertiesDescription'),
@@ -74,7 +74,7 @@ export default function AreaStats({ areas }: AreaStatsProps) {
       bgColor: 'bg-purple-100'
     },
     {
-      icon: BuildingOfficeIcon,
+      icon: BuildingOffice2Icon,
       value: totalAmenities,
       label: t('stats.amenities'),
       description: t('stats.amenitiesDescription'),
@@ -82,7 +82,7 @@ export default function AreaStats({ areas }: AreaStatsProps) {
       bgColor: 'bg-orange-100'
     },
     {
-      icon: TrendingUpIcon,
+      icon: ArrowTrendingUpIcon,
       value: '15%',
       label: t('stats.growth'),
       description: t('stats.growthDescription'),
