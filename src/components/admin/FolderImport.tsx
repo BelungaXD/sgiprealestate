@@ -179,8 +179,8 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
             <input
               ref={fileInputRef}
               type="file"
-              webkitdirectory=""
-              directory=""
+              {...({ webkitdirectory: '' } as any)}
+              {...({ directory: '' } as any)}
               multiple
               onChange={handleFileInputChange}
               className="hidden"
