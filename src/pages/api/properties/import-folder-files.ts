@@ -314,20 +314,20 @@ async function processPropertyFiles(
 
   // Генерировать SEO данные
   // finalDistrict гарантированно не null здесь (есть дефолт 'Downtown')
-  const district = finalDistrict || 'Downtown'
-  const slug = generateSlug(finalPropertyName, district)
+  const safeDistrict = finalDistrict || 'Downtown'
+  const slug = generateSlug(finalPropertyName, safeDistrict)
   const uniqueSlug = await generateUniqueSlug(slug)
-  const description = generateDescription(finalPropertyName, district)
-  const metaTitle = generateMetaTitle(finalPropertyName, district)
-  const metaDescription = generateMetaDescription(finalPropertyName, district)
+  const description = generateDescription(finalPropertyName, safeDistrict)
+  const metaTitle = generateMetaTitle(finalPropertyName, safeDistrict)
+  const metaDescription = generateMetaDescription(finalPropertyName, safeDistrict)
 
   // Найти или создать район
-  const districtSlug = district.toLowerCase().replace(/\s+/g, '-')
+  const districtSlug = safeDistrict.toLowerCase().replace(/\s+/g, '-')
   let area = await prisma.area.findFirst({
     where: {
       OR: [
-        { name: { contains: district, mode: 'insensitive' } },
-        { nameEn: { contains: district, mode: 'insensitive' } },
+        { name: { contains: safeDistrict, mode: 'insensitive' } },
+        { nameEn: { contains: safeDistrict, mode: 'insensitive' } },
         { slug: districtSlug },
       ],
     },
@@ -336,8 +336,8 @@ async function processPropertyFiles(
   if (!area) {
     area = await prisma.area.create({
       data: {
-        name: district,
-        nameEn: district,
+        name: safeDistrict,
+        nameEn: safeDistrict,
         city: 'Dubai',
         slug: districtSlug,
       },
@@ -356,9 +356,9 @@ async function processPropertyFiles(
       bedrooms: 2,
       bathrooms: 2,
       parking: 1,
-      address: `${finalPropertyName}, ${district}, Dubai`,
+      address: `${finalPropertyName}, ${safeDistrict}, Dubai`,
       city: 'Dubai',
-      district: district,
+      district: safeDistrict,
       areaId: area.id,
       slug: uniqueSlug,
       metaTitle,
