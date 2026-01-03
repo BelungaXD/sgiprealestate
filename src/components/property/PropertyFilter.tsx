@@ -61,7 +61,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
   const propertyTypes = Array.from(new Set(properties.map(p => p.type))).sort()
   const districts = Array.from(new Set(properties.map(p => p.district))).sort()
   // Use developers from API, fallback to properties if API fails
-  const developers = developersList.length > 0 ? developersList : Array.from(new Set(properties.map(p => p.developer))).filter(d => d && d.trim() !== '')).sort()
+  const developers = developersList.length > 0 ? developersList : Array.from(new Set(properties.map(p => p.developer))).filter(d => d && d.trim() !== '').sort()
   const maxPrice = Math.max(...properties.map(p => p.price), 0)
   const maxArea = Math.max(...properties.map(p => p.area), 0)
   const maxYear = Math.max(...properties.map(p => p.yearBuilt), 0)
