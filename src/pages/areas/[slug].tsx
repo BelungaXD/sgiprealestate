@@ -130,7 +130,7 @@ export default function AreaDetail({ area }: AreaDetailProps) {
           {/* Area Map */}
           <div className="bg-gray-50 py-16">
             <div className="container-custom">
-              <AreaMap area={area} />
+              <AreaMap coordinates={area.coordinates} name={displayName} />
             </div>
           </div>
 
