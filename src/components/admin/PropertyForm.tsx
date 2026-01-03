@@ -68,7 +68,11 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           floor: property.floor || undefined,
           totalFloors: property.totalFloors || undefined,
           yearBuilt: property.yearBuilt || undefined,
-          completionDate: property.completionDate ? new Date(property.completionDate).toISOString().split('T')[0] : undefined,
+          completionDate: property.completionDate 
+            ? (typeof property.completionDate === 'string' 
+                ? property.completionDate 
+                : new Date(property.completionDate).toISOString().split('T')[0])
+            : undefined,
           address: property.address || '',
           city: property.city || '',
           district: property.district || '',
