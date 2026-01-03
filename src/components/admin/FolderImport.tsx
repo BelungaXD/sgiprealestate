@@ -7,6 +7,7 @@ interface FolderImportProps {
 
 interface FileWithPath extends File {
   webkitRelativePath?: string
+  path?: string
 }
 
 export default function FolderImport({ onImportComplete }: FolderImportProps) {

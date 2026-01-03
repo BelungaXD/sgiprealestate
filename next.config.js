@@ -37,6 +37,8 @@ const nextConfig = {
   experimental: {
     // optimizeCss: true, // Disabled due to critters dependency issue
   },
+  // Enable standalone output for Docker
+  output: 'standalone',
   async headers() {
     return [
       {

@@ -1,0 +1,41 @@
+services:
+  sgiprealestate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PORT: ${PORT}
+    container_name: sgiprealestate-service-blue
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+    volumes:
+      - /srv/storagebox/alfares/docker-volumes/sgiprealestate/logs:/app/logs
+      - /srv/storagebox/alfares/docker-volumes/sgiprealestate/uploads:/app/public/uploads
+    networks:
+      - nginx-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${PORT}/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  nginx-network:
+    external: true
+

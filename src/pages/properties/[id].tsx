@@ -324,7 +324,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale, r
 
     // Fetch property from API using the request host
     const protocol = req.headers['x-forwarded-proto'] || 'http'
-    const host = req.headers.host || 'localhost:3000'
+    const fallbackHost = process.env.NEXT_PUBLIC_SITE_URL 
+      ? new URL(process.env.NEXT_PUBLIC_SITE_URL).host 
+      : 'localhost'
+    const host = req.headers.host || fallbackHost
     const baseUrl = `${protocol}://${host}`
     
     const response = await fetch(`${baseUrl}/api/properties/${id}`)
