@@ -5,9 +5,16 @@ interface FolderImportProps {
   onImportComplete: () => void
 }
 
-interface FileWithPath extends File {
+// FileWithPath interface - extends File with optional path properties
+// Note: webkitRelativePath is already in File type, but we make it explicitly optional
+interface FileWithPath {
+  name: string
+  size: number
+  type: string
+  lastModified: number
   webkitRelativePath?: string
   path?: string
+  [key: string]: any
 }
 
 export default function FolderImport({ onImportComplete }: FolderImportProps) {
