@@ -1,7 +1,7 @@
 import { useTranslation } from 'next-i18next'
 import { 
   ShoppingBagIcon,
-  UtensilsCrossedIcon,
+  CakeIcon,
   AcademicCapIcon,
   HeartIcon,
   TruckIcon,
@@ -69,7 +69,7 @@ export default function AreaAmenities({ amenities, highlights }: AreaAmenitiesPr
     },
     {
       title: t('amenities.dining', 'Dining'),
-      icon: UtensilsCrossedIcon,
+      icon: CakeIcon,
       amenities: categorizedAmenities.dining,
       color: 'text-green-600',
       bgColor: 'bg-green-100'
