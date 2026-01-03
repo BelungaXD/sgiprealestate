@@ -5,9 +5,8 @@ import {
   AcademicCapIcon,
   HeartIcon,
   TruckIcon,
-  WifiIcon,
-  CarIcon,
-  HomeIcon,
+  SignalIcon,
+  BuildingOfficeIcon,
   MapPinIcon,
   StarIcon
 } from '@heroicons/react/24/outline'
@@ -97,7 +96,7 @@ export default function AreaAmenities({ amenities, highlights }: AreaAmenitiesPr
     },
     {
       title: t('amenities.recreation', 'Recreation'),
-      icon: HomeIcon,
+      icon: BuildingOfficeIcon,
       amenities: categorizedAmenities.recreation,
       color: 'text-teal-600',
       bgColor: 'bg-teal-100'
