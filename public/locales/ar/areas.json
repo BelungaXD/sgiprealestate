@@ -4,12 +4,42 @@
   "areas": "مناطق",
   "properties": "عقارات",
   "premiumLocations": "مواقع مميزة",
+  "explore": "استكشف",
+  "viewProperties": "عرض العقارات",
+  "more": "المزيد",
+  "learnMore": "اعرف المزيد",
   "cta": {
     "title": "جاهز لاكتشاف أفضل المناطق؟",
     "description": "تواصل مع خبرائنا للحصول على إرشاد مخصص وفرص عقارية حصرية",
-    "viewProperties": "عرض العقارات",
+    "viewProperties": "عرض جميع العقارات",
     "contactUs": "اتصل بنا"
-  }
+  },
+  "stats": {
+    "title": "إحصائيات المناطق",
+    "description": "بيانات شاملة حول مواقعنا المميزة وأسواق العقارات الخاصة بها",
+    "areas": "مناطق مميزة",
+    "areasDescription": "مواقع مختارة",
+    "properties": "إجمالي العقارات",
+    "propertiesDescription": "الوحدات المتاحة",
+    "averagePrice": "متوسط السعر",
+    "averagePriceDescription": "المتوسط السوقي",
+    "landmarks": "معالم",
+    "landmarksDescription": "معالم شهيرة",
+    "amenities": "المرافق",
+    "amenitiesDescription": "المرافق المتاحة",
+    "growth": "نمو الأسعار",
+    "growthDescription": "الزيادة السنوية"
+  },
+  "topAreas": {
+    "title": "المناطق الأكثر شعبية"
+  },
+  "average": "المتوسط",
+  "city": "المدينة",
+  "averagePrice": "متوسط السعر",
+  "investmentRating": "تصنيف الاستثمار",
+  "priceGrowth": "نمو الأسعار",
+  "rentalYield": "عائد الإيجار",
+  "demand": "الطلب",
+  "properties": "عقارات",
+  "areas": "مناطق"
 }
-
-

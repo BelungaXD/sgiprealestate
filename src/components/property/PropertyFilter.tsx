@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next'
 import { XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Property {
   id: string
@@ -35,14 +35,36 @@ interface PropertyFilterProps {
 export default function PropertyFilter({ filters, onFiltersChange, properties }: PropertyFilterProps) {
   const { t } = useTranslation('properties')
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [developersList, setDevelopersList] = useState<string[]>([])
+
+  // Load developers from API
+  useEffect(() => {
+    const fetchDevelopers = async () => {
+      try {
+        const response = await fetch('/api/developers')
+        const data = await response.json()
+        const developersFromAPI = (data.developers || [])
+          .map((d: any) => d.nameEn || d.name)
+          .filter((name: string) => name && name.trim() !== '')
+        setDevelopersList(developersFromAPI)
+      } catch (error) {
+        console.error('Error fetching developers:', error)
+        // Fallback to developers from properties
+        const developersFromProperties = [...new Set(properties.map(p => p.developer))].filter(d => d && d.trim() !== '')
+        setDevelopersList(developersFromProperties)
+      }
+    }
+    fetchDevelopers()
+  }, [properties])
 
   // Get unique values for filter options
   const propertyTypes = [...new Set(properties.map(p => p.type))].sort()
   const districts = [...new Set(properties.map(p => p.district))].sort()
-  const developers = [...new Set(properties.map(p => p.developer))].sort()
-  const maxPrice = Math.max(...properties.map(p => p.price))
-  const maxArea = Math.max(...properties.map(p => p.area))
-  const maxYear = Math.max(...properties.map(p => p.yearBuilt))
+  // Use developers from API, fallback to properties if API fails
+  const developers = developersList.length > 0 ? developersList : [...new Set(properties.map(p => p.developer))].filter(d => d && d.trim() !== '').sort()
+  const maxPrice = Math.max(...properties.map(p => p.price), 0)
+  const maxArea = Math.max(...properties.map(p => p.area), 0)
+  const maxYear = Math.max(...properties.map(p => p.yearBuilt), 0)
 
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({
@@ -154,7 +176,27 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
                   onChange={(e) => handleFilterChange('type', e.target.value)}
                   className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300"
                 />
-                <span className="ml-2 text-sm text-gray-700">{type}</span>
+                <span className="ml-2 text-sm text-gray-700">
+                  {type === 'Penthouse' ? t('types.penthouse') :
+                   type === 'Villa' ? t('types.villa') :
+                   type === 'Apartment' ? t('types.apartment') :
+                   type === 'Townhouse' ? t('types.townhouse') :
+                   type === 'Office' ? t('types.office') :
+                   type === 'Studio' ? t('types.studio') :
+                   type === 'Пентхаус' ? t('types.penthouse') :
+                   type === 'Вилла' ? t('types.villa') :
+                   type === 'Апартаменты' ? t('types.apartment') :
+                   type === 'Таунхаус' ? t('types.townhouse') :
+                   type === 'Офис' ? t('types.office') :
+                   type === 'Студия' ? t('types.studio') :
+                   type === 'بنتهاوس' ? t('types.penthouse') :
+                   type === 'فيلا' ? t('types.villa') :
+                   type === 'شقة' ? t('types.apartment') :
+                   type === 'تاون هاوس' ? t('types.townhouse') :
+                   type === 'مكتب' ? t('types.office') :
+                   type === 'استوديو' ? t('types.studio') :
+                   type}
+                </span>
               </label>
             ))}
           </div>

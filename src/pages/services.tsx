@@ -4,7 +4,6 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Layout from '@/components/layout/Layout'
 import ServiceCard from '@/components/services/ServiceCard'
-import ServiceProcess from '@/components/services/ServiceProcess'
 import ServiceBenefits from '@/components/services/ServiceBenefits'
 
 export default function Services() {
@@ -151,7 +150,7 @@ export default function Services() {
                 "url": "https://sgiprealestate.com"
               },
               "serviceType": "Real Estate Services",
-              "areaServed": ["UAE", "Europe", "Russia"],
+              "areaServed": ["UAE"],
               "hasOfferCatalog": {
                 "@type": "OfferCatalog",
                 "name": "Real Estate Services",
@@ -205,13 +204,6 @@ export default function Services() {
               {services.map((service) => (
                 <ServiceCard key={service.id} service={service} />
               ))}
-            </div>
-          </div>
-
-          {/* Service Process */}
-          <div className="bg-gray-50 py-16">
-            <div className="container-custom">
-              <ServiceProcess services={services} />
             </div>
           </div>
 

@@ -17,8 +17,7 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const { t, i18n } = useTranslation('services')
-  const isRussian = i18n.language === 'ru'
+  const { t } = useTranslation('services')
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
@@ -28,7 +27,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           <div className="text-4xl">{service.icon}</div>
           <div>
             <h3 className="text-2xl font-bold mb-2">
-              {isRussian ? service.title : service.titleEn}
+              {service.title}
             </h3>
             <p className="text-white/90">
               {service.description}
@@ -50,23 +49,6 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             </li>
           ))}
         </ul>
-
-        {/* Process Steps */}
-        <div className="mb-6">
-          <h4 className="text-lg font-semibold text-graphite mb-4">
-            {t('process.title')}
-          </h4>
-          <div className="space-y-2">
-            {service.process.map((step, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-champagne/20 rounded-full flex items-center justify-center text-xs font-bold text-champagne">
-                  {index + 1}
-                </div>
-                <span className="text-gray-600 text-sm">{step}</span>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Benefits */}
         <div className="mb-6">

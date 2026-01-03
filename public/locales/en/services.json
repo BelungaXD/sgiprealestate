@@ -150,13 +150,14 @@
     },
     "global": {
       "title": "Global Reach",
-      "description": "International presence across UAE, Europe, and Russia markets"
+      "description": "Strong presence in UAE market"
     }
   },
   "cta": {
     "title": "Ready to Get Started?",
     "description": "Contact us today to discuss your real estate needs and let us help you achieve your goals",
     "contactUs": "Contact Us",
-    "viewProperties": "View Properties"
+    "viewProperties": "View Properties",
+    "getStarted": "Get Started"
   }
 }

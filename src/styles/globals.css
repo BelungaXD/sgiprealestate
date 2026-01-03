@@ -2,8 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+/* Google Fonts - loaded via preconnect in _app.tsx for better performance */
 
 /* Custom CSS Variables */
 :root {
@@ -98,9 +97,86 @@ body {
   .animate-slide-down {
     animation: slideDown 0.6s ease-out;
   }
-  
+
+  /* CSS-only scroll animations using @keyframes and animation-delay */
+  .animate-on-scroll {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-on-scroll-delay-0 {
+    animation-delay: 0s;
+  }
+
+  .animate-on-scroll-delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  .animate-on-scroll-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animate-on-scroll-delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .animate-on-scroll-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animate-on-scroll-delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  /* Fade-up animation */
+  .animate-fade-up {
+    opacity: 0;
+    transform: translateY(2rem);
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  /* Fade-in animation */
+  .animate-fade-in-scroll {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  /* Slide-left animation */
+  .animate-slide-left {
+    opacity: 0;
+    transform: translateX(2rem);
+    animation: slideInLeft 0.8s ease-out forwards;
+  }
+
+  /* Slide-right animation */
+  .animate-slide-right {
+    opacity: 0;
+    transform: translateX(-2rem);
+    animation: slideInRight 0.8s ease-out forwards;
+  }
+
+  /* Scale-in animation */
   .animate-scale-in {
-    animation: scaleIn 0.4s ease-out;
+    opacity: 0;
+    transform: scale(0.95);
+    animation: scaleIn 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-stagger {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .animate-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -144,6 +220,68 @@ body {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* CSS-only scroll animations using CSS scroll-driven animations (fallback to regular animations) */
+@supports (animation-timeline: scroll()) {
+  .animate-on-scroll {
+    animation-timeline: scroll();
+    animation-range: entry 0% entry 50%;
+  }
+}
+
+/* Fallback: use regular animations with delays for browsers that don't support scroll-driven animations */
+@supports not (animation-timeline: scroll()) {
+  .animate-on-scroll {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+}
+
+/* Smooth transitions for interactive elements */
+a, button {
+  transition: all 0.2s ease;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
 }
 
 /* Loading States */

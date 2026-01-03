@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
-import Layout from '@/components/layout/Layout'
 import AdminLogin from '@/components/admin/AdminLogin'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 
@@ -31,9 +32,15 @@ export default function Admin() {
         <title>{t('dashboard.title')} | SGIP Real Estate</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <Layout>
-        <AdminDashboard onLogout={() => setIsAuthenticated(false)} />
-      </Layout>
+      <AdminDashboard onLogout={() => setIsAuthenticated(false)} />
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale ?? 'en', ['admin', 'common'])),
+    },
+  }
 }

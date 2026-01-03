@@ -1,0 +1,22 @@
+{
+  "name": "SGIP Real Estate",
+  "short_name": "SGIP",
+  "description": "Elite Real Estate Investment Solutions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1E1F24",
+  "theme_color": "#C9A86A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

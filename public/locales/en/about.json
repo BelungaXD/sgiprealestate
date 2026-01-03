@@ -1,9 +1,9 @@
 {
   "title": "About Us",
-  "description": "Learn about SGIP Real Estate - your trusted partner in luxury real estate across UAE, Europe, and Russia.",
+  "description": "Learn about SGIP Real Estate - your trusted partner in luxury real estate in UAE.",
   "hero": {
     "title": "Your Trusted Real Estate Partner",
-    "subtitle": "Over a decade of excellence in luxury real estate investments across UAE, Europe, and Russia.",
+    "subtitle": "Over a decade of excellence in luxury real estate investments in UAE.",
     "yearsExperience": "Years Experience",
     "propertiesSold": "Properties Sold",
     "developers": "Partner Developers",
@@ -63,8 +63,8 @@
     },
     "2016": {
       "title": "International Expansion",
-      "description": "Expanded operations to Europe and Russia, establishing our global presence.",
-      "achievement1": "Opened offices in London and Moscow",
+      "description": "Expanded operations across UAE, establishing our market presence.",
+      "achievement1": "Expanded to multiple locations in UAE",
       "achievement2": "Reached 100 successful transactions",
       "achievement3": "Launched online property platform"
     },

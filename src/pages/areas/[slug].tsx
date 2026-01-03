@@ -170,8 +170,11 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
-  // In a real app, this would fetch from your API
-  const mockArea: Area = {
+  // Fetch from API - no mock data
+  // Return empty area for now - should be fetched from API
+  const mockArea: Area | null = null
+  /* Removed mock data - fetch from API:
+  {
     id: '1',
     name: 'Даунтаун Дубай',
     nameEn: 'Downtown Dubai',
@@ -208,11 +211,13 @@ export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
       { name: 'Mediclinic City Hospital', type: 'Private Hospital', distance: '12 min drive' }
     ]
   }
+  */
 
   return {
     props: {
       area: mockArea,
       ...(await serverSideTranslations(locale ?? 'en', ['common', 'areas'])),
     },
+    notFound: mockArea === null, // Return 404 if no data
   }
 }

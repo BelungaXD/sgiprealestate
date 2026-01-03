@@ -1,6 +1,7 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
 export default function CTA() {
   const { t } = useTranslation('home')
@@ -8,17 +9,20 @@ export default function CTA() {
   return (
     <section className="section-padding bg-graphite text-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {t('cta.title')}
-          </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            {t('cta.subtitle')}
-          </p>
-        </div>
+        <AnimateOnScroll animation="fade-up" delay={0}>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t('cta.title')}
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              {t('cta.subtitle')}
+            </p>
+          </div>
+        </AnimateOnScroll>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div className="text-center">
+          <AnimateOnScroll animation="fade-up" delay={0}>
+            <div className="text-center">
             <div className="w-16 h-16 bg-champagne/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <PhoneIcon className="h-8 w-8 text-champagne" />
             </div>
@@ -31,8 +35,10 @@ export default function CTA() {
               +971 4 123 4567
             </a>
           </div>
+          </AnimateOnScroll>
 
-          <div className="text-center">
+          <AnimateOnScroll animation="fade-up" delay={100}>
+            <div className="text-center">
             <div className="w-16 h-16 bg-champagne/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <EnvelopeIcon className="h-8 w-8 text-champagne" />
             </div>
@@ -45,8 +51,10 @@ export default function CTA() {
               info@sgiprealestate.com
             </a>
           </div>
+          </AnimateOnScroll>
 
-          <div className="text-center">
+          <AnimateOnScroll animation="fade-up" delay={200}>
+            <div className="text-center">
             <div className="w-16 h-16 bg-champagne/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <ChatBubbleLeftRightIcon className="h-8 w-8 text-champagne" />
             </div>
@@ -61,6 +69,7 @@ export default function CTA() {
               {t('cta.whatsapp.button')}
             </a>
           </div>
+          </AnimateOnScroll>
         </div>
 
         <div className="text-center">

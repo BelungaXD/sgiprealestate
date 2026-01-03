@@ -25,48 +25,8 @@ interface RelatedPropertiesProps {
 export default function RelatedProperties({ currentPropertyId, district, type }: RelatedPropertiesProps) {
   const { t } = useTranslation('property')
 
-  // Mock related properties - in real app this would come from API
-  const relatedProperties: Property[] = [
-    {
-      id: '2',
-      title: 'Modern Villa in Palm Jumeirah',
-      price: 4500000,
-      currency: 'AED',
-      type: 'Villa',
-      area: 4500,
-      bedrooms: 5,
-      bathrooms: 4,
-      location: 'Palm Jumeirah, UAE',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: true
-    },
-    {
-      id: '3',
-      title: 'Elegant Apartment in Marina',
-      price: 1800000,
-      currency: 'AED',
-      type: 'Apartment',
-      area: 1800,
-      bedrooms: 2,
-      bathrooms: 2,
-      location: 'Dubai Marina, UAE',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false
-    },
-    {
-      id: '4',
-      title: 'Luxury Townhouse in Arabian Ranches',
-      price: 3200000,
-      currency: 'AED',
-      type: 'Townhouse',
-      area: 3200,
-      bedrooms: 4,
-      bathrooms: 3,
-      location: 'Arabian Ranches, UAE',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false
-    }
-  ]
+  // Load related properties from API - no mock data
+  const relatedProperties: Property[] = []
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {

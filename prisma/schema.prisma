@@ -17,8 +17,8 @@ model Property {
   price       Float
   currency    String   @default("AED")
   type        PropertyType
-  status      PropertyStatus @default("AVAILABLE")
-  area        Float
+  status      PropertyStatus @default(AVAILABLE)
+  areaSqm     Float // Property area in square meters
   bedrooms    Int
   bathrooms   Int
   parking     Int?
@@ -42,10 +42,14 @@ model Property {
   // Media
   images      PropertyImage[]
   floorPlans  FloorPlan[]
+  files       PropertyFile[]
   
   // Features
   features    String[]
   amenities   String[]
+  
+  // Relations
+  leads       Lead[]
   
   // SEO
   slug        String @unique
@@ -91,6 +95,22 @@ model FloorPlan {
   createdAt  DateTime @default(now())
   
   @@map("floor_plans")
+}
+
+model PropertyFile {
+  id         String @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  label      String // Подпись файла (например "Floor Plan")
+  filename   String
+  size       Int? // Размер файла в байтах
+  mimeType   String? // MIME тип файла
+  order      Int @default(0)
+  
+  createdAt  DateTime @default(now())
+  
+  @@map("property_files")
 }
 
 model Area {
@@ -165,7 +185,7 @@ model Lead {
   page        String? // which page the lead came from
   
   // Status
-  status      LeadStatus @default("NEW")
+  status      LeadStatus @default(NEW)
   notes       String?
   
   // CRM

@@ -1,6 +1,6 @@
 {
   "title": "Properties",
-  "description": "Discover our premium selection of luxury properties across UAE, Europe, and Russia. Find your perfect investment opportunity with our expert guidance.",
+  "description": "Discover our premium selection of luxury properties in UAE. Find your perfect investment opportunity with our expert guidance.",
   "showing": "Showing",
   "of": "of",
   "properties": "properties",
@@ -35,5 +35,13 @@
     "areaDesc": "Area: Large to Small",
     "newest": "Newest First",
     "oldest": "Oldest First"
+  },
+  "types": {
+    "apartment": "Apartment",
+    "villa": "Villa",
+    "townhouse": "Townhouse",
+    "penthouse": "Penthouse",
+    "studio": "Studio",
+    "office": "Office"
   }
 }

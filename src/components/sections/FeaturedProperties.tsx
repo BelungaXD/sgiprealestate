@@ -1,49 +1,28 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
+import Image from 'next/image'
+import { useState, useEffect } from 'react'
 import { ArrowRightIcon, MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
-export default function FeaturedProperties() {
+interface FeaturedPropertiesProps {
+  initialProperties?: any[]
+}
+
+export default function FeaturedProperties({ initialProperties = [] }: FeaturedPropertiesProps) {
   const { t } = useTranslation('home')
+  const [properties, setProperties] = useState<any[]>(initialProperties)
+  const [loading, setLoading] = useState(initialProperties.length === 0)
 
-  // Mock data - in real app this would come from API
-  const properties = [
-    {
-      id: '1',
-      title: 'Luxury Penthouse in Downtown Dubai',
-      location: 'Downtown Dubai, UAE',
-      price: 2500000,
-      currency: 'AED',
-      bedrooms: 3,
-      bathrooms: 3,
-      area: 2500,
-      image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      type: 'Penthouse',
-    },
-    {
-      id: '2',
-      title: 'Modern Villa in Palm Jumeirah',
-      location: 'Palm Jumeirah, UAE',
-      price: 4500000,
-      currency: 'AED',
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 4500,
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      type: 'Villa',
-    },
-    {
-      id: '3',
-      title: 'Elegant Apartment in Marina',
-      location: 'Dubai Marina, UAE',
-      price: 1800000,
-      currency: 'AED',
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 1800,
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      type: 'Apartment',
-    },
-  ]
+  // Use initial properties if provided, otherwise show empty
+  useEffect(() => {
+    if (initialProperties.length > 0) {
+      setProperties(initialProperties)
+      setLoading(false)
+    } else {
+      setLoading(false)
+    }
+  }, [initialProperties])
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -56,23 +35,46 @@ export default function FeaturedProperties() {
   return (
     <section className="section-padding bg-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-graphite mb-4">
-            {t('featured.title')}
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            {t('featured.subtitle')}
-          </p>
-        </div>
+        <AnimateOnScroll animation="fade-up" delay={0}>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-graphite mb-4">
+              {t('featured.title')}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              {t('featured.subtitle')}
+            </p>
+          </div>
+        </AnimateOnScroll>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {properties.map((property) => (
-            <div key={property.id} className="property-card">
+          {loading ? (
+            <div className="col-span-3 text-center py-12">
+              <p className="text-gray-500">Loading featured properties...</p>
+            </div>
+          ) : properties.length === 0 ? (
+            <div className="col-span-3 text-center py-12">
+              <p className="text-gray-500">No featured properties available</p>
+            </div>
+          ) : (
+            properties.map((property, index) => (
+            <AnimateOnScroll
+              key={property.id}
+              animation="fade-up"
+              delay={index * 100}
+            >
+              <div className="property-card">
               <div className="relative overflow-hidden">
-                <img
+                <Image
                   src={property.image}
                   alt={property.title}
+                  width={800}
+                  height={400}
                   className="property-image w-full h-64 object-cover"
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  quality={85}
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
                 <div className="absolute top-4 left-4 bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
                   {property.type}
@@ -115,7 +117,9 @@ export default function FeaturedProperties() {
                 </Link>
               </div>
             </div>
-          ))}
+            </AnimateOnScroll>
+            ))
+          )}
         </div>
 
         <div className="text-center">

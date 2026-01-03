@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTranslation } from 'next-i18next'
 import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon } from '@heroicons/react/24/outline'
 
@@ -25,7 +26,7 @@ interface AreaCardProps {
 
 export default function AreaCard({ area }: AreaCardProps) {
   const { t, i18n } = useTranslation('areas')
-  const isRussian = i18n.language === 'ru'
+  const currentLocale = i18n.language || 'en'
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -35,16 +36,21 @@ export default function AreaCard({ area }: AreaCardProps) {
     }).format(price)
   }
 
-  const displayName = isRussian ? area.name : area.nameEn
-  const displayDescription = isRussian ? area.description : area.descriptionEn
+  const displayName = currentLocale === 'ru' || currentLocale === 'ar' ? area.name : area.nameEn
+  const displayDescription = currentLocale === 'ru' || currentLocale === 'ar' ? area.description : area.descriptionEn
 
   return (
     <div className="card-hover group">
       <div className="relative overflow-hidden">
-        <img
+        <Image
           src={area.image}
           alt={displayName}
+          width={800}
+          height={400}
           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
         />
         
         {/* City Badge */}
@@ -102,14 +108,20 @@ export default function AreaCard({ area }: AreaCardProps) {
         {/* Highlights */}
         <div className="mb-4">
           <div className="flex flex-wrap gap-1">
-            {area.highlights.slice(0, 3).map((highlight, index) => (
-              <span
-                key={index}
-                className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-              >
-                {highlight}
-              </span>
-            ))}
+            {area.highlights.slice(0, 3).map((highlight, index) => {
+              // Translate highlights based on current locale
+              const translatedHighlight = currentLocale === 'ru' || currentLocale === 'ar' 
+                ? highlight 
+                : highlight
+              return (
+                <span
+                  key={index}
+                  className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                >
+                  {translatedHighlight}
+                </span>
+              )
+            })}
             {area.highlights.length > 3 && (
               <span className="text-xs text-gray-500">
                 +{area.highlights.length - 3} {t('more')}

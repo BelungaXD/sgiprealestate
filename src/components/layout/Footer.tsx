@@ -38,7 +38,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-xl font-bold">SGIP</div>
-                  <div className="text-xs text-gray-400 -mt-1">Real Estate</div>
+                  <div className="text-xs text-gray-400 -mt-1">{t('footer.companyName')}</div>
                 </div>
               </div>
               <p className="text-gray-300 text-sm mb-6">

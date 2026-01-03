@@ -5,7 +5,6 @@ import Head from 'next/head'
 import Layout from '@/components/layout/Layout'
 import TeamSection from '@/components/about/TeamSection'
 import CompanyValues from '@/components/about/CompanyValues'
-import CompanyHistory from '@/components/about/CompanyHistory'
 
 export default function About() {
   const { t } = useTranslation('about')
@@ -113,13 +112,6 @@ export default function About() {
           {/* Team Section */}
           <div className="container-custom py-16">
             <TeamSection />
-          </div>
-
-          {/* Company History */}
-          <div className="bg-gray-50 py-16">
-            <div className="container-custom">
-              <CompanyHistory />
-            </div>
           </div>
 
           {/* CTA Section */}

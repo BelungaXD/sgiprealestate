@@ -19,12 +19,14 @@
     "message": "Message",
     "messagePlaceholder": "Tell us about your requirements, questions, or any specific information you need...",
     "preferredContact": "Preferred Contact Method",
+    "whatsapp": "WhatsApp",
     "propertyInterest": "Property Interest",
     "propertyInterestPlaceholder": "e.g., Downtown Dubai apartments",
     "budget": "Budget Range",
     "submit": "Send Message",
     "submitting": "Sending...",
-    "successMessage": "We've received your message and will contact you within 24 hours."
+    "successMessage": "We've received your message and will contact you within 24 hours.",
+    "consent": "I agree to the processing of personal data and accept the Privacy Policy."
   },
   "info": {
     "title": "Get in Touch",

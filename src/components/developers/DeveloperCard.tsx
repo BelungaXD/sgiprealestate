@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTranslation } from 'next-i18next'
 import { 
   BuildingOfficeIcon, 
@@ -55,11 +56,24 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
       <div className="p-6">
         {/* Logo and Basic Info */}
         <div className="flex items-start space-x-4 mb-6">
-          <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <span className="text-2xl font-bold text-champagne">
-              {developer.nameEn.charAt(0)}
-            </span>
-          </div>
+          {developer.logo ? (
+            <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-2">
+              <Image
+                src={developer.logo}
+                alt={displayName}
+                width={64}
+                height={64}
+                className="max-w-full max-h-full object-contain"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-2xl font-bold text-champagne">
+                {developer.nameEn.charAt(0)}
+              </span>
+            </div>
+          )}
           <div className="flex-1">
             <h3 className="text-xl font-semibold text-graphite mb-2 group-hover:text-champagne transition-colors">
               {displayName}
@@ -152,14 +166,17 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
           >
             {t('learnMore')}
           </Link>
-          <a
-            href={developer.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm flex items-center justify-center"
-          >
-            <GlobeAltIcon className="h-4 w-4" />
-          </a>
+          {developer.website && (
+            <a
+              href={developer.website.startsWith('http') ? developer.website : `https://${developer.website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm flex items-center justify-center"
+              title={t('visitWebsite') || 'Visit Website'}
+            >
+              <GlobeAltIcon className="h-4 w-4" />
+            </a>
+          )}
         </div>
       </div>
     </div>

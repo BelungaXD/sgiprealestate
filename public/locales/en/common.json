@@ -7,10 +7,12 @@
     "services": "Services",
     "about": "About",
     "contact": "Contact",
-    "getQuote": "Get Quote"
+    "getQuote": "Get Quote",
+    "companyName": "Real Estate"
   },
   "footer": {
     "description": "Your trusted partner in luxury real estate across UAE. We provide exceptional service and expertise in premium property investments.",
+    "companyName": "Real Estate",
     "company": "Company",
     "services": "Services",
     "support": "Support",

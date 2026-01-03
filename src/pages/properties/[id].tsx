@@ -1,14 +1,13 @@
-import { GetStaticProps, GetStaticPaths } from 'next'
+import { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Layout from '@/components/layout/Layout'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import PropertyDetails from '@/components/property/PropertyDetails'
-import PropertyFloorPlans from '@/components/property/PropertyFloorPlans'
-import PropertyInfrastructure from '@/components/property/PropertyInfrastructure'
 import PropertyContactForm from '@/components/property/PropertyContactForm'
+import PropertyFiles from '@/components/property/PropertyFiles'
 import RelatedProperties from '@/components/property/RelatedProperties'
 import { 
   MapPinIcon, 
@@ -59,6 +58,14 @@ interface Property {
       type: string
     }>
   }>
+  files: Array<{
+    id: string
+    label: string
+    url: string
+    filename: string
+    size?: number | null
+    mimeType?: string | null
+  }>
 }
 
 interface PropertyDetailProps {
@@ -69,6 +76,7 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
   const { t } = useTranslation('property')
   const [activeTab, setActiveTab] = useState('overview')
   const [isSaved, setIsSaved] = useState(false)
+  const tabsSectionRef = useRef<HTMLDivElement>(null)
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -103,10 +111,17 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
     }
   }
 
+  const handleOpenContactTab = () => {
+    setActiveTab('contact')
+    // Scroll to tabs section smoothly
+    setTimeout(() => {
+      tabsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
+  }
+
   const tabs = [
     { id: 'overview', label: t('tabs.overview') },
-    { id: 'floorplans', label: t('tabs.floorPlans') },
-    { id: 'infrastructure', label: t('tabs.infrastructure') },
+    { id: 'files', label: t('tabs.files', 'Documents') },
     { id: 'contact', label: t('tabs.contact') },
   ]
 
@@ -206,10 +221,16 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
                   </div>
                   
                   <div className="space-y-3">
-                    <button className="w-full btn-primary">
+                    <button 
+                      onClick={handleOpenContactTab}
+                      className="w-full btn-primary"
+                    >
                       {t('requestInfo')}
                     </button>
-                    <button className="w-full btn-secondary">
+                    <button 
+                      onClick={handleOpenContactTab}
+                      className="w-full btn-secondary"
+                    >
                       {t('scheduleViewing')}
                     </button>
                     <div className="flex space-x-2">
@@ -242,7 +263,7 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
           <PropertyGallery images={property.images} />
 
           {/* Property Tabs */}
-          <div className="container-custom py-8">
+          <div ref={tabsSectionRef} className="container-custom py-8">
             <div className="border-b border-gray-200 mb-8">
               <nav className="flex space-x-8">
                 {tabs.map((tab) => (
@@ -266,11 +287,8 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
               {activeTab === 'overview' && (
                 <PropertyDetails property={property} />
               )}
-              {activeTab === 'floorplans' && (
-                <PropertyFloorPlans floorPlans={property.floorPlans} />
-              )}
-              {activeTab === 'infrastructure' && (
-                <PropertyInfrastructure infrastructure={property.infrastructure} />
+              {activeTab === 'files' && (
+                <PropertyFiles files={property.files} />
               )}
               {activeTab === 'contact' && (
                 <PropertyContactForm property={property} />
@@ -294,91 +312,97 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
-  // In a real app, this would fetch from your API
-  const properties = [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    { id: '4' },
-    { id: '5' },
-    { id: '6' },
-  ]
-
-  const paths = properties.flatMap((property) =>
-    (locales || ['en']).map((locale) => ({
-      params: { id: property.id },
-      locale,
-    }))
-  )
-
+export const getServerSideProps: GetServerSideProps = async ({ params, locale, req }) => {
+  try {
+    const id = params?.id as string
+    
+    if (!id) {
   return {
-    paths,
-    fallback: 'blocking',
-  }
-}
+        notFound: true,
+      }
+    }
 
-export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
-  // In a real app, this would fetch from your API
-  const mockProperty: Property = {
-    id: params?.id as string,
-    title: 'Luxury Penthouse in Downtown Dubai',
-    description: 'Stunning penthouse with panoramic city views, featuring modern design and premium finishes throughout. This exceptional property offers the perfect blend of luxury and comfort in the heart of Dubai.',
-    price: 2500000,
-    currency: 'AED',
-    type: 'Penthouse',
-    area: 2500,
-    bedrooms: 3,
-    bathrooms: 3,
-    parking: 2,
-    location: 'Downtown Dubai, UAE',
-    district: 'Downtown',
-    images: [
-      'https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    ],
-    floorPlans: [
-      {
-        id: '1',
-        title: '3 Bedroom Layout',
-        area: 2500,
-        bedrooms: 3,
-        bathrooms: 3,
-        url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    // Fetch property from API using the request host
+    const protocol = req.headers['x-forwarded-proto'] || 'http'
+    const host = req.headers.host || 'localhost:3000'
+    const baseUrl = `${protocol}://${host}`
+    
+    const response = await fetch(`${baseUrl}/api/properties/${id}`)
+    
+    if (!response.ok) {
+      return {
+        notFound: true,
       }
-    ],
-    features: ['City Views', 'Private Elevator', 'Marble Floors', 'Smart Home System', 'Balcony', 'Walk-in Closet'],
-    amenities: ['Swimming Pool', 'Gym', 'Concierge', 'Parking', 'Security', 'Garden'],
-    yearBuilt: 2023,
-    completionDate: '2024-06-01',
-    developer: 'Emaar Properties',
-    developerLogo: '/images/developers/emaar.png',
-    isFeatured: true,
-    coordinates: { lat: 25.1972, lng: 55.2744 },
-    infrastructure: [
-      {
-        category: 'Shopping',
-        items: [
-          { name: 'Dubai Mall', distance: '5 min', type: 'Shopping Center' },
-          { name: 'Souk Al Bahar', distance: '3 min', type: 'Souk' }
-        ]
-      },
-      {
-        category: 'Education',
-        items: [
-          { name: 'Dubai International Academy', distance: '10 min', type: 'School' },
-          { name: 'American University of Dubai', distance: '15 min', type: 'University' }
-        ]
+    }
+
+    const data = await response.json()
+    const apiProperty = data.property
+
+    if (!apiProperty || !apiProperty.isPublished) {
+      return {
+        notFound: true,
       }
-    ]
-  }
+    }
+
+    // Transform API data to match Property interface
+    const property: Property = {
+      id: apiProperty.id,
+      title: apiProperty.title,
+      description: apiProperty.description || '',
+      price: apiProperty.price,
+      currency: apiProperty.currency,
+      type: apiProperty.type,
+      area: apiProperty.areaSqm,
+      bedrooms: apiProperty.bedrooms,
+      bathrooms: apiProperty.bathrooms,
+      parking: apiProperty.parking || 0,
+      location: `${apiProperty.city}, ${apiProperty.district}`,
+      district: apiProperty.district,
+      images: apiProperty.images?.map((img: any) => img.url) || [],
+      floorPlans: apiProperty.floorPlans?.map((fp: any) => ({
+        id: fp.id,
+        title: fp.title || 'Floor Plan',
+        area: fp.area || 0,
+        bedrooms: fp.bedrooms || 0,
+        bathrooms: fp.bathrooms || 0,
+        url: fp.url,
+      })) || [],
+      features: apiProperty.features || [],
+      amenities: apiProperty.amenities || [],
+      yearBuilt: apiProperty.yearBuilt || 0,
+      completionDate: apiProperty.completionDate || '',
+      developer: apiProperty.developer?.name || '',
+      developerLogo: apiProperty.developer?.logo || '',
+      isFeatured: apiProperty.isFeatured || false,
+      coordinates: apiProperty.coordinates || { lat: 0, lng: 0 },
+      infrastructure: [], // Can be added later if needed
+      files: apiProperty.files
+        ?.filter((file: any) => {
+          // Filter out videos and .DS_Store files, only show downloadable documents
+          const isVideo = file.mimeType?.startsWith('video/')
+          const isDSStore = file.filename?.includes('.DS_Store') || file.url?.includes('.DS_Store')
+          return !isVideo && !isDSStore && file.label && file.label.trim() !== ''
+        })
+        .map((file: any) => ({
+          id: file.id,
+          label: file.label,
+          url: file.url,
+          filename: file.filename,
+          size: file.size,
+          mimeType: file.mimeType,
+        })) || [],
+    }
 
   return {
     props: {
-      property: mockProperty,
+        property,
       ...(await serverSideTranslations(locale ?? 'en', ['common', 'property'])),
     },
+    }
+  } catch (error) {
+    console.error('Error fetching property:', error)
+    return {
+      notFound: true,
+    }
   }
 }

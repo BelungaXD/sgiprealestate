@@ -1,0 +1,42 @@
+{
+  "title": "المطورون",
+  "description": "اكتشف مطوري العقارات الرائدين في العالم. تعاون مع الأفضل للعثور على استثمارك العقاري المثالي",
+  "developers": "المطورون",
+  "properties": "العقارات",
+  "premiumDevelopers": "مطورون متميزون",
+  "founded": "تأسس",
+  "averagePrice": "متوسط السعر",
+  "marketShare": "حصة السوق",
+  "specialties": "التخصصات",
+  "more": "المزيد",
+  "notableProjects": "مشاريع بارزة",
+  "moreProjects": "مشاريع أكثر",
+  "learnMore": "اعرف المزيد",
+  "cta": {
+    "title": "تعاون مع أفضل المطورين",
+    "description": "اعمل مع شبكتنا من المطورين المتميزين للعثور على فرص استثمارية حصرية وعقارات قيد الإنشاء",
+    "viewProperties": "عرض جميع العقارات",
+    "contactUs": "اتصل بنا"
+  },
+  "stats": {
+    "title": "إحصائيات المطورين",
+    "description": "بيانات شاملة حول شبكة المطورين المتميزين لدينا ووجودهم في السوق",
+    "developers": "إجمالي المطورين",
+    "developersDescription": "في شبكتنا",
+    "properties": "إجمالي العقارات",
+    "propertiesDescription": "الوحدات المتاحة",
+    "averageRating": "التقييم المتوسط",
+    "averageRatingDescription": "درجة الجودة",
+    "countries": "الدول",
+    "countriesDescription": "الوجود العالمي",
+    "awards": "الجوائز",
+    "awardsDescription": "التقدير الصناعي",
+    "marketShare": "حصة السوق",
+    "marketShareDescription": "التغطية المشتركة"
+  },
+  "topDevelopers": {
+    "title": "أفضل المطورين أداءً"
+  },
+  "average": "المتوسط"
+}
+

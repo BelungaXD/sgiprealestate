@@ -19,12 +19,14 @@
     "message": "الرسالة",
     "messagePlaceholder": "اكتب متطلباتك أو أسئلتك...",
     "preferredContact": "طريقة التواصل المفضلة",
+    "whatsapp": "واتساب",
     "propertyInterest": "العقار المطلوب",
     "propertyInterestPlaceholder": "مثال: شقة في داون تاون دبي",
     "budget": "الميزانية",
     "submit": "إرسال الرسالة",
     "submitting": "جارٍ الإرسال...",
-    "successMessage": "تم استلام رسالتك وسنتواصل معك خلال 24 ساعة."
+    "successMessage": "تم استلام رسالتك وسنتواصل معك خلال 24 ساعة.",
+    "consent": "أوافق على معالجة البيانات الشخصية وأقبل سياسة الخصوصية."
   },
   "info": {
     "title": "تواصل معنا",

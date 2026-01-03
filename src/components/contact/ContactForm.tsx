@@ -146,7 +146,7 @@ export default function ContactForm() {
             className="mt-1 h-4 w-4 rounded border-gray-300 text-champagne focus:ring-champagne"
           />
           <label htmlFor="consent" className="text-sm text-gray-600">
-            I agree to the processing of personal data and accept the Privacy Policy.
+            {t('form.consent')}
           </label>
         </div>
 
@@ -214,9 +214,9 @@ export default function ContactForm() {
             onChange={handleInputChange}
             className="input-field"
           >
-            <option value="email">Email</option>
-            <option value="phone">Phone</option>
-            <option value="whatsapp">WhatsApp</option>
+            <option value="email">{t('form.email')}</option>
+            <option value="phone">{t('form.phone')}</option>
+            <option value="whatsapp">{t('form.whatsapp')}</option>
           </select>
         </div>
 

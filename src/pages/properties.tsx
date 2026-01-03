@@ -31,8 +31,10 @@ interface Property {
 }
 
 export default function Properties() {
-  const { t } = useTranslation('properties')
-  const { locale } = useRouter()
+  const { t, i18n } = useTranslation('properties')
+  const router = useRouter()
+  const locale = router.locale || 'en'
+  const currentLocale = i18n.language || locale
   const [properties, setProperties] = useState<Property[]>([])
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([])
   const [filters, setFilters] = useState({
@@ -52,179 +54,61 @@ export default function Properties() {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
 
-  // Mock data - in real app this would come from API
-  const mockProperties: Property[] = [
-    {
-      id: '1',
-      title: 'Luxury Penthouse in Downtown Dubai',
-      description: 'Stunning penthouse with panoramic city views',
-      price: 2500000,
-      currency: 'AED',
-      type: 'Penthouse',
-      area: 2500,
-      bedrooms: 3,
-      bathrooms: 3,
-      parking: 2,
-      location: 'Downtown Dubai, UAE',
-      district: 'Downtown',
-      image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: true,
-      yearBuilt: 2023,
-      completionDate: '2024-06-01',
-      developer: 'Emaar Properties'
-    },
-    {
-      id: '2',
-      title: 'Modern Villa in Palm Jumeirah',
-      description: 'Exclusive beachfront villa with private pool',
-      price: 4500000,
-      currency: 'AED',
-      type: 'Villa',
-      area: 4500,
-      bedrooms: 5,
-      bathrooms: 4,
-      parking: 3,
-      location: 'Palm Jumeirah, UAE',
-      district: 'Palm Jumeirah',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: true,
-      yearBuilt: 2022,
-      completionDate: '2023-12-01',
-      developer: 'Nakheel'
-    },
-    {
-      id: '3',
-      title: 'Elegant Apartment in Marina',
-      description: 'Contemporary apartment with marina views',
-      price: 1800000,
-      currency: 'AED',
-      type: 'Apartment',
-      area: 1800,
-      bedrooms: 2,
-      bathrooms: 2,
-      parking: 1,
-      location: 'Dubai Marina, UAE',
-      district: 'Marina',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false,
-      yearBuilt: 2021,
-      completionDate: '2022-03-01',
-      developer: 'Damac Properties'
-    },
-    {
-      id: '4',
-      title: 'Luxury Townhouse in Arabian Ranches',
-      description: 'Spacious townhouse in family-friendly community',
-      price: 3200000,
-      currency: 'AED',
-      type: 'Townhouse',
-      area: 3200,
-      bedrooms: 4,
-      bathrooms: 3,
-      parking: 2,
-      location: 'Arabian Ranches, UAE',
-      district: 'Arabian Ranches',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false,
-      yearBuilt: 2020,
-      completionDate: '2021-09-01',
-      developer: 'Emaar Properties'
-    },
-    {
-      id: '5',
-      title: 'Premium Office Space in DIFC',
-      description: 'Grade A office space in Dubai International Financial Centre',
-      price: 1200000,
-      currency: 'AED',
-      type: 'Office',
-      area: 1200,
-      bedrooms: 0,
-      bathrooms: 2,
-      parking: 1,
-      location: 'DIFC, UAE',
-      district: 'DIFC',
-      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false,
-      yearBuilt: 2023,
-      completionDate: '2024-01-01',
-      developer: 'Sobha Realty'
-    },
-    {
-      id: '6',
-      title: 'Studio Apartment in JBR',
-      description: 'Modern studio with beach access',
-      price: 800000,
-      currency: 'AED',
-      type: 'Studio',
-      area: 800,
-      bedrooms: 0,
-      bathrooms: 1,
-      parking: 0,
-      location: 'JBR, UAE',
-      district: 'JBR',
-      image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false,
-      yearBuilt: 2022,
-      completionDate: '2023-05-01',
-      developer: 'Meraas'
-    },
-    // UAE-only dataset (non-UAE entries removed)
-    {
-      id: '10',
-      title: 'Luxury Apartment in Abu Dhabi Corniche',
-      description: 'Premium apartment with stunning sea views',
-      price: 3200000,
-      currency: 'AED',
-      type: 'Apartment',
-      area: 2800,
-      bedrooms: 3,
-      bathrooms: 3,
-      parking: 2,
-      location: 'Corniche, Abu Dhabi, UAE',
-      district: 'Corniche',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-      isFeatured: false,
-      yearBuilt: 2023,
-      completionDate: '2024-02-01',
-      developer: 'Aldar Properties'
-    }
-  ]
-
+  // Check URL parameters for developer filter
   useEffect(() => {
-    // Simulate API call
+    const developerParam = router.query.developer as string
+    if (developerParam) {
+      setFilters(prev => ({
+        ...prev,
+        developer: decodeURIComponent(developerParam),
+      }))
+    }
+  }, [router.query])
+
+  // Load properties from API
+  useEffect(() => {
+    const fetchProperties = async () => {
     setLoading(true)
-    setTimeout(() => {
-      let data = mockProperties
-      if (locale === 'ru') {
-        data = mockProperties.map((p) => {
-          const copy = { ...p }
-          // Basic RU translations for demo content
-          copy.title = copy.title
-            .replace('Luxury Penthouse in Downtown Dubai', 'Роскошный пентхаус в Даунтауне Дубая')
-            .replace('Modern Villa in Palm Jumeirah', 'Современная вилла на Пальм Джумейра')
-            .replace('Elegant Apartment in Marina', 'Элегантные апартаменты в Марине')
-            .replace('Premium Office Space in DIFC', 'Премиальные офисы в DIFC')
-            .replace('Studio Apartment in JBR', 'Студия в JBR')
-          copy.description = copy.description
-            .replace('Stunning penthouse with panoramic city views', 'Потрясающий пентхаус с панорамными видами на город')
-            .replace('Exclusive beachfront villa with private pool', 'Эксклюзивная вилла у моря с частным бассейном')
-            .replace('Contemporary apartment with marina views', 'Современные апартаменты с видом на марину')
-            .replace('Grade A office space in Dubai International Financial Centre', 'Офисные помещения класса A в международном финансовом центре Дубая')
-            .replace('Modern studio with beach access', 'Современная студия с выходом на пляж')
-          copy.location = copy.location
-            .replace('Downtown Dubai, UAE', 'Даунтаун Дубай, ОАЭ')
-            .replace('Palm Jumeirah, UAE', 'Пальм Джумейра, ОАЭ')
-            .replace('Dubai Marina, UAE', 'Дубай Марина, ОАЭ')
-            .replace('DIFC, UAE', 'DIFC, ОАЭ')
-            .replace('JBR, UAE', 'JBR, ОАЭ')
-          return copy
-        })
-      }
-      setProperties(data)
-      setFilteredProperties(data)
+      try {
+        const response = await fetch('/api/properties?limit=100')
+        const data = await response.json()
+        
+        // Transform API data to match Property interface
+        const transformedProperties: Property[] = data.properties
+          .filter((p: any) => p.isPublished) // Only show published properties
+          .map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            description: p.description || '',
+            price: p.price,
+            currency: p.currency,
+            type: p.type,
+            area: p.areaSqm,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+            parking: p.parking || 0,
+            location: p.city,
+            district: p.district,
+            image: p.images && p.images.length > 0 ? p.images[0].url : '/images/placeholder.jpg',
+            isFeatured: p.isFeatured,
+            yearBuilt: p.yearBuilt || 0,
+            completionDate: p.completionDate || '',
+            developer: p.developer?.name || p.developer?.nameEn || '',
+          }))
+        
+        setProperties(transformedProperties)
+        setFilteredProperties(transformedProperties)
+      } catch (error) {
+        console.error('Error fetching properties:', error)
+        setProperties([])
+        setFilteredProperties([])
+      } finally {
       setLoading(false)
-    }, 1000)
-  }, [locale])
+      }
+    }
+
+    fetchProperties()
+  }, [currentLocale])
 
   useEffect(() => {
     let filtered = [...properties]
@@ -237,7 +121,12 @@ export default function Properties() {
       filtered = filtered.filter(prop => prop.district === filters.district)
     }
     if (filters.developer) {
-      filtered = filtered.filter(prop => prop.developer === filters.developer)
+      filtered = filtered.filter(prop => {
+        const propDeveloper = prop.developer?.trim() || ''
+        const filterDeveloper = filters.developer.trim()
+        return propDeveloper === filterDeveloper || 
+               propDeveloper.toLowerCase() === filterDeveloper.toLowerCase()
+      })
     }
     if (filters.minPrice) {
       filtered = filtered.filter(prop => prop.price >= parseInt(filters.minPrice))
@@ -301,23 +190,24 @@ export default function Properties() {
         <meta property="og:title" content={t('title')} />
         <meta property="og:description" content={t('description')} />
         <meta property="og:type" content="website" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              "name": t('title'),
-              "description": t('description'),
-              "numberOfItems": filteredProperties.length,
-              "itemListElement": filteredProperties.map((property, index) => ({
-                "@type": "RealEstateListing",
-                "position": index + 1,
-                "name": property.title,
-                "description": property.description,
-                "url": `/properties/${property.id}`,
-                "image": property.image,
-                "offers": {
+        {filteredProperties.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                "name": t('title'),
+                "description": t('description'),
+                "numberOfItems": filteredProperties.length,
+                "itemListElement": filteredProperties.slice(0, 10).map((property, index) => ({
+                  "@type": "RealEstateListing",
+                  "position": index + 1,
+                  "name": property.title,
+                  "description": property.description,
+                  "url": `/properties/${property.id}`,
+                  "image": property.image,
+                  "offers": {
                   "@type": "Offer",
                   "price": property.price,
                   "priceCurrency": property.currency
@@ -332,9 +222,10 @@ export default function Properties() {
                   "unitCode": "SQM"
                 }
               }))
-            })
-          }}
-        />
+              })
+            }}
+          />
+        )}
       </Head>
 
       <Layout>
@@ -342,13 +233,24 @@ export default function Properties() {
           {/* Header Section */}
           <div className="bg-gradient-to-r from-graphite to-gray-800 text-white">
             <div className="container-custom py-16">
-              <div className="max-w-4xl">
+              <div className="max-w-3xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6">
                   {t('title')}
                 </h1>
                 <p className="text-xl text-gray-200 mb-8">
                   {t('description')}
                 </p>
+                <div className="flex flex-wrap gap-4 text-sm">
+                  <div className="bg-white/10 rounded-full px-4 py-2">
+                    {properties.length} {t('properties')}
+                  </div>
+                  <div className="bg-white/10 rounded-full px-4 py-2">
+                    {properties.filter(p => p.isFeatured).length} {t('featured', 'Featured')}
+                  </div>
+                  <div className="bg-white/10 rounded-full px-4 py-2">
+                    {new Set(properties.map(p => p.district)).size} {t('districts', 'Districts')}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
