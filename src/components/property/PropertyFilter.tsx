@@ -50,7 +50,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
       } catch (error) {
         console.error('Error fetching developers:', error)
         // Fallback to developers from properties
-        const developersFromProperties = [...new Set(properties.map(p => p.developer))].filter(d => d && d.trim() !== '')
+        const developersFromProperties = Array.from(new Set(properties.map(p => p.developer))).filter(d => d && d.trim() !== '')
         setDevelopersList(developersFromProperties)
       }
     }
