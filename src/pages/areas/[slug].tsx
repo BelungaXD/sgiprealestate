@@ -124,7 +124,7 @@ export default function AreaDetail({ area }: AreaDetailProps) {
 
           {/* Area Amenities */}
           <div className="container-custom py-16">
-            <AreaAmenities area={area} />
+            <AreaAmenities amenities={area.amenities} highlights={area.highlights} />
           </div>
 
           {/* Area Map */}
