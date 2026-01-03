@@ -42,7 +42,7 @@ export default async function handler(
     })
 
     // Transform to include properties count
-    const developersWithCount = developers.map(dev => ({
+    const developersWithCount = developers.map((dev: typeof developers[0]) => ({
       ...dev,
       propertiesCount: dev._count.properties,
     }))
