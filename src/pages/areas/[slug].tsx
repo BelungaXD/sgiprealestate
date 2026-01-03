@@ -111,9 +111,7 @@ export default function AreaDetail({ area }: AreaDetailProps) {
           {/* Area Overview */}
           <div className="container-custom py-16">
             <AreaOverview 
-              area={area} 
-              displayName={displayName}
-              displayDescription={displayDetailedDescription}
+              area={area}
             />
           </div>
 
