@@ -313,19 +313,21 @@ async function processPropertyFiles(
   }
 
   // Генерировать SEO данные
-  const slug = generateSlug(finalPropertyName, finalDistrict)
+  // finalDistrict гарантированно не null здесь (есть дефолт 'Downtown')
+  const district = finalDistrict || 'Downtown'
+  const slug = generateSlug(finalPropertyName, district)
   const uniqueSlug = await generateUniqueSlug(slug)
-  const description = generateDescription(finalPropertyName, finalDistrict)
-  const metaTitle = generateMetaTitle(finalPropertyName, finalDistrict)
-  const metaDescription = generateMetaDescription(finalPropertyName, finalDistrict)
+  const description = generateDescription(finalPropertyName, district)
+  const metaTitle = generateMetaTitle(finalPropertyName, district)
+  const metaDescription = generateMetaDescription(finalPropertyName, district)
 
   // Найти или создать район
-  const districtSlug = finalDistrict.toLowerCase().replace(/\s+/g, '-')
+  const districtSlug = district.toLowerCase().replace(/\s+/g, '-')
   let area = await prisma.area.findFirst({
     where: {
       OR: [
-        { name: { contains: finalDistrict, mode: 'insensitive' } },
-        { nameEn: { contains: finalDistrict, mode: 'insensitive' } },
+        { name: { contains: district, mode: 'insensitive' } },
+        { nameEn: { contains: district, mode: 'insensitive' } },
         { slug: districtSlug },
       ],
     },
@@ -334,8 +336,8 @@ async function processPropertyFiles(
   if (!area) {
     area = await prisma.area.create({
       data: {
-        name: finalDistrict,
-        nameEn: finalDistrict,
+        name: district,
+        nameEn: district,
         city: 'Dubai',
         slug: districtSlug,
       },
@@ -354,9 +356,9 @@ async function processPropertyFiles(
       bedrooms: 2,
       bathrooms: 2,
       parking: 1,
-      address: `${finalPropertyName}, ${finalDistrict}, Dubai`,
+      address: `${finalPropertyName}, ${district}, Dubai`,
       city: 'Dubai',
-      district: finalDistrict,
+      district: district,
       areaId: area.id,
       slug: uniqueSlug,
       metaTitle,
