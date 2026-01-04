@@ -147,7 +147,7 @@ export default function Services() {
               "provider": {
                 "@type": "Organization",
                 "name": "SGIP Real Estate",
-                "url": "https://sgiprealestate.com"
+                "url": "https://sgiprealestate.alfares.cz"
               },
               "serviceType": "Real Estate Services",
               "areaServed": ["UAE"],

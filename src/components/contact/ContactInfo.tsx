@@ -49,7 +49,7 @@ export default function ContactInfo() {
     {
       name: 'Website',
       icon: GlobeAltIcon,
-      url: 'https://sgiprealestate.com',
+      url: 'https://sgiprealestate.alfares.cz',
       color: 'text-champagne'
     }
   ]

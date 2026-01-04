@@ -25,7 +25,7 @@ export default function About() {
               "@type": "Organization",
               "name": "SGIP Real Estate",
               "description": t('description'),
-              "url": "https://sgiprealestate.com",
+              "url": "https://sgiprealestate.alfares.cz",
               "logo": "https://sgiprealestate.com/logo.png",
               "foundingDate": "2014",
               "address": {

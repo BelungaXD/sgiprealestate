@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://sgiprealestate.com/sitemap.xml
+Sitemap: https://sgiprealestate.alfares.cz/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1

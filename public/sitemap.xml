@@ -2,77 +2,77 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Homepage -->
   <url>
-    <loc>https://sgiprealestate.com/</loc>
+    <loc>https://sgiprealestate.alfares.cz/</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/" />
   </url>
 
   <!-- Properties -->
   <url>
-    <loc>https://sgiprealestate.com/properties</loc>
+    <loc>https://sgiprealestate.alfares.cz/properties</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/properties" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/properties" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/properties" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/properties" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/properties" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/properties" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/properties</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/properties</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/properties" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/properties" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/properties" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/properties" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/properties" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/properties" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/properties</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/properties</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/properties" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/properties" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/properties" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/properties" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/properties" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/properties" />
   </url>
 
   <!-- Individual Properties -->
   <url>
-    <loc>https://sgiprealestate.com/properties/1</loc>
+    <loc>https://sgiprealestate.alfares.cz/properties/1</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sgiprealestate.com/properties/2</loc>
+    <loc>https://sgiprealestate.alfares.cz/properties/2</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://sgiprealestate.com/properties/3</loc>
+    <loc>https://sgiprealestate.alfares.cz/properties/3</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -80,48 +80,48 @@
 
   <!-- Areas -->
   <url>
-    <loc>https://sgiprealestate.com/areas</loc>
+    <loc>https://sgiprealestate.alfares.cz/areas</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/areas" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/areas" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/areas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/areas" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/areas" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/areas" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/areas</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/areas</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/areas" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/areas" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/areas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/areas" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/areas" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/areas" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/areas</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/areas</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/areas" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/areas" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/areas" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/areas" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/areas" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/areas" />
   </url>
 
   <!-- Area Details -->
   <url>
-    <loc>https://sgiprealestate.com/areas/downtown-dubai</loc>
+    <loc>https://sgiprealestate.alfares.cz/areas/downtown-dubai</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sgiprealestate.com/areas/palm-jumeirah</loc>
+    <loc>https://sgiprealestate.alfares.cz/areas/palm-jumeirah</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sgiprealestate.com/areas/dubai-marina</loc>
+    <loc>https://sgiprealestate.alfares.cz/areas/dubai-marina</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -129,135 +129,135 @@
 
   <!-- Developers -->
   <url>
-    <loc>https://sgiprealestate.com/developers</loc>
+    <loc>https://sgiprealestate.alfares.cz/developers</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/developers" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/developers" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/developers" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/developers" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/developers" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/developers" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/developers</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/developers</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/developers" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/developers" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/developers" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/developers" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/developers" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/developers" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/developers</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/developers</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/developers" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/developers" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/developers" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/developers" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/developers" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/developers" />
   </url>
 
   <!-- Services -->
   <url>
-    <loc>https://sgiprealestate.com/services</loc>
+    <loc>https://sgiprealestate.alfares.cz/services</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/services" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/services" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/services" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/services" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/services" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/services" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/services</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/services</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/services" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/services" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/services" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/services" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/services" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/services" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/services</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/services</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/services" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/services" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/services" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/services" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/services" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/services" />
   </url>
 
   <!-- About -->
   <url>
-    <loc>https://sgiprealestate.com/about</loc>
+    <loc>https://sgiprealestate.alfares.cz/about</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/about" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/about" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/about" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/about" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/about" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/about</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/about</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/about" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/about" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/about" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/about" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/about" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/about</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/about</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/about" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/about" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/about" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/about" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/about" />
   </url>
 
   <!-- Contact -->
   <url>
-    <loc>https://sgiprealestate.com/contact</loc>
+    <loc>https://sgiprealestate.alfares.cz/contact</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/contact" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/contact" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/contact" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/contact" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/contact" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ru/contact</loc>
+    <loc>https://sgiprealestate.alfares.cz/ru/contact</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/contact" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/contact" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/contact" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/contact" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/contact" />
   </url>
   <url>
-    <loc>https://sgiprealestate.com/ar/contact</loc>
+    <loc>https://sgiprealestate.alfares.cz/ar/contact</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.com/contact" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.com/ru/contact" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.com/ar/contact" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgiprealestate.alfares.cz/contact" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgiprealestate.alfares.cz/ru/contact" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgiprealestate.alfares.cz/ar/contact" />
   </url>
 
   <!-- Legal Pages -->
   <url>
-    <loc>https://sgiprealestate.com/privacy</loc>
+    <loc>https://sgiprealestate.alfares.cz/privacy</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://sgiprealestate.com/terms</loc>
+    <loc>https://sgiprealestate.alfares.cz/terms</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://sgiprealestate.com/cookies</loc>
+    <loc>https://sgiprealestate.alfares.cz/cookies</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

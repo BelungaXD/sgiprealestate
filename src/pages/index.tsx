@@ -55,7 +55,7 @@ export default function Home({ featuredProperties }: HomeProps) {
           '@context': 'https://schema.org',
           '@type': 'Organization',
           name: 'SGIP Real Estate',
-          url: 'https://sgiprealestate.com',
+          url: 'https://sgiprealestate.alfares.cz',
           logo: 'https://sgiprealestate.com/logo.png',
           sameAs: ['https://t.me/','https://wa.me/']
           })
