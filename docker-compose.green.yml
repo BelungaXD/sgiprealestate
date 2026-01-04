@@ -29,7 +29,7 @@ services:
           memory: 256M
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:4000/api/health"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4000/api/health | grep -q '\"status\":\"ok\"'"]
       interval: 10s
       timeout: 5s
       retries: 3
