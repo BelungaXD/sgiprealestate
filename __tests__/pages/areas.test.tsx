@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import Areas from '../areas'
+import Areas from '@/pages/areas'
 
 // Mock components
 jest.mock('@/components/layout/Layout', () => {

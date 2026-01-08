@@ -573,7 +573,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Area (from list) *
+              Area (from list)
             </label>
             {loadingData ? (
               <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">

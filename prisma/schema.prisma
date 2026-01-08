@@ -34,8 +34,8 @@ model Property {
   coordinates Json? // { lat: number, lng: number }
   
   // Relations
-  areaId      String
-  area        Area @relation(fields: [areaId], references: [id])
+  areaId      String?
+  area        Area? @relation(fields: [areaId], references: [id])
   developerId String?
   developer   Developer? @relation(fields: [developerId], references: [id])
   

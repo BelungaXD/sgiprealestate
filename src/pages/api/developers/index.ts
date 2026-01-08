@@ -50,13 +50,21 @@ export default async function handler(
     return res.status(200).json({ developers: developersWithCount })
   } catch (error: any) {
     console.error('Error fetching developers:', error)
+    console.error('Error details:', {
+      code: error.code,
+      message: error.message,
+      stack: error.stack,
+    })
     
     // If database connection error, return empty array instead of error
     if (error.code === 'P1001' || error.message?.includes('DATABASE_URL') || error.message?.includes('Can\'t reach database') || error.message?.includes('Environment variable not found')) {
       return res.status(200).json({ developers: [] })
     }
     
-    return res.status(500).json({ message: 'Internal server error' })
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    })
   }
 }
 

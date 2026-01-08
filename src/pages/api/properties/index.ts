@@ -240,7 +240,7 @@ export default async function handler(
             address: validatedData.address,
             city: validatedData.city,
             district: validatedData.district,
-            areaId: validatedData.areaId,
+            areaId: validatedData.areaId || null,
             developerId: validatedData.developerId || null,
             coordinates: validatedData.coordinates || null,
             features: validatedData.features || [],

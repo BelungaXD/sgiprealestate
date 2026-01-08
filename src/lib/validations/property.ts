@@ -43,7 +43,7 @@ export const propertySchema = z.object({
   address: z.string().min(1, 'Адрес обязателен'),
   city: z.string().min(1, 'Город обязателен'),
   district: z.string().min(1, 'Район обязателен'),
-  areaId: z.string().min(1, 'Район из списка обязателен'),
+  areaId: z.string().optional(),
   developerId: z.string().optional(),
   coordinates: z.object({
     lat: z.number(),
