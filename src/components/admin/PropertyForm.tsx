@@ -147,7 +147,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         )]
         
         // Merge hardcoded developers with database developers (hardcoded first)
-        const allDevelopers = [...HARDCODED_DEVELOPERS, ...loadedDevelopers.filter(dev => 
+        const allDevelopers = [...HARDCODED_DEVELOPERS, ...loadedDevelopers.filter((dev: { id: string }) => 
           !HARDCODED_DEVELOPERS.some(hc => hc.id === dev.id)
         )]
 
