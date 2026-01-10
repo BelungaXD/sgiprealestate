@@ -121,6 +121,24 @@ else
     success "Права на выполнение установлены"
 fi
 
+# Загрузка конфигурации nginx из nginx.config.json (если существует)
+NGINX_CONFIG_FILE="$(dirname "$0")/../nginx.config.json"
+CLIENT_MAX_BODY_SIZE="10G" # Значение по умолчанию
+
+if [ -f "$NGINX_CONFIG_FILE" ]; then
+    info "Загрузка конфигурации nginx из nginx.config.json..."
+    # Извлекаем client_max_body_size из JSON (требует jq или используем простой парсинг)
+    if command -v jq >/dev/null 2>&1; then
+        CLIENT_MAX_BODY_SIZE=$(jq -r '.nginx.client_max_body_size // "10G"' "$NGINX_CONFIG_FILE" 2>/dev/null || echo "10G")
+    else
+        # Простой парсинг без jq
+        CLIENT_MAX_BODY_SIZE=$(grep -o '"client_max_body_size"[[:space:]]*:[[:space:]]*"[^"]*"' "$NGINX_CONFIG_FILE" 2>/dev/null | sed 's/.*"\([^"]*\)".*/\1/' || echo "10G")
+    fi
+    success "client_max_body_size установлен: $CLIENT_MAX_BODY_SIZE"
+else
+    warning "Файл nginx.config.json не найден, используется значение по умолчанию: $CLIENT_MAX_BODY_SIZE"
+fi
+
 echo ""
 info "Запуск деплоя..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -136,6 +154,42 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 if [ $DEPLOY_EXIT_CODE -eq 0 ]; then
     success "Деплой успешно завершен!"
+    echo ""
+    
+    # Применение конфигурации nginx (client_max_body_size)
+    info "Применение конфигурации nginx (client_max_body_size: $CLIENT_MAX_BODY_SIZE)..."
+    NGINX_CONF_DIR="$NGINX_MICROSERVICE_PATH/nginx/conf.d/blue-green"
+    
+    # Обновляем конфигурационные файлы для blue и green
+    for conf_file in "$NGINX_CONF_DIR"/*.conf; do
+        if [ -f "$conf_file" ] && grep -q "sgiprealestate" "$conf_file" 2>/dev/null; then
+            # Проверяем, есть ли уже client_max_body_size в server блоке
+            if ! grep -q "client_max_body_size" "$conf_file" 2>/dev/null; then
+                # Добавляем client_max_body_size в HTTPS server блок после ssl_certificate_key
+                if grep -q "ssl_certificate_key" "$conf_file" 2>/dev/null; then
+                    sed -i "/ssl_certificate_key/a\\    client_max_body_size $CLIENT_MAX_BODY_SIZE;" "$conf_file"
+                    success "Добавлен client_max_body_size в $(basename "$conf_file")"
+                fi
+            else
+                # Обновляем существующее значение
+                sed -i "s/client_max_body_size[[:space:]]*[^;]*;/client_max_body_size $CLIENT_MAX_BODY_SIZE;/" "$conf_file"
+                success "Обновлен client_max_body_size в $(basename "$conf_file")"
+            fi
+        fi
+    done
+    
+    # Перезагрузка nginx для применения изменений
+    info "Перезагрузка nginx..."
+    if docker exec nginx-microservice nginx -t >/dev/null 2>&1; then
+        if docker exec nginx-microservice nginx -s reload >/dev/null 2>&1; then
+            success "Nginx успешно перезагружен"
+        else
+            warning "Не удалось перезагрузить nginx (возможно, контейнер не запущен)"
+        fi
+    else
+        warning "Конфигурация nginx содержит ошибки, перезагрузка пропущена"
+    fi
+    
     echo ""
     info "Проверьте статус сервиса:"
     echo "   docker ps | grep $SERVICE_NAME"

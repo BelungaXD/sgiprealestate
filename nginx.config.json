@@ -1,0 +1,6 @@
+{
+  "service_name": "sgiprealestate-service",
+  "nginx": {
+    "client_max_body_size": "10G"
+  }
+}
