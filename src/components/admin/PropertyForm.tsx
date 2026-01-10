@@ -142,7 +142,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         const loadedDevelopers = developersData.developers || []
 
         // Merge hardcoded areas with database areas (hardcoded first)
-        const allAreas = [...HARDCODED_AREAS, ...loadedAreas.filter(area => 
+        const allAreas = [...HARDCODED_AREAS, ...loadedAreas.filter((area: { id: string }) => 
           !HARDCODED_AREAS.some(hc => hc.id === area.id)
         )]
         
