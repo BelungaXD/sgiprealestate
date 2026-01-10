@@ -22,17 +22,17 @@ export const PropertyStatusEnum = z.enum([
 
 export const propertySchema = z.object({
   // Basic Information
-  title: z.string().min(1, 'Название обязательно').max(200, 'Название слишком длинное'),
-  description: z.string().min(10, 'Описание должно содержать минимум 10 символов').max(5000, 'Описание слишком длинное'),
-  type: PropertyTypeEnum,
-  price: z.number().positive('Цена должна быть положительным числом'),
+  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+  description: z.string().min(10, 'Description must contain at least 10 characters').max(5000, 'Description is too long'),
+  type: PropertyTypeEnum.optional(),
+  price: z.number().positive('Price must be a positive number'),
   currency: z.string().default('AED'),
   status: PropertyStatusEnum.default('AVAILABLE'),
 
   // Specifications
-  areaSqm: z.number().positive('Площадь должна быть положительным числом'),
-  bedrooms: z.number().int().min(0, 'Количество спален не может быть отрицательным'),
-  bathrooms: z.number().int().min(0, 'Количество ванных не может быть отрицательным'),
+  areaSqm: z.number().positive('Area must be a positive number'),
+  bedrooms: z.number().int().min(0, 'Number of bedrooms cannot be negative'),
+  bathrooms: z.number().int().min(0, 'Number of bathrooms cannot be negative'),
   parking: z.number().int().min(0).optional(),
   floor: z.number().int().optional(),
   totalFloors: z.number().int().positive().optional(),
@@ -40,9 +40,9 @@ export const propertySchema = z.object({
   completionDate: z.string().optional().transform((val) => val ? new Date(val) : undefined),
 
   // Location
-  address: z.string().min(1, 'Адрес обязателен'),
-  city: z.string().min(1, 'Город обязателен'),
-  district: z.string().min(1, 'Район обязателен'),
+  address: z.string().min(1, 'Address is required'),
+  city: z.string().min(1, 'City is required'),
+  district: z.string().min(1, 'District is required'),
   areaId: z.string().optional(),
   developerId: z.string().optional(),
   coordinates: z.object({
@@ -55,7 +55,7 @@ export const propertySchema = z.object({
   amenities: z.array(z.string()).default([]),
 
   // SEO
-  slug: z.string().min(1, 'Slug обязателен'),
+  slug: z.string().min(1, 'Slug is required'),
   metaTitle: z.string().max(60).optional(),
   metaDescription: z.string().max(160).optional(),
 

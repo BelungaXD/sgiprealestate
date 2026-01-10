@@ -114,11 +114,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   }
 
   const handleDeleteAllProperties = async () => {
-    if (!confirm('⚠️ ВНИМАНИЕ: Вы уверены, что хотите удалить ВСЕ недвижимости? Это действие нельзя отменить!')) {
+    if (!confirm('⚠️ WARNING: Are you sure you want to delete ALL properties? This action cannot be undone!')) {
       return
     }
 
-    if (!confirm('Вы действительно хотите удалить все недвижимости? Нажмите OK для подтверждения.')) {
+    if (!confirm('Do you really want to delete all properties? Click OK to confirm.')) {
       return
     }
 
@@ -130,7 +130,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        alert(`Удалено ${result.count} недвижимостей`)
+        alert(`Deleted ${result.count} properties`)
         await loadProperties()
       } else {
         alert(result.message || 'Error deleting properties')
@@ -186,7 +186,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         }
         // Warn if in demo mode
         if (result.message && result.message.includes('demo mode')) {
-          alert('⚠️ Внимание: База данных не настроена. Недвижимость сохранена в демо-режиме и не будет отображаться в списке. Пожалуйста, настройте DATABASE_URL в файле .env')
+          alert('⚠️ Warning: Database is not configured. Property saved in demo mode and will not appear in the list. Please configure DATABASE_URL in .env file')
           console.warn(result.message)
         }
       }
@@ -298,7 +298,23 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           {activeTab === 'properties' && (
             <div className="space-y-6">
               {/* Folder Import Section */}
-              <FolderImport onImportComplete={loadProperties} />
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <FolderImport onImportComplete={loadProperties} />
+                <div className="mt-6 flex items-center justify-center">
+                  <div className="flex-1 border-t border-gray-300"></div>
+                  <span className="px-4 text-sm text-gray-500">or</span>
+                  <div className="flex-1 border-t border-gray-300"></div>
+                </div>
+                <div className="mt-4">
+                  <button
+                    onClick={handleAddProperty}
+                    className="w-full btn-primary flex items-center justify-center space-x-2"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    <span>{t('properties.addProperty')}</span>
+                  </button>
+                </div>
+              </div>
               
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
@@ -311,16 +327,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                         className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                         title="Delete all properties"
                       >
-                        Удалить все
+                        Delete All
                       </button>
                     )}
-                    <button
-                      onClick={handleAddProperty}
-                      className="btn-primary flex items-center space-x-2"
-                    >
-                      <PlusIcon className="h-4 w-4" />
-                      <span>{t('properties.addProperty')}</span>
-                    </button>
                   </div>
                 </div>
               </div>

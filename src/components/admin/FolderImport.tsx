@@ -32,14 +32,14 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
 
   const handleFolderSelect = (files: FileList | null) => {
     if (!files || files.length === 0) {
-      alert('Не выбраны файлы')
+      alert('No files selected')
       return
     }
 
-    // Получаем имя папки из первого файла
+    // Get folder name from first file
     const firstFile = files[0] as FileWithPath
     const relativePath = firstFile.webkitRelativePath || ''
-    const folderName = relativePath.split('/')[0] || 'Выбранная папка'
+    const folderName = relativePath.split('/')[0] || 'Selected folder'
     
     console.log('Selected folder:', folderName)
     console.log('Total files:', files.length)
@@ -70,8 +70,8 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     e.stopPropagation()
     setIsDragging(false)
 
-    // При drag & drop нужно использовать input для выбора папки
-    // Браузер не предоставляет webkitRelativePath при drag & drop
+    // For drag & drop we need to use input for folder selection
+    // Browser doesn't provide webkitRelativePath with drag & drop
     if (fileInputRef.current) {
       fileInputRef.current.click()
     }
@@ -82,15 +82,15 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     setImportResults(null)
 
     try {
-      // Создаем FormData для загрузки файлов
+      // Create FormData for file upload
       const formData = new FormData()
       
-      // Добавляем все файлы с сохранением относительного пути
+      // Add all files preserving relative path
       Array.from(files).forEach((file) => {
         const fileWithPath = file as FileWithPath
-        // Сохраняем webkitRelativePath в имени файла для передачи на сервер
+        // Save webkitRelativePath in filename for server transfer
         if (fileWithPath.webkitRelativePath) {
-          // Используем webkitRelativePath как имя для сохранения структуры папок
+          // Use webkitRelativePath as name to preserve folder structure
           formData.append('files', file, fileWithPath.webkitRelativePath)
         } else {
           formData.append('files', file)
@@ -114,7 +114,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       console.log('Import response:', data)
 
       if (!response.ok) {
-        throw new Error(data.message || 'Ошибка импорта')
+        throw new Error(data.message || 'Import error')
       }
 
       setImportResults({
@@ -130,8 +130,8 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       }
     } catch (error: any) {
       console.error('Import error:', error)
-      const errorMessage = error.message || 'Неизвестная ошибка при импорте'
-      alert(`Ошибка импорта: ${errorMessage}`)
+      const errorMessage = error.message || 'Unknown import error'
+      alert(`Import error: ${errorMessage}`)
       setImportResults({
         success: [],
         errors: [errorMessage],
@@ -141,7 +141,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       })
     } finally {
       setIsImporting(false)
-      // Сбросить input
+      // Reset input
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -149,16 +149,16 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div>
       <div className="flex items-center space-x-3 mb-6">
         <FolderIcon className="h-6 w-6 text-champagne" />
-        <h2 className="text-xl font-semibold text-graphite">Автоматический импорт из папки</h2>
+        <h2 className="text-xl font-semibold text-graphite">Automatic Folder Import</h2>
       </div>
 
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Выберите папку с объектами недвижимости
+            Select folder with property objects
           </label>
           
           {/* Drag & Drop Area */}
@@ -194,22 +194,20 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <p className="text-lg font-medium text-graphite mb-2">Импорт в процессе...</p>
-                  <p className="text-sm text-gray-500">Пожалуйста, подождите</p>
+                  <p className="text-lg font-medium text-graphite mb-2">Import in progress...</p>
+                  <p className="text-sm text-gray-500">Please wait</p>
                 </>
               ) : (
                 <>
                   <ArrowUpTrayIcon className={`h-12 w-12 mb-4 ${isDragging ? 'text-champagne' : 'text-gray-400'}`} />
                   <p className="text-lg font-medium text-graphite mb-2">
-                    {selectedFolder || 'Перетащите папку сюда или нажмите для выбора'}
+                    {selectedFolder || 'Drag folder here or click to select'}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Выберите любую папку. Система автоматически найдет все объекты недвижимости внутри.
+                    Select any folder. The system will automatically find all property objects inside.
                   </p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    Поддерживаемые районы: Beachfront, Downtown, Dubai Hills, Marina Shores, The Oasis
-                    <br />
-                    Структура может быть любой: папка → район → объект или папка → объект
+                  <p className="text-xs text-champagne mt-2 font-medium">
+                    Drag & drop is preferable
                   </p>
                 </>
               )}
@@ -218,7 +216,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
 
           {selectedFolder && !isImporting && (
             <div className="mt-2 text-sm text-green-600">
-              ✓ Выбрана папка: <strong>{selectedFolder}</strong>
+              ✓ Selected folder: <strong>{selectedFolder}</strong>
             </div>
           )}
         </div>
@@ -226,19 +224,19 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
         {importResults && (
           <div className="mt-6 space-y-4">
             <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="font-semibold text-graphite mb-3">Результаты импорта</h3>
+              <h3 className="font-semibold text-graphite mb-3">Import Results</h3>
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div>
                   <div className="text-2xl font-bold text-graphite">{importResults.total}</div>
-                  <div className="text-sm text-gray-600">Всего папок</div>
+                  <div className="text-sm text-gray-600">Total folders</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-green-600">{importResults.successful}</div>
-                  <div className="text-sm text-gray-600">Успешно</div>
+                  <div className="text-sm text-gray-600">Successful</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-red-600">{importResults.failed}</div>
-                  <div className="text-sm text-gray-600">Ошибок</div>
+                  <div className="text-sm text-gray-600">Errors</div>
                 </div>
               </div>
 
@@ -246,7 +244,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                 <div className="mb-4">
                   <h4 className="font-medium text-green-700 mb-2 flex items-center">
                     <CheckCircleIcon className="h-5 w-5 mr-2" />
-                    Успешно импортировано ({importResults.success.length})
+                    Successfully imported ({importResults.success.length})
                   </h4>
                   <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
                     {importResults.success.map((name, idx) => (
@@ -260,7 +258,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                 <div>
                   <h4 className="font-medium text-red-700 mb-2 flex items-center">
                     <XCircleIcon className="h-5 w-5 mr-2" />
-                    Ошибки ({importResults.errors.length})
+                    Errors ({importResults.errors.length})
                   </h4>
                   <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
                     {importResults.errors.map((error, idx) => (

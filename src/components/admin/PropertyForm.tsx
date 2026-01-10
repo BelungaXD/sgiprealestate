@@ -33,6 +33,19 @@ const PROPERTY_STATUSES = [
   { value: 'UNAVAILABLE', label: 'Unavailable' },
 ]
 
+const HARDCODED_AREAS = [
+  { id: 'beachfront', name: 'Beachfront', nameEn: 'Beachfront' },
+  { id: 'downtown', name: 'Downtown', nameEn: 'Downtown' },
+  { id: 'dubai-hills', name: 'Dubai Hills', nameEn: 'Dubai Hills' },
+  { id: 'marina-shores', name: 'Marina Shores', nameEn: 'Marina Shores' },
+  { id: 'the-oasis', name: 'The Oasis', nameEn: 'The Oasis' },
+]
+
+const HARDCODED_DEVELOPERS = [
+  { id: 'emaar-properties', name: 'Emaar Properties', nameEn: 'Emaar Properties' },
+  { id: 'sobha', name: 'Sobha', nameEn: 'Sobha' },
+]
+
 export default function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) {
   const [images, setImages] = useState<string[]>([])
   const [files, setFiles] = useState<FileWithLabel[]>([])
@@ -57,7 +70,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       ? {
           title: property.title || '',
           description: property.description || '',
-          type: property.type || 'APARTMENT',
+          type: property.type || undefined,
           price: property.price || 0,
           currency: property.currency || 'AED',
           status: property.status || 'AVAILABLE',
@@ -87,10 +100,9 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           isPublished: property.isPublished || false,
           isFeatured: property.isFeatured || false,
         }
-      : {
+        : {
           currency: 'AED',
           status: 'AVAILABLE',
-          type: 'APARTMENT',
           features: [],
           amenities: [],
           isPublished: false,
@@ -125,12 +137,22 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         const areasData = await areasRes.json()
         const developersData = await developersRes.json()
 
-        // Use API data only
+        // Combine API data with hardcoded options
         const loadedAreas = areasData.areas || []
         const loadedDevelopers = developersData.developers || []
 
-        setAreas(loadedAreas)
-        setDevelopers(loadedDevelopers)
+        // Merge hardcoded areas with database areas (hardcoded first)
+        const allAreas = [...HARDCODED_AREAS, ...loadedAreas.filter(area => 
+          !HARDCODED_AREAS.some(hc => hc.id === area.id)
+        )]
+        
+        // Merge hardcoded developers with database developers (hardcoded first)
+        const allDevelopers = [...HARDCODED_DEVELOPERS, ...loadedDevelopers.filter(dev => 
+          !HARDCODED_DEVELOPERS.some(hc => hc.id === dev.id)
+        )]
+
+        setAreas(allAreas)
+        setDevelopers(allDevelopers)
       } catch (error) {
         console.error('Error loading data:', error)
         // No fallback - show empty lists
@@ -168,7 +190,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       setFiles(property.files.map((file: any) => ({
         id: file.id,
         label: file.label || '',
-        file: null, // Файл уже загружен
+        file: null, // File already uploaded
         url: file.url,
         filename: file.filename,
         size: file.size,
@@ -373,22 +395,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type *
-            </label>
-            <select
-              {...register('type')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
-            >
-              {PROPERTY_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
               Status *
             </label>
             <select
@@ -440,7 +446,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Area (sq ft) *
+              Area (m²) *
             </label>
             <input
               type="number"

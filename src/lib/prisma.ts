@@ -38,8 +38,39 @@ function initializePrisma(): any {
   }
 
   try {
+    // Fix DATABASE_URL if it has quotes or encoding issues
+    let databaseUrl = process.env.DATABASE_URL
+    // Remove surrounding quotes if present
+    if ((databaseUrl.startsWith('"') && databaseUrl.endsWith('"')) ||
+        (databaseUrl.startsWith("'") && databaseUrl.endsWith("'"))) {
+      databaseUrl = databaseUrl.slice(1, -1)
+    }
+    
+    // Ensure proper URL encoding for special characters in password
+    // If the URL doesn't have proper encoding, try to fix it
+    if (databaseUrl.includes('://') && !databaseUrl.includes('%')) {
+      // Check if password contains special characters that need encoding
+      const urlMatch = databaseUrl.match(/^([^:]+):\/\/([^:]+):([^@]+)@(.+)$/)
+      if (urlMatch) {
+        const [, protocol, user, password, rest] = urlMatch
+        // Only re-encode if password contains unencoded special chars
+        if (password.includes('/') || password.includes('+') || password.includes('=')) {
+          const encodedPassword = encodeURIComponent(password)
+          databaseUrl = `${protocol}://${user}:${encodedPassword}@${rest}`
+        }
+      }
+    }
+
+    // Set the corrected DATABASE_URL
+    process.env.DATABASE_URL = databaseUrl
+
     prismaInstance = globalForPrisma.prisma ?? new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+      datasources: {
+        db: {
+          url: databaseUrl,
+        },
+      },
     })
 
     if (process.env.NODE_ENV !== 'production') {

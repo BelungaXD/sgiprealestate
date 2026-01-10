@@ -5,7 +5,7 @@ export interface FileWithLabel {
   id: string
   label: string
   file: File | null
-  url?: string // Для существующих файлов
+  url?: string // For existing files
   filename?: string
   size?: number
   mimeType?: string
@@ -46,7 +46,7 @@ export default function FileUpload({
 
     const newFiles: FileWithLabel[] = Array.from(selectedFiles).map((file) => ({
       id: `file-${Date.now()}-${Math.random()}`,
-      label: '', // Пользователь должен будет ввести подпись
+      label: '', // User will need to enter label
       file,
       filename: file.name,
       size: file.size,

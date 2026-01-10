@@ -105,7 +105,7 @@ export default async function handler(
         data: {
           title: validatedData.title,
           description: validatedData.description,
-          type: validatedData.type as any,
+          type: (validatedData.type || 'APARTMENT') as any,
           price: validatedData.price,
           currency: validatedData.currency,
           status: validatedData.status as any,
