@@ -30,8 +30,8 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Install wget for healthcheck
-RUN apk add --no-cache wget
+# Install wget for healthcheck and openssl1.1-compat for Prisma
+RUN apk add --no-cache wget openssl1.1-compat
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
