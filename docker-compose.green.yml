@@ -29,11 +29,11 @@ services:
           memory: 256M
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4000/api/health | grep -q '\"status\":\"ok\"'"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4000/api/health | grep -q '\"status\":\"ok\"' || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 3
-      start_period: 90s
+      retries: 5
+      start_period: 120s
 
 networks:
   nginx-network:
