@@ -2,5 +2,6 @@
   "service_name": "sgiprealestate-service",
   "nginx": {
     "client_max_body_size": "10G"
-  }
+  },
+  "_comment": "Настройки nginx применяются автоматически при деплое через scripts/deploy.sh. Для применения изменений выполните деплой."
 }

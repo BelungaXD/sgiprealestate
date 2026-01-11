@@ -16,6 +16,8 @@ export const config = {
     bodyParser: false,
     // Увеличиваем таймаут для больших импортов (работает в Vercel Pro и self-hosted)
     maxDuration: 300, // 5 минут
+    // Отключаем лимит размера ответа для больших импортов
+    responseLimit: false,
   },
 }
 
@@ -422,6 +424,13 @@ export default async function handler(
     return res.status(500).json({ message: 'Database not configured' })
   }
 
+  // Log request headers to debug 413 error
+  console.log('[IMPORT] Request headers:', {
+    'content-type': req.headers['content-type'],
+    'content-length': req.headers['content-length'],
+    'content-encoding': req.headers['content-encoding'],
+  })
+
   try {
     // Парсим FormData
     const form = formidable({
@@ -429,6 +438,9 @@ export default async function handler(
       maxTotalFileSize: 10 * 1024 * 1024 * 1024, // 10GB total
       keepExtensions: true,
       multiples: true,
+      // Увеличиваем лимиты для обработки больших запросов
+      allowEmptyFiles: false,
+      minFileSize: 0,
     })
 
     const [fields, files] = await form.parse(req)
@@ -547,8 +559,29 @@ export default async function handler(
       failed: results.errors.length,
     })
   } catch (error: any) {
-    console.error('Error importing properties:', error)
-    console.error('Error stack:', error.stack)
+    console.error('[IMPORT] Error importing properties:', error)
+    console.error('[IMPORT] Error stack:', error.stack)
+    console.error('[IMPORT] Error code:', error.code)
+    console.error('[IMPORT] Error statusCode:', error.statusCode)
+    console.error('[IMPORT] Error message:', error.message)
+    
+    // Проверяем, не является ли это ошибкой 413 (Payload Too Large)
+    if (error.statusCode === 413 || 
+        error.code === 'LIMIT_FILE_SIZE' ||
+        error.code === 'LIMIT_FIELD_VALUE' ||
+        error.message?.includes('413') || 
+        error.message?.includes('Payload Too Large') || 
+        error.message?.includes('Request Entity Too Large') ||
+        error.message?.includes('maxTotalFileSize') ||
+        error.message?.includes('maxFileSize')) {
+      return res.status(413).json({
+        message: 'File size exceeds server limit',
+        error: 'The uploaded files are too large. Maximum size: 10GB total. Please try uploading folders separately or reduce file sizes.',
+        code: 'PAYLOAD_TOO_LARGE',
+        suggestion: 'Try uploading folders separately or reduce file sizes before uploading.',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      })
+    }
     
     // Более детальное сообщение об ошибке
     let errorMessage = error.message || 'Unknown error'

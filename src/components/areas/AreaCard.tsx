@@ -73,7 +73,7 @@ export default function AreaCard({ area }: AreaCardProps) {
               {t('explore')}
             </Link>
             <Link
-              href={`/properties?district=${area.nameEn}`}
+              href={`/properties?area=${encodeURIComponent(area.nameEn)}`}
               className="bg-champagne text-white px-4 py-2 rounded-lg font-medium hover:bg-champagne/90 transition-colors"
             >
               {t('viewProperties')}
@@ -139,10 +139,10 @@ export default function AreaCard({ area }: AreaCardProps) {
             {t('learnMore')}
           </Link>
           <Link
-            href={`/properties?district=${area.nameEn}`}
+            href={`/properties?area=${encodeURIComponent(area.nameEn)}`}
             className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm"
           >
-            {t('properties')}
+            {t('viewProperties')}
           </Link>
         </div>
       </div>

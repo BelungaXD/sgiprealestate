@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import { useState, useEffect } from 'react'
 import Layout from '@/components/layout/Layout'
 import AreaCard from '@/components/areas/AreaCard'
 // import AreaStats from '@/components/areas/AreaStats'
@@ -23,12 +24,138 @@ interface Area {
   amenities: string[]
 }
 
+// Hardcoded areas
+const HARDCODED_AREAS: Area[] = [
+  {
+    id: 'beachfront',
+    name: 'Beachfront',
+    nameEn: 'Beachfront',
+    description: 'Элитный прибрежный район с прямым доступом к пляжу и роскошными видами на море.',
+    descriptionEn: 'Premium beachfront location with direct beach access and stunning sea views.',
+    city: 'Dubai',
+    image: '/images/placeholder.jpg',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'beachfront',
+    coordinates: { lat: 25.2048, lng: 55.2708 },
+    highlights: ['Beach Access', 'Sea Views', 'Luxury Living'],
+    amenities: ['Beach', 'Marina', 'Restaurants', 'Shopping'],
+  },
+  {
+    id: 'downtown',
+    name: 'Downtown',
+    nameEn: 'Downtown',
+    description: 'Сердце Дубая с небоскребами, роскошными апартаментами и всемирно известными достопримечательностями.',
+    descriptionEn: 'The heart of Dubai with skyscrapers, luxury apartments, and world-famous landmarks.',
+    city: 'Dubai',
+    image: '/images/placeholder.jpg',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'downtown',
+    coordinates: { lat: 25.1972, lng: 55.2744 },
+    highlights: ['Burj Khalifa', 'Dubai Mall', 'Business Hub'],
+    amenities: ['Shopping', 'Dining', 'Entertainment', 'Business'],
+  },
+  {
+    id: 'dubai-hills',
+    name: 'Dubai Hills',
+    nameEn: 'Dubai Hills',
+    description: 'Современный жилой комплекс с парками, гольф-полями и семейной атмосферой.',
+    descriptionEn: 'Modern residential community with parks, golf courses, and family-friendly atmosphere.',
+    city: 'Dubai',
+    image: '/images/placeholder.jpg',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'dubai-hills',
+    coordinates: { lat: 25.0900, lng: 55.2400 },
+    highlights: ['Golf Course', 'Parks', 'Family Community'],
+    amenities: ['Golf', 'Parks', 'Schools', 'Shopping'],
+  },
+  {
+    id: 'marina-shores',
+    name: 'Marina Shores',
+    nameEn: 'Marina Shores',
+    description: 'Престижный район с видом на марину, современной архитектурой и активным образом жизни.',
+    descriptionEn: 'Prestigious area with marina views, modern architecture, and active lifestyle.',
+    city: 'Dubai',
+    image: '/images/placeholder.jpg',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'marina-shores',
+    coordinates: { lat: 25.0789, lng: 55.1394 },
+    highlights: ['Marina Views', 'Modern Design', 'Waterfront'],
+    amenities: ['Marina', 'Beach', 'Restaurants', 'Fitness'],
+  },
+  {
+    id: 'the-oasis',
+    name: 'The Oasis',
+    nameEn: 'The Oasis',
+    description: 'Эксклюзивный жилой комплекс с зелеными зонами, виллами и спокойной атмосферой.',
+    descriptionEn: 'Exclusive residential community with green spaces, villas, and tranquil atmosphere.',
+    city: 'Dubai',
+    image: '/images/placeholder.jpg',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'the-oasis',
+    coordinates: { lat: 25.0657, lng: 55.1713 },
+    highlights: ['Green Spaces', 'Villas', 'Tranquil'],
+    amenities: ['Parks', 'Community Facilities', 'Security'],
+  },
+]
+
 export default function Areas() {
   const { t, i18n } = useTranslation('areas')
   const currentLocale = i18n.language || 'en'
+  const [areas, setAreas] = useState<Area[]>([])
 
-  // Load areas from API - no mock data
-  const areas: Area[] = []
+  // Load areas from API and merge with hardcoded
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const response = await fetch('/api/areas')
+        const data = await response.json()
+        
+        // Transform API data to match Area interface
+        const transformedAreas: Area[] = (data.areas || []).map((area: any) => ({
+          id: area.id,
+          name: area.name,
+          nameEn: area.nameEn || area.name,
+          description: area.description || '',
+          descriptionEn: area.descriptionEn || area.description || '',
+          city: area.city || 'Dubai',
+          image: '/images/areas/default.jpg',
+          propertiesCount: 0,
+          averagePrice: 0,
+          currency: 'AED',
+          slug: area.slug,
+          coordinates: { lat: 25.2048, lng: 55.2708 },
+          highlights: [],
+          amenities: [],
+        }))
+        
+        // Merge hardcoded areas with API areas (hardcoded first, avoid duplicates)
+        const allAreas = [
+          ...HARDCODED_AREAS,
+          ...transformedAreas.filter(area => 
+            !HARDCODED_AREAS.some(hc => hc.id === area.id || hc.slug === area.slug)
+          )
+        ]
+        
+        setAreas(allAreas)
+      } catch (error) {
+        console.error('Error fetching areas:', error)
+        // Use hardcoded areas if API fails
+        setAreas(HARDCODED_AREAS)
+      }
+    }
+
+    fetchAreas()
+  }, [currentLocale])
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -98,11 +225,17 @@ export default function Areas() {
 
           {/* Areas Grid */}
           <div className="container-custom py-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {areas.map((area) => (
-                <AreaCard key={area.id} area={area} />
-              ))}
-            </div>
+            {areas.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">{t('noAreas') || 'No areas found'}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {areas.map((area) => (
+                  <AreaCard key={area.id} area={area} />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* CTA Section */}

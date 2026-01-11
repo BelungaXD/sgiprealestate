@@ -184,10 +184,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         if (result.success === false) {
           throw new Error(result.message || 'Error saving property')
         }
-        // Warn if in demo mode
-        if (result.message && result.message.includes('demo mode')) {
-          alert('⚠️ Warning: Database is not configured. Property saved in demo mode and will not appear in the list. Please configure DATABASE_URL in .env file')
-          console.warn(result.message)
+        // Log demo mode silently (database may be temporarily unavailable)
+        if (result.message && result.message.includes('demo mode') && result.message.includes('database not configured')) {
+          console.warn('Database temporarily unavailable, property saved in demo mode:', result.message)
         }
       }
 

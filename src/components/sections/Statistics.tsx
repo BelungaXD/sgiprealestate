@@ -6,7 +6,7 @@ export default function Statistics() {
 
   const stats = [
     {
-      number: '10+',
+      number: '15+',
       label: t('stats.yearsExperience'),
       description: t('stats.yearsDescription'),
     },
@@ -14,11 +14,6 @@ export default function Statistics() {
       number: '500+',
       label: t('stats.propertiesSold'),
       description: t('stats.propertiesDescription'),
-    },
-    {
-      number: '2',
-      label: t('stats.developers'),
-      description: t('stats.developersDescription'),
     },
     {
       number: '98%',
@@ -41,7 +36,7 @@ export default function Statistics() {
           </div>
         </AnimateOnScroll>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {stats.map((stat, index) => (
             <AnimateOnScroll
               key={index}

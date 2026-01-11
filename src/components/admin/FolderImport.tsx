@@ -82,6 +82,18 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     setImportResults(null)
 
     try {
+      // Проверяем общий размер файлов перед отправкой (максимум 10GB)
+      const MAX_TOTAL_SIZE = 10 * 1024 * 1024 * 1024 // 10GB
+      let totalSize = 0
+      Array.from(files).forEach((file) => {
+        totalSize += file.size
+      })
+
+      if (totalSize > MAX_TOTAL_SIZE) {
+        const sizeInGB = (totalSize / (1024 * 1024 * 1024)).toFixed(2)
+        throw new Error(`Общий размер файлов (${sizeInGB}GB) превышает максимальный лимит (10GB). Попробуйте загрузить папки по отдельности.`)
+      }
+
       // Create FormData for file upload
       const formData = new FormData()
       
@@ -97,7 +109,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
         }
       })
 
-      console.log('Uploading files:', Array.from(files).length)
+      console.log('Uploading files:', Array.from(files).length, `Total size: ${(totalSize / (1024 * 1024 * 1024)).toFixed(2)}GB`)
 
       const response = await fetch('/api/properties/import-folder-files', {
         method: 'POST',
@@ -105,9 +117,29 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Server error:', errorText)
-        throw new Error(`Server error: ${response.status} ${response.statusText}`)
+        let errorMessage = `Server error: ${response.status} ${response.statusText}`
+        
+        // Специальная обработка ошибки 413 (Payload Too Large)
+        if (response.status === 413) {
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.error || errorData.message || 'Размер загружаемых файлов превышает лимит сервера. Попробуйте загрузить папки по отдельности.'
+          } catch {
+            errorMessage = 'Размер загружаемых файлов превышает лимит сервера (413 Payload Too Large). Максимальный размер: 10GB. Попробуйте загрузить папки по отдельности.'
+          }
+        } else {
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.error || errorData.message || errorMessage
+          } catch {
+            const errorText = await response.text()
+            if (errorText) {
+              console.error('Server error:', errorText)
+            }
+          }
+        }
+        
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()

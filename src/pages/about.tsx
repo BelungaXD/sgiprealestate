@@ -60,18 +60,14 @@ export default function About() {
                 <p className="text-xl text-gray-200 mb-8">
                   {t('hero.subtitle')}
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">10+</div>
+                    <div className="text-2xl font-bold text-champagne mb-2">15+</div>
                     <div className="text-sm text-gray-200">{t('hero.yearsExperience')}</div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">
                     <div className="text-2xl font-bold text-champagne mb-2">500+</div>
                     <div className="text-sm text-gray-200">{t('hero.propertiesSold')}</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">6</div>
-                    <div className="text-sm text-gray-200">{t('hero.developers')}</div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">
                     <div className="text-2xl font-bold text-champagne mb-2">98%</div>

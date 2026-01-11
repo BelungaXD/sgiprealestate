@@ -34,6 +34,52 @@ export default function Developers() {
   const [developers, setDevelopers] = useState<Developer[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Hardcoded developers
+  const HARDCODED_DEVELOPERS: Developer[] = [
+    {
+      id: 'emaar-properties',
+      name: 'Emaar Properties',
+      nameEn: 'Emaar Properties',
+      description: 'Ведущий застройщик недвижимости в ОАЭ, известный созданием знаковых проектов мирового класса.',
+      descriptionEn: 'Leading real estate developer in UAE, known for creating world-class iconic projects.',
+      logo: '/uploads/developers/emaar_logo.png',
+      founded: 1997,
+      headquarters: 'Dubai, UAE',
+      propertiesCount: 0,
+      averagePrice: 0,
+      currency: 'AED',
+      slug: 'emaar-properties',
+      website: 'https://www.emaar.com',
+      specialties: ['Luxury Residences', 'Commercial Developments', 'Master Communities'],
+      notableProjects: ['Burj Khalifa', 'Dubai Mall', 'Downtown Dubai'],
+      awards: [],
+      rating: 5,
+      marketShare: 0,
+      countries: ['UAE'],
+    },
+    {
+      id: 'sobha',
+      name: 'Sobha',
+      nameEn: 'Sobha',
+      description: 'Премиальный застройщик, специализирующийся на элитной недвижимости и качественных проектах.',
+      descriptionEn: 'Premium developer specializing in luxury real estate and quality projects.',
+      logo: '/uploads/developers/sobha_logo.png',
+      founded: 1995,
+      headquarters: 'Dubai, UAE',
+      propertiesCount: 0,
+      averagePrice: 0,
+      currency: 'AED',
+      slug: 'sobha',
+      website: 'https://www.sobha.com',
+      specialties: ['Luxury Villas', 'Premium Apartments', 'Quality Construction'],
+      notableProjects: ['Sobha Hartland', 'Sobha Creek Vistas'],
+      awards: [],
+      rating: 5,
+      marketShare: 0,
+      countries: ['UAE'],
+    },
+  ]
+
   // Load developers from API
   useEffect(() => {
     const fetchDevelopers = async () => {
@@ -65,10 +111,19 @@ export default function Developers() {
           countries: ['UAE'],
         }))
         
-        setDevelopers(transformedDevelopers)
+        // Merge hardcoded developers with API developers (hardcoded first, avoid duplicates)
+        const allDevelopers = [
+          ...HARDCODED_DEVELOPERS,
+          ...transformedDevelopers.filter(dev => 
+            !HARDCODED_DEVELOPERS.some(hc => hc.id === dev.id || hc.slug === dev.slug)
+          )
+        ]
+        
+        setDevelopers(allDevelopers)
       } catch (error) {
         console.error('Error fetching developers:', error)
-        setDevelopers([])
+        // Use hardcoded developers if API fails
+        setDevelopers(HARDCODED_DEVELOPERS)
       } finally {
         setLoading(false)
       }

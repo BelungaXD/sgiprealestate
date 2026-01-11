@@ -186,7 +186,7 @@ export default function Services() {
                     <div className="text-sm text-gray-200">{t('hero.services')}</div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">10+</div>
+                    <div className="text-2xl font-bold text-champagne mb-2">15+</div>
                     <div className="text-sm text-gray-200">{t('hero.yearsExperience')}</div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">

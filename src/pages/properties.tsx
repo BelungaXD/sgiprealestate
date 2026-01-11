@@ -39,7 +39,7 @@ export default function Properties() {
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([])
   const [filters, setFilters] = useState({
     type: '',
-    district: '',
+    area: '',
     developer: '',
     minPrice: '',
     maxPrice: '',
@@ -47,20 +47,28 @@ export default function Properties() {
     bathrooms: '',
     minArea: '',
     maxArea: '',
-    yearBuilt: '',
+    minYearBuilt: '',
+    maxYearBuilt: '',
     completionDate: ''
   })
   const [sortBy, setSortBy] = useState('price-asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
 
-  // Check URL parameters for developer filter
+  // Check URL parameters for developer and area filters
   useEffect(() => {
     const developerParam = router.query.developer as string
+    const areaParam = router.query.area as string
     if (developerParam) {
       setFilters(prev => ({
         ...prev,
         developer: decodeURIComponent(developerParam),
+      }))
+    }
+    if (areaParam) {
+      setFilters(prev => ({
+        ...prev,
+        area: decodeURIComponent(areaParam),
       }))
     }
   }, [router.query])
@@ -117,8 +125,8 @@ export default function Properties() {
     if (filters.type) {
       filtered = filtered.filter(prop => prop.type === filters.type)
     }
-    if (filters.district) {
-      filtered = filtered.filter(prop => prop.district === filters.district)
+    if (filters.area) {
+      filtered = filtered.filter(prop => prop.district === filters.area)
     }
     if (filters.developer) {
       filtered = filtered.filter(prop => {
@@ -146,8 +154,11 @@ export default function Properties() {
     if (filters.maxArea) {
       filtered = filtered.filter(prop => prop.area <= parseInt(filters.maxArea))
     }
-    if (filters.yearBuilt) {
-      filtered = filtered.filter(prop => prop.yearBuilt >= parseInt(filters.yearBuilt))
+    if (filters.minYearBuilt) {
+      filtered = filtered.filter(prop => prop.yearBuilt >= parseInt(filters.minYearBuilt))
+    }
+    if (filters.maxYearBuilt) {
+      filtered = filtered.filter(prop => prop.yearBuilt <= parseInt(filters.maxYearBuilt))
     }
 
     // Apply sorting
@@ -270,7 +281,10 @@ export default function Properties() {
               <div className="lg:w-3/4">
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
                   <div className="text-sm text-gray-600 mb-4 sm:mb-0">
-                    {t('showing')} {startIndex + 1}-{Math.min(endIndex, filteredProperties.length)} {t('of')} {filteredProperties.length} {t('properties')}
+                    {filteredProperties.length === 0 
+                      ? `${t('showing')} 0 ${t('of')} 0 ${t('properties')}`
+                      : `${t('showing')} ${startIndex + 1}-${Math.min(endIndex, filteredProperties.length)} ${t('of')} ${filteredProperties.length} ${t('properties')}`
+                    }
                   </div>
                   <PropertySort sortBy={sortBy} onSortChange={setSortBy} />
                 </div>

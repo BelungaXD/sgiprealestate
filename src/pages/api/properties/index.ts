@@ -124,16 +124,12 @@ export default async function handler(
       try {
         await prisma.$connect()
       } catch (dbError: any) {
-        console.warn('Database connection error, using demo mode:', dbError.message)
-        // If database is not available, use demo mode instead of error
-        return res.status(200).json({
-          success: true,
-          message: 'Property saved (demo mode - database not available)',
-          property: {
-            id: `demo-${Date.now()}`,
-            ...req.body,
-            createdAt: new Date().toISOString(),
-          },
+        console.error('Database connection error:', dbError.message)
+        // If database is configured but not available, return error instead of demo mode
+        return res.status(500).json({
+          success: false,
+          message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
+          error: process.env.NODE_ENV === 'development' ? dbError.message : undefined,
         })
       }
 
@@ -280,23 +276,57 @@ export default async function handler(
             },
           })
         }
-        // If database connection error, use demo mode
+        // If database connection error, return error if DATABASE_URL is configured
         if (
           dbError.code === 'P1001' || 
-          dbError.message?.includes('DATABASE_URL') || 
-          dbError.message?.includes('Database is not configured') ||
           dbError.message?.includes('did not initialize')
         ) {
-          console.warn('Database error, using demo mode:', dbError.message)
+          if (process.env.DATABASE_URL) {
+            console.error('Database connection error:', dbError.message)
+            return res.status(500).json({
+              success: false,
+              message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
+              error: process.env.NODE_ENV === 'development' ? dbError.message : undefined,
+            })
+          }
+          // Only use demo mode if DATABASE_URL is not configured
+          console.warn('Database not configured, using demo mode:', dbError.message)
           return res.status(200).json({
             success: true,
-            message: 'Property saved (demo mode - database not available)',
+            message: 'Property saved (demo mode - database not configured)',
             property: {
               id: `demo-${Date.now()}`,
               ...validatedData,
               slug,
               createdAt: new Date().toISOString(),
             },
+          })
+        }
+        
+        // Handle Database is not configured error
+        if (
+          dbError.message?.includes('DATABASE_URL') || 
+          dbError.message?.includes('Database is not configured')
+        ) {
+          if (!process.env.DATABASE_URL) {
+            console.warn('Database not configured, using demo mode:', dbError.message)
+            return res.status(200).json({
+              success: true,
+              message: 'Property saved (demo mode - database not configured)',
+              property: {
+                id: `demo-${Date.now()}`,
+                ...validatedData,
+                slug,
+                createdAt: new Date().toISOString(),
+              },
+            })
+          }
+          // If DATABASE_URL is configured but error occurs, return error
+          console.error('Database error:', dbError.message)
+          return res.status(500).json({
+            success: false,
+            message: 'Database error. Please check your database configuration.',
+            error: process.env.NODE_ENV === 'development' ? dbError.message : undefined,
           })
         }
         throw dbError
@@ -405,17 +435,23 @@ export default async function handler(
         })
       }
 
-      // Handle Prisma connection errors - use demo mode instead of error
+      // Handle Prisma connection errors
       if (
         error.code === 'P1001' || 
-        error.message?.includes('DATABASE_URL') || 
-        error.message?.includes('Can\'t reach database') || 
-        error.message?.includes('Environment variable not found') ||
-        error.message?.includes('Database is not configured') ||
+        error.message?.includes('Can\'t reach database') ||
         error.message?.includes('did not initialize')
       ) {
-        console.warn('Database error in catch block, using demo mode:', error.message)
-        // Try to get body data for demo response
+        // If DATABASE_URL is configured but connection fails, return error
+        if (process.env.DATABASE_URL) {
+          console.error('Database connection error:', error.message)
+          return res.status(500).json({
+            success: false,
+            message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+          })
+        }
+        // Only use demo mode if DATABASE_URL is not configured
+        console.warn('Database not configured, using demo mode:', error.message)
         let bodyData = {}
         try {
           bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
@@ -425,53 +461,66 @@ export default async function handler(
         
         return res.status(200).json({
           success: true,
-          message: 'Property saved (demo mode - database not available)',
+          message: 'Property saved (demo mode - database not configured)',
           property: {
             id: `demo-${Date.now()}`,
             ...bodyData,
             createdAt: new Date().toISOString(),
           },
         })
-      }
-
-      // Handle other Prisma errors - try demo mode for non-critical errors
-      if (error.code?.startsWith('P')) {
-        console.warn('Prisma error, trying demo mode:', error.code, error.message)
-        let bodyData = {}
-        try {
-          bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
-        } catch {
-          // Ignore parse errors
-        }
-        
-        return res.status(200).json({
-          success: true,
-          message: 'Property saved (demo mode)',
-          property: {
-            id: `demo-${Date.now()}`,
-            ...bodyData,
-            createdAt: new Date().toISOString(),
-          },
-        })
-      }
-
-      // For other errors, still try demo mode as fallback
-      console.warn('Unexpected error, using demo mode as fallback:', error.message)
-      let bodyData = {}
-      try {
-        bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
-      } catch {
-        // Ignore parse errors
       }
       
-      return res.status(200).json({
-        success: true,
-        message: 'Property saved (demo mode)',
-        property: {
-          id: `demo-${Date.now()}`,
-          ...bodyData,
-          createdAt: new Date().toISOString(),
-        },
+      // Handle DATABASE_URL not configured error
+      if (
+        error.message?.includes('DATABASE_URL') || 
+        error.message?.includes('Environment variable not found') ||
+        error.message?.includes('Database is not configured')
+      ) {
+        // Only use demo mode if DATABASE_URL is truly not configured
+        if (!process.env.DATABASE_URL) {
+          console.warn('Database not configured, using demo mode:', error.message)
+          let bodyData = {}
+          try {
+            bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
+          } catch {
+            // Ignore parse errors
+          }
+          
+          return res.status(200).json({
+            success: true,
+            message: 'Property saved (demo mode - database not configured)',
+            property: {
+              id: `demo-${Date.now()}`,
+              ...bodyData,
+              createdAt: new Date().toISOString(),
+            },
+          })
+        }
+        // If DATABASE_URL is configured but error occurs, return error
+        console.error('Database error:', error.message)
+        return res.status(500).json({
+          success: false,
+          message: 'Database error. Please check your database configuration.',
+          error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        })
+      }
+
+      // Handle other Prisma errors - return error instead of demo mode
+      if (error.code?.startsWith('P')) {
+        console.error('Prisma error:', error.code, error.message)
+        return res.status(500).json({
+          success: false,
+          message: 'Database error occurred while saving property.',
+          error: process.env.NODE_ENV === 'development' ? `${error.code}: ${error.message}` : undefined,
+        })
+      }
+
+      // For other errors, return error instead of demo mode
+      console.error('Unexpected error:', error.message)
+      return res.status(500).json({
+        success: false,
+        message: 'An error occurred while saving property.',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
       })
     }
   }

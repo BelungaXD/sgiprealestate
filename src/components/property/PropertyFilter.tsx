@@ -2,6 +2,19 @@ import { useTranslation } from 'next-i18next'
 import { XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react'
 
+const HARDCODED_AREAS = [
+  'Beachfront',
+  'Downtown',
+  'Dubai Hills',
+  'Marina Shores',
+  'The Oasis',
+]
+
+const HARDCODED_DEVELOPERS = [
+  'Emaar Properties',
+  'Sobha',
+]
+
 interface Property {
   id: string
   type: string
@@ -17,7 +30,7 @@ interface Property {
 interface PropertyFilterProps {
   filters: {
     type: string
-    district: string
+    area: string
     developer: string
     minPrice: string
     maxPrice: string
@@ -25,7 +38,8 @@ interface PropertyFilterProps {
     bathrooms: string
     minArea: string
     maxArea: string
-    yearBuilt: string
+    minYearBuilt: string
+    maxYearBuilt: string
     completionDate: string
   }
   onFiltersChange: (filters: any) => void
@@ -60,11 +74,19 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
   // Get unique values for filter options
   const propertyTypes = Array.from(new Set(properties.map(p => p.type))).sort()
   const districts = Array.from(new Set(properties.map(p => p.district))).sort()
-  // Use developers from API, fallback to properties if API fails
-  const developers = developersList.length > 0 ? developersList : Array.from(new Set(properties.map(p => p.developer))).filter(d => d && d.trim() !== '').sort()
+  
+  // Merge hardcoded developers with API developers
+  const allDevelopersFromAPI = developersList.length > 0 ? developersList : Array.from(new Set(properties.map(p => p.developer))).filter(d => d && d.trim() !== '').sort()
+  const developers = [...HARDCODED_DEVELOPERS, ...allDevelopersFromAPI.filter(d => !HARDCODED_DEVELOPERS.includes(d))]
+  
+  // Merge hardcoded areas with districts (areas can be in district field)
+  const allAreas = [...HARDCODED_AREAS, ...districts.filter(d => !HARDCODED_AREAS.includes(d))]
   const maxPrice = Math.max(...properties.map(p => p.price), 0)
   const maxArea = Math.max(...properties.map(p => p.area), 0)
-  const maxYear = Math.max(...properties.map(p => p.yearBuilt), 0)
+  const currentYear = new Date().getFullYear()
+  const yearsWithData = properties.map(p => p.yearBuilt).filter(y => y && y > 1800 && y <= currentYear)
+  const maxYear = yearsWithData.length > 0 ? Math.max(...yearsWithData) : currentYear
+  const minYear = yearsWithData.length > 0 ? Math.min(...yearsWithData) : Math.max(1800, currentYear - 30)
 
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({
@@ -76,7 +98,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
   const clearFilters = () => {
     onFiltersChange({
       type: '',
-      district: '',
+      area: '',
       developer: '',
       minPrice: '',
       maxPrice: '',
@@ -84,7 +106,8 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
       bathrooms: '',
       minArea: '',
       maxArea: '',
-      yearBuilt: '',
+      minYearBuilt: '',
+      maxYearBuilt: '',
       completionDate: ''
     })
   }
@@ -202,16 +225,16 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
           </div>
         </FilterSection>
 
-        {/* District */}
-        <FilterSection title={t('district')}>
+        {/* Area */}
+        <FilterSection title={t('area') || 'Area'}>
           <select
-            value={filters.district}
-            onChange={(e) => handleFilterChange('district', e.target.value)}
+            value={filters.area}
+            onChange={(e) => handleFilterChange('area', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
           >
-            <option value="">{t('allDistricts')}</option>
-            {districts.map(district => (
-              <option key={district} value={district}>{district}</option>
+            <option value="">{t('allSelected', 'All Selected')}</option>
+            {allAreas.map(area => (
+              <option key={area} value={area}>{area}</option>
             ))}
           </select>
         </FilterSection>
@@ -223,7 +246,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
             onChange={(e) => handleFilterChange('developer', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
           >
-            <option value="">{t('allDevelopers')}</option>
+            <option value="">{t('allSelected', 'All Selected')}</option>
             {developers.map(developer => (
               <option key={developer} value={developer}>{developer}</option>
             ))}
@@ -259,7 +282,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
         {/* Bedrooms */}
         <FilterSection title={t('bedrooms')}>
           <div className="grid grid-cols-2 gap-2">
-            {[1, 2, 3, 4, 5, '6+'].map(bedrooms => (
+            {[1, 2, 3, '4+'].map(bedrooms => (
               <button
                 key={bedrooms}
                 onClick={() => handleFilterChange('bedrooms', bedrooms.toString())}
@@ -269,7 +292,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
                     : 'bg-white text-gray-700 border-gray-300 hover:border-champagne'
                 }`}
               >
-                {bedrooms === '6+' ? '6+' : bedrooms}
+                {bedrooms === '4+' ? '4+' : bedrooms}
               </button>
             ))}
           </div>
@@ -278,7 +301,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
         {/* Bathrooms */}
         <FilterSection title={t('bathrooms')}>
           <div className="grid grid-cols-2 gap-2">
-            {[1, 2, 3, 4, '5+'].map(bathrooms => (
+            {[1, 2, 3, '4+'].map(bathrooms => (
               <button
                 key={bathrooms}
                 onClick={() => handleFilterChange('bathrooms', bathrooms.toString())}
@@ -288,7 +311,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
                     : 'bg-white text-gray-700 border-gray-300 hover:border-champagne'
                 }`}
               >
-                {bathrooms === '5+' ? '5+' : bathrooms}
+                {bathrooms === '4+' ? '4+' : bathrooms}
               </button>
             ))}
           </div>
@@ -298,21 +321,33 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
         <FilterSection title={t('areaRange')}>
           <div className="space-y-3">
             <div>
-              <label className="block text-sm text-gray-600 mb-1">{t('minArea')} (sq ft)</label>
+              <label className="block text-sm text-gray-600 mb-1">{t('minArea')} (m²)</label>
               <input
                 type="number"
                 value={filters.minArea}
                 onChange={(e) => handleFilterChange('minArea', e.target.value)}
+                onWheel={(e) => e.currentTarget.blur()}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault()
+                  }
+                }}
                 placeholder="0"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1">{t('maxArea')} (sq ft)</label>
+              <label className="block text-sm text-gray-600 mb-1">{t('maxArea')} (m²)</label>
               <input
                 type="number"
                 value={filters.maxArea}
                 onChange={(e) => handleFilterChange('maxArea', e.target.value)}
+                onWheel={(e) => e.currentTarget.blur()}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                    e.preventDefault()
+                  }
+                }}
                 placeholder={maxArea.toLocaleString()}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
               />
@@ -322,16 +357,40 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
 
         {/* Year Built */}
         <FilterSection title={t('yearBuilt')}>
-          <select
-            value={filters.yearBuilt}
-            onChange={(e) => handleFilterChange('yearBuilt', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
-          >
-            <option value="">{t('anyYear')}</option>
-            {Array.from({ length: 10 }, (_, i) => maxYear - i).map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">{t('minYear') || 'Min Year'}</label>
+              <select
+                value={filters.minYearBuilt}
+                onChange={(e) => handleFilterChange('minYearBuilt', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+              >
+                <option value="">{t('anyYear')}</option>
+                {Array.from({ length: maxYear - minYear + 1 }, (_, i) => {
+                  const year = maxYear - i
+                  return year >= minYear && year <= currentYear ? year : null
+                }).filter(year => year !== null).map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">{t('maxYear') || 'Max Year'}</label>
+              <select
+                value={filters.maxYearBuilt}
+                onChange={(e) => handleFilterChange('maxYearBuilt', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+              >
+                <option value="">{t('anyYear')}</option>
+                {Array.from({ length: maxYear - minYear + 1 }, (_, i) => {
+                  const year = maxYear - i
+                  return year >= minYear && year <= currentYear ? year : null
+                }).filter(year => year !== null).map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+          </div>
         </FilterSection>
 
         {/* Mobile Apply Button */}
