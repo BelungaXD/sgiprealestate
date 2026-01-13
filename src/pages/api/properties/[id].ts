@@ -99,6 +99,48 @@ export default async function handler(
         }
       }
 
+      // Validate and sanitize areaId - ensure it exists if provided
+      let areaId = validatedData.areaId || null
+      // Handle empty strings
+      if (areaId === '' || areaId === 'null' || areaId === 'undefined') {
+        areaId = null
+      }
+      // Verify areaId exists in database if provided
+      if (areaId) {
+        try {
+          const areaExists = await prisma.area.findUnique({ where: { id: areaId } })
+          if (!areaExists) {
+            console.warn(`Area with ID ${areaId} not found, setting areaId to null`)
+            areaId = null
+          }
+        } catch (dbError: any) {
+          console.error('Database query failed for area check:', dbError.message)
+          // If database query fails, set to null to avoid foreign key constraint violation
+          areaId = null
+        }
+      }
+
+      // Validate and sanitize developerId - ensure it exists if provided
+      let developerId = validatedData.developerId || null
+      // Handle empty strings
+      if (developerId === '' || developerId === 'null' || developerId === 'undefined') {
+        developerId = null
+      }
+      // Verify developerId exists in database if provided
+      if (developerId) {
+        try {
+          const developerExists = await prisma.developer.findUnique({ where: { id: developerId } })
+          if (!developerExists) {
+            console.warn(`Developer with ID ${developerId} not found, setting developerId to null`)
+            developerId = null
+          }
+        } catch (dbError: any) {
+          console.error('Database query failed for developer check:', dbError.message)
+          // If database query fails, set to null to avoid foreign key constraint violation
+          developerId = null
+        }
+      }
+
       // Update property
       const property = await prisma.property.update({
         where: { id },
@@ -120,8 +162,8 @@ export default async function handler(
           address: validatedData.address,
           city: validatedData.city,
           district: validatedData.district,
-          areaId: validatedData.areaId,
-          developerId: validatedData.developerId || null,
+          areaId: areaId,
+          developerId: developerId,
           coordinates: validatedData.coordinates || null,
           features: validatedData.features || [],
           amenities: validatedData.amenities || [],
@@ -219,6 +261,16 @@ export default async function handler(
           success: false,
           message: 'Validation error',
           errors: error.errors,
+        })
+      }
+
+      // Handle Prisma foreign key constraint violations
+      if (error.code === 'P2003' || error.message?.includes('Foreign key constraint')) {
+        const constraintMatch = error.message?.match(/`(\w+)`/i)
+        const constraintName = constraintMatch ? constraintMatch[1] : 'foreign key'
+        return res.status(400).json({
+          success: false,
+          message: `Invalid reference: The ${constraintName.replace('_fkey', '').replace('properties_', '').replace('Id', '')} does not exist in the database.`,
         })
       }
 
