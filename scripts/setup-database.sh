@@ -73,54 +73,38 @@ check_database_connection() {
     fi
 }
 
-# Function to check if tables exist using Prisma
+# Function to check if tables exist
 check_tables_exist() {
-    # Use Node.js script with Prisma for reliable checking
-    local check_script="$PROJECT_ROOT/scripts/check-database.ts"
-    
-    if [ -f "$check_script" ]; then
-        # Check if we're in a container or on host
-        if [ -f "/.dockerenv" ] || [ -n "$DOCKER_CONTAINER" ]; then
-            # Inside container, use ts-node directly
-            if command -v ts-node >/dev/null 2>&1; then
-                if DATABASE_URL="$DATABASE_URL" ts-node "$check_script" >/dev/null 2>&1; then
-                    return 0
-                else
-                    return 1
-                fi
-            fi
-        fi
-        
-        # On host, try using node or docker
-        if [ -d "$PROJECT_ROOT/node_modules" ] && [ -f "$PROJECT_ROOT/node_modules/.bin/ts-node" ]; then
-            # Use local node_modules
-            if DATABASE_URL="$DATABASE_URL" "$PROJECT_ROOT/node_modules/.bin/ts-node" "$check_script" >/dev/null 2>&1; then
-                return 0
-            else
-                return 1
-            fi
-        else
-            # Try using docker container
-            local container_name="sgiprealestate-service"
-            if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
-                if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx ts-node /app/prisma/../scripts/check-database.ts >/dev/null 2>&1; then
-                    return 0
-                else
-                    return 1
-                fi
-            fi
-        fi
-    fi
-    
-    # Fallback: Try using docker exec with psql
+    # Use direct psql check (most reliable method)
     if docker ps --format '{{.Names}}' | grep -q "^db-server-postgres$"; then
+        # Extract database name and user from DATABASE_URL
         local db_url="$DATABASE_URL"
-        local db_name=$(echo "$db_url" | sed -n 's/.*\/\([^?]*\).*/\1/p')
-        local db_user=$(echo "$db_url" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
         
-        if [ -n "$db_name" ] && [ -n "$db_user" ]; then
-            local table_count=$(docker exec db-server-postgres psql -U "$db_user" -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
-            
+        # Handle both formats: postgresql://user:pass@host/db and postgresql://user@host/db
+        local db_name=$(echo "$db_url" | sed -n 's/.*\/\([^?]*\).*/\1/p')
+        local db_user=$(echo "$db_url" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p' | sed -n 's/\([^@]*\).*/\1/p')
+        
+        # If db_user extraction failed, try alternative method
+        if [ -z "$db_user" ]; then
+            db_user=$(echo "$db_url" | sed -n 's|postgresql://\([^:]*\)@.*|\1|p')
+        fi
+        
+        # Default to sgiprealestate if still empty
+        if [ -z "$db_user" ]; then
+            db_user="sgiprealestate"
+        fi
+        if [ -z "$db_name" ]; then
+            db_name="sgiprealestate"
+        fi
+        
+        # Check if properties table exists
+        local table_count=$(docker exec db-server-postgres psql -U "$db_user" -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
+        
+        if [ "$table_count" = "1" ]; then
+            return 0
+        else
+            # Also try with dbadmin user (fallback)
+            table_count=$(docker exec db-server-postgres psql -U dbadmin -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
             if [ "$table_count" = "1" ]; then
                 return 0
             fi
