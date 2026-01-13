@@ -1,172 +1,81 @@
-# 📜 Скрипты проекта SGIP Real Estate
+# SGIP Real Estate - Scripts Documentation
 
-Эта папка содержит все скрипты для развёртывания, настройки и управления проектом.
+## Database Setup Script
 
-## 🚀 Скрипты развёртывания
+### `setup-database.sh`
+
+Automatically checks database connectivity and creates tables if they don't exist. This script is called automatically during deployment.
+
+**Features:**
+- ✅ Checks database connection
+- ✅ Verifies if tables exist
+- ✅ Creates tables using Prisma if needed
+- ✅ Works in Docker containers and on host
+- ✅ Handles multiple deployment scenarios
+
+**Usage:**
+```bash
+./scripts/setup-database.sh
+```
+
+**What it does:**
+1. Loads DATABASE_URL from .env file
+2. Tests database connectivity
+3. Checks if `properties` table exists (main table)
+4. If tables don't exist, runs `prisma db push` to create schema
+5. Exits with success if database is ready
+
+**Integration:**
+This script is automatically called by `deploy.sh` before deployment starts.
+
+### `check-database.ts`
+
+TypeScript script that uses Prisma to check database connectivity and table existence. Used internally by `setup-database.sh`.
+
+**Usage:**
+```bash
+DATABASE_URL="your-database-url" npx ts-node scripts/check-database.ts
+```
+
+## Deployment Script
 
 ### `deploy.sh`
-Скрипт деплоя приложения на прод сервер. Вызывает `deploy-smart.sh` через nginx-microservice.
 
-**Использование:**
+Main deployment script that:
+1. Runs database setup (`setup-database.sh`)
+2. Deploys service using blue/green deployment
+3. Configures nginx settings
+
+**Usage:**
 ```bash
 ./scripts/deploy.sh
-# или с указанием сервиса
-SERVICE_NAME=sgiprealestate-service ./scripts/deploy.sh
 ```
 
-**Требования:**
-- Выполнение на прод сервере
-- Доступ к `/home/alfares/nginx-microservice/scripts/blue-green/deploy-smart.sh`
+**Requirements:**
+- `.env` file with DATABASE_URL
+- nginx-microservice installed
+- Docker and Docker Compose
 
-### `setup-deploy-permissions.sh`
-Автоматическая настройка прав доступа для совместного деплоя. Создаёт группу `deployers` и настраивает права на директорию nginx-microservice.
+## Environment Variables
 
-**Использование:**
-```bash
-# Скопировать на сервер
-scp scripts/setup-deploy-permissions.sh alfares:/tmp/
+Required in `.env`:
+- `DATABASE_URL` - PostgreSQL connection string
+- `PORT` - Application port
+- `NEXT_PUBLIC_SITE_URL` - Public site URL
 
-# Выполнить с sudo
-ssh alfares
-sudo /tmp/setup-deploy-permissions.sh
-```
+## Troubleshooting
 
-**Что делает:**
-- Создаёт группу `deployers`
-- Добавляет пользователей `alfares` и `belunga` в группу
-- Настраивает права на директорию nginx-microservice (775)
-- Устанавливает SGID бит
-- Делает все скрипты исполняемыми
+### Database connection fails
+- Check DATABASE_URL in .env file
+- Verify database server is running
+- Check network connectivity
 
-**См. также:** [docs/DEPLOYMENT_PERMISSIONS_SETUP.md](../docs/DEPLOYMENT_PERMISSIONS_SETUP.md)
+### Tables not created
+- Ensure Prisma Client is generated: `npm run db:generate`
+- Check database user has CREATE TABLE permissions
+- Verify Prisma schema is valid
 
-### `EXECUTE_ON_SERVER.sh`
-Команды для выполнения на прод сервере (альтернатива setup-deploy-permissions.sh). Содержит те же команды, но в виде последовательности bash команд.
-
-**Использование:**
-```bash
-# Скопировать на сервер и выполнить
-scp scripts/EXECUTE_ON_SERVER.sh alfares:/tmp/
-ssh alfares
-sudo bash /tmp/EXECUTE_ON_SERVER.sh
-```
-
-## 📝 Скрипты работы с контентом
-
-### `extract-content.js`
-Скрипт для извлечения и организации контента с сайта sgiprealestate.ru.
-
-**Использование:**
-```bash
-node scripts/extract-content.js
-```
-
-**Что делает:**
-- Создаёт структуру для извлечённого контента
-- Генерирует JSON файлы с контентом
-- Организует контент по категориям
-
-**См. также:** [docs/CONTENT_TRANSFER_GUIDE.md](../docs/CONTENT_TRANSFER_GUIDE.md)
-
-### `integrate-content.js`
-Скрипт для интеграции извлечённого контента в проект.
-
-**Использование:**
-```bash
-# Интеграция контента
-node scripts/integrate-content.js integrate
-
-# Валидация интеграции
-node scripts/integrate-content.js validate
-
-# Генерация отчёта
-node scripts/integrate-content.js report
-```
-
-**Команды:**
-- `integrate` - Интегрирует контент в проект
-- `validate` - Проверяет корректность интеграции
-- `report` - Генерирует отчёт о состоянии контента
-
-**См. также:** [docs/CONTENT_TRANSFER_GUIDE.md](../docs/CONTENT_TRANSFER_GUIDE.md)
-
-## 🏢 Скрипты управления данными
-
-### `import-properties-from-folders.ts`
-Скрипт для импорта объектов недвижимости из папок с файлами.
-
-**Использование:**
-```bash
-npx ts-node scripts/import-properties-from-folders.ts
-```
-
-**Что делает:**
-- Сканирует папки с файлами объектов
-- Импортирует данные в базу данных
-- Обрабатывает изображения и документы
-
-### `update-developer-descriptions.js`
-Скрипт для обновления описаний застройщиков.
-
-**Использование:**
-```bash
-node scripts/update-developer-descriptions.js
-```
-
-**Что делает:**
-- Обновляет описания застройщиков в базе данных
-- Синхронизирует данные из внешних источников
-
-### `update-developer-logos.js`
-Скрипт для обновления логотипов застройщиков.
-
-**Использование:**
-```bash
-node scripts/update-developer-logos.js
-```
-
-**Что делает:**
-- Загружает логотипы застройщиков
-- Обновляет пути к изображениям в базе данных
-- Оптимизирует изображения
-
-## 📋 Структура скриптов
-
-```
-scripts/
-├── README.md                          # Этот файл
-├── deploy.sh                          # Деплой приложения
-├── setup-deploy-permissions.sh        # Настройка прав для деплоя
-├── EXECUTE_ON_SERVER.sh              # Команды для выполнения на сервере
-├── extract-content.js                 # Извлечение контента
-├── integrate-content.js               # Интеграция контента
-├── import-properties-from-folders.ts  # Импорт объектов недвижимости
-├── update-developer-descriptions.js   # Обновление описаний застройщиков
-└── update-developer-logos.js          # Обновление логотипов застройщиков
-```
-
-## 🔐 Права доступа
-
-Все `.sh` скрипты должны иметь права на выполнение:
-```bash
-chmod +x scripts/*.sh
-```
-
-## 📚 Дополнительная документация
-
-- [Документация проекта](../docs/INDEX.md)
-- [Настройка деплоя](../docs/DEPLOYMENT_PERMISSIONS_SETUP.md)
-- [Быстрая настройка](../docs/QUICK_SETUP.md)
-- [Перенос контента](../docs/CONTENT_TRANSFER_GUIDE.md)
-
-## ⚠️ Важные замечания
-
-1. **Скрипты деплоя** должны выполняться на прод сервере с соответствующими правами
-2. **Скрипты работы с контентом** требуют наличия Node.js и доступа к базе данных
-3. **Перед выполнением** скриптов на прод сервере всегда делайте резервные копии
-4. **Проверяйте** переменные окружения перед выполнением скриптов
-
----
-
-**Последнее обновление**: Все скрипты собраны в папке `scripts/` для удобной организации.
-
+### Script fails in Docker
+- Ensure container has access to DATABASE_URL
+- Check if Prisma Client is available in container
+- Verify network connectivity between containers

@@ -7,7 +7,7 @@ services:
         PORT: ${PORT}
     container_name: sgiprealestate-service-green
     ports:
-      - "${PORT_GREEN}:${PORT}"
+      - "${PORT_GREEN:-4301}:${PORT:-4300}"
     env_file:
       - .env
     environment:

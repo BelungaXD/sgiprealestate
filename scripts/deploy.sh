@@ -22,7 +22,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║     SGIP Real Estate - Production Deployment             ║${NC}"
+echo -e "${BLUE}║       SGIP Real Estate - Production Deployment             ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -79,6 +79,35 @@ fi
 echo -e "${GREEN}✅ Found nginx-microservice at: $NGINX_MICROSERVICE_PATH${NC}"
 echo -e "${GREEN}✅ Deploying service: $SERVICE_NAME${NC}"
 echo ""
+
+# Database setup - check and create tables if needed
+echo -e "${BLUE}ℹ️  Running database setup...${NC}"
+DB_SETUP_SCRIPT="$PROJECT_ROOT/scripts/setup-database.sh"
+if [ -f "$DB_SETUP_SCRIPT" ]; then
+    if [ -x "$DB_SETUP_SCRIPT" ]; then
+        if "$DB_SETUP_SCRIPT"; then
+            echo -e "${GREEN}✅ Database setup completed${NC}"
+            echo ""
+        else
+            echo -e "${RED}❌ Database setup failed. Deployment aborted.${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}⚠️  Making setup-database.sh executable...${NC}"
+        chmod +x "$DB_SETUP_SCRIPT"
+        if "$DB_SETUP_SCRIPT"; then
+            echo -e "${GREEN}✅ Database setup completed${NC}"
+            echo ""
+        else
+            echo -e "${RED}❌ Database setup failed. Deployment aborted.${NC}"
+            exit 1
+        fi
+    fi
+else
+    echo -e "${YELLOW}⚠️  Database setup script not found at $DB_SETUP_SCRIPT${NC}"
+    echo -e "${YELLOW}⚠️  Proceeding with deployment without database setup check...${NC}"
+    echo ""
+fi
 
 # Load nginx configuration from nginx.config.json (if exists)
 NGINX_CONFIG_FILE="$PROJECT_ROOT/nginx.config.json"
