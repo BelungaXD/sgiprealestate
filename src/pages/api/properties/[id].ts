@@ -24,7 +24,8 @@ export default async function handler(
   // GET - Get single property
   if (req.method === 'GET') {
     try {
-      const property = await prisma.property.findUnique({
+      // Try to find by ID first, then by slug
+      let property = await prisma.property.findUnique({
         where: { id },
         include: {
           area: true,
@@ -40,6 +41,26 @@ export default async function handler(
           },
         },
       })
+
+      // If not found by ID, try to find by slug
+      if (!property) {
+        property = await prisma.property.findUnique({
+          where: { slug: id },
+          include: {
+            area: true,
+            developer: true,
+            images: {
+              orderBy: { order: 'asc' },
+            },
+            floorPlans: {
+              orderBy: { order: 'asc' },
+            },
+            files: {
+              orderBy: { order: 'asc' },
+            },
+          },
+        })
+      }
 
       if (!property) {
         return res.status(404).json({ message: 'Property not found' })
@@ -182,26 +203,31 @@ export default async function handler(
         },
       })
 
-      // Handle images update if provided
-      if (body.images && Array.isArray(body.images)) {
-        // Delete existing images
+      // Handle images update if provided (only update if images array is explicitly provided)
+      if (body.images !== undefined && Array.isArray(body.images)) {
+        // Delete existing images only if new images are being set
         await prisma.propertyImage.deleteMany({
           where: { propertyId: id },
         })
 
         // Create new images
         if (body.images.length > 0) {
-          const imageData = body.images.map((img: any, index: number) => ({
-            propertyId: id,
-            url: typeof img === 'string' ? img : img.url || img,
-            alt: typeof img === 'object' ? img.alt : null,
-            order: index,
-            isMain: index === 0,
-          }))
+          const imageData = body.images
+            .filter((img: any) => img && (typeof img === 'string' ? img.trim() !== '' : img.url))
+            .map((img: any, index: number) => ({
+              propertyId: id,
+              url: typeof img === 'string' ? img.trim() : (img.url || '').trim(),
+              alt: typeof img === 'object' ? img.alt : null,
+              order: index,
+              isMain: index === 0,
+            }))
+            .filter((img: any) => img.url !== '')
 
-          await prisma.propertyImage.createMany({
-            data: imageData,
-          })
+          if (imageData.length > 0) {
+            await prisma.propertyImage.createMany({
+              data: imageData,
+            })
+          }
         }
       }
 
