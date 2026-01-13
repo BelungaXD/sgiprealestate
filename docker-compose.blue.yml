@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
       args:
         PORT: ${PORT}
-    container_name: sgiprealestate-service-green
+    container_name: sgiprealestate-service-blue
     ports:
-      - "${PORT_GREEN}:${PORT}"
+      - "${PORT_BLUE}:${PORT}"
     env_file:
       - .env
     environment:
@@ -38,4 +38,3 @@ services:
 networks:
   nginx-network:
     external: true
-
