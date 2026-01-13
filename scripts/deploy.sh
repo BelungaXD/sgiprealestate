@@ -10,7 +10,7 @@ set -e
 
 # Конфигурация
 SERVICE_NAME="${SERVICE_NAME:-sgiprealestate-service}"
-NGINX_MICROSERVICE_PATH="${NGINX_MICROSERVICE_PATH:-/home/alfares/nginx-microservice}"
+NGINX_MICROSERVICE_PATH="${NGINX_MICROSERVICE_PATH:-/home/statex/nginx-microservice}"
 DEPLOY_SCRIPT_PATH="$NGINX_MICROSERVICE_PATH/scripts/blue-green/deploy-smart.sh"
 
 # Цвета для вывода
@@ -46,7 +46,7 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo ""
     echo "Переменные окружения:"
     echo "  SERVICE_NAME            Имя сервиса (имеет приоритет над аргументом)"
-    echo "  NGINX_MICROSERVICE_PATH Путь к nginx-microservice (по умолчанию: /home/alfares/nginx-microservice)"
+    echo "  NGINX_MICROSERVICE_PATH Путь к nginx-microservice (по умолчанию: /home/statex/nginx-microservice)"
     echo ""
     echo "Примеры:"
     echo "  ./deploy.sh"
@@ -75,21 +75,21 @@ if [ ! -r "$NGINX_MICROSERVICE_PATH" ] 2>/dev/null; then
     error "Нет доступа к директории: $NGINX_MICROSERVICE_PATH"
     echo ""
     warning "Проблема с правами доступа. Возможные причины:"
-    echo "  1. Родительская директория /home/alfares имеет права drwxr-x---"
+    echo "  1. Родительская директория /home/statex имеет права drwxr-x---"
     echo "  2. Не установлены права на nginx-microservice"
     echo ""
     info "Для решения выполните на сервере:"
     echo ""
-    echo "  # Если /home/alfares блокирует доступ:"
-    echo "  sudo chgrp deployers /home/alfares"
-    echo "  sudo chmod 775 /home/alfares"
+    echo "  # Если /home/statex блокирует доступ:"
+    echo "  sudo chgrp deployers /home/statex"
+    echo "  sudo chmod 775 /home/statex"
     echo ""
     echo "  # Настройка прав на nginx-microservice:"
     echo "  sudo chgrp -R deployers $NGINX_MICROSERVICE_PATH"
     echo "  sudo chmod -R 775 $NGINX_MICROSERVICE_PATH"
     echo "  sudo chmod g+s $NGINX_MICROSERVICE_PATH"
     echo ""
-    info "После настройки перелогиньтесь: exit && ssh alfares"
+    info "После настройки перелогиньтесь: exit && ssh statex"
     exit 1
 fi
 success "Доступ к директории есть"
