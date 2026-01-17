@@ -9,6 +9,7 @@ import PropertyDetails from '@/components/property/PropertyDetails'
 import PropertyContactForm from '@/components/property/PropertyContactForm'
 import PropertyFiles from '@/components/property/PropertyFiles'
 import RelatedProperties from '@/components/property/RelatedProperties'
+import { prisma } from '@/lib/prisma'
 import { 
   MapPinIcon, 
   HomeIcon, 
@@ -312,34 +313,61 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, locale, req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, locale }) => {
   try {
     const id = params?.id as string
-    
-    if (!id) {
-  return {
-        notFound: true,
-      }
-    }
 
-    // Fetch property from API using the request host
-    const protocol = req.headers['x-forwarded-proto'] || 'http'
-    const fallbackHost = process.env.NEXT_PUBLIC_SITE_URL 
-      ? new URL(process.env.NEXT_PUBLIC_SITE_URL).host 
-      : 'localhost'
-    const host = req.headers.host || fallbackHost
-    const baseUrl = `${protocol}://${host}`
-    
-    const response = await fetch(`${baseUrl}/api/properties/${id}`)
-    
-    if (!response.ok) {
+    if (!id) {
       return {
         notFound: true,
       }
     }
 
-    const data = await response.json()
-    const apiProperty = data.property
+    // Check if DATABASE_URL is configured
+    if (!process.env.DATABASE_URL) {
+      return {
+        notFound: true,
+      }
+    }
+
+    // Fetch property directly from database
+    // Try to find by ID first, then by slug
+    let apiProperty = await prisma.property.findUnique({
+      where: { id },
+      include: {
+        area: true,
+        developer: true,
+        images: {
+          orderBy: { order: 'asc' },
+        },
+        floorPlans: {
+          orderBy: { order: 'asc' },
+        },
+        files: {
+          orderBy: { order: 'asc' },
+        },
+      },
+    })
+
+    // If not found by ID, try to find by slug
+    if (!apiProperty) {
+      apiProperty = await prisma.property.findUnique({
+        where: { slug: id },
+        include: {
+          area: true,
+          developer: true,
+          images: {
+            orderBy: { order: 'asc' },
+          },
+          floorPlans: {
+            orderBy: { order: 'asc' },
+          },
+          files: {
+            orderBy: { order: 'asc' },
+          },
+        },
+      })
+    }
 
     if (!apiProperty || !apiProperty.isPublished) {
       return {
