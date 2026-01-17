@@ -1,9 +1,18 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require('./next-i18next.config.js');
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
+// Optional bundle analyzer - only use if installed and ANALYZE is enabled
+let withBundleAnalyzer = (config) => config;
+if (process.env.ANALYZE === 'true') {
+  try {
+    withBundleAnalyzer = require('@next/bundle-analyzer')({
+      enabled: true,
+    });
+  } catch (e) {
+    // Bundle analyzer not installed, skip it
+    console.warn('@next/bundle-analyzer not found, skipping bundle analysis');
+  }
+}
 
 const nextConfig = {
   reactStrictMode: true,
