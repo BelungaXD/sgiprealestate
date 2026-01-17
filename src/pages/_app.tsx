@@ -2,8 +2,30 @@ import type { AppProps } from 'next/app'
 import { appWithTranslation } from 'next-i18next'
 import Head from 'next/head'
 import { useEffect } from 'react'
+import { Manrope, Inter } from 'next/font/google'
 import '../styles/globals.css'
 import GTM from '../components/analytics/GTM'
+
+// Optimize Google Fonts with Next.js font optimization
+// This self-hosts fonts and enables proper cache headers
+// Reduced font weights to minimize bundle size
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  display: 'swap',
+  variable: '--font-manrope',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  display: 'swap',
+  variable: '--font-inter',
+  preload: false,
+  fallback: ['system-ui', 'sans-serif'],
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -16,25 +38,14 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#C9A86A" />
-        {/* Fonts loaded asynchronously to avoid blocking render */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-          media="print"
-          onLoad={(e) => { (e.target as HTMLLinkElement).media = 'all' }}
-        />
-        <noscript>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        </noscript>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <GTM id={process.env.NEXT_PUBLIC_GTM_ID} />
-      <Component {...pageProps} />
+      <div className={`${manrope.variable} ${inter.variable}`}>
+        <GTM id={process.env.NEXT_PUBLIC_GTM_ID} />
+        <Component {...pageProps} />
+      </div>
     </>
   )
 }

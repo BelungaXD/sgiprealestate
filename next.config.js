@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require('./next-i18next.config.js');
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -11,7 +15,7 @@ const nextConfig = {
     localeDetection: false,
   },
   images: {
-    domains: ['localhost', 'sgiprealestate.alfares.cz', 'sgiprealestate.com', 'sgiprealestate.ru', 'images.unsplash.com'],
+    domains: ['localhost', 'sgiprealestate.alfares.cz', 'sgiprealestate.com', 'sgiprealestate.ru', 'sgipreality.statex.cz', 'images.unsplash.com'],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -49,7 +53,53 @@ const nextConfig = {
     )
     
     if (!dev && !isServer) {
-      // Remove react-refresh in production
+      // Optimize chunk splitting for better code splitting
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            default: false,
+            vendors: false,
+            // Vendor chunk for node_modules
+            vendor: {
+              name: 'vendor',
+              chunks: 'all',
+              test: /node_modules/,
+              priority: 20,
+            },
+            // Common chunk for shared code
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+              priority: 10,
+              reuseExistingChunk: true,
+            },
+            // Separate chunk for large libraries
+            react: {
+              name: 'react',
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              chunks: 'all',
+              priority: 30,
+            },
+            // Separate chunk for icons to reduce initial bundle
+            icons: {
+              name: 'icons',
+              test: /[\\/]node_modules[\\/]@heroicons[\\/]/,
+              chunks: 'all',
+              priority: 25,
+            },
+            // Separate chunk for headlessui
+            headlessui: {
+              name: 'headlessui',
+              test: /[\\/]node_modules[\\/]@headlessui[\\/]/,
+              chunks: 'all',
+              priority: 25,
+            },
+          },
+        },
+      }
     }
     return config
   },
@@ -61,6 +111,7 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Security headers for all routes
         source: '/(.*)',
         headers: [
           {
@@ -77,8 +128,58 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Cache headers for static JavaScript files (Next.js chunks)
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache headers for static CSS files
+        source: '/_next/static/:path*.css',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache headers for images in public folder
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache headers for uploads
+        source: '/uploads/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache headers for other static assets (favicon, manifest, etc.)
+        source: '/:path*\\.(ico|png|jpg|jpeg|gif|webp|svg|woff|woff2|ttf|eot)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ];
   },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

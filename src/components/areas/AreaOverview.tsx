@@ -46,9 +46,15 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
       {/* Hero Image */}
       <div className="relative h-64 md:h-80">
         <img
-          src={area.image}
+          src={area.image || '/images/hero.jpg'}
           alt={isRussian ? area.name : area.nameEn}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            if (target.src !== '/images/hero.jpg') {
+              target.src = '/images/hero.jpg'
+            }
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-6 left-6 text-white">

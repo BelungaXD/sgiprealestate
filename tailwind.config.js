@@ -11,6 +11,7 @@ module.exports = {
         // SGIP Brand Colors
         graphite: '#1E1F24',
         champagne: '#C9A86A',
+        'champagne-dark': '#8B6F3F', // Darker champagne for better contrast on light backgrounds
         white: '#F7F7F8',
         // Additional colors for UI
         gray: {
@@ -27,8 +28,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-manrope)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-manrope)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       spacing: {
         '18': '4.5rem',

@@ -2,12 +2,13 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Google Fonts - loaded via preconnect in _app.tsx for better performance */
+/* Google Fonts - optimized via next/font in _app.tsx */
 
 /* Custom CSS Variables */
 :root {
   --color-graphite: #1E1F24;
   --color-champagne: #C9A86A;
+  --color-champagne-dark: #8B6F3F;
   --color-white: #F7F7F8;
 }
 
@@ -17,7 +18,7 @@ html {
 }
 
 body {
-  font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+  font-family: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
   background-color: var(--color-white);
   color: var(--color-graphite);
   line-height: 1.6;
@@ -44,11 +45,11 @@ body {
 /* Custom Components */
 @layer components {
   .btn-primary {
-    @apply bg-champagne text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-champagne/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-champagne/50;
+    @apply bg-champagne-dark text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-champagne-dark/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
   }
   
   .btn-secondary {
-    @apply bg-transparent border-2 border-champagne text-champagne px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-champagne hover:text-white focus:outline-none focus:ring-2 focus:ring-champagne/50;
+    @apply bg-transparent border-2 border-champagne-dark text-champagne-dark px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-champagne-dark hover:text-white focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
   }
   
   .btn-outline {

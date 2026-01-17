@@ -39,11 +39,13 @@ export default function AreaCard({ area }: AreaCardProps) {
   const displayName = currentLocale === 'ru' || currentLocale === 'ar' ? area.name : area.nameEn
   const displayDescription = currentLocale === 'ru' || currentLocale === 'ar' ? area.description : area.descriptionEn
 
+  const imageSrc = area.image || '/images/hero.jpg'
+
   return (
     <div className="card-hover group">
       <div className="relative overflow-hidden">
         <Image
-          src={area.image}
+          src={imageSrc}
           alt={displayName}
           width={800}
           height={400}

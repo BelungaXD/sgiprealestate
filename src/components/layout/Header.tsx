@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
@@ -56,12 +57,17 @@ export default function Header() {
             </div>
               </>
             ) : (
-              <img
-                src="/images/sgip_logo.png"
-                alt="SGIP Real Estate"
-                className="h-10 w-auto object-contain"
-                onError={() => setLogoError(true)}
-              />
+              <div className="relative h-10 w-10">
+                <Image
+                  src="/images/sgip_logo.png"
+                  alt="SGIP Real Estate"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 object-contain"
+                  priority
+                  onError={() => setLogoError(true)}
+                />
+              </div>
             )}
           </Link>
 
@@ -100,6 +106,8 @@ export default function Header() {
               type="button"
               className="p-2 text-gray-700 hover:text-champagne"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={t('nav.toggleMenu')}
+              aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
                 <XMarkIcon className="h-6 w-6" />

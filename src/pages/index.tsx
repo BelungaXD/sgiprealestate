@@ -9,19 +9,25 @@ import Hero from '@/components/sections/Hero'
 import { prisma } from '@/lib/prisma'
 
 // Lazy load components below the fold for better performance
+// Disable SSR for components that don't need it to reduce initial bundle size
 const Statistics = dynamic(() => import('@/components/sections/Statistics'), {
+  ssr: true,
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 const Advantages = dynamic(() => import('@/components/sections/Advantages'), {
+  ssr: true,
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 const FeaturedProperties = dynamic(() => import('@/components/sections/FeaturedProperties'), {
+  ssr: true,
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 const Partners = dynamic(() => import('@/components/sections/Partners'), {
+  ssr: false,
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 const CTA = dynamic(() => import('@/components/sections/CTA'), {
+  ssr: false,
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 
@@ -114,7 +120,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         bedrooms: p.bedrooms,
         bathrooms: p.bathrooms,
         location: `${p.city}, ${p.district}`,
-        image: p.images && p.images.length > 0 ? p.images[0].url : '/images/placeholder.jpg',
+        image: p.images && p.images.length > 0 ? p.images[0].url : '/images/hero.jpg',
       }))
     } catch (error) {
       console.error('Error fetching featured properties:', error)

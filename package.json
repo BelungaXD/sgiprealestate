@@ -10,6 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "analyze": "ANALYZE=true next build",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -28,7 +29,6 @@
     "@types/formidable": "^3.4.6",
     "clsx": "^2.1.1",
     "formidable": "^3.5.4",
-    "framer-motion": "^11.3.19",
     "next": "14.2.5",
     "next-i18next": "^15.2.0",
     "prisma": "^5.19.1",
@@ -36,7 +36,6 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.1",
     "sharp": "^0.33.2",
-    "swiper": "^11.1.4",
     "tailwind-merge": "^2.4.0",
     "zod": "^3.23.8"
   },
@@ -51,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "autoprefixer": "^10.4.19",
+    "cssnano": "^7.1.2",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
     "jest": "^29.7.0",
@@ -62,5 +62,21 @@
   },
   "prisma": {
     "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+  },
+  "browserslist": {
+    "production": [
+      "defaults",
+      "not IE 11",
+      "not op_mini all",
+      "Chrome >= 92",
+      "Firefox >= 90",
+      "Safari >= 15.4",
+      "Edge >= 92"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

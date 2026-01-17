@@ -43,12 +43,20 @@ export default function AreaHero({ area }: AreaHeroProps) {
     }).format(price)
   }
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.target as HTMLImageElement
+    if (target.src !== '/images/hero.jpg') {
+      target.src = '/images/hero.jpg'
+    }
+  }
+
   return (
     <div className="relative h-96 md:h-[500px] overflow-hidden">
       <img
-        src={area.image}
+        src={area.image || '/images/hero.jpg'}
         alt={displayName}
         className="w-full h-full object-cover"
+        onError={handleImageError}
       />
       
       {/* Overlay */}

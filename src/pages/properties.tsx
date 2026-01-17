@@ -2,13 +2,20 @@ import { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import Script from 'next/script'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import Layout from '@/components/layout/Layout'
 import PropertyFilter from '@/components/property/PropertyFilter'
-import PropertyGrid from '@/components/property/PropertyGrid'
 import PropertySort from '@/components/property/PropertySort'
 import Pagination from '@/components/ui/Pagination'
+
+// Lazy load heavy components
+const PropertyGrid = dynamic(() => import('@/components/property/PropertyGrid'), {
+  ssr: true,
+  loading: () => <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"><div className="h-64 bg-gray-200 rounded-lg animate-pulse" /></div>,
+})
 
 interface Property {
   id: string
@@ -97,7 +104,7 @@ export default function Properties() {
             parking: p.parking || 0,
             location: p.city,
             district: p.district,
-            image: p.images && p.images.length > 0 ? p.images[0].url : '/images/placeholder.jpg',
+            image: p.images && p.images.length > 0 ? p.images[0].url : '/images/hero.jpg',
             isFeatured: p.isFeatured,
             yearBuilt: p.yearBuilt || 0,
             completionDate: p.completionDate || '',
@@ -202,8 +209,10 @@ export default function Properties() {
         <meta property="og:description" content={t('description')} />
         <meta property="og:type" content="website" />
         {filteredProperties.length > 0 && (
-          <script
+          <Script
+            id="properties-ld-json"
             type="application/ld+json"
+            strategy="lazyOnload"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
                 "@context": "https://schema.org",

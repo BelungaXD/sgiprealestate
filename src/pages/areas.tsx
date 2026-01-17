@@ -2,10 +2,16 @@ import { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
+import Script from 'next/script'
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Layout from '@/components/layout/Layout'
-import AreaCard from '@/components/areas/AreaCard'
 // import AreaStats from '@/components/areas/AreaStats'
+
+// Lazy load AreaCard component
+const AreaCard = dynamic(() => import('@/components/areas/AreaCard'), {
+  ssr: true,
+})
 
 interface Area {
   id: string
@@ -33,7 +39,7 @@ const HARDCODED_AREAS: Area[] = [
     description: 'Элитный прибрежный район с прямым доступом к пляжу и роскошными видами на море.',
     descriptionEn: 'Premium beachfront location with direct beach access and stunning sea views.',
     city: 'Dubai',
-    image: '/images/placeholder.jpg',
+    image: '/images/hero.jpg',
     propertiesCount: 0,
     averagePrice: 0,
     currency: 'AED',
@@ -49,7 +55,7 @@ const HARDCODED_AREAS: Area[] = [
     description: 'Сердце Дубая с небоскребами, роскошными апартаментами и всемирно известными достопримечательностями.',
     descriptionEn: 'The heart of Dubai with skyscrapers, luxury apartments, and world-famous landmarks.',
     city: 'Dubai',
-    image: '/images/placeholder.jpg',
+    image: '/images/hero.jpg',
     propertiesCount: 0,
     averagePrice: 0,
     currency: 'AED',
@@ -65,7 +71,7 @@ const HARDCODED_AREAS: Area[] = [
     description: 'Современный жилой комплекс с парками, гольф-полями и семейной атмосферой.',
     descriptionEn: 'Modern residential community with parks, golf courses, and family-friendly atmosphere.',
     city: 'Dubai',
-    image: '/images/placeholder.jpg',
+    image: '/images/hero.jpg',
     propertiesCount: 0,
     averagePrice: 0,
     currency: 'AED',
@@ -81,7 +87,7 @@ const HARDCODED_AREAS: Area[] = [
     description: 'Престижный район с видом на марину, современной архитектурой и активным образом жизни.',
     descriptionEn: 'Prestigious area with marina views, modern architecture, and active lifestyle.',
     city: 'Dubai',
-    image: '/images/placeholder.jpg',
+    image: '/images/hero.jpg',
     propertiesCount: 0,
     averagePrice: 0,
     currency: 'AED',
@@ -97,7 +103,7 @@ const HARDCODED_AREAS: Area[] = [
     description: 'Эксклюзивный жилой комплекс с зелеными зонами, виллами и спокойной атмосферой.',
     descriptionEn: 'Exclusive residential community with green spaces, villas, and tranquil atmosphere.',
     city: 'Dubai',
-    image: '/images/placeholder.jpg',
+    image: '/images/hero.jpg',
     propertiesCount: 0,
     averagePrice: 0,
     currency: 'AED',
@@ -128,7 +134,7 @@ export default function Areas() {
           description: area.description || '',
           descriptionEn: area.descriptionEn || area.description || '',
           city: area.city || 'Dubai',
-          image: '/images/areas/default.jpg',
+          image: '/images/hero.jpg',
           propertiesCount: 0,
           averagePrice: 0,
           currency: 'AED',
@@ -174,8 +180,10 @@ export default function Areas() {
         <meta property="og:description" content={t('description')} />
         <meta property="og:type" content="website" />
         {areas.length > 0 && (
-          <script
+          <Script
+            id="areas-ld-json"
             type="application/ld+json"
+            strategy="lazyOnload"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
                 "@context": "https://schema.org",
