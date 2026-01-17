@@ -36,19 +36,19 @@ interface HomeProps {
 }
 
 export default function Home({ featuredProperties }: HomeProps) {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation(['common', 'home'])
 
   return (
     <>
       <Head>
-        <title>{t('title')} | SGIP Real Estate</title>
-        <meta name="description" content={t('description')} />
-        <meta property="og:title" content={t('title')} />
-        <meta property="og:description" content={t('description')} />
+        <title>{t('home:title')} | SGIP Real Estate</title>
+        <meta name="description" content={t('home:description')} />
+        <meta property="og:title" content={t('home:title')} />
+        <meta property="og:description" content={t('home:description')} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={t('title')} />
-        <meta name="twitter:description" content={t('description')} />
+        <meta name="twitter:title" content={t('home:title')} />
+        <meta name="twitter:description" content={t('home:description')} />
         <link rel="preload" as="image" href="/images/hero.webp" fetchPriority="high" />
         <link rel="preload" as="image" href="/images/hero.jpg" fetchPriority="high" />
       </Head>
