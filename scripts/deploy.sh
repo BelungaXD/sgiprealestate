@@ -6,6 +6,8 @@
 # The script automatically detects the nginx-microservice location and
 # calls the deploy-smart.sh script to perform the deployment.
 
+git pull
+
 set -e
 
 # Get script directory and project root
