@@ -1,20 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { ChatBubbleLeftRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false)
+  const [whatsappHref, setWhatsappHref] = useState('/contact')
+  const [telegramHref, setTelegramHref] = useState('/contact')
   const { t } = useTranslation('common')
+  const router = useRouter()
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
   const telegramUsername = process.env.NEXT_PUBLIC_TELEGRAM_USERNAME
-  const message = encodeURIComponent(t('whatsapp.message'))
 
-  const whatsappHref = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${message}`
-    : (typeof window !== 'undefined' ? `/${document.documentElement.lang || 'en'}/contact` : '/contact')
-  const telegramHref = telegramUsername
-    ? `https://t.me/${telegramUsername}`
-    : (typeof window !== 'undefined' ? `/${document.documentElement.lang || 'en'}/contact` : '/contact')
+  useEffect(() => {
+    const message = encodeURIComponent(t('whatsapp.message'))
+    const locale = router.locale || 'en'
+    
+    setWhatsappHref(
+      whatsappNumber
+        ? `https://wa.me/${whatsappNumber}?text=${message}`
+        : `/${locale}/contact`
+    )
+    setTelegramHref(
+      telegramUsername
+        ? `https://t.me/${telegramUsername}`
+        : `/${locale}/contact`
+    )
+  }, [whatsappNumber, telegramUsername, t, router.locale])
 
   return (
     <>

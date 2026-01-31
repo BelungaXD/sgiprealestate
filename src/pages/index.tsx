@@ -58,12 +58,17 @@ export default function Home({ featuredProperties }: HomeProps) {
         strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          name: 'SGIP Real Estate',
-          url: 'https://sgiprealestate.alfares.cz',
-          logo: 'https://sgipreal.com/logo.png',
-          sameAs: ['https://t.me/','https://wa.me/']
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'SGIP Real Estate',
+            url: process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com',
+            logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/images/sgip_logo.png`,
+            ...(process.env.NEXT_PUBLIC_TELEGRAM_USERNAME || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ? {
+              sameAs: [
+                ...(process.env.NEXT_PUBLIC_TELEGRAM_USERNAME ? [`https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_USERNAME}`] : []),
+                ...(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ? [`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}`] : [])
+              ]
+            } : {})
           })
         }}
       />

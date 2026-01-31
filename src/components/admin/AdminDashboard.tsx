@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'next-i18next'
 import { 
   PlusIcon, 
@@ -35,11 +35,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   })
 
   // Load properties from API
-  useEffect(() => {
-    loadProperties()
-  }, [])
-
-  const loadProperties = async () => {
+  const loadProperties = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch('/api/properties?limit=100')
@@ -59,7 +55,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadProperties()
+  }, [loadProperties])
 
   const statsData = [
     { name: t('dashboard.totalProperties'), value: stats.total.toString(), icon: BuildingOfficeIcon, color: 'text-blue-600' },
