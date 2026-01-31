@@ -8,5 +8,5 @@
     "www_to_canonical": true,
     "canonical_domain": "sgipreal.com"
   },
-  "_comment": "Настройки nginx применяются автоматически при деплое через scripts/deploy.sh. Для применения изменений выполните деплой. Все HTTP запросы перенаправляются на HTTPS. Все www.sgipreal.com запросы перенаправляются на sgipreal.com (канонический адрес)."
+  "_comment": "Reference only. Nginx configs and service registry are generated automatically by nginx-microservice deploy-smart.sh during ./scripts/deploy.sh. Do not create or edit service-registry in this repo. HTTP→HTTPS and www→canonical redirects are in nginx-microservice templates."
 }

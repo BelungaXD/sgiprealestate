@@ -13,6 +13,7 @@ This directory contains reference copies of nginx configuration templates used o
 All HTTP requests (port 80) are automatically redirected to HTTPS (port 443) using a 301 permanent redirect.
 
 **Implementation:**
+
 - HTTP server block listens on port 80
 - Allows Let's Encrypt ACME challenges for certificate renewal
 - All other traffic is redirected to HTTPS with `return 301 https://$host$request_uri;`
@@ -22,6 +23,7 @@ All HTTP requests (port 80) are automatically redirected to HTTPS (port 443) usi
 All `www.sgipreal.com` requests are redirected to the canonical domain `sgipreal.com` (non-www).
 
 **Implementation:**
+
 - Separate HTTPS server block for `www.{{DOMAIN_NAME}}`
 - Returns 301 redirect to `https://{{DOMAIN_NAME}}$request_uri`
 - Main HTTPS server block only serves the canonical (non-www) domain
@@ -35,6 +37,7 @@ All `www.sgipreal.com` requests are redirected to the canonical domain `sgipreal
 ## Production Server Location
 
 These templates are stored on the production server at:
+
 ```
 nginx-microservice/nginx/templates/domain-blue-green.conf.template
 ```
@@ -42,6 +45,7 @@ nginx-microservice/nginx/templates/domain-blue-green.conf.template
 ## Deployment
 
 Templates are automatically used by the deployment script:
+
 ```bash
 ./scripts/deploy.sh
 ```

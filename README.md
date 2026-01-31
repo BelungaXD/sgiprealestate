@@ -35,26 +35,30 @@
 ## ✨ Функциональные требования
 
 ### 1. Дизайн и UX
+
 - ✅ Адаптация под мобильные устройства
 - ✅ Фиксированный Header с CTA
 - ✅ Плавные анимации без перегрузки интерфейса
 
 ### 2. Интеграция связи
+
 - ✅ Плавающий виджет мессенджеров (WhatsApp, Telegram) на всех страницах
 - ✅ Кнопка WhatsApp в Header и карточках объектов
 
 ### 3. Лидогенерация
+
 - ✅ Загрузка PDF-лид-магнита
 - ✅ GDPR-согласие в формах
 
-
 ### 5. SEO и аналитика
+
 - ✅ Мультиязычность: RU/EN/AR
 - ✅ Настройка GA4 и Яндекс.Метрики через GTM
 - ✅ Sitemap.xml и robots.txt
 - ✅ Schema Markup (Organization, ItemList, RealEstateListing)
 
 ### 6. Производительность
+
 - ✅ Скорость загрузки <2 секунд
 - ✅ Lazy-load изображений
 - ✅ Изображения в WebP
@@ -63,24 +67,29 @@
 ## 🎨 Дизайн и контент
 
 ### Цветовая палитра
+
 - **Графит**: #1E1F24
 - **Шампанское золото**: #C9A86A
 - **Белый**: #F7F7F8
 
 ### Шрифты
+
 - Manrope / Inter
 
 ### Изображения
+
 - Премиальные, светлые, без избыточного HDR
 - Логотипы партнёров и застройщиков: SVG/PNG с прозрачным фоном
 
 ### Контент
+
 - Тексты на русском, английском и арабском языках
 - Анимации: плавные, лёгкие
 
 ## 🛠️ Технологический стек
 
 ### Frontend
+
 - **Framework**: Next.js 14 (Pages Router)
 - **UI Library**: React 18
 - **Language**: TypeScript
@@ -89,16 +98,19 @@
 - **Icons**: Heroicons
 
 ### Backend
+
 - **Database**: PostgreSQL
 - **ORM**: Prisma
 - **API**: Next.js API Routes
 
 ### Интеграции
+
 - **Internationalization**: next-i18next
 - **Analytics**: Google Analytics 4, Yandex Metrica, Google Tag Manager
 - **Maps**: Google Maps API
 
 ### Deployment
+
 - **Containerization**: Docker + Docker Compose
 - **CDN**: Cloudflare
 - **Hosting**: Cloudflare (с поддержкой .ru зеркала)
@@ -114,38 +126,44 @@
 ### Installation
 
 1. Клонируйте репозиторий:
+
 ```bash
 git clone https://github.com/BelungaCZ/sgiprealestate.git
 cd sgipreal.com
 ```
 
-2. Установите зависимости:
+1. Установите зависимости:
+
 ```bash
 npm install
 ```
 
-3. Настройте environment variables:
+1. Настройте environment variables:
+
 ```bash
 cp .env.example .env.local
 # Отредактируйте .env.local с вашей конфигурацией
 ```
 
-4. Запустите базу данных (если используете Docker):
+1. Запустите базу данных (если используете Docker):
+
 ```bash
 docker-compose -f docker-compose.dev.yml up -d postgres
 ```
 
-5. Выполните миграции базы данных:
+1. Выполните миграции базы данных:
+
 ```bash
 npm run db:push
 ```
 
-6. Запустите dev сервер:
+1. Запустите dev сервер:
+
 ```bash
 npm run dev
 ```
 
-7. Откройте приложение в браузере (порт настраивается через переменную PORT в .env файле).
+1. Откройте приложение в браузере (порт настраивается через переменную PORT в .env файле).
 
 ## 📁 Структура проекта
 
@@ -192,29 +210,32 @@ src/
 См. `.env.example` для всех необходимых переменных окружения. Основные переменные:
 
 ### Analytics
+
 - `NEXT_PUBLIC_GTM_ID` - Google Tag Manager ID
 
 ### Communication
+
 - `NEXT_PUBLIC_WHATSAPP_NUMBER` - WhatsApp номер
 - `NEXT_PUBLIC_TELEGRAM_USERNAME` - Telegram username
 
 ### Maps
+
 - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` - Google Maps API ключ
 
-
 ### Integrations
-
 
 ## 🌐 Развёртывание
 
 ### Использование Docker
 
 1. Соберите production образ:
+
 ```bash
 docker build -t sgip-real-estate .
 ```
 
-2. Запустите с Docker Compose:
+1. Запустите с Docker Compose:
+
 ```bash
 docker-compose up -d
 ```
@@ -222,11 +243,13 @@ docker-compose up -d
 ### Ручное развёртывание
 
 1. Соберите приложение:
+
 ```bash
 npm run build
 ```
 
-2. Запустите production сервер:
+1. Запустите production сервер:
+
 ```bash
 npm run start
 ```
@@ -253,14 +276,15 @@ npm run start
 - HTTPS
 - Защита форм и базовых данных
 
-### Nginx Configuration
+### Nginx Configuration and Deployment
 
-Nginx configuration is managed through templates on the production server. The following redirects are configured:
+Deployment works like other ecosystem services (e.g. notifications-microservice):
 
-- **HTTP to HTTPS**: All HTTP requests (port 80) are automatically redirected to HTTPS (port 443)
-- **WWW to Canonical**: All `www.sgipreal.com` requests are redirected to `sgipreal.com` (non-www canonical domain)
+- **Deploy**: Run `./scripts/deploy.sh` from the project root (on the production server).
+- **Nginx configs and service registry** are generated automatically during deployment by nginx-microservice's `deploy-smart.sh`. Do not create or edit `service-registry` files in this repo.
+- **Redirects** (HTTP→HTTPS, www→canonical) are configured in nginx-microservice templates.
 
-Reference templates are stored in [`nginx-templates/`](./nginx-templates/) directory. See [`nginx-templates/README.md`](./nginx-templates/README.md) for details.
+Reference: [`nginx-templates/`](./nginx-templates/) and [`nginx.config.json`](./nginx.config.json) are for documentation only; actual configs are generated by nginx-microservice during deploy.
 
 ### Интеграция аналитики
 
@@ -280,6 +304,7 @@ Reference templates are stored in [`nginx-templates/`](./nginx-templates/) direc
 ## 📊 Мультиязычность
 
 Сайт поддерживает три языка:
+
 - **Русский (ru)** - основной язык для РФ
 - **Английский (en)** - основной язык для международного рынка
 - **Арабский (ar)** - для рынка ОАЭ
@@ -289,12 +314,13 @@ Reference templates are stored in [`nginx-templates/`](./nginx-templates/) direc
 ## 🔗 Интеграции
 
 ### Analytics
+
 - Google Analytics 4
 - Yandex Metrica
 - Google Tag Manager
 
-
 ### Maps
+
 - Google Maps API
 
 ## 📚 Документация
@@ -324,10 +350,10 @@ Reference templates are stored in [`nginx-templates/`](./nginx-templates/) direc
 
 ## 💬 Поддержка
 
-Для поддержки обращайтесь по email: info@sgipreal.com или через форму на сайте.
+Для поддержки обращайтесь по email: <info@sgipreal.com> или через форму на сайте.
 
 ## 📞 Контакты
 
-- **Website**: https://sgipreal.com
-- **Email**: info@sgipreal.com
-- **GitHub**: https://github.com/BelungaCZ/sgiprealestate
+- **Website**: <https://sgipreal.com>
+- **Email**: <info@sgipreal.com>
+- **GitHub**: <https://github.com/BelungaCZ/sgiprealestate>

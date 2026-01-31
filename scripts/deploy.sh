@@ -1,10 +1,15 @@
 #!/bin/bash
-
-# ============================================================================
-# Скрипт деплоя приложения sgipreal.com
-# Вызывает deploy-smart.sh на прод сервере через nginx-microservice
-# Запускается непосредственно на прод сервере
-# ============================================================================
+# sgiprealestate Application Deployment Script
+# Usage: ./scripts/deploy.sh
+#
+# This script deploys the sgiprealestate application to production using the
+# nginx-microservice blue/green deployment system.
+#
+# Nginx configs and service registry are generated automatically during deployment
+# by deploy-smart.sh (same as notifications-microservice and other ecosystem services).
+#
+# The script automatically detects the nginx-microservice location and
+# calls the deploy-smart.sh script to perform the deployment.
 
 set -e
 
@@ -21,30 +26,34 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║       SGIP Real Estate - Production Deployment             ║${NC}"
-echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
+echo -e "${BLUE}╔════════════════════════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║         sgiprealestate Application - Production Deployment                    ║${NC}"
+echo -e "${BLUE}╚════════════════════════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
 # Service name
 SERVICE_NAME="sgiprealestate"
 
 # Detect nginx-microservice path
-# Try common production paths first, then fallback to relative path
-NGINX_MICROSERVICE_PATH=""
+# Allow override via environment variable, then try common production paths
+if [ -n "${NGINX_MICROSERVICE_PATH:-}" ] && [ -d "$NGINX_MICROSERVICE_PATH" ]; then
+    :
+else
+    NGINX_MICROSERVICE_PATH=""
+fi
 
-# Check common production paths
-if [ -d "/home/statex/nginx-microservice" ]; then
+# Check common production paths (if not set by env)
+if [ -z "$NGINX_MICROSERVICE_PATH" ] && [ -d "/home/statex/nginx-microservice" ]; then
     NGINX_MICROSERVICE_PATH="/home/statex/nginx-microservice"
-elif [ -d "/home/alfares/nginx-microservice" ]; then
+elif [ -z "$NGINX_MICROSERVICE_PATH" ] && [ -d "/home/alfares/nginx-microservice" ]; then
     NGINX_MICROSERVICE_PATH="/home/alfares/nginx-microservice"
-elif [ -d "$HOME/nginx-microservice" ]; then
+elif [ -z "$NGINX_MICROSERVICE_PATH" ] && [ -d "/home/belunga/nginx-microservice" ]; then
+    NGINX_MICROSERVICE_PATH="/home/belunga/nginx-microservice"
+elif [ -z "$NGINX_MICROSERVICE_PATH" ] && [ -d "$HOME/nginx-microservice" ]; then
     NGINX_MICROSERVICE_PATH="$HOME/nginx-microservice"
-# Check if nginx-microservice is a sibling directory (for local dev)
-elif [ -d "$(dirname "$PROJECT_ROOT")/nginx-microservice" ]; then
+elif [ -z "$NGINX_MICROSERVICE_PATH" ] && [ -d "$(dirname "$PROJECT_ROOT")/nginx-microservice" ]; then
     NGINX_MICROSERVICE_PATH="$(dirname "$PROJECT_ROOT")/nginx-microservice"
-# Check if nginx-microservice is in the same directory
-elif [ -d "$PROJECT_ROOT/../nginx-microservice" ]; then
+elif [ -z "$NGINX_MICROSERVICE_PATH" ] && [ -d "$PROJECT_ROOT/../nginx-microservice" ]; then
     NGINX_MICROSERVICE_PATH="$(cd "$PROJECT_ROOT/../nginx-microservice" && pwd)"
 fi
 
@@ -55,6 +64,7 @@ if [ -z "$NGINX_MICROSERVICE_PATH" ] || [ ! -d "$NGINX_MICROSERVICE_PATH" ]; the
     echo "Please ensure nginx-microservice is installed in one of these locations:"
     echo "  - /home/statex/nginx-microservice"
     echo "  - /home/alfares/nginx-microservice"
+    echo "  - /home/belunga/nginx-microservice"
     echo "  - $HOME/nginx-microservice"
     echo "  - $(dirname "$PROJECT_ROOT")/nginx-microservice (sibling directory)"
     echo ""
@@ -80,10 +90,10 @@ echo -e "${GREEN}✅ Found nginx-microservice at: $NGINX_MICROSERVICE_PATH${NC}"
 echo -e "${GREEN}✅ Deploying service: $SERVICE_NAME${NC}"
 echo ""
 
-# Database setup - check and create tables if needed
-echo -e "${BLUE}ℹ️  Running database setup...${NC}"
+# Database setup - check and create tables if needed (sgiprealestate-specific)
 DB_SETUP_SCRIPT="$PROJECT_ROOT/scripts/setup-database.sh"
 if [ -f "$DB_SETUP_SCRIPT" ]; then
+    echo -e "${BLUE}ℹ️  Running database setup...${NC}"
     if [ -x "$DB_SETUP_SCRIPT" ]; then
         if "$DB_SETUP_SCRIPT"; then
             echo -e "${GREEN}✅ Database setup completed${NC}"
@@ -109,84 +119,191 @@ else
     echo ""
 fi
 
-# Load nginx configuration from nginx.config.json (if exists)
-NGINX_CONFIG_FILE="$PROJECT_ROOT/nginx.config.json"
-CLIENT_MAX_BODY_SIZE="10G" # Default value
+# Timing and logging functions (same as notifications-microservice)
+get_timestamp() {
+    date '+%Y-%m-%d %H:%M:%S.%3N'
+}
 
-if [ -f "$NGINX_CONFIG_FILE" ]; then
-    echo -e "${BLUE}ℹ️  Loading nginx configuration from nginx.config.json...${NC}"
-    # Extract client_max_body_size from JSON (requires jq or use simple parsing)
-    if command -v jq >/dev/null 2>&1; then
-        CLIENT_MAX_BODY_SIZE=$(jq -r '.nginx.client_max_body_size // "10G"' "$NGINX_CONFIG_FILE" 2>/dev/null || echo "10G")
-    else
-        # Simple parsing without jq
-        CLIENT_MAX_BODY_SIZE=$(grep -o '"client_max_body_size"[[:space:]]*:[[:space:]]*"[^"]*"' "$NGINX_CONFIG_FILE" 2>/dev/null | sed 's/.*"\([^"]*\)".*/\1/' || echo "10G")
+get_timestamp_seconds() {
+    date +%s.%N
+}
+
+log_with_timestamp() {
+    local message="[$(get_timestamp)] $1"
+    echo "$message" >&2
+    echo "$message"
+}
+
+# Phase timing tracking using temp file (works in subshells)
+PHASE_TIMING_FILE=$(mktemp /tmp/deploy-phases-XXXXXX)
+trap "rm -f $PHASE_TIMING_FILE" EXIT
+
+start_phase() {
+    local phase_name="$1"
+    local timestamp=$(get_timestamp_seconds)
+    echo "$phase_name|START|$timestamp" >> "$PHASE_TIMING_FILE"
+    local msg="⏱️  PHASE START: $phase_name"
+    echo -e "${YELLOW}$msg${NC}" >&2
+    echo -e "${YELLOW}$msg${NC}"
+}
+
+end_phase() {
+    local phase_name="$1"
+    local timestamp=$(get_timestamp_seconds)
+    echo "$phase_name|END|$timestamp" >> "$PHASE_TIMING_FILE"
+
+    # Calculate duration if we have start time
+    local start_line=$(grep "^${phase_name}|START|" "$PHASE_TIMING_FILE" | tail -1)
+    if [ -n "$start_line" ]; then
+        local start_time=$(echo "$start_line" | cut -d'|' -f3)
+        local duration=$(awk "BEGIN {printf \"%.2f\", $timestamp - $start_time}")
+        local msg="⏱️  PHASE END: $phase_name (duration: ${duration}s)"
+        echo -e "${GREEN}$msg${NC}" >&2
+        echo -e "${GREEN}$msg${NC}"
     fi
-    echo -e "${GREEN}✅ client_max_body_size set: $CLIENT_MAX_BODY_SIZE${NC}"
-else
-    echo -e "${YELLOW}⚠️  nginx.config.json not found, using default: $CLIENT_MAX_BODY_SIZE${NC}"
-fi
+}
+
+print_phase_summary() {
+    if [ ! -f "$PHASE_TIMING_FILE" ] || [ ! -s "$PHASE_TIMING_FILE" ]; then
+        echo ""
+        echo -e "${YELLOW}⚠️  No phase timing data available${NC}"
+        echo ""
+        return
+    fi
+
+    echo ""
+    echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}📊 DEPLOYMENT PHASE TIMING SUMMARY${NC}"
+    echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
+
+    local current_phase=""
+    local start_time=""
+    local total_phase_time=0
+
+    while IFS='|' read -r phase_name event timestamp; do
+        if [ "$event" = "START" ]; then
+            current_phase="$phase_name"
+            start_time="$timestamp"
+        elif [ "$event" = "END" ] && [ -n "$start_time" ] && [ -n "$current_phase" ]; then
+            local duration=$(awk "BEGIN {printf \"%.2f\", $timestamp - $start_time}")
+            total_phase_time=$(awk "BEGIN {printf \"%.2f\", $total_phase_time + $duration}")
+            printf "  ${GREEN}%-45s${NC} ${YELLOW}%10.2fs${NC}\n" "$phase_name:" "$duration"
+            current_phase=""
+            start_time=""
+        fi
+    done < "$PHASE_TIMING_FILE"
+
+    if [ "$(echo "$total_phase_time > 0" | bc 2>/dev/null || echo "0")" = "1" ]; then
+        echo -e "${BLUE}────────────────────────────────────────────────────────────${NC}"
+        printf "  ${GREEN}%-45s${NC} ${YELLOW}%10.2fs${NC}\n" "Total (all phases):" "$total_phase_time"
+    fi
+    echo -e "${BLUE}════════════════════════════════════════════════════════════${NC}"
+    echo ""
+}
 
 # Change to nginx-microservice directory and run deployment
+start_phase "Pre-deployment Setup"
+log_with_timestamp "Starting blue/green deployment..."
 echo -e "${YELLOW}Starting blue/green deployment...${NC}"
 echo ""
 
+log_with_timestamp "Changing directory to: $NGINX_MICROSERVICE_PATH"
 cd "$NGINX_MICROSERVICE_PATH"
 
-# Execute the deployment script
-if "$DEPLOY_SCRIPT" "$SERVICE_NAME"; then
+log_with_timestamp "About to execute: $DEPLOY_SCRIPT $SERVICE_NAME"
+log_with_timestamp "Current directory: $(pwd)"
+log_with_timestamp "Script exists and is executable: $([ -x "$DEPLOY_SCRIPT" ] && echo 'yes' || echo 'no')"
+end_phase "Pre-deployment Setup"
+
+# Execute the deployment script with phase tracking (deploy-smart.sh generates nginx configs and service registry)
+log_with_timestamp "Executing deployment script now..."
+START_TIME=$(get_timestamp_seconds)
+
+"$DEPLOY_SCRIPT" "$SERVICE_NAME" 2>&1 | {
+    build_started=0
+    start_containers_started=0
+    health_check_started=0
+
+    while IFS= read -r line; do
+        echo "$line"
+
+        if echo "$line" | grep -qE "Phase 0:.*Infrastructure"; then
+            start_phase "Phase 0: Infrastructure Check"
+        elif echo "$line" | grep -qE "Phase 0 completed|✅ Phase 0 completed"; then
+            end_phase "Phase 0: Infrastructure Check"
+        elif echo "$line" | grep -qE "Phase 1:.*Preparing|Phase 1:.*Prepare"; then
+            start_phase "Phase 1: Prepare Green Deployment"
+        elif echo "$line" | grep -qE "Phase 1 completed|✅ Phase 1 completed"; then
+            end_phase "Phase 1: Prepare Green Deployment"
+        elif echo "$line" | grep -qE "Phase 2:.*Switching|Phase 2:.*Switch"; then
+            start_phase "Phase 2: Switch Traffic to Green"
+        elif echo "$line" | grep -qE "Phase 2 completed|✅ Phase 2 completed"; then
+            end_phase "Phase 2: Switch Traffic to Green"
+        elif echo "$line" | grep -qE "Phase 3:.*Monitoring|Phase 3:.*Monitor"; then
+            start_phase "Phase 3: Monitor Health"
+        elif echo "$line" | grep -qE "Phase 3 completed|✅ Phase 3 completed"; then
+            end_phase "Phase 3: Monitor Health"
+        elif echo "$line" | grep -qE "Phase 4:.*Verifying|Phase 4:.*Verify"; then
+            start_phase "Phase 4: Verify HTTPS"
+        elif echo "$line" | grep -qE "Phase 4 completed|✅ Phase 4 completed"; then
+            end_phase "Phase 4: Verify HTTPS"
+        elif echo "$line" | grep -qE "Phase 5:.*Cleaning|Phase 5:.*Cleanup"; then
+            start_phase "Phase 5: Cleanup"
+        elif echo "$line" | grep -qE "Phase 5 completed|✅ Phase 5 completed"; then
+            end_phase "Phase 5: Cleanup"
+        elif echo "$line" | grep -qE "Building containers|Image.*Building" && [ "$build_started" -eq 0 ]; then
+            start_phase "Build Containers"
+            build_started=1
+        elif echo "$line" | grep -qE "All services built|✅ All services built" && [ "$build_started" -eq 1 ]; then
+            end_phase "Build Containers"
+            build_started=2
+        elif echo "$line" | grep -qE "Starting containers|Container.*Starting" && [ "$start_containers_started" -eq 0 ]; then
+            start_phase "Start Containers"
+            start_containers_started=1
+        elif echo "$line" | grep -qE "Container.*Started|Waiting.*services to start" && [ "$start_containers_started" -eq 1 ]; then
+            end_phase "Start Containers"
+            start_containers_started=2
+        elif echo "$line" | grep -qE "Checking.*health|Health check" && [ "$health_check_started" -eq 0 ]; then
+            start_phase "Health Checks"
+            health_check_started=1
+        elif echo "$line" | grep -qE "health check passed|✅.*health" && [ "$health_check_started" -eq 1 ]; then
+            end_phase "Health Checks"
+            health_check_started=2
+        fi
+    done
+    exit ${PIPESTATUS[0]}
+}
+
+DEPLOY_EXIT_CODE=$?
+END_TIME=$(get_timestamp_seconds)
+TOTAL_DURATION=$(awk "BEGIN {printf \"%.2f\", $END_TIME - $START_TIME}")
+
+if [ $DEPLOY_EXIT_CODE -eq 0 ]; then
+    TOTAL_DURATION_FORMATTED=$(awk "BEGIN {printf \"%.2f\", $TOTAL_DURATION}")
+    print_phase_summary 2>&1
     echo ""
     echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║     ✅ Deployment completed successfully!                 ║${NC}"
+    echo -e "${GREEN}║     ✅ Deployment completed successfully!                  ║${NC}"
+    echo -e "${GREEN}║     Total deployment time: ${TOTAL_DURATION_FORMATTED}s    ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════════════════════╝${NC}"
     echo ""
-    
-    # Apply nginx configuration (client_max_body_size)
-    if [ -f "$NGINX_CONFIG_FILE" ]; then
-        echo -e "${BLUE}ℹ️  Applying nginx configuration (client_max_body_size: $CLIENT_MAX_BODY_SIZE)...${NC}"
-        NGINX_CONF_DIR="$NGINX_MICROSERVICE_PATH/nginx/conf.d/blue-green"
-        
-        # Update configuration files for blue and green
-        for conf_file in "$NGINX_CONF_DIR"/*.conf; do
-            if [ -f "$conf_file" ] && grep -q "sgiprealestate" "$conf_file" 2>/dev/null; then
-                # Check if client_max_body_size already exists in server block
-                if ! grep -q "client_max_body_size" "$conf_file" 2>/dev/null; then
-                    # Add client_max_body_size in HTTPS server block after ssl_certificate_key
-                    if grep -q "ssl_certificate_key" "$conf_file" 2>/dev/null; then
-                        sed -i "/ssl_certificate_key/a\\    client_max_body_size $CLIENT_MAX_BODY_SIZE;" "$conf_file"
-                        echo -e "${GREEN}✅ Added client_max_body_size to $(basename "$conf_file")${NC}"
-                    fi
-                else
-                    # Update existing value
-                    sed -i "s/client_max_body_size[[:space:]]*[^;]*;/client_max_body_size $CLIENT_MAX_BODY_SIZE;/" "$conf_file"
-                    echo -e "${GREEN}✅ Updated client_max_body_size in $(basename "$conf_file")${NC}"
-                fi
-            fi
-        done
-        
-        # Reload nginx to apply changes
-        echo -e "${BLUE}ℹ️  Reloading nginx...${NC}"
-        if docker exec nginx-microservice nginx -t >/dev/null 2>&1; then
-            if docker exec nginx-microservice nginx -s reload >/dev/null 2>&1; then
-                echo -e "${GREEN}✅ Nginx reloaded successfully${NC}"
-            else
-                echo -e "${YELLOW}⚠️  Failed to reload nginx (container may not be running)${NC}"
-            fi
-        else
-            echo -e "${YELLOW}⚠️  Nginx configuration has errors, reload skipped${NC}"
-        fi
-    fi
-    
-    echo ""
     echo "The sgiprealestate application has been deployed using blue/green deployment."
+    echo "Nginx configs and service registry were generated automatically by deploy-smart.sh."
     echo "Check the status with:"
     echo "  cd $NGINX_MICROSERVICE_PATH"
     echo "  ./scripts/status-all-services.sh"
     exit 0
 else
+    TOTAL_DURATION_FORMATTED=$(awk "BEGIN {printf \"%.2f\", $TOTAL_DURATION}")
+    echo ""
+    echo -e "${RED}════════════════════════════════════════════════════════════${NC}"
+    echo -e "${RED}❌ Deployment failed!${NC}"
+    echo -e "${RED}   Failed after: ${TOTAL_DURATION_FORMATTED}s${NC}"
+    echo -e "${RED}════════════════════════════════════════════════════════════${NC}"
+    print_phase_summary
     echo ""
     echo -e "${RED}╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${RED}║     ❌ Deployment failed!                                  ║${NC}"
+    echo -e "${RED}║      ❌ Deployment failed!                                 ║${NC}"
     echo -e "${RED}╚════════════════════════════════════════════════════════════╝${NC}"
     echo ""
     echo "Please check the error messages above and:"

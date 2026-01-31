@@ -1,6 +1,7 @@
 # 🏠 SGIP Real Estate Content Transfer Guide
 
 ## 📋 Overview
+
 This guide will help you systematically transfer all content from sgiprealestate.ru to your current website. I've already created the foundation with comprehensive Russian translation files and extraction tools.
 
 > 📖 **См. также**: [content-extraction-guide.md](./content-extraction-guide.md) - Пошаговое руководство по извлечению контента
@@ -8,11 +9,13 @@ This guide will help you systematically transfer all content from sgiprealestate
 ## 🚀 Quick Start
 
 ### Step 1: Access the Russian Website
+
 1. Open your browser and go to `https://sgiprealestate.ru`
 2. Navigate through all pages systematically
 3. Use the content extraction checklist below
 
 ### Step 2: Use the Extraction Tools
+
 ```bash
 # Run the content extraction tool
 node scripts/extract-content.js
@@ -24,6 +27,7 @@ node scripts/integrate-content.js integrate
 ## 📝 Content Extraction Checklist
 
 ### 🏠 Home Page (Главная)
+
 - [ ] **Hero Section**
   - [ ] Main title
   - [ ] Subtitle/description
@@ -57,6 +61,7 @@ node scripts/integrate-content.js integrate
   - [ ] Contact information
 
 ### 🏢 Properties Page (Каталог недвижимости)
+
 - [ ] **Property Categories**
   - [ ] Apartment types
   - [ ] Villa types
@@ -80,6 +85,7 @@ node scripts/integrate-content.js integrate
   - [ ] Amenity filters
 
 ### 🗺️ Areas Page (Районы)
+
 - [ ] **Area Listings**
   - [ ] Area names (Russian and English)
   - [ ] Descriptions
@@ -95,6 +101,7 @@ node scripts/integrate-content.js integrate
   - [ ] Investment potential
 
 ### 🛠️ Services Page (Услуги)
+
 - [ ] **Service Categories**
   - [ ] Property purchase
   - [ ] Property sale
@@ -110,6 +117,7 @@ node scripts/integrate-content.js integrate
   - [ ] Contact forms
 
 ### 👥 About Page (О нас)
+
 - [ ] **Company Information**
   - [ ] Company history
   - [ ] Mission statement
@@ -129,6 +137,7 @@ node scripts/integrate-content.js integrate
   - [ ] Partnerships
 
 ### 📞 Contact Page (Контакты)
+
 - [ ] **Contact Information**
   - [ ] Phone numbers
   - [ ] Email addresses
@@ -149,6 +158,7 @@ node scripts/integrate-content.js integrate
   - [ ] LinkedIn
 
 ### ⚖️ Legal Pages (Правовая информация)
+
 - [ ] **Privacy Policy**
   - [ ] Full privacy policy text
   - [ ] Data collection information
@@ -166,7 +176,9 @@ node scripts/integrate-content.js integrate
 ## 🔧 Technical Implementation
 
 ### 1. Content Organization
+
 Create the following folder structure:
+
 ```
 extracted-content/
 ├── home.json
@@ -184,12 +196,14 @@ extracted-content/
 ```
 
 ### 2. Translation Process
+
 1. **Extract Russian content** from the website
 2. **Translate to English** using professional services or tools
 3. **Update translation files** in `public/locales/`
 4. **Integrate content** into components
 
 ### 3. Content Integration
+
 ```bash
 # Extract content from Russian site
 node scripts/extract-content.js
@@ -206,7 +220,8 @@ node scripts/integrate-content.js report
 
 ## 📊 Content Mapping
 
-### Translation Files Created:
+### Translation Files Created
+
 - ✅ `public/locales/ru/common.json` - Common translations
 - ✅ `public/locales/ru/home.json` - Home page content
 - ✅ `public/locales/ru/properties.json` - Properties page content
@@ -215,7 +230,8 @@ node scripts/integrate-content.js report
 - ✅ `public/locales/ru/about.json` - About page content
 - ✅ `public/locales/ru/contact.json` - Contact page content
 
-### Components to Update:
+### Components to Update
+
 - `src/components/home/` - Home page components
 - `src/components/properties/` - Properties components
 - `src/components/areas/` - Areas components
@@ -226,18 +242,21 @@ node scripts/integrate-content.js report
 ## 🎯 Priority Order
 
 ### Phase 1 (High Priority)
+
 1. **Home Page** - Main landing page content
 2. **Contact Information** - Essential contact details
 3. **Basic Property Listings** - Core property information
 4. **Main Navigation** - Primary site navigation
 
 ### Phase 2 (Medium Priority)
+
 1. **Detailed Property Information** - Complete property details
 2. **Services Descriptions** - Service offerings
 3. **About Page Content** - Company information
 4. **Areas Information** - Location details
 
 ### Phase 3 (Low Priority)
+
 1. **Legal Pages** - Privacy, terms, etc.
 2. **Additional Media** - Extra images and videos
 3. **Advanced Features** - Complex functionality
@@ -246,12 +265,14 @@ node scripts/integrate-content.js report
 ## 🔍 Quality Assurance
 
 ### Content Review
+
 - [ ] Proofread all translated content
 - [ ] Verify accuracy of property details
 - [ ] Check contact information
 - [ ] Validate legal content
 
 ### Technical Testing
+
 - [ ] Test all pages load correctly
 - [ ] Verify all images display
 - [ ] Test contact forms
@@ -261,6 +282,7 @@ node scripts/integrate-content.js report
 ## 📱 Mobile Considerations
 
 ### Responsive Content
+
 - [ ] Ensure all content displays properly on mobile
 - [ ] Test touch interactions
 - [ ] Verify image scaling
@@ -269,12 +291,14 @@ node scripts/integrate-content.js report
 ## 🌐 SEO Optimization
 
 ### Content SEO
+
 - [ ] Update meta descriptions
 - [ ] Update page titles
 - [ ] Update schema markup
 - [ ] Update sitemap
 
 ### Technical SEO
+
 - [ ] Verify all internal links
 - [ ] Check image alt tags
 - [ ] Validate HTML structure
@@ -283,6 +307,7 @@ node scripts/integrate-content.js report
 ## 🚀 Deployment
 
 ### Pre-deployment Checklist
+
 - [ ] All content integrated
 - [ ] All translations complete
 - [ ] All images optimized
@@ -292,6 +317,7 @@ node scripts/integrate-content.js report
 - [ ] SEO optimized
 
 ### Deployment Steps
+
 1. **Backup current site**
 2. **Deploy updated content**
 3. **Test all functionality**
@@ -301,12 +327,14 @@ node scripts/integrate-content.js report
 ## 📞 Support
 
 ### If You Need Help
+
 1. **Check the extraction tools** - Run the scripts I created
 2. **Review the translation files** - Use the comprehensive Russian translations
 3. **Follow the checklist** - Use the systematic approach above
 4. **Test incrementally** - Don't try to do everything at once
 
 ### Common Issues
+
 - **Missing translations**: Check if content exists in Russian files
 - **Component errors**: Verify component imports and props
 - **Image issues**: Ensure images are properly saved and referenced
@@ -315,18 +343,21 @@ node scripts/integrate-content.js report
 ## 🎉 Success Metrics
 
 ### Content Integration
+
 - [ ] All pages have Russian content
 - [ ] All images are properly integrated
 - [ ] All forms are functional
 - [ ] All links work correctly
 
 ### Quality Assurance
+
 - [ ] No broken links
 - [ ] No missing images
 - [ ] No translation errors
 - [ ] No functionality issues
 
 ### Performance
+
 - [ ] Page load times < 2 seconds
 - [ ] Mobile responsive
 - [ ] SEO optimized

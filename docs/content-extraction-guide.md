@@ -5,9 +5,11 @@
 ## Step-by-Step Content Transfer Process
 
 ### 1. Website Structure Analysis
+
 Visit sgiprealestate.ru and document the following:
 
-#### Main Pages to Extract:
+#### Main Pages to Extract
+
 - [ ] Home Page (Главная)
 - [ ] Properties Catalog (Каталог недвижимости)
 - [ ] Areas/Locations (Районы)
@@ -19,6 +21,7 @@ Visit sgiprealestate.ru and document the following:
 ### 2. Content Categories to Extract
 
 #### A. Text Content
+
 - [ ] Headlines and titles
 - [ ] Descriptions and paragraphs
 - [ ] Property details
@@ -28,6 +31,7 @@ Visit sgiprealestate.ru and document the following:
 - [ ] Legal text
 
 #### B. Media Content
+
 - [ ] Property images
 - [ ] Company logos
 - [ ] Team photos
@@ -36,6 +40,7 @@ Visit sgiprealestate.ru and document the following:
 - [ ] Background images
 
 #### C. Data Content
+
 - [ ] Property listings with details
 - [ ] Pricing information
 - [ ] Contact information
@@ -45,7 +50,8 @@ Visit sgiprealestate.ru and document the following:
 
 ### 3. Translation Requirements
 
-#### Russian to English Translation Needed:
+#### Russian to English Translation Needed
+
 - [ ] All page titles and headings
 - [ ] Property descriptions
 - [ ] Service descriptions
@@ -56,7 +62,8 @@ Visit sgiprealestate.ru and document the following:
 
 ### 4. Content Integration Checklist
 
-#### Home Page Updates:
+#### Home Page Updates
+
 - [ ] Hero section content
 - [ ] Company statistics
 - [ ] Featured properties
@@ -64,7 +71,8 @@ Visit sgiprealestate.ru and document the following:
 - [ ] Testimonials
 - [ ] Call-to-action sections
 
-#### Properties Section:
+#### Properties Section
+
 - [ ] Property listings
 - [ ] Property details
 - [ ] Pricing information
@@ -72,28 +80,32 @@ Visit sgiprealestate.ru and document the following:
 - [ ] Filter options
 - [ ] Search functionality
 
-#### Areas Section:
+#### Areas Section
+
 - [ ] Location descriptions
 - [ ] Area statistics
 - [ ] Amenities information
 - [ ] Investment data
 - [ ] Location images
 
-#### Services Section:
+#### Services Section
+
 - [ ] Service descriptions
 - [ ] Pricing packages
 - [ ] Process explanations
 - [ ] Service benefits
 - [ ] Contact forms
 
-#### About Section:
+#### About Section
+
 - [ ] Company history
 - [ ] Team information
 - [ ] Company values
 - [ ] Achievements
 - [ ] Certifications
 
-#### Contact Section:
+#### Contact Section
+
 - [ ] Contact information
 - [ ] Office locations
 - [ ] Contact forms
@@ -102,18 +114,21 @@ Visit sgiprealestate.ru and document the following:
 
 ### 5. Technical Implementation
 
-#### Translation Files Update:
+#### Translation Files Update
+
 - [ ] Update `public/locales/ru/` files
 - [ ] Update `public/locales/en/` files
 - [ ] Ensure all keys are properly mapped
 
-#### Content Integration:
+#### Content Integration
+
 - [ ] Update component props with new content
 - [ ] Replace placeholder images with real content
 - [ ] Update property data in mock files
 - [ ] Integrate real contact information
 
-#### SEO Updates:
+#### SEO Updates
+
 - [ ] Update meta descriptions
 - [ ] Update page titles
 - [ ] Update schema markup
@@ -121,13 +136,15 @@ Visit sgiprealestate.ru and document the following:
 
 ### 6. Quality Assurance
 
-#### Content Review:
+#### Content Review
+
 - [ ] Proofread all translated content
 - [ ] Verify accuracy of property details
 - [ ] Check contact information
 - [ ] Validate legal content
 
-#### Technical Testing:
+#### Technical Testing
+
 - [ ] Test all pages load correctly
 - [ ] Verify all images display
 - [ ] Test contact forms
@@ -136,13 +153,15 @@ Visit sgiprealestate.ru and document the following:
 
 ### 7. Content Extraction Tools
 
-#### Recommended Tools:
+#### Recommended Tools
+
 1. **Manual Copy-Paste**: Most reliable for text content
 2. **Browser Developer Tools**: For inspecting page structure
 3. **Image Download**: Right-click and save images
 4. **Translation Services**: Google Translate or professional services
 
-#### Content Organization:
+#### Content Organization
+
 - Create folders for each content type
 - Use consistent naming conventions
 - Maintain original structure
@@ -150,19 +169,22 @@ Visit sgiprealestate.ru and document the following:
 
 ### 8. Implementation Priority
 
-#### Phase 1 (High Priority):
+#### Phase 1 (High Priority)
+
 1. Home page content
 2. Main navigation
 3. Contact information
 4. Basic property listings
 
-#### Phase 2 (Medium Priority):
+#### Phase 2 (Medium Priority)
+
 1. Detailed property information
 2. Services descriptions
 3. About page content
 4. Legal pages
 
-#### Phase 3 (Low Priority):
+#### Phase 3 (Low Priority)
+
 1. Blog content
 2. Additional media
 3. Advanced features
