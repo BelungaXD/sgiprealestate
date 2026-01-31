@@ -61,3 +61,13 @@ temp
 # Uploaded files (will be mounted as volume)
 public/uploads
 
+# Exclude nginx-microservice directory (production only - has restricted certificates)
+nginx-microservice/
+nginx-microservice/**
+
+# Additional certificate exclusions
+*.key
+*.crt
+*.csr
+certificates/
+accounts/
