@@ -26,7 +26,7 @@ export default function About() {
               "name": "SGIP Real Estate",
               "description": t('description'),
               "url": "https://sgiprealestate.alfares.cz",
-              "logo": "https://sgiprealestate.com/logo.png",
+              "logo": "https://sgipreal.com/logo.png",
               "foundingDate": "2014",
               "address": {
                 "@type": "PostalAddress",
@@ -37,7 +37,7 @@ export default function About() {
                 "@type": "ContactPoint",
                 "telephone": "+971-4-123-4567",
                 "contactType": "customer service",
-                "email": "info@sgiprealestate.com"
+                "email": "info@sgipreal.com"
               },
               "sameAs": [
                 "https://www.linkedin.com/company/sgip-real-estate",

@@ -1,0 +1,61 @@
+# Domain Configuration Template with Blue/Green Deployment
+# Variables: DOMAIN_NAME, UPSTREAM_BLOCKS, PROXY_LOCATIONS
+# Supports blue/green deployment with upstream blocks
+# Upstream blocks are auto-generated from service registry
+# This template supports services with any number of internal services
+
+# Upstream blocks for blue/green deployment (auto-generated)
+{{UPSTREAM_BLOCKS}}
+
+# HTTP Server - Redirect to HTTPS
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{DOMAIN_NAME}} www.{{DOMAIN_NAME}};
+    
+    # Common HTTP server settings (security headers)
+    include /etc/nginx/includes/common-http-server-settings.conf;
+    
+    # Let's Encrypt challenge
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/html;
+        allow all;
+        try_files $uri =404;
+    }
+    
+    # Redirect all other traffic to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# HTTPS Server - Redirect www to canonical (non-www)
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name www.{{DOMAIN_NAME}};
+    ssl_certificate /etc/nginx/certs/{{DOMAIN_NAME}}/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/{{DOMAIN_NAME}}/privkey.pem;
+    include /etc/nginx/includes/common-server-settings.conf;
+    return 301 https://{{DOMAIN_NAME}}$request_uri;
+}
+
+# HTTPS Server - Main site (canonical domain only)
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {{DOMAIN_NAME}};
+
+    # SSL Configuration
+    # Common SSL settings (protocols, ciphers, session cache) are in nginx.conf
+    # Only domain-specific certificate paths are configured here
+    ssl_certificate /etc/nginx/certs/{{DOMAIN_NAME}}/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/{{DOMAIN_NAME}}/privkey.pem;
+    
+    # Common HTTPS server settings (http2, security headers, rate limiting, deny rules, error pages)
+    include /etc/nginx/includes/common-server-settings.conf;
+    
+    # Proxy locations (auto-generated from service registry)
+    # Frontend service typically handles root path, backend handles /api/
+    {{PROXY_LOCATIONS}}
+}

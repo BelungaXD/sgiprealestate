@@ -47,7 +47,7 @@ export default function Footer() {
               <div className="space-y-2 text-sm text-gray-300">
                 <p>📍 Dubai, UAE</p>
                 <p>📞 +971 4 123 4567</p>
-                <p>✉️ info@sgiprealestate.com</p>
+                <p>✉️ info@sgipreal.com</p>
               </div>
             </div>
 

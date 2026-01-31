@@ -7,8 +7,8 @@
 **Название проекта**: Корпоративный сайт агентства элитной недвижимости SGIP Real Estate  
 **Цель**: Разработка функционального, адаптивного и визуально премиального сайта с каталогом объектов, интеграцией форм и аналитикой  
 **Платформа**: Самописный сайт  
-**Основной домен**: sgiprealestate.com (через Cloudflare)  
-**Зеркало для РФ**: sgiprealestate.ru (с редиректом по GeoIP)  
+**Основной домен**: sgipreal.com (через Cloudflare)  
+**Зеркало для РФ**: sgipreal.ru (с редиректом по GeoIP)  
 **Срок реализации**: 8 недель (34 рабочих дня)
 
 ## 🏗️ Структура сайта
@@ -116,7 +116,7 @@
 1. Клонируйте репозиторий:
 ```bash
 git clone https://github.com/BelungaCZ/sgiprealestate.git
-cd sgiprealestate.com
+cd sgipreal.com
 ```
 
 2. Установите зависимости:
@@ -235,7 +235,7 @@ npm run start
 
 ### Домен и хостинг
 
-1. Перенос sgiprealestate.com на Cloudflare
+1. Перенос sgipreal.com на Cloudflare
 2. Настройка DNS и SSL
 3. Зеркало .ru: регистрация и настройка редиректа для пользователей из РФ
 
@@ -252,6 +252,15 @@ npm run start
 
 - HTTPS
 - Защита форм и базовых данных
+
+### Nginx Configuration
+
+Nginx configuration is managed through templates on the production server. The following redirects are configured:
+
+- **HTTP to HTTPS**: All HTTP requests (port 80) are automatically redirected to HTTPS (port 443)
+- **WWW to Canonical**: All `www.sgipreal.com` requests are redirected to `sgipreal.com` (non-www canonical domain)
+
+Reference templates are stored in [`nginx-templates/`](./nginx-templates/) directory. See [`nginx-templates/README.md`](./nginx-templates/README.md) for details.
 
 ### Интеграция аналитики
 
@@ -315,10 +324,10 @@ npm run start
 
 ## 💬 Поддержка
 
-Для поддержки обращайтесь по email: info@sgiprealestate.com или через форму на сайте.
+Для поддержки обращайтесь по email: info@sgipreal.com или через форму на сайте.
 
 ## 📞 Контакты
 
-- **Website**: https://sgiprealestate.com
-- **Email**: info@sgiprealestate.com
+- **Website**: https://sgipreal.com
+- **Email**: info@sgipreal.com
 - **GitHub**: https://github.com/BelungaCZ/sgiprealestate

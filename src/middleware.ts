@@ -7,8 +7,8 @@ export function middleware(req: NextRequest) {
   const country = req.headers.get('cf-ipcountry') || req.headers.get('x-vercel-ip-country') || ''
   const isDev = process.env.NODE_ENV !== 'production'
 
-  if (!isDev && host.includes('sgiprealestate.com') && country.toUpperCase() === 'RU') {
-    url.hostname = 'sgiprealestate.ru'
+  if (!isDev && host.includes('sgipreal.com') && country.toUpperCase() === 'RU') {
+    url.hostname = 'sgipreal.ru'
     return NextResponse.redirect(url)
   }
   return NextResponse.next()

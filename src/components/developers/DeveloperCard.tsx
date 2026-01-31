@@ -160,24 +160,24 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
         
         {/* Action Buttons */}
         <div className="flex flex-col space-y-2">
-          <div className="flex space-x-2">
-            <Link
-              href={`/developers/${developer.slug}`}
-              className="flex-1 btn-primary text-center text-sm py-2"
+        <div className="flex space-x-2">
+          <Link
+            href={`/developers/${developer.slug}`}
+            className="flex-1 btn-primary text-center text-sm py-2"
+          >
+            {t('learnMore')}
+          </Link>
+          {developer.website && (
+            <a
+              href={developer.website.startsWith('http') ? developer.website : `https://${developer.website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm flex items-center justify-center"
+              title={t('visitWebsite') || 'Visit Website'}
             >
-              {t('learnMore')}
-            </Link>
-            {developer.website && (
-              <a
-                href={developer.website.startsWith('http') ? developer.website : `https://${developer.website}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm flex items-center justify-center"
-                title={t('visitWebsite') || 'Visit Website'}
-              >
-                <GlobeAltIcon className="h-4 w-4" />
-              </a>
-            )}
+              <GlobeAltIcon className="h-4 w-4" />
+            </a>
+          )}
           </div>
           <Link
             href={`/properties?developer=${encodeURIComponent(developer.nameEn)}`}

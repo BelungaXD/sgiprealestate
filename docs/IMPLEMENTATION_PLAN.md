@@ -19,7 +19,7 @@ Corporate website for SGIP Real Estate agency targeting UAE, EU, and Russia mark
 
 ## Project Structure
 ```
-sgiprealestate.com/
+sgipreal.com/
 ├── .docker/
 ├── .env.example
 ├── .env.local

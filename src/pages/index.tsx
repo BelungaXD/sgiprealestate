@@ -62,7 +62,7 @@ export default function Home({ featuredProperties }: HomeProps) {
           '@type': 'Organization',
           name: 'SGIP Real Estate',
           url: 'https://sgiprealestate.alfares.cz',
-          logo: 'https://sgiprealestate.com/logo.png',
+          logo: 'https://sgipreal.com/logo.png',
           sameAs: ['https://t.me/','https://wa.me/']
           })
         }}

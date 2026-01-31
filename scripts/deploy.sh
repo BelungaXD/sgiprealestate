@@ -1,12 +1,10 @@
 #!/bin/bash
-# SGIP Real Estate Application Deployment Script
-# Deploys the sgiprealestate application to production using the
-# nginx-microservice blue/green deployment system.
-#
-# The script automatically detects the nginx-microservice location and
-# calls the deploy-smart.sh script to perform the deployment.
 
-git pull
+# ============================================================================
+# Скрипт деплоя приложения sgipreal.com
+# Вызывает deploy-smart.sh на прод сервере через nginx-microservice
+# Запускается непосредственно на прод сервере
+# ============================================================================
 
 set -e
 

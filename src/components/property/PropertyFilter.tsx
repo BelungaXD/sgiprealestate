@@ -376,19 +376,19 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
             </div>
             <div>
               <label className="block text-sm text-gray-600 mb-1">{t('maxYear') || 'Max Year'}</label>
-              <select
+          <select
                 value={filters.maxYearBuilt}
                 onChange={(e) => handleFilterChange('maxYearBuilt', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
-              >
-                <option value="">{t('anyYear')}</option>
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+          >
+            <option value="">{t('anyYear')}</option>
                 {Array.from({ length: maxYear - minYear + 1 }, (_, i) => {
                   const year = maxYear - i
                   return year >= minYear && year <= currentYear ? year : null
                 }).filter(year => year !== null).map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
             </div>
           </div>
         </FilterSection>

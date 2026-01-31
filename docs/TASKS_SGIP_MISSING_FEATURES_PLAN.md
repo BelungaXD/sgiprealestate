@@ -88,7 +88,7 @@ This document enumerates requirements from the provided Technical Specification 
 2. Add `BreadcrumbList` to key pages.
 
 ### M) GeoIP Redirect for .ru Mirror
-1. Implement `src/middleware.ts` to read Cloudflare country header and redirect `.ru` users to `sgiprealestate.ru` (document Cloudflare config alternative).
+1. Implement `src/middleware.ts` to read Cloudflare country header and redirect `.ru` users to `sgipreal.ru` (document Cloudflare config alternative).
 
 
 ### O) Security and Performance

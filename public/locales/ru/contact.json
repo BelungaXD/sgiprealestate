@@ -58,14 +58,14 @@
       "title": "Дубай",
       "address": "Бизнес Бэй, Дубай, ОАЭ",
       "phone": "+971 4 123 4567",
-      "email": "dubai@sgiprealestate.com",
+      "email": "dubai@sgipreal.com",
       "workingHours": "Пн-Пт: 9:00-18:00, Сб: 9:00-14:00"
     },
     "abuDhabi": {
       "title": "Абу-Даби",
       "address": "Корниш, Абу-Даби, ОАЭ",
       "phone": "+971 2 123 4567",
-      "email": "abudhabi@sgiprealestate.com",
+      "email": "abudhabi@sgipreal.com",
       "workingHours": "Пн-Пт: 9:00-18:00, Сб: 9:00-14:00"
     }
   },

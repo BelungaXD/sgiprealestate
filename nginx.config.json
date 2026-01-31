@@ -3,5 +3,10 @@
   "nginx": {
     "client_max_body_size": "10G"
   },
-  "_comment": "Настройки nginx применяются автоматически при деплое через scripts/deploy.sh. Для применения изменений выполните деплой."
+  "redirects": {
+    "http_to_https": true,
+    "www_to_canonical": true,
+    "canonical_domain": "sgipreal.com"
+  },
+  "_comment": "Настройки nginx применяются автоматически при деплое через scripts/deploy.sh. Для применения изменений выполните деплой. Все HTTP запросы перенаправляются на HTTPS. Все www.sgipreal.com запросы перенаправляются на sgipreal.com (канонический адрес)."
 }
