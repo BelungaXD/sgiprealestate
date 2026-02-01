@@ -30,12 +30,14 @@ export default function About() {
               "foundingDate": "2014",
               "address": {
                 "@type": "PostalAddress",
-                "addressLocality": "Dubai",
+                "streetAddress": "Westburry 1, office 302",
+                "addressLocality": "Business Bay",
+                "addressRegion": "Dubai",
                 "addressCountry": "AE"
               },
               "contactPoint": {
                 "@type": "ContactPoint",
-                "telephone": "+971-4-123-4567",
+                "telephone": "+971-50-580-7871",
                 "contactType": "customer service",
                 "email": "info@sgipreal.com"
               },

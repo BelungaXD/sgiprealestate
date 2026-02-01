@@ -29,10 +29,10 @@ export default function CTA() {
             <h3 className="text-xl font-semibold mb-2">{t('cta.phone.title')}</h3>
             <p className="text-gray-300 mb-4">{t('cta.phone.description')}</p>
             <a
-              href="tel:+97141234567"
+              href="tel:+971505807871"
               className="text-champagne hover:text-champagne/80 font-medium"
             >
-              +971 4 123 4567
+              +971 50 580 7871
             </a>
           </div>
           </AnimateOnScroll>
@@ -61,7 +61,7 @@ export default function CTA() {
             <h3 className="text-xl font-semibold mb-2">{t('cta.whatsapp.title')}</h3>
             <p className="text-gray-300 mb-4">{t('cta.whatsapp.description')}</p>
             <a
-              href="https://wa.me/971501234567"
+              href="https://wa.me/971505807871"
               target="_blank"
               rel="noopener noreferrer"
               className="text-champagne hover:text-champagne/80 font-medium"

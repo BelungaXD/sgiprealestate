@@ -15,11 +15,10 @@
 /* Base Styles */
 html {
   scroll-behavior: smooth;
-  font-family: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
 }
 
 body {
-  font-family: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
+  @apply font-sans;
   background-color: var(--color-white);
   color: var(--color-graphite);
   line-height: 1.6;

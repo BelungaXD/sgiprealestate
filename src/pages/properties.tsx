@@ -46,8 +46,8 @@ export default function Properties() {
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([])
   const [filters, setFilters] = useState({
     type: '',
-    area: '',
-    developer: '',
+    area: [] as string[],
+    developer: [] as string[],
     minPrice: '',
     maxPrice: '',
     bedrooms: '',
@@ -69,13 +69,13 @@ export default function Properties() {
     if (developerParam) {
       setFilters(prev => ({
         ...prev,
-        developer: decodeURIComponent(developerParam),
+        developer: [decodeURIComponent(developerParam)],
       }))
     }
     if (areaParam) {
       setFilters(prev => ({
         ...prev,
-        area: decodeURIComponent(areaParam),
+        area: [decodeURIComponent(areaParam)],
       }))
     }
   }, [router.query])
@@ -132,15 +132,17 @@ export default function Properties() {
     if (filters.type) {
       filtered = filtered.filter(prop => prop.type === filters.type)
     }
-    if (filters.area) {
-      filtered = filtered.filter(prop => prop.district === filters.area)
+    if (filters.area && filters.area.length > 0) {
+      filtered = filtered.filter(prop => filters.area.includes(prop.district))
     }
-    if (filters.developer) {
+    if (filters.developer && filters.developer.length > 0) {
       filtered = filtered.filter(prop => {
         const propDeveloper = prop.developer?.trim() || ''
-        const filterDeveloper = filters.developer.trim()
-        return propDeveloper === filterDeveloper || 
-               propDeveloper.toLowerCase() === filterDeveloper.toLowerCase()
+        return filters.developer.some(filterDeveloper => {
+          const trimmedFilter = filterDeveloper.trim()
+          return propDeveloper === trimmedFilter || 
+                 propDeveloper.toLowerCase() === trimmedFilter.toLowerCase()
+        })
       })
     }
     if (filters.minPrice) {

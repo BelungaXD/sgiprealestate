@@ -41,5 +41,11 @@
   "rentalYield": "Rental Yield",
   "demand": "Demand",
   "properties": "Properties",
-  "areas": "Areas"
+  "areas": "Areas",
+  "filters": "Filters",
+  "allSelected": "All Selected",
+  "noAreas": "No areas found",
+  "developer": "Developer",
+  "location": "Location",
+  "clearAll": "Clear All"
 }

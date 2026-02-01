@@ -243,12 +243,12 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
             
             <div className="space-y-4">
               <a
-                href="tel:+97141234567"
+                href="tel:+971505807871"
                 className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <PhoneIcon className="h-5 w-5 text-champagne" />
                 <div>
-                  <div className="font-medium text-graphite">+971 4 123 4567</div>
+                  <div className="font-medium text-graphite">+971 50 580 7871</div>
                   <div className="text-sm text-gray-600">Call now</div>
                 </div>
               </a>
@@ -265,7 +265,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
               </a>
               
               <a
-                href="https://wa.me/971501234567"
+                href="https://wa.me/971505807871"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"

@@ -10,13 +10,12 @@ import {
 
 export default function ContactInfo() {
   const { t } = useTranslation('contact')
-  const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
   const contactMethods = [
     {
       icon: PhoneIcon,
       title: t('info.phone.title'),
-      details: ['+971 4 123 4567', '+971 50 123 4567'],
+      details: ['+971 50 580 7871'],
       description: t('info.phone.description')
     },
     {
@@ -28,7 +27,7 @@ export default function ContactInfo() {
     {
       icon: MapPinIcon,
       title: t('info.address.title'),
-      details: ['Downtown Dubai, UAE', 'Business Bay, Dubai'],
+      details: ['Dubai, Business Bay, Westburry 1, office 302'],
       description: t('info.address.description')
     },
     {
@@ -43,7 +42,7 @@ export default function ContactInfo() {
     {
       name: 'WhatsApp',
       icon: ChatBubbleLeftRightIcon,
-      url: 'https://wa.me/971501234567',
+      url: 'https://wa.me/971505807871',
       color: 'text-green-500'
     },
     {
@@ -116,39 +115,28 @@ export default function ContactInfo() {
         <h3 className="text-lg font-semibold text-graphite mb-4">
           {t('info.map.title')}
         </h3>
-        {mapsKey ? (
+        <div className="w-full h-96 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
           <iframe
-            className="w-full h-64 rounded-lg border"
+            className="w-full h-full"
             loading="lazy"
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps/embed/v1/place?key=${mapsKey}&q=Downtown+Dubai+UAE`}
+            src="https://www.google.com/maps?q=25.1972,55.2684&hl=en&z=16&output=embed"
+            title="SGIP Real Estate Location - Dubai, Business Bay, Westburry 1, office 302"
           />
-        ) : (
-          <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <MapPinIcon className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-              <p className="text-gray-500">Map will appear when API key is set</p>
-              <p className="text-sm text-gray-400">Downtown Dubai, UAE</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Emergency Contact */}
-      <div className="bg-red-50 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-red-800 mb-2">
-          {t('info.emergency.title')}
-        </h3>
-        <p className="text-red-700 text-sm mb-3">
-          {t('info.emergency.description')}
-        </p>
-        <a
-          href="tel:+971501234567"
-          className="text-red-600 font-semibold hover:text-red-800 transition-colors"
-        >
-          +971 50 123 4567
-        </a>
+        </div>
+        <div className="mt-4">
+          <p className="text-sm text-gray-600 mb-2">Dubai, Business Bay, Westburry 1, office 302</p>
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=25.1972,55.2684"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-champagne hover:text-champagne-dark text-sm font-medium inline-flex items-center transition-colors"
+          >
+            <MapPinIcon className="h-4 w-4 mr-1" />
+            {t('info.map.openInMaps') || 'Open in Google Maps'}
+          </a>
+        </div>
       </div>
     </div>
   )

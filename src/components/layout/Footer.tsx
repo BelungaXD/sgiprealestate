@@ -1,8 +1,11 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import { useState } from 'react'
 import { useTranslation } from 'next-i18next'
 
 export default function Footer() {
   const { t } = useTranslation('common')
+  const [logoError, setLogoError] = useState(false)
 
   const footerLinks = {
     company: [
@@ -12,10 +15,10 @@ export default function Footer() {
       { name: t('footer.news'), href: '/news' },
     ],
     services: [
-      { name: t('footer.buy'), href: '/services/buy' },
-      { name: t('footer.sell'), href: '/services/sell' },
-      { name: t('footer.rent'), href: '/services/rent' },
-      { name: t('footer.investment'), href: '/services/investment' },
+      { name: t('footer.buy'), href: '/properties' },
+      { name: t('footer.sell'), href: '/services' },
+      { name: t('footer.rent'), href: '/services' },
+      { name: t('footer.investment'), href: '/services' },
     ],
     support: [
       { name: t('footer.contact'), href: '/contact' },
@@ -33,9 +36,23 @@ export default function Footer() {
             {/* Company Info */}
             <div className="lg:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-champagne rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">S</span>
-                </div>
+                {logoError ? (
+                  <div className="w-10 h-10 bg-champagne rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-xl">S</span>
+                  </div>
+                ) : (
+                  <div className="relative h-10 w-10">
+                    <Image
+                      src="/images/sgip_logo.png"
+                      alt="SGIP Real Estate"
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 object-contain rounded-lg"
+                      unoptimized
+                      onError={() => setLogoError(true)}
+                    />
+                  </div>
+                )}
                 <div>
                   <div className="text-xl font-bold">SGIP</div>
                   <div className="text-xs text-gray-400 -mt-1">{t('footer.companyName')}</div>
@@ -45,8 +62,8 @@ export default function Footer() {
                 {t('footer.description')}
               </p>
               <div className="space-y-2 text-sm text-gray-300">
-                <p>📍 Dubai, UAE</p>
-                <p>📞 +971 4 123 4567</p>
+                <p>📍 Dubai, Business Bay, Westburry 1, office 302</p>
+                <p>📞 +971 50 580 7871</p>
                 <p>✉️ info@sgipreal.com</p>
               </div>
             </div>
@@ -108,7 +125,7 @@ export default function Footer() {
         <div className="border-t border-gray-700 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © 2024 SGIP Real Estate. {t('footer.allRightsReserved')}
+              © 2026 SGIP Real Estate. {t('footer.allRightsReserved')}
             </p>
             <div className="flex space-x-6 text-sm">
               <Link

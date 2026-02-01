@@ -30,8 +30,8 @@ interface Property {
 interface PropertyFilterProps {
   filters: {
     type: string
-    area: string
-    developer: string
+    area: string[]
+    developer: string[]
     minPrice: string
     maxPrice: string
     bedrooms: string
@@ -95,11 +95,35 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
     })
   }
 
+  const handleAreaToggle = (areaValue: string) => {
+    const currentAreas = filters.area || []
+    const newAreas = currentAreas.includes(areaValue)
+      ? currentAreas.filter(a => a !== areaValue)
+      : [...currentAreas, areaValue]
+    
+    onFiltersChange({
+      ...filters,
+      area: newAreas
+    })
+  }
+
+  const handleDeveloperToggle = (developerValue: string) => {
+    const currentDevelopers = filters.developer || []
+    const newDevelopers = currentDevelopers.includes(developerValue)
+      ? currentDevelopers.filter(d => d !== developerValue)
+      : [...currentDevelopers, developerValue]
+    
+    onFiltersChange({
+      ...filters,
+      developer: newDevelopers
+    })
+  }
+
   const clearFilters = () => {
     onFiltersChange({
       type: '',
-      area: '',
-      developer: '',
+      area: [],
+      developer: [],
       minPrice: '',
       maxPrice: '',
       bedrooms: '',
@@ -112,7 +136,14 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
     })
   }
 
-  const hasActiveFilters = Object.values(filters).some(value => value !== '')
+  const hasActiveFilters = (filters.type !== '') || 
+    (filters.area && filters.area.length > 0) || 
+    (filters.developer && filters.developer.length > 0) ||
+    (filters.minPrice !== '' || filters.maxPrice !== '') ||
+    (filters.bedrooms !== '' || filters.bathrooms !== '') ||
+    (filters.minArea !== '' || filters.maxArea !== '') ||
+    (filters.minYearBuilt !== '' || filters.maxYearBuilt !== '') ||
+    (filters.completionDate !== '')
 
   const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <div className="mb-6">
@@ -133,7 +164,12 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
           <span>{t('filters')}</span>
           {hasActiveFilters && (
             <span className="bg-white text-champagne rounded-full px-2 py-1 text-xs font-bold">
-              {Object.values(filters).filter(v => v !== '').length}
+              {(filters.type !== '' ? 1 : 0) + (filters.area?.length || 0) + (filters.developer?.length || 0) + 
+               (filters.minPrice !== '' || filters.maxPrice !== '' ? 1 : 0) + 
+               (filters.bedrooms !== '' || filters.bathrooms !== '' ? 1 : 0) + 
+               (filters.minArea !== '' || filters.maxArea !== '' ? 1 : 0) + 
+               (filters.minYearBuilt !== '' || filters.maxYearBuilt !== '' ? 1 : 0) + 
+               (filters.completionDate !== '' ? 1 : 0)}
             </span>
           )}
         </button>
@@ -225,32 +261,44 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
           </div>
         </FilterSection>
 
-        {/* Area */}
+        {/* Area - Multiple Selection */}
         <FilterSection title={t('area') || 'Area'}>
-          <select
-            value={filters.area}
-            onChange={(e) => handleFilterChange('area', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
-          >
-            <option value="">{t('allSelected', 'All Selected')}</option>
-            {allAreas.map(area => (
-              <option key={area} value={area}>{area}</option>
-            ))}
-          </select>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {allAreas.map(area => {
+              const isChecked = filters.area && filters.area.includes(area)
+              return (
+                <label key={area} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleAreaToggle(area)}
+                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{area}</span>
+                </label>
+              )
+            })}
+          </div>
         </FilterSection>
 
-        {/* Developer */}
+        {/* Developer - Multiple Selection */}
         <FilterSection title={t('developer')}>
-          <select
-            value={filters.developer}
-            onChange={(e) => handleFilterChange('developer', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
-          >
-            <option value="">{t('allSelected', 'All Selected')}</option>
-            {developers.map(developer => (
-              <option key={developer} value={developer}>{developer}</option>
-            ))}
-          </select>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {developers.map(developer => {
+              const isChecked = filters.developer && filters.developer.includes(developer)
+              return (
+                <label key={developer} className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleDeveloperToggle(developer)}
+                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{developer}</span>
+                </label>
+              )
+            })}
+          </div>
         </FilterSection>
 
         {/* Price Range */}

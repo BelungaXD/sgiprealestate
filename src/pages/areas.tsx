@@ -6,6 +6,7 @@ import Script from 'next/script'
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import Layout from '@/components/layout/Layout'
+import AreaFilter from '@/components/areas/AreaFilter'
 // import AreaStats from '@/components/areas/AreaStats'
 
 // Lazy load AreaCard component
@@ -30,94 +31,19 @@ interface Area {
   amenities: string[]
 }
 
-// Hardcoded areas
-const HARDCODED_AREAS: Area[] = [
-  {
-    id: 'beachfront',
-    name: 'Beachfront',
-    nameEn: 'Beachfront',
-    description: 'Элитный прибрежный район с прямым доступом к пляжу и роскошными видами на море.',
-    descriptionEn: 'Premium beachfront location with direct beach access and stunning sea views.',
-    city: 'Dubai',
-    image: '/images/hero.jpg',
-    propertiesCount: 0,
-    averagePrice: 0,
-    currency: 'AED',
-    slug: 'beachfront',
-    coordinates: { lat: 25.2048, lng: 55.2708 },
-    highlights: ['Beach Access', 'Sea Views', 'Luxury Living'],
-    amenities: ['Beach', 'Marina', 'Restaurants', 'Shopping'],
-  },
-  {
-    id: 'downtown',
-    name: 'Downtown',
-    nameEn: 'Downtown',
-    description: 'Сердце Дубая с небоскребами, роскошными апартаментами и всемирно известными достопримечательностями.',
-    descriptionEn: 'The heart of Dubai with skyscrapers, luxury apartments, and world-famous landmarks.',
-    city: 'Dubai',
-    image: '/images/hero.jpg',
-    propertiesCount: 0,
-    averagePrice: 0,
-    currency: 'AED',
-    slug: 'downtown',
-    coordinates: { lat: 25.1972, lng: 55.2744 },
-    highlights: ['Burj Khalifa', 'Dubai Mall', 'Business Hub'],
-    amenities: ['Shopping', 'Dining', 'Entertainment', 'Business'],
-  },
-  {
-    id: 'dubai-hills',
-    name: 'Dubai Hills',
-    nameEn: 'Dubai Hills',
-    description: 'Современный жилой комплекс с парками, гольф-полями и семейной атмосферой.',
-    descriptionEn: 'Modern residential community with parks, golf courses, and family-friendly atmosphere.',
-    city: 'Dubai',
-    image: '/images/hero.jpg',
-    propertiesCount: 0,
-    averagePrice: 0,
-    currency: 'AED',
-    slug: 'dubai-hills',
-    coordinates: { lat: 25.0900, lng: 55.2400 },
-    highlights: ['Golf Course', 'Parks', 'Family Community'],
-    amenities: ['Golf', 'Parks', 'Schools', 'Shopping'],
-  },
-  {
-    id: 'marina-shores',
-    name: 'Marina Shores',
-    nameEn: 'Marina Shores',
-    description: 'Престижный район с видом на марину, современной архитектурой и активным образом жизни.',
-    descriptionEn: 'Prestigious area with marina views, modern architecture, and active lifestyle.',
-    city: 'Dubai',
-    image: '/images/hero.jpg',
-    propertiesCount: 0,
-    averagePrice: 0,
-    currency: 'AED',
-    slug: 'marina-shores',
-    coordinates: { lat: 25.0789, lng: 55.1394 },
-    highlights: ['Marina Views', 'Modern Design', 'Waterfront'],
-    amenities: ['Marina', 'Beach', 'Restaurants', 'Fitness'],
-  },
-  {
-    id: 'the-oasis',
-    name: 'The Oasis',
-    nameEn: 'The Oasis',
-    description: 'Эксклюзивный жилой комплекс с зелеными зонами, виллами и спокойной атмосферой.',
-    descriptionEn: 'Exclusive residential community with green spaces, villas, and tranquil atmosphere.',
-    city: 'Dubai',
-    image: '/images/hero.jpg',
-    propertiesCount: 0,
-    averagePrice: 0,
-    currency: 'AED',
-    slug: 'the-oasis',
-    coordinates: { lat: 25.0657, lng: 55.1713 },
-    highlights: ['Green Spaces', 'Villas', 'Tranquil'],
-    amenities: ['Parks', 'Community Facilities', 'Security'],
-  },
-]
+// Hardcoded areas - empty array
+const HARDCODED_AREAS: Area[] = []
 
 export default function Areas() {
   const { t, i18n } = useTranslation('areas')
   const currentLocale = i18n.language || 'en'
   const [areas, setAreas] = useState<Area[]>([])
+  const [filteredAreas, setFilteredAreas] = useState<Area[]>([])
+  const [filters, setFilters] = useState({
+    developer: [] as string[],
+    location: [] as string[],
+    city: '',
+  })
 
   // Load areas from API and merge with hardcoded
   useEffect(() => {
@@ -153,15 +79,63 @@ export default function Areas() {
         ]
         
         setAreas(allAreas)
+        setFilteredAreas(allAreas)
       } catch (error) {
         console.error('Error fetching areas:', error)
-        // Use hardcoded areas if API fails
-        setAreas(HARDCODED_AREAS)
+        // Set empty array if API fails
+        setAreas([])
+        setFilteredAreas([])
       }
     }
 
     fetchAreas()
   }, [currentLocale])
+
+  // Apply filters
+  useEffect(() => {
+    let filtered = [...areas]
+
+    // Filter by developer (if area has developer property or we need to check properties in area)
+    if (filters.developer) {
+      // Note: This would require checking properties in each area
+      // For now, we'll skip this filter if areas don't have developer info
+      // filtered = filtered.filter(area => area.developer === filters.developer)
+    }
+
+    // Filter by location (North/South/East/West/Central based on coordinates) - Multiple selection
+    if (filters.location && filters.location.length > 0) {
+      filtered = filtered.filter(area => {
+        const { lat, lng } = area.coordinates
+        // Dubai center approximately: 25.2048, 55.2708
+        const dubaiCenterLat = 25.2048
+        const dubaiCenterLng = 55.2708
+        
+        return filters.location.some(loc => {
+          switch (loc) {
+            case 'north':
+              return lat > dubaiCenterLat
+            case 'south':
+              return lat < dubaiCenterLat
+            case 'east':
+              return lng > dubaiCenterLng
+            case 'west':
+              return lng < dubaiCenterLng
+            case 'central':
+              return Math.abs(lat - dubaiCenterLat) < 0.1 && Math.abs(lng - dubaiCenterLng) < 0.1
+            default:
+              return false
+          }
+        })
+      })
+    }
+
+    // Filter by city
+    if (filters.city) {
+      filtered = filtered.filter(area => area.city === filters.city)
+    }
+
+    setFilteredAreas(filtered)
+  }, [areas, filters])
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -179,7 +153,7 @@ export default function Areas() {
         <meta property="og:title" content={t('title')} />
         <meta property="og:description" content={t('description')} />
         <meta property="og:type" content="website" />
-        {areas.length > 0 && (
+        {filteredAreas.length > 0 && (
           <Script
             id="areas-ld-json"
             type="application/ld+json"
@@ -190,8 +164,8 @@ export default function Areas() {
                 "@type": "ItemList",
                 "name": t('title'),
                 "description": t('description'),
-                "numberOfItems": areas.length,
-                "itemListElement": areas.slice(0, 10).map((area, index) => ({
+                "numberOfItems": filteredAreas.length,
+                "itemListElement": filteredAreas.slice(0, 10).map((area, index) => ({
                   "@type": "Place",
                   "position": index + 1,
                   "name": area.nameEn,
@@ -218,10 +192,10 @@ export default function Areas() {
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div className="bg-white/10 rounded-full px-4 py-2">
-                    {areas.length} {t('areas')}
+                    {filteredAreas.length} {t('areas')}
                   </div>
                   <div className="bg-white/10 rounded-full px-4 py-2">
-                    {areas.reduce((sum, area) => sum + area.propertiesCount, 0)} {t('properties')}
+                    {filteredAreas.reduce((sum, area) => sum + area.propertiesCount, 0)} {t('properties')}
                   </div>
                   <div className="bg-white/10 rounded-full px-4 py-2">
                     {t('premiumLocations')}
@@ -231,19 +205,33 @@ export default function Areas() {
             </div>
           </div>
 
-          {/* Areas Grid */}
+          {/* Areas Grid with Filters */}
           <div className="container-custom py-16">
-            {areas.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">{t('noAreas') || 'No areas found'}</p>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Filters Sidebar */}
+              <div className="lg:col-span-1">
+                <AreaFilter
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  areas={areas}
+                />
               </div>
-            ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {areas.map((area) => (
-                <AreaCard key={area.id} area={area} />
-              ))}
+
+              {/* Areas Grid */}
+              <div className="lg:col-span-3">
+                {filteredAreas.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">{t('noAreas') || 'No areas found'}</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredAreas.map((area) => (
+                      <AreaCard key={area.id} area={area} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            )}
           </div>
 
           {/* CTA Section */}

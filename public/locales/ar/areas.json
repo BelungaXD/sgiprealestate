@@ -41,5 +41,11 @@
   "rentalYield": "عائد الإيجار",
   "demand": "الطلب",
   "properties": "عقارات",
-  "areas": "مناطق"
+  "areas": "مناطق",
+  "filters": "المرشحات",
+  "allSelected": "الكل محدد",
+  "noAreas": "لم يتم العثور على مناطق",
+  "developer": "المطور",
+  "location": "الموقع",
+  "clearAll": "مسح الكل"
 }

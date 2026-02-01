@@ -178,10 +178,10 @@ export default function Privacy() {
                       <strong>{t('contact.email')}:</strong> privacy@sgipreal.com
                     </p>
                     <p className="text-gray-700 mb-2">
-                      <strong>{t('contact.phone')}:</strong> +971 4 123 4567
+                      <strong>{t('contact.phone')}:</strong> +971 50 580 7871
                     </p>
                     <p className="text-gray-700">
-                      <strong>{t('contact.address')}:</strong> Downtown Dubai, UAE
+                      <strong>{t('contact.address')}:</strong> Dubai, Business Bay, Westburry 1, office 302
                     </p>
                   </div>
                 </section>

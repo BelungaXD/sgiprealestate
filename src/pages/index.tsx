@@ -23,7 +23,7 @@ const FeaturedProperties = dynamic(() => import('@/components/sections/FeaturedP
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 const Partners = dynamic(() => import('@/components/sections/Partners'), {
-  ssr: false,
+  ssr: true,
   loading: () => <div className="section-padding bg-white"><div className="container-custom"><div className="h-64" /></div></div>,
 })
 const CTA = dynamic(() => import('@/components/sections/CTA'), {
