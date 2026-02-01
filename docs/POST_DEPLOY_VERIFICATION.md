@@ -11,6 +11,7 @@
   1. Check nginx-microservice path and `deploy-smart.sh` (see script error output).
   2. Check service registry: `ls $NGINX_MICROSERVICE_PATH/service-registry/sgiprealestate.json`.
   3. Run health check: `cd $NGINX_MICROSERVICE_PATH && ./scripts/blue-green/health-check.sh sgiprealestate`.
+- [ ] **"Domain not found in registry for service: sgipreal.com" or "jq: parse error"** – In the app `.env` on the server, set **SERVICE_NAME=sgiprealestate** (not sgipreal.com). Deploy scripts source the app `.env` and use SERVICE_NAME; if it is the domain, the script fails.
 - [ ] **HTTPS check warnings** – If you see "HTTPS check failed" (e.g. for logging.sgipreal.com) but internal health checks passed and phases completed, deployment is still successful. See [DEPLOY_HTTPS_CHECK_TROUBLESHOOTING.md](./DEPLOY_HTTPS_CHECK_TROUBLESHOOTING.md).
 
 ---
@@ -82,7 +83,7 @@ cd $NGINX_MICROSERVICE_PATH
 | Status            | `cd $NGINX_MICROSERVICE_PATH && ./scripts/status-all-services.sh` |
 | Health            | `./scripts/blue-green/health-check.sh sgiprealestate` |
 | DB test           | `docker exec db-server-postgres psql -U dbadmin -d sgiprealestate -c "SELECT 1;"` |
-| App logs          | `docker compose -f docker-compose.green.yml logs sgiprealestate-green --tail 100` (or blue) |
+| App logs          | `docker compose -f docker-compose.green.yml logs frontend --tail 100` (or blue) |
 
 ---
 

@@ -71,6 +71,6 @@ cd /home/alfares/nginx-microservice/scripts/blue-green
 ./deploy-smart.sh sgiprealestate
 ```
 
-Имя сервиса для deploy-smart.sh — **sgiprealestate** (не sgiprealestate-service). Реестр создаётся как `service-registry/sgiprealestate.json`.
+Имя сервиса для deploy-smart.sh — **sgiprealestate**. В `.env` приложения на проде должно быть **SERVICE_NAME=sgiprealestate** (не sgipreal.com), иначе при source .env скрипты деплоя подхватят домен вместо имени сервиса. Реестр создаётся как `service-registry/sgiprealestate.json`.
 
 Подробная документация: [DEPLOYMENT_PERMISSIONS_SETUP.md](./DEPLOYMENT_PERMISSIONS_SETUP.md)
