@@ -41,6 +41,7 @@ export default function TeamSection() {
                     fill
                     className="object-cover object-top"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    unoptimized={member.image.startsWith('/api/')}
                   />
                 )}
               </div>

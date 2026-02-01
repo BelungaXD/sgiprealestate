@@ -39,7 +39,7 @@ export default function About() {
                 "@type": "ContactPoint",
                 "telephone": "+971-50-580-7871",
                 "contactType": "customer service",
-                "email": "info@sgipreal.com"
+                "email": "support@sgipreal.com"
               },
               "sameAs": [
                 "https://www.linkedin.com/company/sgip-real-estate",

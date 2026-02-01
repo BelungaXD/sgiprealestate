@@ -175,7 +175,7 @@ export default function Privacy() {
                   </p>
                   <div className="bg-gray-50 p-6 rounded-lg">
                     <p className="text-gray-700 mb-2">
-                      <strong>{t('contact.email')}:</strong> privacy@sgipreal.com
+                      <strong>{t('contact.email')}:</strong> support@sgipreal.com
                     </p>
                     <p className="text-gray-700 mb-2">
                       <strong>{t('contact.phone')}:</strong> +971 50 580 7871

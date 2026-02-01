@@ -64,7 +64,7 @@ export default function Footer() {
               <div className="space-y-2 text-sm text-gray-300">
                 <p>📍 Dubai, Business Bay, Westburry 1, office 302</p>
                 <p>📞 +971 50 580 7871</p>
-                <p>✉️ info@sgipreal.com</p>
+                <p>✉️ support@sgipreal.com</p>
               </div>
             </div>
 

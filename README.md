@@ -350,10 +350,10 @@ Reference: [`nginx-templates/`](./nginx-templates/) and [`nginx.config.json`](./
 
 ## 💬 Поддержка
 
-Для поддержки обращайтесь по email: <info@sgipreal.com> или через форму на сайте.
+Для поддержки обращайтесь по email: <support@sgipreal.com> или через форму на сайте.
 
 ## 📞 Контакты
 
 - **Website**: <https://sgipreal.com>
-- **Email**: <info@sgipreal.com>
+- **Email**: <support@sgipreal.com>
 - **GitHub**: <https://github.com/BelungaCZ/sgiprealestate>

@@ -45,10 +45,10 @@ export default function CTA() {
             <h3 className="text-xl font-semibold mb-2">{t('cta.email.title')}</h3>
             <p className="text-gray-300 mb-4">{t('cta.email.description')}</p>
             <a
-              href="mailto:info@sgipreal.com"
+              href="mailto:support@sgipreal.com"
               className="text-champagne hover:text-champagne/80 font-medium"
             >
-              info@sgipreal.com
+              support@sgipreal.com
             </a>
           </div>
           </AnimateOnScroll>

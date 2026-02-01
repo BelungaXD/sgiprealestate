@@ -21,7 +21,7 @@ export default function ContactInfo() {
     {
       icon: EnvelopeIcon,
       title: t('info.email.title'),
-      details: ['info@sgipreal.com', 'sales@sgipreal.com'],
+      details: ['support@sgipreal.com'],
       description: t('info.email.description')
     },
     {

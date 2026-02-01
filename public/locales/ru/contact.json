@@ -58,14 +58,14 @@
       "title": "Дубай",
       "address": "Dubai, Business Bay, Westburry 1, office 302",
       "phone": "+971 50 580 7871",
-      "email": "dubai@sgipreal.com",
+      "email": "support@sgipreal.com",
       "workingHours": "Пн-Пт: 9:00-18:00, Сб: 9:00-14:00"
     },
     "abuDhabi": {
       "title": "Абу-Даби",
       "address": "Корниш, Абу-Даби, ОАЭ",
       "phone": "+971 2 123 4567",
-      "email": "abudhabi@sgipreal.com",
+      "email": "support@sgipreal.com",
       "workingHours": "Пн-Пт: 9:00-18:00, Сб: 9:00-14:00"
     }
   },

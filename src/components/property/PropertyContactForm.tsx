@@ -254,12 +254,12 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
               </a>
               
               <a
-                href="mailto:info@sgipreal.com"
+                href="mailto:support@sgipreal.com"
                 className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <EnvelopeIcon className="h-5 w-5 text-champagne" />
                 <div>
-                  <div className="font-medium text-graphite">info@sgipreal.com</div>
+                  <div className="font-medium text-graphite">support@sgipreal.com</div>
                   <div className="text-sm text-gray-600">Email us</div>
                 </div>
               </a>
