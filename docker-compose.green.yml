@@ -1,5 +1,6 @@
 services:
-  sgiprealestate:
+  # Named "frontend" so nginx-microservice prepare-green-smart.sh runs health check (expects frontend/backend)
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile

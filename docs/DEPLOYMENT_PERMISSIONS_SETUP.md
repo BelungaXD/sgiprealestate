@@ -101,14 +101,14 @@ ls -la /home/alfares/nginx-microservice/scripts/blue-green/deploy-smart.sh
 ```bash
 ssh alfares
 cd /home/alfares/nginx-microservice/scripts/blue-green
-./deploy-smart.sh sgiprealestate-service
+./deploy-smart.sh sgiprealestate
 ```
 
 Или если используется симлинк из варианта 3:
 
 ```bash
 ssh alfares
-/opt/deploy-scripts/nginx-microservice/blue-green/deploy-smart.sh sgiprealestate-service
+/opt/deploy-scripts/nginx-microservice/blue-green/deploy-smart.sh sgiprealestate
 ```
 
 ## Безопасность

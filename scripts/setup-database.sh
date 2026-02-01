@@ -147,33 +147,32 @@ create_tables() {
             # Try using docker run with node image
             echo -e "${BLUE}ℹ️  Running Prisma DB Push using Docker...${NC}"
             
-            # Check if we have a running container we can use
-            local container_name="sgiprealestate-service"
-            if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
-                echo -e "${BLUE}ℹ️  Using existing container: ${container_name}${NC}"
-                if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --skip-generate; then
-                    echo -e "${GREEN}✅ Database schema created successfully${NC}"
-                    return 0
-                else
-                    echo -e "${RED}❌ Failed to create database schema${NC}"
-                    return 1
+            # Check if we have a running container we can use (blue/green or generic name)
+            for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
+                if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
+                    echo -e "${BLUE}ℹ️  Using existing container: ${container_name}${NC}"
+                    if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --skip-generate; then
+                        echo -e "${GREEN}✅ Database schema created successfully${NC}"
+                        return 0
+                    else
+                        echo -e "${YELLOW}⚠️  Prisma failed in ${container_name}, trying next container...${NC}"
+                    fi
                 fi
+            done
+            # No running app container or all failed - use a temporary node container
+            echo -e "${BLUE}ℹ️  Using temporary Node.js container...${NC}"
+            if docker run --rm \
+                --network nginx-network \
+                -v "$PROJECT_ROOT:/app" \
+                -w /app \
+                -e DATABASE_URL="$DATABASE_URL" \
+                node:20-slim \
+                sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --skip-generate"; then
+                echo -e "${GREEN}✅ Database schema created successfully${NC}"
+                return 0
             else
-                # Use a temporary node container
-                echo -e "${BLUE}ℹ️  Using temporary Node.js container...${NC}"
-                if docker run --rm \
-                    --network nginx-network \
-                    -v "$PROJECT_ROOT:/app" \
-                    -w /app \
-                    -e DATABASE_URL="$DATABASE_URL" \
-                    node:20-slim \
-                    sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --skip-generate"; then
-                    echo -e "${GREEN}✅ Database schema created successfully${NC}"
-                    return 0
-                else
-                    echo -e "${RED}❌ Failed to create database schema${NC}"
-                    return 1
-                fi
+                echo -e "${RED}❌ Failed to create database schema${NC}"
+                return 1
             fi
         fi
     fi

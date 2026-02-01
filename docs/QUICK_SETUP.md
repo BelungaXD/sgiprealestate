@@ -54,10 +54,23 @@ ls -la /home/alfares/nginx-microservice/scripts/blue-green/deploy-smart.sh
 
 После настройки деплой выполняется так:
 
+**Вариант 1 — из репозитория приложения (рекомендуется):**
+
+```bash
+ssh sgipreal   # или belunga@server1
+cd ~/sgiprealestate   # или путь к клону приложения
+git pull
+./scripts/deploy.sh
+```
+
+**Вариант 2 — напрямую из nginx-microservice:**
+
 ```bash
 ssh alfares
 cd /home/alfares/nginx-microservice/scripts/blue-green
-./deploy-smart.sh sgiprealestate-service
+./deploy-smart.sh sgiprealestate
 ```
+
+Имя сервиса для deploy-smart.sh — **sgiprealestate** (не sgiprealestate-service). Реестр создаётся как `service-registry/sgiprealestate.json`.
 
 Подробная документация: [DEPLOYMENT_PERMISSIONS_SETUP.md](./DEPLOYMENT_PERMISSIONS_SETUP.md)
