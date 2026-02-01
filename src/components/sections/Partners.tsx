@@ -13,15 +13,16 @@ export default function Partners() {
   const { t, ready } = useTranslation('home')
 
   // Trusted partners - developers
+  // Use API route for logos to ensure they work in standalone mode
   const partners: Partner[] = [
     {
       name: 'Emaar',
-      logo: '/uploads/developers/emaar_logo.png',
+      logo: '/api/uploads/developers/emaar_logo.png',
       website: 'https://www.emaar.com',
     },
     {
       name: 'Sobha',
-      logo: '/uploads/developers/sobha_logo.png',
+      logo: '/api/uploads/developers/sobha_logo.png',
       website: 'https://www.sobha.com',
     },
   ]
