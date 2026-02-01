@@ -58,8 +58,8 @@ logs
 tmp
 temp
 
-# Uploaded files (will be mounted as volume)
-public/uploads
+# Uploaded files are now included in the image for static assets
+# public/uploads
 
 # Exclude nginx-microservice directory (production only - has restricted certificates)
 nginx-microservice/

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,7 +35,13 @@ export default async function handler(
         return res.status(404).json({ message: 'Developer not found' })
       }
 
-      return res.status(200).json({ developer })
+      // Normalize logo path for production
+      const normalizedDeveloper = {
+        ...developer,
+        logo: normalizeImageUrl(developer.logo),
+      }
+
+      return res.status(200).json({ developer: normalizedDeveloper })
     } catch (error: any) {
       console.error('Error fetching developer:', error)
       

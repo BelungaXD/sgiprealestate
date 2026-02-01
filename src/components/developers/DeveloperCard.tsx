@@ -9,6 +9,7 @@ import {
   GlobeAltIcon,
   TrophyIcon
 } from '@heroicons/react/24/outline'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 interface Developer {
   id: string
@@ -42,6 +43,7 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
 
   const displayName = isRussian ? developer.name : developer.nameEn
   const displayDescription = isRussian ? developer.description : developer.descriptionEn
+  const normalizedLogo = normalizeImageUrl(developer.logo)
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -56,10 +58,10 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
       <div className="p-6">
         {/* Logo and Basic Info */}
         <div className="flex items-start space-x-4 mb-6">
-          {developer.logo ? (
+          {normalizedLogo ? (
             <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center flex-shrink-0 border border-gray-200 p-2">
               <Image
-                src={developer.logo}
+                src={normalizedLogo}
                 alt={displayName}
                 width={64}
                 height={64}

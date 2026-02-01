@@ -54,49 +54,49 @@
       {
         "name": "Rustam Umurzakov",
         "position": "Founder & CEO of the company",
-        "image": "/uploads/team/Rustam Umurzakov.webp",
+        "image": "/api/uploads/team/Rustam Umurzakov.webp",
         "description": "Main competencies real estate transactions in Dubai-Moscow-Zurich, investment strategies. Successful with high experience in UAE since 2008."
       },
       {
         "name": "Kseniya Grishina",
         "position": "Head of Market Research & Development",
-        "image": "/uploads/team/Kseniya Grishina.webp",
+        "image": "/api/uploads/team/Kseniya Grishina.webp",
         "description": "Managing business activities aimed at innovation to improve products & services. Responsible for carrying out research in various company departments, establishing their feasibility in terms of investment."
       },
       {
         "name": "Hussein El Reda",
         "position": "Senior Property Consultant",
-        "image": "/uploads/team/Hussein El Reda.webp",
+        "image": "/api/uploads/team/Hussein El Reda.webp",
         "description": "Speaks Arabic & English, leading the team in areas like: Downtown, Business Bay"
       },
       {
         "name": "Ramina Semetova",
         "position": "HR Manager",
-        "image": "/uploads/team/Ramina Semetova.webp",
+        "image": "/api/uploads/team/Ramina Semetova.webp",
         "description": "Responsible for individual agreements/contracts, arrange and participate in the interviews, handling all paper work for each team member."
       },
       {
         "name": "Rushana Damini",
         "position": "Property Consultant",
-        "image": "/uploads/team/Rushana Damini.webp",
+        "image": "/api/uploads/team/Rushana Damini.webp",
         "description": "Expert in property consultation with focus on client satisfaction and market expertise"
       },
       {
         "name": "Vishal Dhanak",
         "position": "Property Consultant",
-        "image": "/uploads/team/Vishal Dhanak.webp",
+        "image": "/api/uploads/team/Vishal Dhanak.webp",
         "description": "Specialized in property investment consulting and market analysis"
       },
       {
         "name": "Yanina Dydynskaya",
         "position": "Senior Sales Consultant",
-        "image": "/uploads/team/Yanina Dydynskaya.webp",
+        "image": "/api/uploads/team/Yanina Dydynskaya.webp",
         "description": "Result-oriented and self-driven leader, who achieves goals and motivate others through strong communication skills and team leadership"
       },
       {
         "name": "Anna Krotova",
         "position": "Property Specialist",
-        "image": "/uploads/team/Anna Krotova.webp",
+        "image": "/api/uploads/team/Anna Krotova.webp",
         "description": "Specialist in areas: Palm Jumeirah and Dubai Marina"
       }
     ]

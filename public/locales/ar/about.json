@@ -54,49 +54,49 @@
       {
         "name": "رستم أومورزاكوف",
         "position": "المؤسس والرئيس التنفيذي للشركة",
-        "image": "/uploads/team/Rustam Umurzakov.webp",
+        "image": "/api/uploads/team/Rustam Umurzakov.webp",
         "description": "الكفاءات الرئيسية: معاملات العقارات في دبي-موسكو-زيورخ، استراتيجيات الاستثمار. نجاح مع خبرة عالية في الإمارات منذ عام 2008."
       },
       {
         "name": "كسينيا جريشينا",
         "position": "رئيسة أبحاث السوق والتطوير",
-        "image": "/uploads/team/Kseniya Grishina.webp",
+        "image": "/api/uploads/team/Kseniya Grishina.webp",
         "description": "إدارة الأنشطة التجارية الهادفة إلى الابتكار لتحسين المنتجات والخدمات. مسؤولة عن إجراء البحوث في مختلف أقسام الشركة، وتحديد جدواها من حيث الاستثمار."
       },
       {
         "name": "حسين الأحمر",
         "position": "مستشار عقاري أول",
-        "image": "/uploads/team/Hussein El Reda.webp",
+        "image": "/api/uploads/team/Hussein El Reda.webp",
         "description": "يتحدث العربية والإنجليزية، يقود الفريق في مناطق مثل: وسط المدينة، خليج الأعمال"
       },
       {
         "name": "رامينا سيميتوفا",
         "position": "مديرة الموارد البشرية",
-        "image": "/uploads/team/Ramina Semetova.webp",
+        "image": "/api/uploads/team/Ramina Semetova.webp",
         "description": "مسؤولة عن الاتفاقيات/العقود الفردية، تنظيم والمشاركة في المقابلات، معالجة جميع الأعمال الورقية لكل عضو في الفريق."
       },
       {
         "name": "روشانا داميني",
         "position": "مستشار عقاري",
-        "image": "/uploads/team/Rushana Damini.webp",
+        "image": "/api/uploads/team/Rushana Damini.webp",
         "description": "خبيرة في الاستشارات العقارية مع التركيز على رضا العملاء والخبرة السوقية"
       },
       {
         "name": "فيشال دهناك",
         "position": "مستشار عقاري",
-        "image": "/uploads/team/Vishal Dhanak.webp",
+        "image": "/api/uploads/team/Vishal Dhanak.webp",
         "description": "متخصص في استشارات الاستثمار العقاري وتحليل السوق"
       },
       {
         "name": "يانينا ديدينسكايا",
         "position": "مستشار مبيعات أول",
-        "image": "/uploads/team/Yanina Dydynskaya.webp",
+        "image": "/api/uploads/team/Yanina Dydynskaya.webp",
         "description": "قائدة موجهة نحو النتائج وذات دافع ذاتي، تحقق الأهداف وتحفز الآخرين من خلال مهارات التواصل القوية والقيادة الفريقية"
       },
       {
         "name": "آنا كروتوفا",
         "position": "أخصائية عقارية",
-        "image": "/uploads/team/Anna Krotova.webp",
+        "image": "/api/uploads/team/Anna Krotova.webp",
         "description": "متخصصة في المناطق: نخلة جميرا ومارينا دبي"
       }
     ]

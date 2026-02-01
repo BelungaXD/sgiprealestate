@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 export default async function handler(
   req: NextApiRequest,
@@ -41,9 +42,10 @@ export default async function handler(
       },
     })
 
-    // Transform to include properties count
+    // Transform to include properties count and normalize logo paths
     const developersWithCount = developers.map((dev: typeof developers[0]) => ({
       ...dev,
+      logo: normalizeImageUrl(dev.logo),
       propertiesCount: dev._count.properties,
     }))
 

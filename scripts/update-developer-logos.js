@@ -16,7 +16,7 @@ async function updateDeveloperLogos() {
         ],
       },
       data: {
-        logo: '/uploads/developers/sobha_logo.png',
+        logo: '/api/uploads/developers/sobha_logo.png',
       },
     })
 
@@ -32,7 +32,7 @@ async function updateDeveloperLogos() {
         ],
       },
       data: {
-        logo: '/uploads/developers/emaar_logo.png',
+        logo: '/api/uploads/developers/emaar_logo.png',
       },
     })
 

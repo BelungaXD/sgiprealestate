@@ -81,49 +81,49 @@
       {
         "name": "Рустам Умурзаков",
         "position": "Основатель и генеральный директор компании",
-        "image": "/uploads/team/Rustam Umurzakov.webp",
+        "image": "/api/uploads/team/Rustam Umurzakov.webp",
         "description": "Основные компетенции: сделки с недвижимостью в Дубае-Москве-Цюрихе, инвестиционные стратегии. Успешный опыт работы в ОАЭ с 2008 года."
       },
       {
         "name": "Ксения Гришина",
         "position": "Руководитель отдела исследований рынка и развития",
-        "image": "/uploads/team/Kseniya Grishina.webp",
+        "image": "/api/uploads/team/Kseniya Grishina.webp",
         "description": "Управление бизнес-активностями, направленными на инновации для улучшения продуктов и услуг. Ответственна за проведение исследований в различных отделах компании, определение их целесообразности с точки зрения инвестиций."
       },
       {
         "name": "Хусейн Эль Реда",
         "position": "Старший консультант по недвижимости",
-        "image": "/uploads/team/Hussein El Reda.webp",
+        "image": "/api/uploads/team/Hussein El Reda.webp",
         "description": "Говорит на арабском и английском, руководит командой в районах: Downtown, Business Bay"
       },
       {
         "name": "Рамина Семетова",
         "position": "Менеджер по персоналу",
-        "image": "/uploads/team/Ramina Semetova.webp",
+        "image": "/api/uploads/team/Ramina Semetova.webp",
         "description": "Ответственна за индивидуальные соглашения/договоры, организация и участие в собеседованиях, ведение всей документации для каждого члена команды."
       },
       {
         "name": "Рушана Дамини",
         "position": "Консультант по недвижимости",
-        "image": "/uploads/team/Rushana Damini.webp",
+        "image": "/api/uploads/team/Rushana Damini.webp",
         "description": "Эксперт по консультированию по недвижимости с фокусом на удовлетворенность клиентов и знание рынка"
       },
       {
         "name": "Вишал Дханак",
         "position": "Консультант по недвижимости",
-        "image": "/uploads/team/Vishal Dhanak.webp",
+        "image": "/api/uploads/team/Vishal Dhanak.webp",
         "description": "Специализация: консультирование по инвестициям в недвижимость и анализ рынка"
       },
       {
         "name": "Янина Дыдынская",
         "position": "Старший консультант по продажам",
-        "image": "/uploads/team/Yanina Dydynskaya.webp",
+        "image": "/api/uploads/team/Yanina Dydynskaya.webp",
         "description": "Ориентированный на результат и самодостаточный лидер, который достигает целей и мотивирует других через сильные коммуникативные навыки и лидерство в команде"
       },
       {
         "name": "Анна Кротова",
         "position": "Специалист по недвижимости",
-        "image": "/uploads/team/Anna Krotova.webp",
+        "image": "/api/uploads/team/Anna Krotova.webp",
         "description": "Специализация: Palm Jumeirah и Dubai Marina"
       }
     ]

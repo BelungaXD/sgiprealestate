@@ -13,6 +13,7 @@ import {
   EnvelopeIcon,
   HomeIcon,
 } from '@heroicons/react/24/outline'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 interface Developer {
   id: string
@@ -45,6 +46,7 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
   const displayDescription = isRussian 
     ? (developer.description || '') 
     : (developer.descriptionEn || developer.description || '')
+  const normalizedLogo = normalizeImageUrl(developer.logo)
 
   const handleViewProperties = () => {
     router.push(`/properties?developer=${encodeURIComponent(displayName)}`)
@@ -67,10 +69,10 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
             <div className="container-custom py-16">
               <div className="max-w-4xl">
                 <div className="flex items-start space-x-6 mb-6">
-                  {developer.logo && (
+                  {normalizedLogo && (
                     <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
                       <img
-                        src={developer.logo}
+                        src={normalizedLogo}
                         alt={displayName}
                         className="max-w-full max-h-full object-contain"
                       />
