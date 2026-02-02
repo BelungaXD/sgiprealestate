@@ -3,7 +3,7 @@ FROM node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apt-get update && apt-get install -y libc6 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libc6 openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy package files
@@ -12,6 +12,7 @@ RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
