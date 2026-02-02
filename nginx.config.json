@@ -8,5 +8,5 @@
     "www_to_canonical": true,
     "canonical_domain": "sgipreal.com"
   },
-  "_comment": "Reference only. Nginx configs and service registry are generated automatically by nginx-microservice deploy-smart.sh during ./scripts/deploy.sh. Do not create or edit service-registry in this repo. HTTP→HTTPS and www→canonical redirects are in nginx-microservice templates."
+  "_comment": "nginx.client_max_body_size is read by deploy-smart.sh and applied to generated nginx configs. Nginx configs and service registry are generated automatically by nginx-microservice deploy-smart.sh during ./scripts/deploy.sh. HTTP→HTTPS and www→canonical redirects are in nginx-microservice templates."
 }
