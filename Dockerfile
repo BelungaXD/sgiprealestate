@@ -1,5 +1,6 @@
 # Multi-stage build for Next.js
-FROM node:20-slim AS base
+# Force linux/amd64 so sharp binaries match production (avoids darwin/arm64 when building on Mac)
+FROM --platform=linux/amd64 node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -46,6 +47,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/sharp ./node_modules/sharp
+COPY --from=builder /app/node_modules/@img ./node_modules/@img
 COPY --from=builder /app/prisma ./prisma
 
 # Set correct permissions
