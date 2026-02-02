@@ -189,9 +189,8 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   const folderName = basename(folderPath)
   const { district, propertyName } = parseFolderName(folderName)
   
-  if (!district) {
-    throw new Error(`Invalid district in folder name: ${folderName}. Must be one of: ${VALID_DISTRICTS.join(', ')}`)
-  }
+  const safeDistrict = district || 'Downtown'
+  const safePropertyName = propertyName || folderName
 
   const images: Array<{ url: string; alt?: string; order: number; isMain: boolean }> = []
   const videos: Array<{ url: string; title: string; order: number }> = []
@@ -231,7 +230,7 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
           
           images.push({
             url: fileInfo.url,
-            alt: `${propertyName} - ${entry.name}`,
+            alt: `${safePropertyName} - ${entry.name}`,
             order: images.length,
             isMain: images.length === 0,
           })
@@ -268,19 +267,19 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   }
 
   // Генерировать SEO данные
-  const slug = generateSlug(propertyName, district)
+  const slug = generateSlug(safePropertyName, safeDistrict)
   const uniqueSlug = await generateUniqueSlug(slug)
-  const description = generateDescription(propertyName, district)
-  const metaTitle = generateMetaTitle(propertyName, district)
-  const metaDescription = generateMetaDescription(propertyName, district)
+  const description = generateDescription(safePropertyName, safeDistrict)
+  const metaTitle = generateMetaTitle(safePropertyName, safeDistrict)
+  const metaDescription = generateMetaDescription(safePropertyName, safeDistrict)
 
   // Найти или создать район
-  const districtSlug = district.toLowerCase().replace(/\s+/g, '-')
+  const districtSlug = safeDistrict.toLowerCase().replace(/\s+/g, '-')
   let area = await prisma.area.findFirst({
     where: {
       OR: [
-        { name: { contains: district, mode: 'insensitive' } },
-        { nameEn: { contains: district, mode: 'insensitive' } },
+        { name: { contains: safeDistrict, mode: 'insensitive' } },
+        { nameEn: { contains: safeDistrict, mode: 'insensitive' } },
         { slug: districtSlug },
       ],
     },
@@ -300,8 +299,8 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   // Создать объект недвижимости
   const property = await prisma.property.create({
     data: {
-      title: propertyName,
-      titleEn: propertyName,
+      title: safePropertyName,
+      titleEn: safePropertyName,
       description,
       descriptionEn: description,
       price: 1000000,
@@ -311,9 +310,9 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
       bedrooms: 2,
       bathrooms: 2,
       parking: 1,
-      address: `${propertyName}, ${district}, Dubai`,
+      address: `${safePropertyName}, ${safeDistrict}, Dubai`,
       city: 'Dubai',
-      district,
+      district: safeDistrict,
       areaId: area.id,
       slug: uniqueSlug,
       metaTitle,
@@ -412,12 +411,21 @@ export default async function handler(
       return res.status(400).json({ message: 'Path is not a directory' })
     }
 
-    // Проверяем, что это папка с подпапками объектов
+    // Проверяем: подпапки объектов ИЛИ сама папка - один объект (файлы внутри)
     const entries = await readdir(folderPath, { withFileTypes: true })
-    const propertyFolders = entries.filter(entry => entry.isDirectory())
+    const subdirs = entries.filter(entry => entry.isDirectory())
+    const hasFiles = entries.some(entry => entry.isFile() && !entry.name.startsWith('.'))
 
-    if (propertyFolders.length === 0) {
-      return res.status(400).json({ message: 'No property folders found in directory' })
+    const foldersToProcess: { path: string; name: string }[] = []
+    if (subdirs.length > 0) {
+      foldersToProcess.push(...subdirs.map(d => ({ path: join(folderPath, d.name), name: d.name })))
+    } else if (hasFiles) {
+      // Single property folder - files directly in folderPath
+      foldersToProcess.push({ path: folderPath, name: basename(folderPath) })
+    }
+
+    if (foldersToProcess.length === 0) {
+      return res.status(400).json({ message: 'No property folders or files found in directory' })
     }
 
     const results = {
@@ -425,21 +433,19 @@ export default async function handler(
       errors: [] as string[],
     }
 
-    // Обработать каждую папку объекта
-    for (const folder of propertyFolders) {
+    for (const { path: propertyFolderPath, name: folderName } of foldersToProcess) {
       try {
-        const propertyFolderPath = join(folderPath, folder.name)
         await processPropertyFolder(propertyFolderPath)
-        results.success.push(folder.name)
+        results.success.push(folderName)
       } catch (error: any) {
-        results.errors.push(`${folder.name}: ${error.message}`)
+        results.errors.push(`${folderName}: ${error.message}`)
       }
     }
 
     return res.status(200).json({
       message: 'Import completed',
       results,
-      total: propertyFolders.length,
+      total: foldersToProcess.length,
       successful: results.success.length,
       failed: results.errors.length,
     })
