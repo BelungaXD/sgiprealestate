@@ -9,6 +9,7 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
+ENV npm_config_update_notifier=false
 RUN npm install
 
 # Rebuild the source code only when needed
