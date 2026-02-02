@@ -60,6 +60,11 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   },
+  "overrides": {
+    "rimraf": "^5.0.0",
+    "glob": "^9.3.5",
+    "jsdom": "^25.0.1"
+  },
   "prisma": {
     "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
   },
