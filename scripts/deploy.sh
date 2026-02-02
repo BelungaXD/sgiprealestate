@@ -226,11 +226,12 @@ log_with_timestamp "Current directory: $(pwd)"
 log_with_timestamp "Script exists and is executable: $([ -x "$DEPLOY_SCRIPT" ] && echo 'yes' || echo 'no')"
 end_phase "Pre-deployment Setup"
 
-# Execute the deployment script with phase tracking (deploy-smart.sh generates nginx configs and service registry)
-log_with_timestamp "Executing deployment script now..."
+# Execute the deployment script with phase tracking (deploy-smart.sh generates nginx configs and service registry).
+# Use nice to lower CPU priority so deploy does not starve the system (reduces load during build).
+log_with_timestamp "Executing deployment script now (low CPU priority)..."
 START_TIME=$(get_timestamp_seconds)
 
-"$DEPLOY_SCRIPT" "$SERVICE_NAME" 2>&1 | {
+nice -n 19 "$DEPLOY_SCRIPT" "$SERVICE_NAME" 2>&1 | {
     build_started=0
     start_containers_started=0
     health_check_started=0

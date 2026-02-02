@@ -16,6 +16,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Limit Node.js heap during build to reduce memory spike (avoids OOM/swap thrashing on low-RAM hosts)
+ENV NODE_OPTIONS=--max-old-space-size=768
+
 # Generate Prisma Client
 RUN npx prisma generate
 
