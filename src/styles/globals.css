@@ -256,6 +256,15 @@ body {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 /* CSS-only scroll animations using CSS scroll-driven animations (fallback to regular animations) */
 @supports (animation-timeline: scroll()) {
   .animate-on-scroll {
@@ -310,6 +319,11 @@ a, button {
 /* Loading States */
 .loading-skeleton {
   @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* Shimmer animation for image loading */
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
 }
 
 /* Property Card Specific Styles */
