@@ -29,15 +29,15 @@ RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
-# Production image
-FROM base AS runner
+# Production image - use full node:20 for sharp/libvips compatibility (slim had linux-x64 load errors)
+FROM --platform=linux/amd64 node:20 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Install wget for healthcheck, openssl for Prisma, libvips for sharp
-RUN apt-get update && apt-get install -y wget ca-certificates openssl libvips-dev && rm -rf /var/lib/apt/lists/*
+# Install wget for healthcheck, openssl for Prisma
+RUN apt-get update && apt-get install -y wget ca-certificates openssl && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --system --gid 1001 nodejs
 RUN useradd --system --uid 1001 nextjs
