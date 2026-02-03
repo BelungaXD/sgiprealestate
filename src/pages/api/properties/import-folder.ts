@@ -3,11 +3,25 @@ import { prisma } from '@/lib/prisma'
 import { readdir, stat, copyFile, mkdir } from 'fs/promises'
 import { join, extname, basename } from 'path'
 import { existsSync } from 'fs'
-import sharp from 'sharp'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 
 const execAsync = promisify(exec)
+
+// Lazy-load sharp to avoid import-time failure (e.g. linux-x64 runtime error in Docker)
+let sharpModule: typeof import('sharp') | null | false = null
+async function getSharp(): Promise<typeof import('sharp') | null> {
+  if (sharpModule === false) return null
+  if (sharpModule) return sharpModule
+  try {
+    sharpModule = (await import('sharp')).default
+    return sharpModule
+  } catch (err) {
+    console.warn('[import-folder] sharp failed to load:', err)
+    sharpModule = false
+    return null
+  }
+}
 
 export const config = {
   api: {
@@ -73,11 +87,22 @@ async function isVideo16x9(videoPath: string): Promise<boolean> {
   }
 }
 
-// Конвертировать изображение в WebP
-async function convertToWebP(sourcePath: string, destPath: string): Promise<void> {
-  await sharp(sourcePath)
-    .webp({ quality: 85 })
-    .toFile(destPath)
+// Конвертировать изображение в WebP (или копировать если sharp недоступен)
+async function convertToWebP(sourcePath: string, destPath: string): Promise<string> {
+  const sharp = await getSharp()
+  if (sharp) {
+    try {
+      await sharp(sourcePath)
+        .webp({ quality: 85 })
+        .toFile(destPath)
+      return destPath
+    } catch (err) {
+      console.warn('[import-folder] sharp error, copying image as-is:', err)
+    }
+  }
+  const fallbackPath = destPath.replace(/\.webp$/i, extname(sourcePath))
+  await copyFile(sourcePath, fallbackPath)
+  return fallbackPath
 }
 
 // Копировать файл с конвертацией изображений в WebP
@@ -109,7 +134,7 @@ async function processFile(
     if (ext === '.webp') {
       await copyFile(sourcePath, finalPath)
     } else {
-      await convertToWebP(sourcePath, finalPath)
+      finalPath = await convertToWebP(sourcePath, finalPath)
     }
   } else if (category === 'video') {
     destDir = join(process.cwd(), 'public', 'uploads', 'properties', 'videos')
@@ -212,22 +237,28 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
         if (IMAGE_EXTENSIONS.includes(ext)) {
           const fileInfo = await processFile(fullPath, 'image')
           
-          // Создать thumbnail
-          const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
-          if (!existsSync(thumbnailDir)) {
-            await mkdir(thumbnailDir, { recursive: true })
+          // Создать thumbnail (пропускаем если sharp недоступен)
+          const sharpForThumb = await getSharp()
+          if (sharpForThumb) {
+            try {
+              const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
+              if (!existsSync(thumbnailDir)) {
+                await mkdir(thumbnailDir, { recursive: true })
+              }
+              const thumbnailFilename = `thumb-${fileInfo.filename}`
+              const thumbnailPath = join(thumbnailDir, thumbnailFilename)
+              const imagePath = join(process.cwd(), 'public', fileInfo.url)
+              await sharpForThumb(imagePath)
+                .resize(200, 200, {
+                  fit: sharpForThumb.fit.inside,
+                  withoutEnlargement: true,
+                })
+                .webp({ quality: 70 })
+                .toFile(thumbnailPath)
+            } catch (thumbErr) {
+              console.warn('[import-folder] thumbnail creation failed:', thumbErr)
+            }
           }
-          const thumbnailFilename = `thumb-${fileInfo.filename}`
-          const thumbnailPath = join(thumbnailDir, thumbnailFilename)
-          
-          const imagePath = join(process.cwd(), 'public', fileInfo.url)
-          await sharp(imagePath)
-            .resize(200, 200, {
-              fit: sharp.fit.inside,
-              withoutEnlargement: true,
-            })
-            .webp({ quality: 70 })
-            .toFile(thumbnailPath)
           
           images.push({
             url: fileInfo.url,
