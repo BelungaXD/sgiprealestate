@@ -26,14 +26,13 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Pull latest changes from git
-echo -e "${BLUE}ℹ️  Pulling latest changes from git...${NC}"
-if git pull; then
-    echo -e "${GREEN}✅ Git pull completed successfully${NC}"
-    echo ""
-else
-    echo -e "${YELLOW}⚠️  Git pull failed or no changes to pull${NC}"
-    echo -e "${YELLOW}⚠️  Proceeding with deployment...${NC}"
+# Deploy only code from repository: sync with remote (discard local changes on server)
+if [ -d ".git" ]; then
+    echo -e "${BLUE}Syncing with remote repository...${NC}"
+    git fetch origin
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    git reset --hard "origin/$BRANCH"
+    echo -e "${GREEN}✓ Repository synced to origin/$BRANCH${NC}"
     echo ""
 fi
 
