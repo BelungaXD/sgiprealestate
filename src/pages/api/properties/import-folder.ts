@@ -318,24 +318,25 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   })
 
   if (!area) {
+    const areaName = String(safeDistrict || 'Downtown')
     area = await prisma.area.create({
       data: {
-        name: safeDistrict,
-        nameEn: safeDistrict,
+        name: areaName,
+        nameEn: areaName,
         city: 'Dubai',
         slug: districtSlug,
       },
     })
   }
 
-  // Создать объект недвижимости
+  // Создать объект недвижимости (Property schema: title, description, type, features[], amenities[])
   const property = await prisma.property.create({
     data: {
       title: safePropertyName,
       description,
       price: 1000000,
       currency: 'AED',
-      type: 'Apartment',
+      type: 'APARTMENT',
       areaSqm: 100,
       bedrooms: 2,
       bathrooms: 2,
@@ -347,6 +348,8 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
       slug: uniqueSlug,
       metaTitle,
       metaDescription,
+      features: [],
+      amenities: [],
       isPublished: true,
       isFeatured: false,
     },
