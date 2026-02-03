@@ -276,6 +276,28 @@ a, button {
   transition: all 0.2s ease;
 }
 
+/* Optimized hover effects using GPU-accelerated properties */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-out;
+}
+
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-out;
+}
+
+/* Optimized shadow transitions - only on hover, not during scroll */
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease-out;
+}
+
+.hover\:shadow-xl:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease-out;
+}
+
 /* Card hover effects */
 .card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;

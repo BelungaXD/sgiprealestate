@@ -6,7 +6,6 @@
     "subtitle": "أكثر من عقد من التميز في استثمارات العقارات الفاخرة في الإمارات",
     "yearsExperience": "سنوات الخبرة",
     "propertiesSold": "العقارات المباعة",
-    "developers": "شركات التطوير الشريكة",
     "clientSatisfaction": "رضا العملاء"
   },
   "story": {
@@ -15,88 +14,56 @@
     "paragraph2": "تميزت رحلتنا بالالتزام الثابت بالتميز والنزاهة ورضا العملاء. نؤمن أن كل معاملة عقارية هي أكثر من مجرد صفقة تجارية - إنها مساعدة عملائنا في تحقيق أحلامهم وبناء ثروة دائمة من خلال استثمارات عقارية استراتيجية.",
     "paragraph3": "اليوم، مع أكثر من 500 معاملة ناجحة ومعدل رضا العملاء 98%، نواصل وضع معايير جديدة في الصناعة مع الحفاظ على اللمسة الشخصية التي عرفتنا من البداية."
   },
-  "values": {
-    "title": "قيمنا",
-    "subtitle": "المبادئ التي توجه كل ما نقوم به",
-    "integrity": {
-      "title": "النزاهة",
-      "description": "نمارس الأعمال بأعلى المعايير الأخلاقية، وضمان الشفافية والصدق في جميع معاملاتنا."
-    },
-    "innovation": {
-      "title": "الابتكار",
-      "description": "نتبنى أحدث التقنيات والنهج المبتكرة لتوفير خدمة ورؤى سوقية متفوقة."
-    },
-    "clientFocus": {
-      "title": "التركيز على العملاء",
-      "description": "نجاح عملائنا هو نجاحنا. نعطي الأولوية لاحتياجاتهم ونعمل بلا كلل لتجاوز توقعاتهم."
-    },
-    "excellence": {
-      "title": "التميز",
-      "description": "نسعى للتميز في كل جانب من جوانب خدمتنا، من الاستشارة الأولية إلى إتمام المعاملة النهائية."
-    },
-    "reliability": {
-      "title": "الموثوقية",
-      "description": "يمكن لعملائنا الاعتماد علينا لتقديم خدمة ودعم متسقين وموثوقين طوال رحلتهم."
-    },
-    "results": {
-      "title": "النتائج",
-      "description": "نركز على تقديم نتائج قابلة للقياس وقيمة طويلة الأجل لاستثمارات عملائنا العقارية."
-    }
-  },
   "team": {
     "title": "تعرف على فريقنا",
     "subtitle": "محترفون ذوو خبرة مكرسون لنجاحك",
-    "experience": "الخبرة",
-    "years": "سنوات",
-    "languages": "اللغات",
-    "specialties": "التخصصات",
     "members": [
       {
         "name": "رستم أومورزاكوف",
         "position": "المؤسس والرئيس التنفيذي للشركة",
-        "image": "/api/uploads/team/Rustam Umurzakov.webp",
+        "image": "/uploads/team/Rustam Umurzakov.webp",
         "description": "الكفاءات الرئيسية: معاملات العقارات في دبي-موسكو-زيورخ، استراتيجيات الاستثمار. نجاح مع خبرة عالية في الإمارات منذ عام 2008."
       },
       {
         "name": "كسينيا جريشينا",
         "position": "رئيسة أبحاث السوق والتطوير",
-        "image": "/api/uploads/team/Kseniya Grishina.webp",
+        "image": "/uploads/team/Kseniya Grishina.webp",
         "description": "إدارة الأنشطة التجارية الهادفة إلى الابتكار لتحسين المنتجات والخدمات. مسؤولة عن إجراء البحوث في مختلف أقسام الشركة، وتحديد جدواها من حيث الاستثمار."
       },
       {
         "name": "حسين الأحمر",
         "position": "مستشار عقاري أول",
-        "image": "/api/uploads/team/Hussein El Reda.webp",
+        "image": "/uploads/team/Hussein El Reda.webp",
         "description": "يتحدث العربية والإنجليزية، يقود الفريق في مناطق مثل: وسط المدينة، خليج الأعمال"
       },
       {
         "name": "رامينا سيميتوفا",
         "position": "مديرة الموارد البشرية",
-        "image": "/api/uploads/team/Ramina Semetova.webp",
+        "image": "/uploads/team/Ramina Semetova.webp",
         "description": "مسؤولة عن الاتفاقيات/العقود الفردية، تنظيم والمشاركة في المقابلات، معالجة جميع الأعمال الورقية لكل عضو في الفريق."
       },
       {
         "name": "روشانا داميني",
         "position": "مستشار عقاري",
-        "image": "/api/uploads/team/Rushana Damini.webp",
+        "image": "/uploads/team/Rushana Damini.webp",
         "description": "خبيرة في الاستشارات العقارية مع التركيز على رضا العملاء والخبرة السوقية"
       },
       {
         "name": "فيشال دهناك",
         "position": "مستشار عقاري",
-        "image": "/api/uploads/team/Vishal Dhanak.webp",
+        "image": "/uploads/team/Vishal Dhanak.webp",
         "description": "متخصص في استشارات الاستثمار العقاري وتحليل السوق"
       },
       {
         "name": "يانينا ديدينسكايا",
         "position": "مستشار مبيعات أول",
-        "image": "/api/uploads/team/Yanina Dydynskaya.webp",
+        "image": "/uploads/team/Yanina Dydynskaya.webp",
         "description": "قائدة موجهة نحو النتائج وذات دافع ذاتي، تحقق الأهداف وتحفز الآخرين من خلال مهارات التواصل القوية والقيادة الفريقية"
       },
       {
         "name": "آنا كروتوفا",
         "position": "أخصائية عقارية",
-        "image": "/api/uploads/team/Anna Krotova.webp",
+        "image": "/uploads/team/Anna Krotova.webp",
         "description": "متخصصة في المناطق: نخلة جميرا ومارينا دبي"
       }
     ]

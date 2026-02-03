@@ -71,8 +71,8 @@ export default function CompanyValues() {
         {values.map((value, index) => {
           const IconComponent = value.icon
           return (
-            <div key={index} className="text-center group hover:scale-105 transition-transform duration-300">
-              <div className={`w-16 h-16 ${value.bgColor} rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+            <div key={index} className="text-center group will-change-transform">
+              <div className={`w-16 h-16 ${value.bgColor} rounded-full flex items-center justify-center mx-auto mb-6 will-change-transform`}>
                 <IconComponent className={`h-8 w-8 ${value.color}`} />
               </div>
               <h3 className="text-xl font-semibold text-graphite mb-4">

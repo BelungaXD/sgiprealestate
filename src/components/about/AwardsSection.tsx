@@ -76,9 +76,9 @@ export default function AwardsSection() {
         {awards.map((award, index) => {
           const IconComponent = award.icon
           return (
-            <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 group">
+            <div key={index} className="bg-white rounded-lg shadow-lg p-6 group will-change-transform">
               <div className="flex items-start space-x-4">
-                <div className={`w-12 h-12 ${award.bgColor} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-12 h-12 ${award.bgColor} rounded-lg flex items-center justify-center flex-shrink-0 will-change-transform`}>
                   <IconComponent className={`h-6 w-6 ${award.color}`} />
                 </div>
                 <div className="flex-1">

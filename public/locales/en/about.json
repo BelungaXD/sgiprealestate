@@ -11,7 +11,7 @@
   },
   "story": {
     "title": "Our Story",
-    "paragraph1": "Founded in 2014, SGIP Real Estate began as a vision to bridge the gap between international investors and premium real estate opportunities. What started as a small team with big dreams has grown into one of the most trusted names in luxury real estate across three continents.",
+    "paragraph1": "Founded in 2008, SGIP Real Estate began as a vision to bridge the gap between international investors and premium real estate opportunities. What started as a small team with big dreams has grown into one of the most trusted names in luxury real estate across three continents.",
     "paragraph2": "Our journey has been marked by unwavering commitment to excellence, integrity, and client satisfaction. We believe that every property transaction is more than just a business deal – it's about helping our clients achieve their dreams and build lasting wealth through strategic real estate investments.",
     "paragraph3": "Today, with over 500 successful transactions and a 98% client satisfaction rate, we continue to set new standards in the industry while maintaining the personal touch that has defined us from the beginning."
   },
@@ -104,7 +104,7 @@
   "history": {
     "title": "Our Journey",
     "subtitle": "Key milestones in our company's growth and success",
-    "2014": {
+    "2008": {
       "title": "Company Founded",
       "description": "SGIP Real Estate was established with a vision to revolutionize luxury real estate services.",
       "achievement1": "Launched with 3 team members",

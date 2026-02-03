@@ -6,13 +6,13 @@ export default function CompanyHistory() {
 
   const milestones = [
     {
-      year: '2014',
-      title: t('history.2014.title'),
-      description: t('history.2014.description'),
+      year: '2008',
+      title: t('history.2008.title'),
+      description: t('history.2008.description'),
       achievements: [
-        t('history.2014.achievement1'),
-        t('history.2014.achievement2'),
-        t('history.2014.achievement3')
+        t('history.2008.achievement1'),
+        t('history.2008.achievement2'),
+        t('history.2008.achievement3')
       ]
     },
     {
@@ -87,7 +87,7 @@ export default function CompanyHistory() {
             <div key={milestone.year} className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
               {/* Content */}
               <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                <div className="bg-white rounded-lg shadow-lg p-6">
                   <div className="text-2xl font-bold text-champagne mb-2">
                     {milestone.year}
                   </div>

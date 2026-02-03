@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -5,9 +6,33 @@ import Head from 'next/head'
 import Layout from '@/components/layout/Layout'
 import ServiceCard from '@/components/services/ServiceCard'
 import ServiceBenefits from '@/components/services/ServiceBenefits'
+import AnimatedNumber from '@/components/ui/AnimatedNumber'
 
 export default function Services() {
   const { t } = useTranslation('services')
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    const element = document.getElementById('services-stats')
+    if (element) {
+      observer.observe(element)
+    }
+
+    return () => {
+      if (element) {
+        observer.unobserve(element)
+      }
+    }
+  }, [])
 
   const services = [
     {
@@ -180,17 +205,35 @@ export default function Services() {
                 <p className="text-xl text-gray-200 mb-8">
                   {t('hero.subtitle')}
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div id="services-stats" className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">4</div>
+                    <div className="text-2xl font-bold text-champagne mb-2">
+                      {isVisible ? (
+                        <AnimatedNumber value={4} duration={2000} />
+                      ) : (
+                        <span>0</span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-200">{t('hero.services')}</div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">15+</div>
+                    <div className="text-2xl font-bold text-champagne mb-2">
+                      {isVisible ? (
+                        <AnimatedNumber value={15} suffix="+" duration={2000} />
+                      ) : (
+                        <span>0+</span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-200">{t('hero.yearsExperience')}</div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">500+</div>
+                    <div className="text-2xl font-bold text-champagne mb-2">
+                      {isVisible ? (
+                        <AnimatedNumber value={500} suffix="+" duration={2000} />
+                      ) : (
+                        <span>0+</span>
+                      )}
+                    </div>
                     <div className="text-sm text-gray-200">{t('hero.successfulTransactions')}</div>
                   </div>
                 </div>

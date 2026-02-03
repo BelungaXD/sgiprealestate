@@ -20,8 +20,8 @@ export default function Header() {
         { name: t('nav.areas'), href: '/areas' },
         { name: t('nav.developers'), href: '/developers' },
         { name: t('nav.services'), href: '/services' },
+        { name: t('nav.aboutUs'), href: '/about-us' },
         { name: t('nav.contact'), href: '/contact' },
-        { name: t('nav.about'), href: '/about' },
       ]
     : [
         { name: t('nav.home'), href: '/' },
@@ -29,7 +29,7 @@ export default function Header() {
         { name: t('nav.areas'), href: '/areas' },
         { name: t('nav.developers'), href: '/developers' },
         { name: t('nav.services'), href: '/services' },
-        { name: t('nav.about'), href: '/about' },
+        { name: t('nav.aboutUs'), href: '/about-us' },
         { name: t('nav.contact'), href: '/contact' },
       ]
 
