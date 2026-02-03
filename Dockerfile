@@ -48,9 +48,13 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules/sharp ./node_modules/sharp
 COPY --from=builder /app/node_modules/@img ./node_modules/@img
 COPY --from=builder /app/prisma ./prisma
+
+# Reinstall sharp for runner platform (fixes linux-x64 load when builder/runner differ)
+RUN npm install --omit=dev sharp
 
 # Set correct permissions
 RUN chown -R nextjs:nodejs /app
