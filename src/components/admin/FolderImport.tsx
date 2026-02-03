@@ -49,7 +49,21 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ folderPath: path }),
       })
-      const data = await response.json()
+      const contentType = response.headers.get('content-type')
+      let data: { results?: { success?: string[]; errors?: string[] }; total?: number; successful?: number; failed?: number; error?: string; message?: string } = {}
+      try {
+        const text = await response.text()
+        if (text && contentType?.includes('application/json')) {
+          data = JSON.parse(text) as typeof data
+        } else if (!response.ok && text) {
+          throw new Error(text.slice(0, 200) || `Server error: ${response.status}`)
+        }
+      } catch (parseError: unknown) {
+        if (parseError instanceof SyntaxError) {
+          throw new Error(`Server returned invalid response (${response.status}). Import may have timed out or failed.`)
+        }
+        throw parseError
+      }
 
       if (!response.ok) {
         throw new Error(data.error || data.message || `Server error: ${response.status}`)
@@ -58,11 +72,11 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       setImportResults({
         success: data.results?.success || [],
         errors: data.results?.errors || [],
-        total: data.total || 0,
-        successful: data.successful || 0,
-        failed: data.failed || 0,
+        total: data.total ?? 0,
+        successful: data.successful ?? 0,
+        failed: data.failed ?? 0,
       })
-      if (data.successful > 0) {
+      if ((data.successful ?? 0) > 0) {
         onImportComplete()
       }
     } catch (error: any) {

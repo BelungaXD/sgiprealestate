@@ -14,6 +14,7 @@ export const config = {
     bodyParser: {
       sizeLimit: '800mb',
     },
+    maxDuration: 300, // 5 min for large imports
   },
 }
 
