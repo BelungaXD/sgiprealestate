@@ -6,15 +6,21 @@
 export function normalizeImageUrl(url: string | null | undefined): string {
   if (!url) return ''
   
-  // If already using API endpoint, return as is
+  // If already using API endpoint, encode it properly
   if (url.startsWith('/api/uploads/')) {
-    return url
+    // Split path and encode each segment to handle spaces and special characters
+    const pathParts = url.replace('/api/uploads/', '').split('/')
+    const encodedParts = pathParts.map(part => encodeURIComponent(part))
+    return `/api/uploads/${encodedParts.join('/')}`
   }
   
-  // If using direct uploads path, convert to API endpoint
+  // If using direct uploads path, convert to API endpoint and encode
   // This is required for standalone mode in production
   if (url.startsWith('/uploads/')) {
-    return `/api${url}`
+    // Split path and encode each segment to handle spaces and special characters
+    const pathParts = url.replace('/uploads/', '').split('/')
+    const encodedParts = pathParts.map(part => encodeURIComponent(part))
+    return `/api/uploads/${encodedParts.join('/')}`
   }
   
   // If it's an external URL, return as is

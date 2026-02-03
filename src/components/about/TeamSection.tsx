@@ -18,6 +18,10 @@ interface TeamMemberCardProps {
 }
 
 function TeamMemberCard({ member, index }: TeamMemberCardProps) {
+  if (!member || !member.image) {
+    return null
+  }
+
   const imageUrl = normalizeImageUrl(member.image)
   
   // First 3 images load with priority, rest use native lazy loading
@@ -26,7 +30,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   return (
     <>
       {/* Preload critical images for instant display */}
-      {isPriority && (
+      {isPriority && imageUrl && (
         <Head>
           <link
             rel="preload"
@@ -38,20 +42,26 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
       )}
       <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
         <div className="relative w-full h-[400px] bg-gray-200 overflow-hidden flex-shrink-0">
-          <Image
-            src={imageUrl}
-            alt={member.name}
-            width={400}
-            height={533}
-            className="object-cover object-top w-full h-full"
-            loading={isPriority ? "eager" : "lazy"}
-            priority={isPriority}
-            quality={95}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-            placeholder="blur"
-            blurDataURL={blurDataURL}
-            fetchPriority={isPriority ? "high" : "auto"}
-          />
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={member.name || 'Team member'}
+              width={400}
+              height={533}
+              className="object-cover object-top w-full h-full"
+              loading={isPriority ? "eager" : "lazy"}
+              priority={isPriority}
+              quality={95}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+              placeholder="blur"
+              blurDataURL={blurDataURL}
+              fetchPriority={isPriority ? "high" : "auto"}
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400">No image</span>
+            </div>
+          )}
         </div>
       <div className="p-6 flex flex-col flex-grow">
         <h3 className="text-2xl font-bold text-graphite mb-2">
@@ -77,13 +87,20 @@ export default function TeamSection() {
   // Memoize team members to avoid recalculation on every render
   const teamMembers = useMemo(() => {
     try {
-      // Get team object from translations
+      // Try to get members array directly
+      const members = t('team.members', { returnObjects: true }) as any
+      
+      // If members is an array, return it
+      if (Array.isArray(members)) {
+        return members
+      }
+      
+      // Fallback: try to get team object and extract members
       const teamObject = t('team', { returnObjects: true }) as any
-
-      // Extract members array from team object
       if (teamObject && typeof teamObject === 'object' && 'members' in teamObject) {
         return Array.isArray(teamObject.members) ? teamObject.members : []
       }
+      
       return []
     } catch (error) {
       console.error('Error loading team data:', error)
@@ -107,17 +124,13 @@ export default function TeamSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {teamMembers.map((member, index) => (
               <TeamMemberCard
-                key={member.name}
+                key={member.name || index}
                 member={member}
                 index={index}
               />
             ))}
           </div>
-        ) : (
-          <div className="col-span-full text-center text-gray-500 py-8">
-            {t('team.subtitle')}
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   )
