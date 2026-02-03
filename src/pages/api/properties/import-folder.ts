@@ -397,7 +397,8 @@ export default async function handler(
   }
 
   try {
-    const { folderPath } = req.body
+    const body = req.body as { folderPath?: string } | undefined
+    const folderPath = body?.folderPath
 
     if (!folderPath || typeof folderPath !== 'string') {
       return res.status(400).json({ message: 'Folder path is required' })

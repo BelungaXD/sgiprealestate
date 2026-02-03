@@ -53,10 +53,14 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       let data: { results?: { success?: string[]; errors?: string[] }; total?: number; successful?: number; failed?: number; error?: string; message?: string } = {}
       try {
         const text = await response.text()
-        if (text && contentType?.includes('application/json')) {
+        const isHtml = text && (text.trimStart().toLowerCase().startsWith('<!') || text.includes('<html'))
+        if (text && contentType?.includes('application/json') && !isHtml) {
           data = JSON.parse(text) as typeof data
-        } else if (!response.ok && text) {
-          throw new Error(text.slice(0, 200) || `Server error: ${response.status}`)
+        } else if (isHtml || (!response.ok && text)) {
+          const msg = isHtml
+            ? `Server error ${response.status}: Import may have timed out or the API returned an error page. Check container logs: docker logs sgiprealestate-service-green`
+            : text.slice(0, 200)
+          throw new Error(msg)
         }
       } catch (parseError: unknown) {
         if (parseError instanceof SyntaxError) {
