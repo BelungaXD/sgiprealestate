@@ -34,6 +34,11 @@ See [LARGE_FILE_UPLOAD_TROUBLESHOOTING.md](./LARGE_FILE_UPLOAD_TROUBLESHOOTING.m
 
 ---
 
+## File Locations on sgipreal (prod)
+
+- **Host path**: `/home/belunga/uploads/` (property folders go here)
+- **In container** (after redeploy with volume): `/uploads/`
+
 ## Alternative: Import from Server Path (No Browser Upload)
 
 An API exists for importing from disk when files are already on the server: **`/api/properties/import-folder`**.
@@ -42,30 +47,30 @@ An API exists for importing from disk when files are already on the server: **`/
 
 1. **Upload files to server once** (scp, rsync, SFTP):
    ```bash
-   # Example: copy from your Mac to prod
-   scp -r "/Users/you/Downloads/Telegram Lite/Creek Vistas Reserve" sgipreal:~/imports/
+   # Example: copy property folders to prod
+   scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
    ```
 
 2. **Organise folder structure** on server. Two options:
 
    **Option A – single property folder** (path points to folder with files):
    ```bash
-   scp -r "Creek Vistas Reserve" sgipreal:~/imports/
+   scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
    ```
-   Then use path: `/home/belunga/imports/Creek Vistas Reserve`
+   Then use path: `/uploads/Creek Vistas Reserve`
 
    **Option B – multiple properties** (path points to parent with subfolders):
    ```text
-   ~/imports/
+   ~/uploads/
    ├── Downtown - Creek Vistas Reserve/
    │   ├── image1.jpg
    │   └── ...
    └── Beachfront - Another Property/
        └── ...
    ```
-   Then use path: `/home/belunga/imports`
+   Then use path: `/uploads`
 
-3. **Run import** in admin via "Import from server path" and enter the server path.
+3. **Run import** in admin via "Import from server path" and enter the server path (container path, e.g. `/uploads` or `/uploads/PropertyName`).
 
 ### Benefits
 

@@ -36,7 +36,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const handleImportFromServerPath = async () => {
     const path = serverPath.trim()
     if (!path) {
-      alert('Enter server path to folder containing property subfolders (e.g. /home/user/imports)')
+      alert('Enter server path to folder containing property subfolders (e.g. /uploads or /uploads/PropertyName)')
       return
     }
     if (isImportingFromPath) return
@@ -323,7 +323,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
               type="text"
               value={serverPath}
               onChange={(e) => setServerPath(e.target.value)}
-              placeholder="/home/user/imports or /home/user/imports/Creek Vistas Reserve"
+              placeholder="/uploads or /uploads/Creek Vistas Reserve"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
               disabled={isImporting || isImportingFromPath}
             />

@@ -16,6 +16,9 @@ services:
       - PORT=${PORT}
       - DATABASE_URL=${DATABASE_URL}
       - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+    volumes:
+      # Import from server path: host ~/uploads -> /uploads in container
+      - ~/uploads:/uploads:ro
     networks:
       - nginx-network
     deploy:
