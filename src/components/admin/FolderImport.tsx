@@ -30,7 +30,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isProcessingRef = useRef(false)
-  const [serverPath, setServerPath] = useState('')
+  const [serverPath, setServerPath] = useState('/uploads')
   const [isImportingFromPath, setIsImportingFromPath] = useState(false)
 
   const handleImportFromServerPath = async () => {
