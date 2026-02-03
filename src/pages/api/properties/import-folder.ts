@@ -320,8 +320,8 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   if (!area) {
     area = await prisma.area.create({
       data: {
-        name: district,
-        nameEn: district,
+        name: safeDistrict,
+        nameEn: safeDistrict,
         city: 'Dubai',
         slug: districtSlug,
       },
@@ -332,9 +332,7 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   const property = await prisma.property.create({
     data: {
       title: safePropertyName,
-      titleEn: safePropertyName,
       description,
-      descriptionEn: description,
       price: 1000000,
       currency: 'AED',
       type: 'Apartment',
