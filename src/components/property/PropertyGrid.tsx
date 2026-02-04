@@ -4,6 +4,7 @@ import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, Calend
 
 interface Property {
   id: string
+  slug?: string
   title: string
   description: string
   price: number
@@ -77,7 +78,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <div className="flex space-x-2">
                 <Link
-                  href={`/properties/${property.id}`}
+                  href={`/properties/${property.slug || property.id}`}
                   className="bg-white text-graphite px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
                 >
                   {t('viewDetails')}
@@ -137,7 +138,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
             {/* Action Buttons */}
             <div className="flex space-x-2">
               <Link
-                href={`/properties/${property.id}`}
+                href={`/properties/${property.slug || property.id}`}
                 className="flex-1 btn-primary text-center text-sm py-2"
               >
                 {t('viewDetails')}

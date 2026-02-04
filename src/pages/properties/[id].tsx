@@ -24,6 +24,7 @@ import {
 
 interface Property {
   id: string
+  slug: string
   title: string
   description: string
   price: number
@@ -132,10 +133,12 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
       <Head>
         <title>{property.title} | SGIP Real Estate</title>
         <meta name="description" content={property.description} />
+        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/properties/${property.slug}`} />
         <meta property="og:title" content={property.title} />
         <meta property="og:description" content={property.description} />
         <meta property="og:image" content={property.images[0]} />
         <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/properties/${property.slug}`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -145,7 +148,7 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
               "name": property.title,
               "description": property.description,
               "image": property.images,
-              "url": `/properties/${property.id}`,
+              "url": `/properties/${property.slug}`,
               "offers": {
                 "@type": "Offer",
                 "price": property.price,
@@ -378,8 +381,19 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
 
     // Transform API data to match Property interface
     // Normalize upload URLs for standalone mode (/api/uploads/...)
+    // Redirect to canonical slug URL when user visits with CUID (SEO, human-readable URLs)
+    if (params?.id === apiProperty.id) {
+      return {
+        redirect: {
+          destination: `/properties/${apiProperty.slug}`,
+          permanent: true,
+        },
+      }
+    }
+
     const property: Property = {
       id: apiProperty.id,
+      slug: apiProperty.slug,
       title: apiProperty.title,
       description: apiProperty.description || '',
       price: apiProperty.price,

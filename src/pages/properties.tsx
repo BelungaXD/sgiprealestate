@@ -19,6 +19,7 @@ const PropertyGrid = dynamic(() => import('@/components/property/PropertyGrid'),
 
 interface Property {
   id: string
+  slug: string
   title: string
   description: string
   price: number
@@ -93,6 +94,7 @@ export default function Properties() {
           .filter((p: any) => p.isPublished) // Only show published properties
           .map((p: any) => ({
             id: p.id,
+            slug: p.slug || p.id,
             title: p.title,
             description: p.description || '',
             price: p.price,
@@ -227,7 +229,7 @@ export default function Properties() {
                   "position": index + 1,
                   "name": property.title,
                   "description": property.description,
-                  "url": `/properties/${property.id}`,
+                  "url": `/properties/${property.slug}`,
                   "image": property.image,
                   "offers": {
                   "@type": "Offer",

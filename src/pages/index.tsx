@@ -117,6 +117,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
       featuredProperties = properties.map((p: any) => ({
         id: p.id,
+        slug: p.slug,
         title: p.title,
         description: p.description || '',
         price: p.price,

@@ -14,7 +14,7 @@ This document enumerates requirements from the provided Technical Specification 
 
 - Home: ✅ Exists (`src/pages/index.tsx`) with sections in `src/components/sections/`. UAE-only copy fixed.
 - Properties (catalog): ⏳ Exists (`src/pages/properties.tsx`) with sample data. Needs real filters and data from DB.
-- Property detail: ⏳ Exists (`src/pages/properties/[id].tsx`) and components under `src/components/property/`. Needs SEO schema and lead forms per spec.
+- Property detail: ⏳ Exists (`src/pages/properties/[id].tsx`) and components under `src/components/property/`. SEO-friendly slug URLs implemented (301 from CUID to slug). Needs lead forms per spec.
 - Areas: ✅ Dynamic route exists (`src/pages/areas/[slug].tsx`), content components present.
 - Developers: ✅ Page exists (`src/pages/developers.tsx`), enrich content and logos.
 - Partners: ❌ Page missing. Component `src/components/sections/Partners.tsx` exists; create dedicated page and CMS fields.

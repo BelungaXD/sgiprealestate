@@ -56,6 +56,7 @@
 - ✅ Настройка GA4 и Яндекс.Метрики через GTM
 - ✅ Sitemap.xml и robots.txt
 - ✅ Schema Markup (Organization, ItemList, RealEstateListing)
+- ✅ Человекопонятные URL карточек объектов: `/properties/mirage-the-oasis-dubai` вместо `/properties/cml8gytat000huyo10zir39wz`; старые ссылки по CUID редиректятся 301 на slug
 
 ### 6. Производительность
 

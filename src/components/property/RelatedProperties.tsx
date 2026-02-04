@@ -4,6 +4,7 @@ import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from 
 
 interface Property {
   id: string
+  slug?: string
   title: string
   price: number
   currency: string
@@ -98,7 +99,7 @@ export default function RelatedProperties({ currentPropertyId, district, type }:
               </div>
               
               <Link
-                href={`/properties/${property.id}`}
+                href={`/properties/${property.slug || property.id}`}
                 className="btn-primary w-full text-center text-sm py-2"
               >
                 {t('viewDetails')}

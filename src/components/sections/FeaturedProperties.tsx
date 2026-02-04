@@ -110,7 +110,7 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
                 </div>
                 
                 <Link
-                  href={`/properties/${property.id}`}
+                  href={`/properties/${property.slug || property.id}`}
                   className="btn-primary w-full text-center inline-block"
                 >
                   {t('featured.viewDetails')}

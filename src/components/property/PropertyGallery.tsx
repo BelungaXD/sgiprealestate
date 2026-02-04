@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface PropertyGalleryProps {
@@ -49,9 +49,19 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
     setIsLightboxOpen(true)
   }
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setIsLightboxOpen(false)
-  }
+  }, [])
+
+  // Close lightbox on Escape
+  useEffect(() => {
+    if (!isLightboxOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [isLightboxOpen, closeLightbox])
 
   const isVideo = (url: string) => {
     return url.includes('/videos/') || 
@@ -77,6 +87,24 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
   const currentMedia = images[currentIndex] || ''
   const isCurrentVideo = isVideo(currentMedia)
   const mainDisplayUrl = resolveUrl(currentMedia)
+  // Main hero: use small thumbnail for fast load; lightbox uses full URL (preloaded in background)
+  const mainHeroSrc =
+    mainDisplayUrl && !isVideo(currentMedia)
+      ? getThumbnailUrl(mainDisplayUrl)
+      : mainDisplayUrl
+
+  // After page load, preload full-size images in background so lightbox opens fast
+  useEffect(() => {
+    const imageUrls = images.filter((url) => !isVideo(url))
+    if (imageUrls.length === 0) return
+    const timer = window.setTimeout(() => {
+      imageUrls.forEach((url) => {
+        const img = new Image()
+        img.src = url
+      })
+    }, 1000)
+    return () => window.clearTimeout(timer)
+  }, [images])
 
   return (
     <>
@@ -94,11 +122,18 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
             />
           ) : mainDisplayUrl ? (
             <img
-              src={mainDisplayUrl}
+              src={mainHeroSrc ?? mainDisplayUrl}
               alt={`Property image ${currentIndex + 1}`}
               className="max-w-full max-h-full object-contain cursor-pointer"
               onClick={() => openLightbox(currentIndex)}
-              onError={() => handleImageError(currentMedia)}
+              onError={(e) => {
+                const t = e.target as HTMLImageElement
+                if (t.src !== mainDisplayUrl && mainHeroSrc !== mainDisplayUrl) {
+                  t.src = mainDisplayUrl
+                } else {
+                  handleImageError(currentMedia)
+                }
+              }}
             />
           ) : (
             <div className="flex flex-col items-center justify-center text-gray-400 gap-2 p-8">
@@ -200,23 +235,33 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
         )}
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Lightbox Modal - stopPropagation on content so click on image/container does not close */}
       {isLightboxOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center"
           onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image gallery"
         >
-          <div className="relative w-full h-full flex items-center justify-center px-16 md:px-24">
+          <div
+            className="relative w-full h-full flex items-center justify-center px-16 md:px-24"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Close Button - Outside image area */}
             <button
               onClick={closeLightbox}
               className="absolute top-4 right-4 z-20 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-colors"
+              aria-label="Close"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
-            
-            {/* Image/Video Container */}
-            <div className="relative max-w-7xl max-h-full flex items-center justify-center">
+
+            {/* Image/Video Container - stopPropagation so clicking image doesn't close */}
+            <div
+              className="relative max-w-7xl max-h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
               {isCurrentVideo ? (
                 <video
                   src={currentMedia}
