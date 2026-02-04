@@ -27,6 +27,7 @@ const inter = Inter({
 })
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'
+const CHUNK_RELOAD_MAX = 2
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -41,9 +42,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     // Cache-busting redirect forces a fresh document load so new HTML (with correct chunk URLs) is fetched.
     const doChunkReload = () => {
       if (typeof window === 'undefined') return
-      const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY)
-      if (!alreadyReloaded) {
-        sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+      const count = parseInt(sessionStorage.getItem(CHUNK_RELOAD_KEY) || '0', 10)
+      if (count < CHUNK_RELOAD_MAX) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, String(count + 1))
         const sep = window.location.search ? '&' : '?'
         window.location.href = window.location.pathname + window.location.search + sep + '_t=' + Date.now()
       }
@@ -66,7 +67,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
     window.addEventListener('error', handleError)
     window.addEventListener('unhandledrejection', handleRejection)
+    // Reset reload count after successful load so next navigation gets fresh attempts
+    const resetTimer = window.setTimeout(() => {
+      sessionStorage.removeItem(CHUNK_RELOAD_KEY)
+    }, 5000)
     return () => {
+      window.clearTimeout(resetTimer)
       window.removeEventListener('error', handleError)
       window.removeEventListener('unhandledrejection', handleRejection)
     }

@@ -201,14 +201,19 @@ const nextConfig = {
           },
         ],
       },
-      // HTML documents: no-cache so users get fresh chunk references after deployment (avoids "Unexpected token '<'" when chunks 404)
+      // HTML documents: no-store so CDN/browser never serve stale HTML with old chunk URLs (avoids "Unexpected token '<'" when chunk returns 404 HTML)
+      {
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+        ],
+      },
       {
         source: '/((?!_next|api|images|uploads|favicon\\.ico|manifest\\.json|robots\\.txt|sitemap\\.xml).*)',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-cache, must-revalidate',
-          },
+          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
         ],
       },
     ];

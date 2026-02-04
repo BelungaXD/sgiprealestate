@@ -75,6 +75,20 @@ Required in `.env`:
 - `PORT` - Application port
 - `NEXT_PUBLIC_SITE_URL` - Public site URL
 
+### `verify-chunks.sh`
+
+Checks that the site returns HTML for the document and (optionally) JavaScript for chunk URLs. Use after deploy when you see **SyntaxError: Unexpected token '<'** in the browser.
+
+**Usage:**
+
+```bash
+BASE_URL=https://sgipreal.com ./scripts/verify-chunks.sh
+# With a chunk path from the browser error:
+BASE_URL=https://sgipreal.com ./scripts/verify-chunks.sh '/_next/static/chunks/index-50ffc71760e52fd5.js'
+```
+
+If chunk requests return HTML or 404: purge CDN cache (Cloudflare → Purge Everything) and ensure nginx proxies all traffic to the Next.js container.
+
 ## Troubleshooting
 
 ### Database connection fails

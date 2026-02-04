@@ -63,6 +63,8 @@ If you see **SyntaxError: Unexpected token '<'** in the console or **images/thum
    - Optional: hit the uploads API:  
      `curl -sI "https://sgipreal.com/api/uploads/properties/images/1770236243007-MIRAGE_THE_OASIS_RENDER1.webp"`  
      Expect 200 and `Content-Type: image/webp` (or similar).
+4. **If using Cloudflare (or other CDN)**: After deploy, if chunk errors persist, **purge the CDN cache** (Cloudflare Dashboard → Caching → **Purge Everything**). This is the most common fix: the CDN was serving cached 404 HTML for chunk URLs. After purge, HTML and `/_next/static/*` come from the same build.
+5. **Verify from server**: `BASE_URL=https://sgipreal.com ./scripts/verify-chunks.sh` (optionally pass a chunk path from the browser error, e.g. `./scripts/verify-chunks.sh '/_next/static/chunks/index-50ffc71760e52fd5.js'`).
 
 ---
 
