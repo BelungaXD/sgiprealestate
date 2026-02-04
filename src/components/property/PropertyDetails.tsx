@@ -1,12 +1,13 @@
 import { useTranslation } from 'next-i18next'
-import { 
-  HomeIcon, 
-  WrenchScrewdriverIcon, 
+import {
+  HomeIcon,
+  WrenchScrewdriverIcon,
   Square3Stack3DIcon,
   CalendarIcon,
   MapPinIcon,
   CheckIcon
 } from '@heroicons/react/24/outline'
+import PropertyMap from './PropertyMap'
 
 interface Property {
   id: string
@@ -173,9 +174,10 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
             <MapPinIcon className="h-6 w-6 text-champagne" />
             <span className="text-lg font-medium text-graphite">{property.location}</span>
           </div>
-          <div className="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-            <span className="text-gray-500">Google Maps will be integrated here</span>
-          </div>
+          <PropertyMap
+            location={property.location}
+            coordinates={property.coordinates}
+          />
         </div>
       </div>
 

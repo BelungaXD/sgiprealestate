@@ -1,13 +1,40 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface PropertyGalleryProps {
   images: string[]
 }
 
+// Try alternate path when one form returns HTML or 404 (e.g. /api/uploads/ <-> /uploads/)
+function alternateUploadUrl(url: string): string {
+  if (url.startsWith('/api/uploads/')) return url.replace(/^\/api\/uploads/, '/uploads')
+  if (url.startsWith('/uploads/')) return url.replace(/^\/uploads/, '/api/uploads')
+  return url
+}
+
 export default function PropertyGallery({ images }: PropertyGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  // Per-URL: try alternate path once on error; then mark failed and show placeholder
+  const [urlFallback, setUrlFallback] = useState<Record<string, string>>({})
+  const [urlFailed, setUrlFailed] = useState<Set<string>>(new Set())
+
+  const resolveUrl = useCallback((url: string) => {
+    if (urlFailed.has(url)) return null
+    return urlFallback[url] || url
+  }, [urlFallback, urlFailed])
+
+  const handleImageError = useCallback((url: string) => {
+    const tried = urlFallback[url]
+    const alt = alternateUploadUrl(url)
+    if (tried) {
+      setUrlFailed((prev) => new Set(prev).add(url))
+    } else if (alt !== url) {
+      setUrlFallback((prev) => ({ ...prev, [url]: alt }))
+    } else {
+      setUrlFailed((prev) => new Set(prev).add(url))
+    }
+  }, [urlFallback])
 
   const nextImage = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
@@ -49,6 +76,7 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
 
   const currentMedia = images[currentIndex] || ''
   const isCurrentVideo = isVideo(currentMedia)
+  const mainDisplayUrl = resolveUrl(currentMedia)
 
   return (
     <>
@@ -64,13 +92,21 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
               muted
               loop
             />
-          ) : (
+          ) : mainDisplayUrl ? (
             <img
-              src={currentMedia}
-            alt={`Property image ${currentIndex + 1}`}
+              src={mainDisplayUrl}
+              alt={`Property image ${currentIndex + 1}`}
               className="max-w-full max-h-full object-contain cursor-pointer"
-            onClick={() => openLightbox(currentIndex)}
-          />
+              onClick={() => openLightbox(currentIndex)}
+              onError={() => handleImageError(currentMedia)}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center text-gray-400 gap-2 p-8">
+              <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span className="text-sm">Image unavailable</span>
+            </div>
           )}
           
           {/* Navigation Arrows */}
@@ -123,21 +159,33 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
                       muted
                       preload="metadata"
                     />
-                  ) : (
-                    <img
-                      src={getThumbnailUrl(image)}
-                  alt={`Thumbnail ${index + 1}`}
-                      className="max-w-full max-h-full object-contain"
-                      loading="lazy"
-                      onError={(e) => {
-                        // Fallback to full image if thumbnail doesn't exist
-                        const target = e.target as HTMLImageElement
-                        if (target.src !== image) {
-                          target.src = image
-                        }
-                      }}
-                    />
-                  )}
+                  ) : (() => {
+                    const thumbUrl = resolveUrl(image)
+                    const thumbSrc = thumbUrl ? getThumbnailUrl(thumbUrl) : null
+                    const fullUrl = thumbUrl || image
+                    return thumbSrc ? (
+                      <img
+                        src={thumbSrc}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="max-w-full max-h-full object-contain"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement
+                          if (target.src !== fullUrl && thumbSrc !== fullUrl) {
+                            target.src = fullUrl
+                          } else {
+                            handleImageError(image)
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                        </svg>
+                      </div>
+                    )
+                  })()}
                   {isThumbVideo && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                       <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -177,13 +225,21 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
                   autoPlay
                   onClick={(e) => e.stopPropagation()}
                 />
-              ) : (
-            <img
-                  src={currentMedia}
-              alt={`Property image ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
+              ) : mainDisplayUrl ? (
+                <img
+                  src={mainDisplayUrl}
+                  alt={`Property image ${currentIndex + 1}`}
+                  className="max-w-full max-h-full object-contain"
                   onClick={(e) => e.stopPropagation()}
-            />
+                  onError={() => handleImageError(currentMedia)}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-400 gap-2 p-8">
+                  <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                  </svg>
+                  <span className="text-sm">Image unavailable</span>
+                </div>
               )}
             </div>
             

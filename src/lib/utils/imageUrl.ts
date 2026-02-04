@@ -1,39 +1,44 @@
+const baseUrl = typeof process !== 'undefined' ? (process.env.NEXT_PUBLIC_SITE_URL || '') : ''
+
 /**
  * Normalizes image URLs to use API endpoint for uploads
  * This ensures images work correctly in production standalone mode
- * In standalone mode, Next.js doesn't serve files from public/uploads directly
+ * In standalone mode, Next.js doesn't serve files from public/uploads directly.
+ * If NEXT_PUBLIC_SITE_URL is set, returns absolute URL so images load when relative paths fail (e.g. proxy).
  */
 export function normalizeImageUrl(url: string | null | undefined): string {
   if (!url) return ''
-  
+
   // If already using API endpoint, encode it properly
   if (url.startsWith('/api/uploads/')) {
-    // Split path and encode each segment to handle spaces and special characters
     const pathParts = url.replace('/api/uploads/', '').split('/')
     const encodedParts = pathParts.map(part => encodeURIComponent(part))
-    return `/api/uploads/${encodedParts.join('/')}`
+    const path = `/api/uploads/${encodedParts.join('/')}`
+    return baseUrl ? baseUrl.replace(/\/$/, '') + path : path
   }
-  
+
   // If using direct uploads path, convert to API endpoint and encode
-  // This is required for standalone mode in production
   if (url.startsWith('/uploads/')) {
-    // Split path and encode each segment to handle spaces and special characters
     const pathParts = url.replace('/uploads/', '').split('/')
     const encodedParts = pathParts.map(part => encodeURIComponent(part))
-    return `/api/uploads/${encodedParts.join('/')}`
+    const path = `/api/uploads/${encodedParts.join('/')}`
+    return baseUrl ? baseUrl.replace(/\/$/, '') + path : path
   }
-  
+
   // If it's an external URL, return as is
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
   }
-  
+
   // If it's a data URL, return as is
   if (url.startsWith('data:')) {
     return url
   }
-  
-  // Default: return as is
+
+  // Default: return as is (with optional base for relative paths)
+  if (baseUrl && url.startsWith('/')) {
+    return baseUrl.replace(/\/$/, '') + url
+  }
   return url
 }
 

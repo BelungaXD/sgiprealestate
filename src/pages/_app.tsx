@@ -39,23 +39,37 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Recover from "Unexpected token '<'" - happens when chunk request returns HTML (404) instead of JS.
     // Cache-busting redirect forces a fresh document load so new HTML (with correct chunk URLs) is fetched.
+    const doChunkReload = () => {
+      if (typeof window === 'undefined') return
+      const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY)
+      if (!alreadyReloaded) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+        const sep = window.location.search ? '&' : '?'
+        window.location.href = window.location.pathname + window.location.search + sep + '_t=' + Date.now()
+      }
+    }
     const handleError = (e: ErrorEvent) => {
       const msg = e.message || ''
       const isChunkError =
         msg.includes("Unexpected token '<'") ||
         msg.includes('ChunkLoadError') ||
         msg.includes('Loading chunk')
-      if (isChunkError && typeof window !== 'undefined') {
-        const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY)
-        if (!alreadyReloaded) {
-          sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
-          const sep = window.location.search ? '&' : '?'
-          window.location.href = window.location.pathname + window.location.search + sep + '_t=' + Date.now()
-        }
-      }
+      if (isChunkError) doChunkReload()
+    }
+    const handleRejection = (e: PromiseRejectionEvent) => {
+      const msg = (e.reason?.message || String(e.reason)) || ''
+      const isChunkError =
+        msg.includes("Unexpected token '<'") ||
+        msg.includes('ChunkLoadError') ||
+        msg.includes('Loading chunk')
+      if (isChunkError) doChunkReload()
     }
     window.addEventListener('error', handleError)
-    return () => window.removeEventListener('error', handleError)
+    window.addEventListener('unhandledrejection', handleRejection)
+    return () => {
+      window.removeEventListener('error', handleError)
+      window.removeEventListener('unhandledrejection', handleRejection)
+    }
   }, [])
 
   return (

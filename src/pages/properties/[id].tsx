@@ -389,7 +389,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       bedrooms: apiProperty.bedrooms,
       bathrooms: apiProperty.bathrooms,
       parking: apiProperty.parking || 0,
-      location: `${apiProperty.city}, ${apiProperty.district}`,
+      location: apiProperty.address
+        ? `${apiProperty.address}, ${apiProperty.city}`
+        : `${apiProperty.city}, ${apiProperty.district}`,
       district: apiProperty.district,
       images: apiProperty.images?.map((img: any) => normalizeUploadUrl(img.url)) || [],
       floorPlans: apiProperty.floorPlans?.map((fp: any) => ({
