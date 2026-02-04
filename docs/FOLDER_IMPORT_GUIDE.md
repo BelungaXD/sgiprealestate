@@ -38,7 +38,7 @@ See [LARGE_FILE_UPLOAD_TROUBLESHOOTING.md](./LARGE_FILE_UPLOAD_TROUBLESHOOTING.m
 
 - **Host path**: `/home/belunga/uploads/` (property folders go here)
 - **In container** (after redeploy with volume): `/uploads/`
-- **Persistent storage**: `sgiprealestate-uploads` Docker volume at `/app/public/uploads/properties` – imported images/videos/files survive container restarts
+- **Persistent storage**: `public/uploads/` folder inside the repo – imported property images/videos/files stored here
 
 ## Alternative: Import from Server Path (No Browser Upload)
 

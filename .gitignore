@@ -66,6 +66,7 @@ temp/
 public/uploads/properties/
 public/uploads/videos/
 public/uploads/files/
+public/uploads/
 
 # Large media files in uploads (prevent future commits of large files)
 public/uploads/**/*.mp4
