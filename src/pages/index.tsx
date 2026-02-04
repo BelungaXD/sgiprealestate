@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
@@ -88,10 +88,10 @@ export default function Home({ featuredProperties }: HomeProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   let featuredProperties: any[] = []
 
-  // Fetch featured properties from database if available
+  // Fetch featured properties at request time (getStaticProps runs at build when DB may be unavailable)
   if (process.env.DATABASE_URL) {
     try {
       const properties = await prisma.property.findMany({
@@ -139,6 +139,5 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       featuredProperties,
       ...(await serverSideTranslations(locale ?? 'en', ['common', 'home'])),
     },
-    revalidate: 60, // Revalidate every 60 seconds
   }
 }
