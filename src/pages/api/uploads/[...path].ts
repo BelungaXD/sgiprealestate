@@ -161,7 +161,9 @@ export default async function handler(
       if (imageCache.size >= MAX_CACHE_SIZE) {
         // Remove oldest entry
         const firstKey = imageCache.keys().next().value
-        imageCache.delete(firstKey)
+        if (firstKey) {
+          imageCache.delete(firstKey)
+        }
       }
       imageCache.set(cacheKey, {
         buffer: outputBuffer,
