@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 interface ImageData {
   full: string // Full size image (base64 or URL)
@@ -318,14 +319,13 @@ export default function ImageUpload({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {images.map((image, index) => {
             const isVideo = image.startsWith('data:video/')
-            // For preview, use thumbnail if available, otherwise use full image
-            // Images are stored as base64 strings, so we use them directly
-            // But we can optimize display by using object-cover and fixed size
+            // Normalize URL for display (ensures /api/uploads/ in standalone mode)
+            const displaySrc = image.startsWith('data:') ? image : (normalizeImageUrl(image) || image)
             return (
             <div key={index} className="relative group">
                 {isVideo ? (
                   <video
-                    src={image}
+                    src={displaySrc}
                     className="w-full h-32 object-cover rounded-lg"
                     controls={false}
                     muted
@@ -333,7 +333,7 @@ export default function ImageUpload({
                   />
                 ) : (
               <img
-                src={image}
+                src={displaySrc}
                 alt={`Upload ${index + 1}`}
                 className="w-full h-32 object-cover rounded-lg"
                     loading="lazy"

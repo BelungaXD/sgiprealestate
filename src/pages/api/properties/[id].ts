@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 
 export const config = {
   api: {
@@ -66,7 +67,20 @@ export default async function handler(
         return res.status(404).json({ message: 'Property not found' })
       }
 
-      return res.status(200).json({ property })
+      // Normalize image/file URLs for standalone mode (/api/uploads/...)
+      const normalizedProperty = {
+        ...property,
+        images: (property.images || []).map((img: any) => ({
+          ...img,
+          url: normalizeUploadUrl(img.url),
+        })),
+        files: (property.files || []).map((f: any) => ({
+          ...f,
+          url: normalizeUploadUrl(f.url),
+        })),
+      }
+
+      return res.status(200).json({ property: normalizedProperty })
     } catch (error) {
       console.error('Error fetching property:', error)
       return res.status(500).json({ message: 'Internal server error' })
@@ -275,9 +289,22 @@ export default async function handler(
         },
       })
 
+      // Normalize image/file URLs for standalone mode
+      const normalizedProperty = propertyWithImages ? {
+        ...propertyWithImages,
+        images: (propertyWithImages.images || []).map((img: any) => ({
+          ...img,
+          url: normalizeUploadUrl(img.url),
+        })),
+        files: (propertyWithImages.files || []).map((f: any) => ({
+          ...f,
+          url: normalizeUploadUrl(f.url),
+        })),
+      } : null
+
       return res.status(200).json({
         success: true,
-        property: propertyWithImages,
+        property: normalizedProperty || propertyWithImages,
       })
     } catch (error: any) {
       console.error('Error updating property:', error)

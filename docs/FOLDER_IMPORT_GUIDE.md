@@ -38,6 +38,7 @@ See [LARGE_FILE_UPLOAD_TROUBLESHOOTING.md](./LARGE_FILE_UPLOAD_TROUBLESHOOTING.m
 
 - **Host path**: `/home/belunga/uploads/` (property folders go here)
 - **In container** (after redeploy with volume): `/uploads/`
+- **Persistent storage**: `sgiprealestate-uploads` Docker volume at `/app/public/uploads/properties` – imported images/videos/files survive container restarts
 
 ## Alternative: Import from Server Path (No Browser Upload)
 
@@ -46,6 +47,7 @@ An API exists for importing from disk when files are already on the server: **`/
 ### Workflow
 
 1. **Upload files to server once** (scp, rsync, SFTP):
+
    ```bash
    # Example: copy property folders to prod
    scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
@@ -54,12 +56,15 @@ An API exists for importing from disk when files are already on the server: **`/
 2. **Organise folder structure** on server. Two options:
 
    **Option A – single property folder** (path points to folder with files):
+
    ```bash
    scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
    ```
+
    Then use path: `/uploads/Creek Vistas Reserve`
 
    **Option B – multiple properties** (path points to parent with subfolders):
+
    ```text
    ~/uploads/
    ├── Downtown - Creek Vistas Reserve/
@@ -68,6 +73,7 @@ An API exists for importing from disk when files are already on the server: **`/
    └── Beachfront - Another Property/
        └── ...
    ```
+
    Then use path: `/uploads`
 
 3. **Run import** in admin via "Import from server path" and enter the server path (container path, e.g. `/uploads` or `/uploads/PropertyName`).

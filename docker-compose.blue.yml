@@ -19,6 +19,8 @@ services:
     volumes:
       # Import from server path: host ~/uploads -> /uploads in container
       - ~/uploads:/uploads:ro
+      # Persist property uploads (images, videos, files) across restarts
+      - sgiprealestate-uploads:/app/public/uploads/properties
     networks:
       - nginx-network
     deploy:
@@ -35,6 +37,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 120s
+
+volumes:
+  sgiprealestate-uploads:
 
 networks:
   nginx-network:

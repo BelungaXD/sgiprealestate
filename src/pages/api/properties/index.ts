@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 
 export const config = {
   api: {
@@ -71,8 +72,21 @@ export default async function handler(
         prisma.property.count({ where }),
       ])
 
+      // Normalize image/file URLs for standalone mode (/api/uploads/...)
+      const normalizedProperties = properties.map((p: any) => ({
+        ...p,
+        images: (p.images || []).map((img: any) => ({
+          ...img,
+          url: normalizeUploadUrl(img.url),
+        })),
+        files: (p.files || []).map((f: any) => ({
+          ...f,
+          url: normalizeUploadUrl(f.url),
+        })),
+      }))
+
       return res.status(200).json({
-        properties,
+        properties: normalizedProperties,
         total,
         page,
         limit,

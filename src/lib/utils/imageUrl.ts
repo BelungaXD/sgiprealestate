@@ -36,3 +36,11 @@ export function normalizeImageUrl(url: string | null | undefined): string {
   // Default: return as is
   return url
 }
+
+/**
+ * Normalize upload URL for API response (images and files).
+ * Converts /uploads/... to /api/uploads/... for reliable serving in standalone mode.
+ */
+export function normalizeUploadUrl(url: string | null | undefined): string {
+  return normalizeImageUrl(url)
+}
