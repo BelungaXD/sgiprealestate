@@ -14,8 +14,10 @@ if (process.env.ANALYZE === 'true') {
   }
 }
 
-// Use full URL for static assets to avoid path resolution issues behind nginx proxy
-const assetPrefix = process.env.NEXT_PUBLIC_SITE_URL || ''
+// Use assetPrefix only when explicitly set for CDN. Do NOT use NEXT_PUBLIC_SITE_URL here:
+// if set to https://sgipreal.com, users on https://www.sgipreal.com would request
+// chunks/data from non-www → cross-origin → CORS "access control checks" failure.
+const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
 
 const nextConfig = {
   ...(assetPrefix && { assetPrefix }),
