@@ -14,7 +14,11 @@ if (process.env.ANALYZE === 'true') {
   }
 }
 
+// Use full URL for static assets to avoid path resolution issues behind nginx proxy
+const assetPrefix = process.env.NEXT_PUBLIC_SITE_URL || ''
+
 const nextConfig = {
+  ...(assetPrefix && { assetPrefix }),
   reactStrictMode: true,
   swcMinify: true,
   // Exclude test files from being treated as pages

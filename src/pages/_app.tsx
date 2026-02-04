@@ -26,12 +26,34 @@ const inter = Inter({
   fallback: ['system-ui', 'sans-serif'],
 })
 
+const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'
+
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Remove loading class from body when component mounts
     document.body.classList.remove('loading')
     // Apply font variables to html element for global access
     document.documentElement.classList.add(manrope.variable, inter.variable)
+  }, [])
+
+  useEffect(() => {
+    // Recover from "Unexpected token '<'" - happens when chunk request returns HTML (404) instead of JS
+    const handleError = (e: ErrorEvent) => {
+      const msg = e.message || ''
+      const isChunkError =
+        msg.includes("Unexpected token '<'") ||
+        msg.includes('ChunkLoadError') ||
+        msg.includes('Loading chunk')
+      if (isChunkError && typeof window !== 'undefined') {
+        const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY)
+        if (!alreadyReloaded) {
+          sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+          window.location.reload()
+        }
+      }
+    }
+    window.addEventListener('error', handleError)
+    return () => window.removeEventListener('error', handleError)
   }, [])
 
   return (
