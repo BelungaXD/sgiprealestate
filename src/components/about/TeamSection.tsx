@@ -7,15 +7,13 @@ import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 // Blur placeholder for smooth image loading
 const blurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=='
 
-interface TeamMember {
-  name: string
-  position: string
-  image: string
-  description?: string
-}
-
 interface TeamMemberCardProps {
-  member: TeamMember
+  member: {
+    name: string
+    position: string
+    image: string
+    description?: string
+  }
   index: number
 }
 
@@ -208,7 +206,7 @@ export default function TeamSection() {
 
         {teamMembers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {teamMembers.map((member: TeamMember, index: number) => (
+            {teamMembers.map((member, index) => (
               <TeamMemberCard
                 key={member.name || index}
                 member={member}
