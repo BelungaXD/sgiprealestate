@@ -10,6 +10,7 @@ import PropertyContactForm from '@/components/property/PropertyContactForm'
 import PropertyFiles from '@/components/property/PropertyFiles'
 import RelatedProperties from '@/components/property/RelatedProperties'
 import { prisma } from '@/lib/prisma'
+import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 import { 
   MapPinIcon, 
   HomeIcon, 
@@ -376,6 +377,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
     }
 
     // Transform API data to match Property interface
+    // Normalize upload URLs for standalone mode (/api/uploads/...)
     const property: Property = {
       id: apiProperty.id,
       title: apiProperty.title,
@@ -389,21 +391,21 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       parking: apiProperty.parking || 0,
       location: `${apiProperty.city}, ${apiProperty.district}`,
       district: apiProperty.district,
-      images: apiProperty.images?.map((img: any) => img.url) || [],
+      images: apiProperty.images?.map((img: any) => normalizeUploadUrl(img.url)) || [],
       floorPlans: apiProperty.floorPlans?.map((fp: any) => ({
         id: fp.id,
         title: fp.title || 'Floor Plan',
         area: fp.area || 0,
         bedrooms: fp.bedrooms || 0,
         bathrooms: fp.bathrooms || 0,
-        url: fp.url,
+        url: normalizeUploadUrl(fp.url),
       })) || [],
       features: apiProperty.features || [],
       amenities: apiProperty.amenities || [],
       yearBuilt: apiProperty.yearBuilt || 0,
       completionDate: apiProperty.completionDate || '',
       developer: apiProperty.developer?.name || '',
-      developerLogo: apiProperty.developer?.logo || '',
+      developerLogo: normalizeUploadUrl(apiProperty.developer?.logo) || '',
       isFeatured: apiProperty.isFeatured || false,
       coordinates: apiProperty.coordinates || { lat: 0, lng: 0 },
       infrastructure: [], // Can be added later if needed
@@ -417,7 +419,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
         .map((file: any) => ({
           id: file.id,
           label: file.label,
-          url: file.url,
+          url: normalizeUploadUrl(file.url),
           filename: file.filename,
           size: file.size,
           mimeType: file.mimeType,

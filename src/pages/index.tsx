@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import Layout from '@/components/layout/Layout'
 import Hero from '@/components/sections/Hero'
 import { prisma } from '@/lib/prisma'
+import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 
 // Lazy load components below the fold for better performance
 // Disable SSR for components that don't need it to reduce initial bundle size
@@ -125,7 +126,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         bedrooms: p.bedrooms,
         bathrooms: p.bathrooms,
         location: `${p.city}, ${p.district}`,
-        image: p.images && p.images.length > 0 ? p.images[0].url : '/images/hero.jpg',
+        image: p.images && p.images.length > 0 ? normalizeUploadUrl(p.images[0].url) : '/images/hero.jpg',
       }))
     } catch (error) {
       console.error('Error fetching featured properties:', error)
