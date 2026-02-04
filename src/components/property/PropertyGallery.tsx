@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface PropertyGalleryProps {
-  images: string[]
+  images?: string[] | null
 }
 
 // Try alternate path when one form returns HTML or 404 (e.g. /api/uploads/ <-> /uploads/)
@@ -12,7 +12,8 @@ function alternateUploadUrl(url: string): string {
   return url
 }
 
-export default function PropertyGallery({ images }: PropertyGalleryProps) {
+export default function PropertyGallery({ images: imagesProp }: PropertyGalleryProps) {
+  const images = imagesProp ?? []
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   // Per-URL: try alternate path once on error; then mark failed and show placeholder
@@ -109,12 +110,12 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
   return (
     <>
       <div className="relative">
-        {/* Main Image/Video */}
-        <div className="relative h-96 md:h-[500px] overflow-hidden bg-gray-100 flex items-center justify-center">
+        {/* Main Image/Video - large preview container */}
+        <div className="relative w-full min-h-[60vh] md:min-h-[70vh] overflow-hidden bg-gray-100 flex items-center justify-center">
           {isCurrentVideo ? (
             <video
               src={currentMedia}
-              className="max-w-full max-h-full object-contain cursor-pointer"
+              className="w-full h-full min-h-[60vh] md:min-h-[70vh] object-cover cursor-pointer"
               onClick={() => openLightbox(currentIndex)}
               controls={false}
               muted
@@ -124,7 +125,7 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
             <img
               src={mainHeroSrc ?? mainDisplayUrl}
               alt={`Property image ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain cursor-pointer"
+              className="w-full h-full min-h-[60vh] md:min-h-[70vh] object-cover cursor-pointer"
               onClick={() => openLightbox(currentIndex)}
               onError={(e) => {
                 const t = e.target as HTMLImageElement
@@ -171,9 +172,9 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
           </div>
         </div>
 
-        {/* Thumbnail Strip */}
+        {/* Thumbnail Strip - centered */}
         {images.length > 1 && (
-          <div className="flex space-x-2 p-4 overflow-x-auto">
+          <div className="flex flex-wrap justify-center gap-3 p-4">
             {images.map((image, index) => {
               const isThumbVideo = isVideo(image)
               return (
