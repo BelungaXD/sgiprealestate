@@ -73,7 +73,7 @@ export default function Admin() {
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'en', ['admin', 'common'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['admin', 'common', 'downtown', 'the-oasis'])),
     },
   }
 }

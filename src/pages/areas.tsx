@@ -268,7 +268,7 @@ export default function Areas() {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'en', ['common', 'areas'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common', 'areas', 'downtown', 'the-oasis'])),
     },
   }
 }
