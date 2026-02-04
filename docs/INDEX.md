@@ -45,6 +45,8 @@
 
 - [QUICK_SETUP.md](./QUICK_SETUP.md)
 - [DEPLOYMENT_PERMISSIONS_SETUP.md](./DEPLOYMENT_PERMISSIONS_SETUP.md)
+- [NGINX_AND_API_ROUTES.md](./NGINX_AND_API_ROUTES.md) - Nginx и API-маршруты (все маршруты в приложении)
+- [POST_DEPLOY_VERIFICATION.md](./POST_DEPLOY_VERIFICATION.md) - Проверка после деплоя
 - [ОТКАТ_ВЕРСИИ.md](./ОТКАТ_ВЕРСИИ.md)
 
 #### Контент

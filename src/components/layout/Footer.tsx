@@ -76,6 +76,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
+                      prefetch={false}
                       className="text-gray-300 hover:text-champagne transition-colors text-sm"
                     >
                       {link.name}
@@ -93,6 +94,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
+                      prefetch={false}
                       className="text-gray-300 hover:text-champagne transition-colors text-sm"
                     >
                       {link.name}
@@ -110,6 +112,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
+                      prefetch={false}
                       className="text-gray-300 hover:text-champagne transition-colors text-sm"
                     >
                       {link.name}
@@ -130,18 +133,21 @@ export default function Footer() {
             <div className="flex space-x-6 text-sm">
               <Link
                 href="/terms"
+                prefetch={false}
                 className="text-gray-400 hover:text-champagne transition-colors"
               >
                 {t('footer.terms')}
               </Link>
               <Link
                 href="/privacy"
+                prefetch={false}
                 className="text-gray-400 hover:text-champagne transition-colors"
               >
                 {t('footer.privacy')}
               </Link>
               <Link
                 href="/cookies"
+                prefetch={false}
                 className="text-gray-400 hover:text-champagne transition-colors"
               >
                 {t('footer.cookies')}

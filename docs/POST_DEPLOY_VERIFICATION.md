@@ -43,6 +43,26 @@ cd $NGINX_MICROSERVICE_PATH
 - [ ] Open **production URL** from `.env` (e.g. `NEXT_PUBLIC_SITE_URL` – e.g. `https://sgiprealestate.alfares.cz` or your domain).
 - [ ] Homepage loads (no 502/503/504).
 - [ ] Check one key route (e.g. Properties, Contact) and that assets load.
+- [ ] **Google Maps on property page**: Add `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to `.env` on the server and redeploy. Without it, the map shows a "View on Google Maps" fallback. Enable [Maps Embed API](https://console.cloud.google.com/) and restrict the key to your domain.
+
+### 4.1 Browser check (chunks and images)
+
+If you see **SyntaxError: Unexpected token '<'** in the console or **images/thumbnails not loading** (placeholders or "Image unavailable"):
+
+1. **Console**: Open DevTools → Console. If errors point to `/_next/static/chunks/*.js`, the server is returning HTML instead of JS (often 404 or SPA fallback).
+2. **Network**: DevTools → Network. Reload; filter by "JS" or "Img". Check:
+   - Requests to `/_next/static/chunks/*.js` → Status should be 200 and Type "script"; if 404 or Type "document", nginx or the app is mis-serving.
+   - Requests to `/api/uploads/...` or `https://sgipreal.com/api/uploads/...` → Status 200 and Type "image"; if 404/document, uploads are not reaching the Next.js app.
+3. **On the server** (after SSH):
+   - Confirm nginx proxies everything to the frontend:  
+     `grep -A5 "location /" $NGINX_MICROSERVICE_PATH/nginx/conf.d/blue-green/sgipreal.com.*.conf`  
+     You should see `proxy_pass` to the sgiprealestate frontend container; no `try_files` or `root` that would serve HTML for `/_next/` or `/api/`.
+   - Test from the server:  
+     `curl -sI https://sgipreal.com/_next/static/chunks/webpack.js`  
+     Expect `Content-Type: application/javascript` and 200; if you get 404 or `text/html`, fix nginx or the app so static and API routes are proxied to the Next.js container.
+   - Optional: hit the uploads API:  
+     `curl -sI "https://sgipreal.com/api/uploads/properties/images/1770236243007-MIRAGE_THE_OASIS_RENDER1.webp"`  
+     Expect 200 and `Content-Type: image/webp` (or similar).
 
 ---
 

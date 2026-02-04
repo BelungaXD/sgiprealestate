@@ -283,8 +283,9 @@ Deployment works like other ecosystem services (e.g. notifications-microservice)
 - **Deploy**: Run `./scripts/deploy.sh` from the project root (on the production server).
 - **Nginx configs and service registry** are generated automatically during deployment by nginx-microservice's `deploy-smart.sh`. Do not create or edit `service-registry` files in this repo.
 - **Redirects** (HTTP→HTTPS, www→canonical) are configured in nginx-microservice templates.
+- **All API routes are managed by this application**: single Next.js container; no separate backend. So `/api/*` (e.g. `/api/uploads`, `/api/properties`) and `/_next/static/*` must be proxied to the same frontend. See [docs/NGINX_AND_API_ROUTES.md](./docs/NGINX_AND_API_ROUTES.md).
 
-Reference: [`nginx-templates/`](./nginx-templates/) and [`nginx.config.json`](./nginx.config.json). The `nginx.client_max_body_size` from nginx.config.json is read during deploy and applied to allow large file uploads (e.g. 10G for folder imports).
+Reference: [`nginx-templates/`](./nginx-templates/), [`nginx.config.json`](./nginx.config.json), and [`nginx/nginx-api-routes.conf`](./nginx/nginx-api-routes.conf). The `nginx.client_max_body_size` from nginx.config.json is read during deploy and applied to allow large file uploads (e.g. 10G for folder imports).
 
 **413 Payload Too Large when uploading folders**: If uploads >100MB fail:
 
