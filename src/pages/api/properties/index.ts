@@ -219,8 +219,24 @@ export default async function handler(
             console.warn(`Area with ID ${validatedData.areaId} not found, allowing in demo mode`)
           }
         } catch (dbError: any) {
-          // If database query fails, allow creation with mock areaId (demo mode)
+          // If database query failed, allow creation with mock areaId (demo mode)
           console.warn('Database query failed for area check, allowing in demo mode:', dbError.message)
+        }
+      }
+
+      // Resolve developerId: form may send slug (e.g. emaar-properties), DB needs real id
+      let developerId = validatedData.developerId || null
+      if (developerId && (developerId === '' || developerId === 'null')) developerId = null
+      if (developerId) {
+        try {
+          let dev = await prisma.developer.findUnique({ where: { id: developerId } })
+          if (!dev) {
+            dev = await prisma.developer.findUnique({ where: { slug: developerId } })
+            if (dev) developerId = dev.id
+            else developerId = null
+          }
+        } catch {
+          developerId = null
         }
       }
 
@@ -251,7 +267,7 @@ export default async function handler(
             city: validatedData.city,
             district: validatedData.district,
             areaId: validatedData.areaId || null,
-            developerId: validatedData.developerId || null,
+            developerId,
             coordinates: validatedData.coordinates || null,
             features: validatedData.features || [],
             amenities: validatedData.amenities || [],

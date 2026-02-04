@@ -164,14 +164,17 @@ export default async function handler(
       // Verify developerId exists in database if provided
       if (developerId) {
         try {
-          const developerExists = await prisma.developer.findUnique({ where: { id: developerId } })
+          let developerExists = await prisma.developer.findUnique({ where: { id: developerId } })
           if (!developerExists) {
-            console.warn(`Developer with ID ${developerId} not found, setting developerId to null`)
+            developerExists = await prisma.developer.findUnique({ where: { slug: developerId } })
+            if (developerExists) developerId = developerExists.id
+          }
+          if (!developerExists) {
+            console.warn(`Developer with ID/slug ${developerId} not found, setting developerId to null`)
             developerId = null
           }
         } catch (dbError: any) {
           console.error('Database query failed for developer check:', dbError.message)
-          // If database query fails, set to null to avoid foreign key constraint violation
           developerId = null
         }
       }

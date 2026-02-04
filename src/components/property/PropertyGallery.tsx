@@ -38,14 +38,13 @@ export default function PropertyGallery({ images }: PropertyGalleryProps) {
            url.endsWith('.WEBM')
   }
 
-  // Get thumbnail URL if available, otherwise use full image
+  // Get thumbnail URL - import stores thumbnails as thumb-{filename} in thumbnails/
   const getThumbnailUrl = (url: string): string => {
     if (isVideo(url)) return url
-    // Check if thumbnail exists (in thumbnails subdirectory)
     const urlParts = url.split('/')
     const filename = urlParts[urlParts.length - 1]
-    const thumbnailUrl = url.replace('/images/', '/images/thumbnails/')
-    return thumbnailUrl
+    const thumbFilename = filename.startsWith('thumb-') ? filename : `thumb-${filename}`
+    return url.replace(/\/images\/[^/]+$/, `/images/thumbnails/${thumbFilename}`)
   }
 
   const currentMedia = images[currentIndex] || ''

@@ -146,10 +146,10 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           !HARDCODED_AREAS.some(hc => hc.id === area.id)
         )]
         
-        // Merge hardcoded developers with database developers (hardcoded first)
-        const allDevelopers = [...HARDCODED_DEVELOPERS, ...loadedDevelopers.filter((dev: { id: string }) => 
-          !HARDCODED_DEVELOPERS.some(hc => hc.id === dev.id)
-        )]
+        // Prefer API developers (have real DB ids); add hardcoded only if API has none
+        const allDevelopers = loadedDevelopers.length > 0
+          ? loadedDevelopers
+          : HARDCODED_DEVELOPERS
 
         setAreas(allAreas)
         setDevelopers(allDevelopers)
