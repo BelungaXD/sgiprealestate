@@ -37,7 +37,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   useEffect(() => {
-    // Recover from "Unexpected token '<'" - happens when chunk request returns HTML (404) instead of JS
+    // Recover from "Unexpected token '<'" - happens when chunk request returns HTML (404) instead of JS.
+    // Cache-busting redirect forces a fresh document load so new HTML (with correct chunk URLs) is fetched.
     const handleError = (e: ErrorEvent) => {
       const msg = e.message || ''
       const isChunkError =
@@ -48,7 +49,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY)
         if (!alreadyReloaded) {
           sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
-          window.location.reload()
+          const sep = window.location.search ? '&' : '?'
+          window.location.href = window.location.pathname + window.location.search + sep + '_t=' + Date.now()
         }
       }
     }

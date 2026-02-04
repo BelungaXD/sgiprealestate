@@ -201,6 +201,16 @@ const nextConfig = {
           },
         ],
       },
+      // HTML documents: no-cache so users get fresh chunk references after deployment (avoids "Unexpected token '<'" when chunks 404)
+      {
+        source: '/((?!_next|api|images|uploads|favicon\\.ico|manifest\\.json|robots\\.txt|sitemap\\.xml).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, must-revalidate',
+          },
+        ],
+      },
     ];
   },
 };
