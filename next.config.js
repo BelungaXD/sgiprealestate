@@ -117,6 +117,14 @@ const nextConfig = {
   },
   // Enable standalone output for Docker
   output: 'standalone',
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: '/api/uploads/:path*',
+      },
+    ]
+  },
   async headers() {
     return [
       {
