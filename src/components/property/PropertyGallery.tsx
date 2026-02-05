@@ -88,11 +88,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
   const currentMedia = images[currentIndex] || ''
   const isCurrentVideo = isVideo(currentMedia)
   const mainDisplayUrl = resolveUrl(currentMedia)
-  // Main hero: use small thumbnail for fast load; lightbox uses full URL (preloaded in background)
-  const mainHeroSrc =
-    mainDisplayUrl && !isVideo(currentMedia)
-      ? getThumbnailUrl(mainDisplayUrl)
-      : mainDisplayUrl
+  // Main hero: use full resolution for best quality; thumbnails only used in thumbnail strip below
 
   // After page load, preload full-size images in background so lightbox opens fast
   useEffect(() => {
@@ -123,18 +119,11 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
             />
           ) : mainDisplayUrl ? (
             <img
-              src={mainHeroSrc ?? mainDisplayUrl}
+              src={mainDisplayUrl}
               alt={`Property image ${currentIndex + 1}`}
               className="w-full h-full min-h-[60vh] md:min-h-[70vh] object-cover cursor-pointer"
               onClick={() => openLightbox(currentIndex)}
-              onError={(e) => {
-                const t = e.target as HTMLImageElement
-                if (t.src !== mainDisplayUrl && mainHeroSrc !== mainDisplayUrl) {
-                  t.src = mainDisplayUrl
-                } else {
-                  handleImageError(currentMedia)
-                }
-              }}
+              onError={() => handleImageError(currentMedia)}
             />
           ) : (
             <div className="flex flex-col items-center justify-center text-gray-400 gap-2 p-8">
