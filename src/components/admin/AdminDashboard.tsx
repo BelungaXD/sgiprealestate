@@ -1,15 +1,20 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Fragment } from 'react'
 import { useTranslation } from 'next-i18next'
-import { 
-  PlusIcon, 
-  PencilIcon, 
-  TrashIcon, 
+import { Dialog, Transition } from '@headlessui/react'
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
   EyeIcon,
   ArrowLeftOnRectangleIcon,
   HomeIcon,
   BuildingOfficeIcon,
   UsersIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  FolderOpenIcon,
+  FolderIcon,
+  ChevronUpIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
 import PropertyModal from './PropertyModal'
 import FolderImport from './FolderImport'
@@ -33,6 +38,79 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     views: 0,
     leads: 0,
   })
+
+  // Import folder into existing property
+  const [importFolderProperty, setImportFolderProperty] = useState<any>(null)
+  const [importFolderPath, setImportFolderPath] = useState('')
+  const [importFolderLoading, setImportFolderLoading] = useState(false)
+  const [browseOpen, setBrowseOpen] = useState(false)
+  const [browseRoots, setBrowseRoots] = useState<{ name: string; path: string }[]>([])
+  const [browseFolders, setBrowseFolders] = useState<{ name: string; path: string }[]>([])
+  const [browseParentPath, setBrowseParentPath] = useState<string | null>(null)
+  const [browseCurrentPath, setBrowseCurrentPath] = useState('')
+  const [browseLoading, setBrowseLoading] = useState(false)
+  const [browseError, setBrowseError] = useState<string | null>(null)
+
+  const loadBrowse = useCallback(async (path: string | null) => {
+    setBrowseLoading(true)
+    setBrowseError(null)
+    try {
+      const q = path ? `?path=${encodeURIComponent(path)}` : ''
+      const res = await fetch(`/api/properties/browse-folders${q}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || data.error || 'Failed to load')
+      setBrowseRoots(data.roots || [])
+      setBrowseFolders(data.folders || [])
+      setBrowseParentPath(data.parentPath ?? null)
+      setBrowseCurrentPath(data.currentPath ?? (path || ''))
+    } catch (e: unknown) {
+      setBrowseError((e as Error).message)
+      setBrowseRoots([])
+      setBrowseFolders([])
+      setBrowseParentPath(null)
+    } finally {
+      setBrowseLoading(false)
+    }
+  }, [])
+
+  const openImportFolderModal = (property: any) => {
+    setImportFolderProperty(property)
+    setImportFolderPath('')
+    setImportFolderLoading(false)
+  }
+
+  const openBrowseForImport = () => {
+    setBrowseOpen(true)
+    setBrowseCurrentPath('')
+    loadBrowse(null)
+  }
+
+  const selectBrowseForImport = (path: string) => {
+    setImportFolderPath(path)
+    setBrowseOpen(false)
+  }
+
+  const handleImportFolderIntoProperty = async () => {
+    if (!importFolderProperty || !importFolderPath.trim()) return
+    setImportFolderLoading(true)
+    try {
+      const res = await fetch('/api/properties/import-folder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folderPath: importFolderPath.trim(), propertyId: importFolderProperty.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || data.error || 'Import failed')
+      setImportFolderProperty(null)
+      setImportFolderPath('')
+      await loadProperties()
+      alert(data.message || 'Folder imported.')
+    } catch (e: unknown) {
+      alert((e as Error).message)
+    } finally {
+      setImportFolderLoading(false)
+    }
+  }
 
   // Load properties from API
   const loadProperties = useCallback(async () => {
@@ -384,13 +462,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                             {property.views || 0}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex space-x-2">
+                            <div className="flex flex-wrap gap-2">
                               <button
                                 onClick={() => handleEditProperty(property)}
                                 className="text-yellow-600 hover:text-yellow-900"
                                 title="Edit"
                               >
                                 <PencilIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => openImportFolderModal(property)}
+                                className="text-blue-600 hover:text-blue-900 inline-flex items-center gap-1"
+                                title="Import folder into this property"
+                              >
+                                <FolderOpenIcon className="h-4 w-4" />
+                                Import folder
                               </button>
                               <button
                                 onClick={() => handleDeleteProperty(property.id)}
@@ -437,6 +523,106 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         property={editingProperty}
         onSave={handleSaveProperty}
       />
+
+      {/* Import folder into property modal */}
+      <Transition appear show={!!importFolderProperty} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setImportFolderProperty(null)}>
+          <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
+            <div className="fixed inset-0 bg-black/30" />
+          </Transition.Child>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-150" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                <Dialog.Panel className="w-full max-w-lg rounded-xl bg-white p-4 shadow-xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <Dialog.Title as="h3" className="text-lg font-semibold text-graphite">
+                      Import folder into: {importFolderProperty?.title}
+                    </Dialog.Title>
+                    <button type="button" onClick={() => setImportFolderProperty(null)} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite">
+                      <XMarkIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-3">Choose a folder on the server; its images, videos and documents will be attached to this property.</p>
+                  <div className="flex gap-2 flex-wrap mb-4">
+                    <input
+                      type="text"
+                      value={importFolderPath}
+                      onChange={(e) => setImportFolderPath(e.target.value)}
+                      placeholder="Path or use Browse"
+                      className="flex-1 min-w-[200px] px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
+                      disabled={importFolderLoading}
+                    />
+                    <button type="button" onClick={openBrowseForImport} disabled={importFolderLoading} className="inline-flex items-center gap-2 px-4 py-2 border border-champagne text-champagne rounded-md text-sm font-medium hover:bg-champagne/10">
+                      <FolderOpenIcon className="h-5 w-5" />
+                      Browse
+                    </button>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => setImportFolderProperty(null)} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Cancel</button>
+                    <button type="button" onClick={handleImportFolderIntoProperty} disabled={importFolderLoading || !importFolderPath.trim()} className="px-4 py-2 bg-champagne text-white rounded-md text-sm font-medium hover:bg-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed">
+                      {importFolderLoading ? 'Importing…' : 'Import'}
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Browse folders modal (for import-into-property) */}
+      <Transition appear show={browseOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-[60]" onClose={() => setBrowseOpen(false)}>
+          <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
+            <div className="fixed inset-0 bg-black/30" />
+          </Transition.Child>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-150" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                <Dialog.Panel className="w-full max-w-lg rounded-xl bg-white p-4 shadow-xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <Dialog.Title as="h3" className="text-lg font-semibold text-graphite">Choose folder</Dialog.Title>
+                    <button type="button" onClick={() => setBrowseOpen(false)} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite"><XMarkIcon className="h-5 w-5" /></button>
+                  </div>
+                  {browseError && <p className="mb-3 text-sm text-red-600">{browseError}</p>}
+                  <div className="mb-3 flex items-center gap-2">
+                    {browseParentPath !== null && (
+                      <button type="button" onClick={() => loadBrowse(browseParentPath)} className="inline-flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50">
+                        <ChevronUpIcon className="h-4 w-4" /> Up
+                      </button>
+                    )}
+                    {browseCurrentPath && (
+                      <button type="button" onClick={() => selectBrowseForImport(browseCurrentPath)} className="rounded bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90">Select this folder</button>
+                    )}
+                  </div>
+                  <p className="mb-2 truncate text-xs text-gray-500" title={browseCurrentPath || 'Select a location'}>{browseCurrentPath || 'Select a location'}</p>
+                  {browseLoading ? (
+                    <p className="py-4 text-center text-sm text-gray-500">Loading…</p>
+                  ) : (
+                    <ul className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
+                      {browseRoots.map((r) => (
+                        <li key={r.path}>
+                          <button type="button" onClick={() => loadBrowse(r.path)} className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100">
+                            <FolderOpenIcon className="h-5 w-5 flex-shrink-0 text-champagne" />{r.name}
+                          </button>
+                        </li>
+                      ))}
+                      {browseFolders.map((f) => (
+                        <li key={f.path}>
+                          <button type="button" onClick={() => loadBrowse(f.path)} className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100">
+                            <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />{f.name}
+                          </button>
+                        </li>
+                      ))}
+                      {!browseLoading && browseRoots.length === 0 && browseFolders.length === 0 && !browseError && <li className="py-2 text-center text-sm text-gray-500">No folders here</li>}
+                    </ul>
+                  )}
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   )
 }
