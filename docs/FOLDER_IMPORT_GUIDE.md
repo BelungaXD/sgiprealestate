@@ -1,14 +1,15 @@
 # Automatic Folder Import – How It Works
 
-## Current Flow (Browser Upload)
+## Current Flow (Browser Upload) – Two-Phase
 
 1. **User** selects a folder (e.g. `Creek Vistas Reserve`) in admin.
-2. **Client** (`FolderImport.tsx`) builds `FormData` with all files and `webkitRelativePath` and sends one POST to `/api/properties/import-folder-files`.
-3. **Server** (`import-folder-files.ts`):
-   - Parses multipart body with `formidable`
-   - Groups files by property folder (see folder naming below)
-   - For each group: saves files to `public/uploads/properties/{images|videos|files}/`, creates Property and related records in DB
-4. **Result**: Upload and DB import happen in a single HTTP request.
+2. **Phase 1 – Upload**: **Client** (`FolderImport.tsx`) builds `FormData` with all files and `webkitRelativePath` and sends POST to `/api/properties/upload-folder`.
+3. **Server** (`upload-folder.ts`): saves all files to `public/uploads/incoming/{uploadId}/` preserving folder structure. No DB write. Returns `folderPath` (absolute path).
+4. **Phase 2 – Import**: **Client** sends POST to `/api/properties/import-folder` with `{ folderPath }`.
+5. **Server** (`import-folder.ts`): reads from that path, converts/copies to `public/uploads/properties/{images|videos|files}/`, creates Property and related records in DB.
+6. **Result**: Upload completes first and is stored under `uploads/`; only after that does import run and create the property in the database.
+
+**If import fails:** The uploaded data **remains** in `public/uploads/incoming/{uploadId}/`. Nothing is deleted when the import step fails (DB error, timeout, validation, etc.). You can re-import later via **"Import from server path"** using that path (e.g. `/app/public/uploads/incoming/1738827600000` in container, or the path shown in server logs).
 
 ### Limits and Errors
 
@@ -36,7 +37,22 @@ See [LARGE_FILE_UPLOAD_TROUBLESHOOTING.md](./LARGE_FILE_UPLOAD_TROUBLESHOOTING.m
 
 ## File Locations on sgipreal (prod)
 
-- **Host path**: `/home/belunga/uploads/` (property folders go here)
+- **Host path**: `sgiprealestate/uploads/` (inside the app repo; e.g. `~/sgiprealestate/uploads/` or `/home/belunga/sgiprealestate/uploads/`). Property folders go here.
+
+### One-time migration: move uploads into sgiprealestate
+
+If `uploads` was previously at the parent level (same level as `sgiprealestate`), move it once on the server:
+
+```bash
+ssh sgipreal
+cd ~/sgiprealestate
+mv ../uploads ./uploads
+# Ensure permissions: same owner as sgiprealestate (e.g. belunga)
+chown -R $(whoami):$(whoami) ./uploads
+```
+
+Then redeploy so the new volume mount `./uploads:/uploads` is used.
+
 - **In container** (after redeploy with volume): `/uploads/`
 - **Persistent storage**: `public/uploads/` folder inside the repo – imported property images/videos/files stored here
 
@@ -49,8 +65,8 @@ An API exists for importing from disk when files are already on the server: **`/
 1. **Upload files to server once** (scp, rsync, SFTP):
 
    ```bash
-   # Example: copy property folders to prod
-   scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
+   # Example: copy property folders to prod (uploads is inside sgiprealestate)
+   scp -r "Creek Vistas Reserve" sgipreal:sgiprealestate/uploads/
    ```
 
 2. **Organise folder structure** on server. Two options:
@@ -58,7 +74,7 @@ An API exists for importing from disk when files are already on the server: **`/
    **Option A – single property folder** (path points to folder with files):
 
    ```bash
-   scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
+   scp -r "Creek Vistas Reserve" sgipreal:sgiprealestate/uploads/
    ```
 
    Then use path: `/uploads/Creek Vistas Reserve`
@@ -66,7 +82,7 @@ An API exists for importing from disk when files are already on the server: **`/
    **Option B – multiple properties** (path points to parent with subfolders):
 
    ```text
-   ~/uploads/
+   sgiprealestate/uploads/
    ├── Downtown - Creek Vistas Reserve/
    │   ├── image1.jpg
    │   └── ...
@@ -76,7 +92,7 @@ An API exists for importing from disk when files are already on the server: **`/
 
    Then use path: `/uploads`
 
-3. **Run import** in admin via "Import from server path" and enter the server path (container path, e.g. `/uploads` or `/uploads/PropertyName`).
+3. **Run import** in admin: use **Browse** to choose the property folder on the server (or enter the path manually). Then click Import. The host folder is `sgiprealestate/uploads/` on the server.
 
 ### Benefits
 
@@ -84,13 +100,20 @@ An API exists for importing from disk when files are already on the server: **`/
 - Upload once, import multiple times
 - Avoids Cloudflare and browser upload limits
 
+### API Summary
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/properties/browse-folders?path=` | List directories under allowed upload roots (e.g. `/uploads`, `public/uploads/incoming`) for the Browse picker. |
+| `POST /api/properties/upload-folder` | Upload only: save files to `public/uploads/incoming/{uploadId}/`. Returns `folderPath`. |
+| `POST /api/properties/import-folder` | Import from server path: read from `folderPath`, create property in DB. Optional `propertyId` in body: attach folder media to that existing property instead of creating a new one. |
+| `POST /api/properties/import-folder-files` | Legacy: upload + import in one request (still available). |
+
 ---
 
 ## Possible Future Improvements
 
-1. **Two-phase import**
-   - Phase 1: Upload files to a staging directory (chunked or per-file)
-   - Phase 2: Import from staging into DB (triggered separately)
+1. ~~**Two-phase import**~~ ✅ Implemented: upload-folder then import-folder.
 
 2. **Checksum-based deduplication**
    - Client sends filename + size (or hash)

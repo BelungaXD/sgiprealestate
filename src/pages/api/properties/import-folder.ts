@@ -401,18 +401,127 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
 async function generateUniqueSlug(baseSlug: string): Promise<string> {
   let slug = baseSlug
   let counter = 1
-  
+
   while (true) {
     const existing = await prisma.property.findUnique({
       where: { slug },
     })
-    
+
     if (!existing) {
       return slug
     }
-    
+
     slug = `${baseSlug}-${counter}`
     counter++
+  }
+}
+
+/**
+ * Process a single folder and attach images/videos/files to an existing property.
+ * Does not create a new property or update property fields.
+ */
+async function processFolderIntoProperty(propertyId: string, folderPath: string): Promise<void> {
+  const folderName = basename(folderPath)
+  const images: Array<{ url: string; alt?: string; order: number; isMain: boolean }> = []
+  const videos: Array<{ url: string; title: string; order: number }> = []
+  const files: Array<{ url: string; label: string; filename: string; size: number; mimeType: string; order: number }> = []
+
+  async function processDirectory(dirPath: string) {
+    const entries = await readdir(dirPath, { withFileTypes: true })
+    for (const entry of entries) {
+      const fullPath = join(dirPath, entry.name)
+      if (entry.isDirectory()) {
+        await processDirectory(fullPath)
+      } else if (entry.isFile() && !entry.name.startsWith('.') && entry.name !== '.DS_Store') {
+        const ext = extname(entry.name).toLowerCase()
+        if (IMAGE_EXTENSIONS.includes(ext)) {
+          const fileInfo = await processFile(fullPath, 'image')
+          const sharpForThumb = await getSharp()
+          if (sharpForThumb) {
+            try {
+              const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
+              if (!existsSync(thumbnailDir)) await mkdir(thumbnailDir, { recursive: true })
+              const thumbnailFilename = `thumb-${fileInfo.filename}`
+              const thumbnailPath = join(thumbnailDir, thumbnailFilename)
+              const imagePath = join(process.cwd(), 'public', fileInfo.url)
+              await sharpForThumb(imagePath)
+                .resize(200, 200, { fit: sharpForThumb.fit.inside, withoutEnlargement: true })
+                .webp({ quality: 70 })
+                .toFile(thumbnailPath)
+            } catch (thumbErr) {
+              console.warn('[import-folder] thumbnail creation failed:', thumbErr)
+            }
+          }
+          images.push({
+            url: fileInfo.url,
+            alt: `${folderName} - ${entry.name}`,
+            order: images.length,
+            isMain: images.length === 0,
+          })
+        } else if (VIDEO_EXTENSIONS.includes(ext)) {
+          const is16x9 = await isVideo16x9(fullPath)
+          if (is16x9) {
+            const fileInfo = await processFile(fullPath, 'video')
+            videos.push({
+              url: fileInfo.url,
+              title: entry.name.replace(/\.[^/.]+$/, ''),
+              order: videos.length,
+            })
+          }
+        } else if (DOCUMENT_EXTENSIONS.includes(ext)) {
+          const fileInfo = await processFile(fullPath, 'file')
+          files.push({
+            url: fileInfo.url,
+            label: entry.name.replace(/\.[^/.]+$/, ''),
+            filename: fileInfo.filename,
+            size: fileInfo.size,
+            mimeType: fileInfo.mimeType,
+            order: files.length,
+          })
+        }
+      }
+    }
+  }
+
+  await processDirectory(folderPath)
+  if (images.length === 0 && videos.length === 0 && files.length === 0) {
+    throw new Error(`No images, videos or documents found in folder: ${folderName}`)
+  }
+
+  if (images.length > 0) {
+    await prisma.propertyImage.createMany({
+      data: images.map(img => ({
+        propertyId,
+        url: img.url,
+        alt: img.alt || '',
+        order: img.order,
+        isMain: img.isMain,
+      })),
+    })
+  }
+  if (videos.length > 0) {
+    await prisma.propertyImage.createMany({
+      data: videos.map(video => ({
+        propertyId,
+        url: video.url,
+        alt: video.title,
+        order: images.length + video.order,
+        isMain: false,
+      })),
+    })
+  }
+  if (files.length > 0) {
+    await prisma.propertyFile.createMany({
+      data: files.map(file => ({
+        propertyId,
+        url: file.url,
+        label: file.label,
+        filename: file.filename,
+        size: file.size,
+        mimeType: file.mimeType,
+        order: file.order,
+      })),
+    })
   }
 }
 
@@ -429,8 +538,9 @@ export default async function handler(
   }
 
   try {
-    const body = req.body as { folderPath?: string } | undefined
+    const body = req.body as { folderPath?: string; propertyId?: string } | undefined
     const folderPath = body?.folderPath
+    const propertyId = body?.propertyId
 
     if (!folderPath || typeof folderPath !== 'string') {
       return res.status(400).json({ message: 'Folder path is required' })
@@ -445,7 +555,30 @@ export default async function handler(
       return res.status(400).json({ message: 'Path is not a directory' })
     }
 
-    // Проверяем: подпапки объектов ИЛИ сама папка - один объект (файлы внутри)
+    // Attach folder to existing property (import one folder into one property)
+    if (propertyId && typeof propertyId === 'string') {
+      const property = await prisma.property.findUnique({ where: { id: propertyId } })
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' })
+      }
+      const entries = await readdir(folderPath, { withFileTypes: true })
+      const subdirs = entries.filter(entry => entry.isDirectory())
+      const hasFiles = entries.some(entry => entry.isFile() && !entry.name.startsWith('.'))
+      const targetPath = hasFiles ? folderPath : (subdirs.length === 1 ? join(folderPath, subdirs[0].name) : null)
+      if (!targetPath || !existsSync(targetPath)) {
+        return res.status(400).json({ message: 'Choose a folder that contains images or files (or a single subfolder with them)' })
+      }
+      await processFolderIntoProperty(propertyId, targetPath)
+      return res.status(200).json({
+        message: 'Folder imported into property',
+        results: { success: [property.title], errors: [] },
+        total: 1,
+        successful: 1,
+        failed: 0,
+      })
+    }
+
+    // Create new property(ies) from folder(s)
     const entries = await readdir(folderPath, { withFileTypes: true })
     const subdirs = entries.filter(entry => entry.isDirectory())
     const hasFiles = entries.some(entry => entry.isFile() && !entry.name.startsWith('.'))
@@ -482,7 +615,6 @@ export default async function handler(
         foldersToProcess.push({ path: folderPath, name: basename(folderPath) })
       }
     } else if (hasFiles) {
-      // Single property folder - files directly in folderPath
       foldersToProcess.push({ path: folderPath, name: basename(folderPath) })
     }
 
@@ -490,11 +622,7 @@ export default async function handler(
       return res.status(400).json({ message: 'No property folders or files found in directory' })
     }
 
-    const results = {
-      success: [] as string[],
-      errors: [] as string[],
-    }
-
+    const results = { success: [] as string[], errors: [] as string[] }
     for (const { path: propertyFolderPath, name: folderName } of foldersToProcess) {
       try {
         await processPropertyFolder(propertyFolderPath)
