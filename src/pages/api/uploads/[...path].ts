@@ -138,8 +138,40 @@ export default async function handler(
       return res.status(403).json({ message: 'Access denied' })
     }
 
-    // Check if file exists
+    // Check if file exists locally, if not try to proxy from server
     if (!existsSync(filePath)) {
+      // Try to proxy from server if NEXT_PUBLIC_SERVER_URL is set
+      const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
+      if (serverUrl) {
+        try {
+          const serverPath = `/api/uploads/${decodedPath.join('/')}`
+          const fullUrl = `${serverUrl.replace(/\/$/, '')}${serverPath}`
+          
+          // Add query parameters for optimization if present
+          const queryParams = new URLSearchParams()
+          if (width) queryParams.append('w', width.toString())
+          if (quality) queryParams.append('q', quality.toString())
+          if (format) queryParams.append('f', format)
+          
+          const proxyUrl = queryParams.toString() 
+            ? `${fullUrl}?${queryParams.toString()}`
+            : fullUrl
+          
+          const proxyResponse = await fetch(proxyUrl)
+          
+          if (proxyResponse.ok) {
+            const contentType = proxyResponse.headers.get('content-type') || 'application/octet-stream'
+            const buffer = Buffer.from(await proxyResponse.arrayBuffer())
+            
+            res.setHeader('Content-Type', contentType)
+            res.setHeader('Cache-Control', 'public, max-age=3600')
+            return res.status(200).send(buffer)
+          }
+        } catch (proxyError) {
+          console.warn('Failed to proxy from server:', proxyError)
+        }
+      }
+      
       return res.status(404).json({ message: 'File not found' })
     }
 

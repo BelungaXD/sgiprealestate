@@ -451,8 +451,36 @@ export default async function handler(
     const hasFiles = entries.some(entry => entry.isFile() && !entry.name.startsWith('.'))
 
     const foldersToProcess: { path: string; name: string }[] = []
+    
+    // Если есть подпапки, проверяем их содержимое
     if (subdirs.length > 0) {
-      foldersToProcess.push(...subdirs.map(d => ({ path: join(folderPath, d.name), name: d.name })))
+      // Проверяем, есть ли в подпапках файлы (категории) или это подпапки объектов недвижимости
+      let hasPropertySubfolders = false
+      for (const subdir of subdirs) {
+        const subdirPath = join(folderPath, subdir.name)
+        const subdirEntries = await readdir(subdirPath, { withFileTypes: true })
+        const subdirHasFiles = subdirEntries.some(entry => entry.isFile() && !entry.name.startsWith('.'))
+        const subdirHasSubdirs = subdirEntries.some(entry => entry.isDirectory())
+        
+        // Если в подпапке есть файлы, это категория (IMAGES, FLOOR PLAN и т.д.)
+        // Если в подпапке только подпапки, это может быть объект недвижимости
+        if (subdirHasFiles && !subdirHasSubdirs) {
+          // Это категория файлов - обрабатываем всю папку как одну недвижимость
+          hasPropertySubfolders = false
+          break
+        } else if (subdirHasSubdirs) {
+          // Это может быть объект недвижимости
+          hasPropertySubfolders = true
+        }
+      }
+      
+      if (hasPropertySubfolders) {
+        // Подпапки - это объекты недвижимости
+        foldersToProcess.push(...subdirs.map(d => ({ path: join(folderPath, d.name), name: d.name })))
+      } else {
+        // Подпапки - это категории файлов, обрабатываем всю папку как одну недвижимость
+        foldersToProcess.push({ path: folderPath, name: basename(folderPath) })
+      }
     } else if (hasFiles) {
       // Single property folder - files directly in folderPath
       foldersToProcess.push({ path: folderPath, name: basename(folderPath) })

@@ -30,7 +30,25 @@ const nextConfig = {
     localeDetection: false,
   },
   images: {
-    domains: ['localhost', 'sgiprealestate.alfares.cz', 'sgipreal.com', 'sgipreal.ru', 'sgipreality.statex.cz', 'images.unsplash.com'],
+    domains: [
+      'localhost',
+      'sgiprealestate.alfares.cz',
+      'sgipreal.com',
+      'sgipreal.ru',
+      'sgipreality.statex.cz',
+      'images.unsplash.com',
+      // Add server domain from environment variable if set
+      ...(process.env.NEXT_PUBLIC_SERVER_URL
+        ? (() => {
+            try {
+              return [new URL(process.env.NEXT_PUBLIC_SERVER_URL).hostname]
+            } catch (e) {
+              console.warn('Invalid NEXT_PUBLIC_SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
+              return []
+            }
+          })()
+        : []),
+    ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

@@ -40,11 +40,17 @@ function initializePrisma(): any {
   try {
     // Fix DATABASE_URL if it has quotes or encoding issues
     let databaseUrl = process.env.DATABASE_URL
+    if (!databaseUrl) {
+      console.error('DATABASE_URL is not set in environment variables')
+      return null
+    }
     // Remove surrounding quotes if present
     if ((databaseUrl.startsWith('"') && databaseUrl.endsWith('"')) ||
         (databaseUrl.startsWith("'") && databaseUrl.endsWith("'"))) {
       databaseUrl = databaseUrl.slice(1, -1)
     }
+    
+    console.log('[Prisma] Initializing with DATABASE_URL:', databaseUrl.replace(/:[^:@]+@/, ':****@'))
     
     // Ensure proper URL encoding for special characters in password
     // If the URL doesn't have proper encoding, try to fix it

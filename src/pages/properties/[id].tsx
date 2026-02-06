@@ -322,41 +322,31 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
     const id = params?.id as string
 
     if (!id) {
+      console.log('[getServerSideProps] No ID provided')
       return {
         notFound: true,
       }
     }
+
+    console.log('[getServerSideProps] Looking for property with ID/slug:', id)
+    console.log('[getServerSideProps] DATABASE_URL:', process.env.DATABASE_URL ? 'configured' : 'NOT configured')
 
     // Check if DATABASE_URL is configured
     if (!process.env.DATABASE_URL) {
+      console.log('[getServerSideProps] DATABASE_URL not configured')
       return {
         notFound: true,
       }
     }
 
+    console.log('[getServerSideProps] Attempting to query database...')
+    
     // Fetch property directly from database
     // Try to find by ID first, then by slug
-    let apiProperty = await prisma.property.findUnique({
-      where: { id },
-      include: {
-        area: true,
-        developer: true,
-        images: {
-          orderBy: { order: 'asc' },
-        },
-        floorPlans: {
-          orderBy: { order: 'asc' },
-        },
-        files: {
-          orderBy: { order: 'asc' },
-        },
-      },
-    })
-
-    // If not found by ID, try to find by slug
-    if (!apiProperty) {
+    let apiProperty
+    try {
       apiProperty = await prisma.property.findUnique({
-        where: { slug: id },
+        where: { id },
         include: {
           area: true,
           developer: true,
@@ -371,13 +361,65 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
           },
         },
       })
+      console.log('[getServerSideProps] Query by ID result:', apiProperty ? 'found' : 'not found')
+    } catch (error: any) {
+      console.error('[getServerSideProps] Error querying by ID:', error.message)
+      apiProperty = null
     }
 
-    if (!apiProperty || !apiProperty.isPublished) {
+    // If not found by ID, try to find by slug
+    if (!apiProperty) {
+      console.log('[getServerSideProps] Not found by ID, trying slug:', id)
+      try {
+        apiProperty = await prisma.property.findUnique({
+          where: { slug: id },
+          include: {
+            area: true,
+            developer: true,
+            images: {
+              orderBy: { order: 'asc' },
+            },
+            floorPlans: {
+              orderBy: { order: 'asc' },
+            },
+            files: {
+              orderBy: { order: 'asc' },
+            },
+          },
+        })
+        console.log('[getServerSideProps] Query by slug result:', apiProperty ? 'found' : 'not found')
+      } catch (error: any) {
+        console.error('[getServerSideProps] Error querying by slug:', error.message)
+        apiProperty = null
+      }
+    }
+
+    if (!apiProperty) {
+      console.log('[getServerSideProps] Property not found:', id)
+      // Try direct query to debug
+      try {
+        const directQuery = await prisma.property.findMany({
+          where: { slug: { contains: id } },
+          select: { id: true, slug: true, title: true, isPublished: true },
+          take: 5
+        })
+        console.log('[getServerSideProps] Direct query results:', directQuery)
+      } catch (debugError: any) {
+        console.error('[getServerSideProps] Debug query error:', debugError.message)
+      }
       return {
         notFound: true,
       }
     }
+
+    if (!apiProperty.isPublished) {
+      console.log('[getServerSideProps] Property not published:', id)
+      return {
+        notFound: true,
+      }
+    }
+
+    console.log('[getServerSideProps] Property found:', apiProperty.title, 'Published:', apiProperty.isPublished, 'Images:', apiProperty.images?.length || 0)
 
     // Transform API data to match Property interface
     // Normalize upload URLs for standalone mode (/api/uploads/...)

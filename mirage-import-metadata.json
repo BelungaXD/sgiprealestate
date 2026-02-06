@@ -1,0 +1,209 @@
+{
+  "propertyName": "The Oasis - Mirage",
+  "district": "The Oasis",
+  "folderName": "The Oasis - Mirage",
+  "images": [
+    {
+      "url": "/uploads/properties/images/1770406668665-MIRAGE_THE_OASIS_RENDER1.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER1.jpg",
+      "order": 0,
+      "isMain": true
+    },
+    {
+      "url": "/uploads/properties/images/1770406668680-MIRAGE_THE_OASIS_RENDER10.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER10.jpg",
+      "order": 1,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668696-MIRAGE_THE_OASIS_RENDER11.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER11.jpg",
+      "order": 2,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668713-MIRAGE_THE_OASIS_RENDER12.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER12.jpg",
+      "order": 3,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668725-MIRAGE_THE_OASIS_RENDER13.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER13.jpg",
+      "order": 4,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668735-MIRAGE_THE_OASIS_RENDER14.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER14.jpg",
+      "order": 5,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668747-MIRAGE_THE_OASIS_RENDER15.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER15.jpg",
+      "order": 6,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668760-MIRAGE_THE_OASIS_RENDER16.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER16.jpg",
+      "order": 7,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668778-MIRAGE_THE_OASIS_RENDER17.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER17.jpg",
+      "order": 8,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668794-MIRAGE_THE_OASIS_RENDER18.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER18.jpg",
+      "order": 9,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668809-MIRAGE_THE_OASIS_RENDER19.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER19.jpg",
+      "order": 10,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668820-MIRAGE_THE_OASIS_RENDER2.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER2.jpg",
+      "order": 11,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668834-MIRAGE_THE_OASIS_RENDER20.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER20.jpg",
+      "order": 12,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668847-MIRAGE_THE_OASIS_RENDER21.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER21.jpg",
+      "order": 13,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668856-MIRAGE_THE_OASIS_RENDER22.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER22.jpg",
+      "order": 14,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668865-MIRAGE_THE_OASIS_RENDER23.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER23.jpg",
+      "order": 15,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668876-MIRAGE_THE_OASIS_RENDER3.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER3.jpg",
+      "order": 16,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668889-MIRAGE_THE_OASIS_RENDER4.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER4.jpg",
+      "order": 17,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668900-MIRAGE_THE_OASIS_RENDER5.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER5.jpg",
+      "order": 18,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668916-MIRAGE_THE_OASIS_RENDER6.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER6.jpg",
+      "order": 19,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668931-MIRAGE_THE_OASIS_RENDER7.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER7.jpg",
+      "order": 20,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668946-MIRAGE_THE_OASIS_RENDER8.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER8.jpg",
+      "order": 21,
+      "isMain": false
+    },
+    {
+      "url": "/uploads/properties/images/1770406668949-MIRAGE_THE_OASIS_RENDER9.jpg",
+      "alt": "The Oasis - Mirage - MIRAGE_THE_OASIS_RENDER9.jpg",
+      "order": 22,
+      "isMain": false
+    }
+  ],
+  "videos": [
+    {
+      "url": "/uploads/properties/videos/1770406669204-MIRAGE_THE_OASIS_LAUNCH_16x9.mp4",
+      "title": "MIRAGE_THE_OASIS_LAUNCH_16x9",
+      "order": 0
+    },
+    {
+      "url": "/uploads/properties/videos/1770406669750-MIRAGE_THE_OASIS_TEASER_16x9.mp4",
+      "title": "MIRAGE_THE_OASIS_TEASER_16x9",
+      "order": 1
+    }
+  ],
+  "files": [
+    {
+      "url": "/uploads/properties/files/1770406668570-MIRAGE_THE_OASIS_FACTSHEET.pdf",
+      "label": "MIRAGE_THE_OASIS_FACTSHEET",
+      "filename": "1770406668570-MIRAGE_THE_OASIS_FACTSHEET.pdf",
+      "size": 3401230,
+      "order": 0
+    },
+    {
+      "url": "/uploads/properties/files/1770406668593-MIRAGE_THE_OASIS_FLOORPLANS.pdf",
+      "label": "MIRAGE_THE_OASIS_FLOORPLANS",
+      "filename": "1770406668593-MIRAGE_THE_OASIS_FLOORPLANS.pdf",
+      "size": 12541139,
+      "order": 1
+    },
+    {
+      "url": "/uploads/properties/files/1770406668955-MIRAGE_THE_OASIS_CLUSTERMAP.pdf",
+      "label": "MIRAGE_THE_OASIS_CLUSTERMAP",
+      "filename": "1770406668955-MIRAGE_THE_OASIS_CLUSTERMAP.pdf",
+      "size": 5914516,
+      "order": 2
+    },
+    {
+      "url": "/uploads/properties/files/1770406669000-THE_OASIS_MASTERPLAN_MAP.pdf",
+      "label": "THE_OASIS_MASTERPLAN_MAP",
+      "filename": "1770406669000-THE_OASIS_MASTERPLAN_MAP.pdf",
+      "size": 1787348,
+      "order": 3
+    },
+    {
+      "url": "/uploads/properties/files/1770406669054-MIRAGE_THE_OASIS_MATERIAL_BOARD.pdf",
+      "label": "MIRAGE_THE_OASIS_MATERIAL_BOARD",
+      "filename": "1770406669054-MIRAGE_THE_OASIS_MATERIAL_BOARD.pdf",
+      "size": 5886946,
+      "order": 4
+    },
+    {
+      "url": "/uploads/properties/files/1770406669092-MIRAGE_THE_OASIS_ONE_PAGER.pdf",
+      "label": "MIRAGE_THE_OASIS_ONE_PAGER",
+      "filename": "1770406669092-MIRAGE_THE_OASIS_ONE_PAGER.pdf",
+      "size": 1968910,
+      "order": 5
+    },
+    {
+      "url": "/uploads/properties/files/1770406669139-MIRAGE_THE_OASIS_PAYMENT_PLAN.pdf",
+      "label": "MIRAGE_THE_OASIS_PAYMENT_PLAN",
+      "filename": "1770406669139-MIRAGE_THE_OASIS_PAYMENT_PLAN.pdf",
+      "size": 4694948,
+      "order": 6
+    }
+  ],
+  "importedAt": "2026-02-06T19:37:49.959Z"
+}
