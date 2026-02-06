@@ -36,7 +36,22 @@ See [LARGE_FILE_UPLOAD_TROUBLESHOOTING.md](./LARGE_FILE_UPLOAD_TROUBLESHOOTING.m
 
 ## File Locations on sgipreal (prod)
 
-- **Host path**: `/home/belunga/uploads/` (property folders go here)
+- **Host path**: `sgiprealestate/uploads/` (inside the app repo; e.g. `~/sgiprealestate/uploads/` or `/home/belunga/sgiprealestate/uploads/`). Property folders go here.
+
+### One-time migration: move uploads into sgiprealestate
+
+If `uploads` was previously at the parent level (same level as `sgiprealestate`), move it once on the server:
+
+```bash
+ssh sgipreal
+cd ~/sgiprealestate
+mv ../uploads ./uploads
+# Ensure permissions: same owner as sgiprealestate (e.g. belunga)
+chown -R $(whoami):$(whoami) ./uploads
+```
+
+Then redeploy so the new volume mount `./uploads:/uploads` is used.
+
 - **In container** (after redeploy with volume): `/uploads/`
 - **Persistent storage**: `public/uploads/` folder inside the repo – imported property images/videos/files stored here
 
@@ -49,8 +64,8 @@ An API exists for importing from disk when files are already on the server: **`/
 1. **Upload files to server once** (scp, rsync, SFTP):
 
    ```bash
-   # Example: copy property folders to prod
-   scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
+   # Example: copy property folders to prod (uploads is inside sgiprealestate)
+   scp -r "Creek Vistas Reserve" sgipreal:sgiprealestate/uploads/
    ```
 
 2. **Organise folder structure** on server. Two options:
@@ -58,7 +73,7 @@ An API exists for importing from disk when files are already on the server: **`/
    **Option A – single property folder** (path points to folder with files):
 
    ```bash
-   scp -r "Creek Vistas Reserve" sgipreal:~/uploads/
+   scp -r "Creek Vistas Reserve" sgipreal:sgiprealestate/uploads/
    ```
 
    Then use path: `/uploads/Creek Vistas Reserve`
@@ -66,7 +81,7 @@ An API exists for importing from disk when files are already on the server: **`/
    **Option B – multiple properties** (path points to parent with subfolders):
 
    ```text
-   ~/uploads/
+   sgiprealestate/uploads/
    ├── Downtown - Creek Vistas Reserve/
    │   ├── image1.jpg
    │   └── ...
@@ -76,7 +91,7 @@ An API exists for importing from disk when files are already on the server: **`/
 
    Then use path: `/uploads`
 
-3. **Run import** in admin via "Import from server path" and enter the server path (container path, e.g. `/uploads` or `/uploads/PropertyName`).
+3. **Run import** in admin via "Import from server path" and enter the container path (e.g. `/uploads` or `/uploads/PropertyName`). The host folder is `sgiprealestate/uploads/` on the server.
 
 ### Benefits
 
