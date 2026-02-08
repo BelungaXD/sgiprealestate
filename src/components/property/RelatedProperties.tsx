@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
-import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline'
+import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Property {
   id: string
@@ -100,9 +100,10 @@ export default function RelatedProperties({ currentPropertyId, district, type }:
               
               <Link
                 href={`/properties/${property.slug || property.id}`}
-                className="btn-primary w-full text-center text-sm py-2"
+                className="btn-primary w-full text-center text-sm py-2 inline-flex items-center justify-center group"
               >
                 {t('viewDetails')}
+                <ArrowRightIcon className="ml-2 h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -112,9 +113,10 @@ export default function RelatedProperties({ currentPropertyId, district, type }:
       <div className="text-center mt-8">
         <Link
           href="/properties"
-          className="btn-secondary text-lg px-8 py-4"
+          className="btn-secondary text-lg px-8 py-4 inline-flex items-center group"
         >
           {t('relatedProperties.viewAll')}
+          <ArrowRightIcon className="ml-2 h-5 w-5" />
         </Link>
       </div>
     </div>

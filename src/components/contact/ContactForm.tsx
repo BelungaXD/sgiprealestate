@@ -5,7 +5,8 @@ import {
   EnvelopeIcon, 
   PhoneIcon, 
   ChatBubbleLeftRightIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  ArrowRightIcon
 } from '@heroicons/react/24/outline'
 
 export default function ContactForm() {
@@ -59,9 +60,10 @@ export default function ContactForm() {
         <p className="text-gray-600 mb-6">{t('form.successMessage')}</p>
         <button
           onClick={() => setIsSubmitted(false)}
-          className="btn-primary"
+          className="btn-primary inline-flex items-center group"
         >
           Send Another Message
+          <ArrowRightIcon className="ml-2 h-5 w-5" />
         </button>
       </div>
     )
@@ -229,9 +231,14 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full btn-primary py-3"
+          className="w-full btn-primary py-3 inline-flex items-center justify-center group"
         >
-          {isSubmitting ? t('form.submitting') : t('form.submit')}
+          {isSubmitting ? t('form.submitting') : (
+            <>
+              {t('form.submit')}
+              <ArrowRightIcon className="ml-2 h-5 w-5" />
+            </>
+          )}
         </button>
       </form>
     </div>

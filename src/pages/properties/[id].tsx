@@ -171,138 +171,130 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
       </Head>
 
       <Layout>
-        <div className="bg-white">
-          {/* Property Header */}
-          <div className="container-custom py-8">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                  <span className="bg-champagne/10 text-champagne px-2 py-1 rounded-full font-medium">
-                    {property.type}
+        <div className="bg-gray-50 min-h-screen">
+          {/* Property Header - White Background */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="container-custom py-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <span className="bg-champagne text-white px-4 py-1.5 rounded-full text-sm font-semibold">
+                  {property.type}
+                </span>
+                {property.isFeatured && (
+                  <span className="bg-red-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold">
+                    {t('featured')}
                   </span>
-                  {property.isFeatured && (
-                    <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full font-medium">
-                      {t('featured')}
-                    </span>
-                  )}
-                </div>
-                
-                <h1 className="text-3xl md:text-4xl font-bold text-graphite mb-4">
-                  {property.title}
-                </h1>
-                
-                <div className="flex items-center text-gray-600 mb-6">
-                  <MapPinIcon className="h-5 w-5 mr-2" />
-                  <span className="text-lg">{property.location}</span>
-                </div>
-                
-                <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6">
-                  <div className="flex items-center">
-                    <HomeIcon className="h-4 w-4 mr-1" />
-                    <span>{property.bedrooms} {t('bedrooms')}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <WrenchScrewdriverIcon className="h-4 w-4 mr-1" />
-                    <span>{property.bathrooms} {t('bathrooms')}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Square3Stack3DIcon className="h-4 w-4 mr-1" />
-                    <span>{property.area.toLocaleString()} sq ft</span>
-                  </div>
-                  <div className="flex items-center">
-                    <CalendarIcon className="h-4 w-4 mr-1" />
-                    <span>{property.yearBuilt}</span>
-                  </div>
-                </div>
+                )}
               </div>
-              
-              <div className="lg:w-80">
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <div className="text-3xl font-bold text-champagne mb-2">
-                    {formatPrice(property.price, property.currency)}
-                  </div>
-                  <div className="text-sm text-gray-600 mb-4">
-                    {t('pricePerSqft')}: {formatPrice(property.price / property.area, property.currency)}
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <button 
-                      onClick={handleOpenContactTab}
-                      className="w-full btn-primary"
-                    >
-                      {t('requestInfo')}
-                    </button>
-                    <button 
-                      onClick={handleOpenContactTab}
-                      className="w-full btn-secondary"
-                    >
-                      {t('scheduleViewing')}
-                    </button>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setIsSaved(!isSaved)}
-                        className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-lg border transition-colors ${
-                          isSaved
-                            ? 'bg-red-50 border-red-200 text-red-600'
-                            : 'bg-white border-gray-300 text-gray-700 hover:border-red-300'
-                        }`}
-                      >
-                        <HeartIcon className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
-                        <span>{isSaved ? t('saved') : t('save')}</span>
-                      </button>
-                      <button
-                        onClick={handleShare}
-                        className="flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-lg border border-gray-300 text-gray-700 hover:border-champagne hover:text-champagne transition-colors"
-                      >
-                        <ShareIcon className="h-4 w-4" />
-                        <span>{t('share')}</span>
-                      </button>
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-3">
+                <div className="flex-1">
+                  <h1 className="text-4xl md:text-5xl font-bold text-graphite mb-2">
+                    {property.title}
+                  </h1>
+                </div>
+                <div className="bg-white rounded-xl border-2 border-champagne shadow-lg p-5 md:p-6 min-w-[260px] transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:border-champagne-dark group cursor-pointer">
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <div className="text-3xl md:text-4xl font-bold text-champagne transition-colors duration-300 group-hover:text-champagne-dark">
+                      {formatPrice(property.price, property.currency)}
                     </div>
                   </div>
+                  {property.area > 0 && (
+                    <div className="text-sm text-gray-600 border-t border-gray-100 pt-2 transition-all duration-300 group-hover:border-champagne/30">
+                      <span className="font-medium">{t('pricePerSqft')}:</span>{' '}
+                      <span className="text-champagne font-semibold transition-colors duration-300 group-hover:text-champagne-dark">{formatPrice(property.price / property.area, property.currency)}</span>
+                    </div>
+                  )}
                 </div>
+              </div>
+              <div className="flex items-center text-gray-700">
+                <MapPinIcon className="h-6 w-6 mr-2 text-champagne" />
+                <span className="text-xl font-medium">{property.location}</span>
               </div>
             </div>
           </div>
 
-          {/* Property Gallery */}
-          <PropertyGallery images={property.images} />
+          {/* Gallery Section */}
+          <div className="relative w-full bg-white">
+            <PropertyGallery images={property.images} />
+          </div>
 
-          {/* Property Tabs */}
-          <div ref={tabsSectionRef} className="container-custom py-8">
-            <div className="border-b border-gray-200 mb-8">
-              <nav className="flex space-x-8">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      activeTab === tab.id
-                        ? 'border-champagne text-champagne'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </nav>
-            </div>
+          {/* Main Content Area */}
+          <div className="container-custom mt-8 relative z-20 pb-8">
+            <div className="max-w-5xl mx-auto">
+              {/* Main Content */}
+              <div className="space-y-8">
+                {/* Quick Stats Card */}
+                <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] group">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="text-center transition-transform duration-300 group-hover:scale-105">
+                      <div className="w-14 h-14 bg-champagne/10 rounded-xl flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:bg-champagne/20 group-hover:scale-110">
+                        <HomeIcon className="h-7 w-7 text-champagne transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                      <div className="text-2xl font-bold text-graphite mb-1">{property.bedrooms}</div>
+                      <div className="text-sm text-gray-600">{t('bedrooms')}</div>
+                    </div>
+                    <div className="text-center transition-transform duration-300 group-hover:scale-105">
+                      <div className="w-14 h-14 bg-champagne/10 rounded-xl flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:bg-champagne/20 group-hover:scale-110">
+                        <WrenchScrewdriverIcon className="h-7 w-7 text-champagne transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                      <div className="text-2xl font-bold text-graphite mb-1">{property.bathrooms}</div>
+                      <div className="text-sm text-gray-600">{t('bathrooms')}</div>
+                    </div>
+                    <div className="text-center transition-transform duration-300 group-hover:scale-105">
+                      <div className="w-14 h-14 bg-champagne/10 rounded-xl flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:bg-champagne/20 group-hover:scale-110">
+                        <Square3Stack3DIcon className="h-7 w-7 text-champagne transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                      <div className="text-2xl font-bold text-graphite mb-1">{property.area.toLocaleString()}</div>
+                      <div className="text-sm text-gray-600">sq ft</div>
+                    </div>
+                    <div className="text-center transition-transform duration-300 group-hover:scale-105">
+                      <div className="w-14 h-14 bg-champagne/10 rounded-xl flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:bg-champagne/20 group-hover:scale-110">
+                        <CalendarIcon className="h-7 w-7 text-champagne transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                      <div className="text-2xl font-bold text-graphite mb-1">{property.yearBuilt}</div>
+                      <div className="text-sm text-gray-600">{t('yearBuilt')}</div>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Tab Content */}
-            <div className="min-h-[400px]">
-              {activeTab === 'overview' && (
-                <PropertyDetails property={property} />
-              )}
-              {activeTab === 'files' && (
-                <PropertyFiles files={property.files} />
-              )}
-              {activeTab === 'contact' && (
-                <PropertyContactForm property={property} />
-              )}
+                {/* Property Tabs */}
+                <div ref={tabsSectionRef} className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                  <div className="border-b border-gray-200 bg-gray-50/50">
+                    <nav className="flex space-x-1 p-2">
+                      {tabs.map((tab) => (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-all duration-500 ease-in-out ${
+                            activeTab === tab.id
+                              ? 'bg-champagne-dark text-white shadow-md'
+                              : 'bg-white text-champagne border-2 border-champagne hover:bg-champagne-dark hover:text-white hover:border-champagne-dark'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </nav>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="p-8 min-h-[400px]">
+                    {activeTab === 'overview' && (
+                      <PropertyDetails property={property} />
+                    )}
+                    {activeTab === 'files' && (
+                      <PropertyFiles files={property.files} />
+                    )}
+                    {activeTab === 'contact' && (
+                      <PropertyContactForm property={property} />
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Related Properties */}
-          <div className="bg-gray-50 py-16">
+          <div className="bg-white py-16 mt-16">
             <div className="container-custom">
               <RelatedProperties 
                 currentPropertyId={property.id}

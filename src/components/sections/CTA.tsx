@@ -1,6 +1,6 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
-import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
 export default function CTA() {
@@ -75,15 +75,17 @@ export default function CTA() {
         <div className="text-center">
           <Link
             href="/contact"
-            className="btn-primary text-lg px-8 py-4 inline-block mr-4"
+            className="btn-primary text-lg px-8 py-4 inline-flex items-center group mr-4"
           >
             {t('cta.getQuote')}
+            <ArrowRightIcon className="ml-2 h-5 w-5" />
           </Link>
           <Link
             href="/properties"
-            className="btn-secondary text-lg px-8 py-4 inline-block"
+            className="btn-secondary text-lg px-8 py-4 inline-flex items-center group"
           >
             {t('cta.browseProperties')}
+            <ArrowRightIcon className="ml-2 h-5 w-5" />
           </Link>
         </div>
       </div>

@@ -111,9 +111,10 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
                 
                 <Link
                   href={`/properties/${property.slug || property.id}`}
-                  className="btn-primary w-full text-center inline-block"
+                  className="btn-primary w-full text-center inline-flex items-center justify-center group"
                 >
                   {t('featured.viewDetails')}
+                  <ArrowRightIcon className="ml-2 h-4 w-4" />
                 </Link>
               </div>
             </div>
@@ -128,7 +129,7 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
             className="btn-secondary text-lg px-8 py-4 inline-flex items-center group"
           >
             {t('featured.viewAllProperties')}
-            <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRightIcon className="ml-2 h-5 w-5" />
           </Link>
         </div>
       </div>

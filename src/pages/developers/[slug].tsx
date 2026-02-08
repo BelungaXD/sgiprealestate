@@ -12,6 +12,7 @@ import {
   PhoneIcon,
   EnvelopeIcon,
   HomeIcon,
+  ArrowRightIcon,
 } from '@heroicons/react/24/outline'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
@@ -197,10 +198,11 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                 </p>
                 <button
                   onClick={handleViewProperties}
-                  className="btn-primary inline-flex items-center"
+                  className="btn-primary inline-flex items-center group"
                 >
                   <HomeIcon className="h-5 w-5 mr-2" />
                   {t('viewProperties') || 'View Properties'}
+                  <ArrowRightIcon className="ml-2 h-5 w-5" />
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import { useTranslation } from 'next-i18next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
 interface Partner {
@@ -87,9 +88,10 @@ export default function Partners() {
           <div className="text-center">
             <Link
               href="/developers"
-              className="btn-primary inline-flex items-center"
+              className="btn-primary inline-flex items-center group"
             >
               {ready ? t('partners.viewAllDevelopers') : 'View All Developers'}
+              <ArrowRightIcon className="ml-2 h-5 w-5" />
             </Link>
           </div>
         </AnimateOnScroll>

@@ -40,7 +40,7 @@ export default function Hero() {
                 className="bg-transparent border-2 border-white/80 text-white text-lg px-8 py-4 inline-flex items-center justify-center group rounded-lg font-medium transition-all duration-200 hover:bg-white/10 hover:border-white focus:outline-none focus:ring-2 focus:ring-white/50"
               >
                 {t('hero.exploreProperties')}
-                <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRightIcon className="ml-2 h-5 w-5" />
               </Link>
             </div>
           </div>

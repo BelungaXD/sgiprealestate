@@ -45,11 +45,46 @@ body {
 /* Custom Components */
 @layer components {
   .btn-primary {
-    @apply bg-champagne-dark text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-champagne-dark/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium transition-all duration-500 ease-in-out hover:bg-champagne-dark hover:text-white hover:border-champagne-dark hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+  }
+  
+  .btn-primary svg,
+  .btn-primary .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+  
+  .btn-primary:hover svg,
+  .btn-primary:hover .arrow-icon,
+  .btn-primary.group:hover svg {
+    @apply translate-x-1;
   }
   
   .btn-secondary {
-    @apply bg-transparent border-2 border-champagne-dark text-champagne-dark px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-champagne-dark hover:text-white focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium transition-all duration-500 ease-in-out hover:bg-champagne-dark hover:text-white hover:border-champagne-dark focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+  }
+  
+  .btn-secondary svg,
+  .btn-secondary .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+  
+  .btn-secondary:hover svg,
+  .btn-secondary:hover .arrow-icon,
+  .btn-secondary.group:hover svg {
+    @apply translate-x-1;
+  }
+  
+  /* Animation for all buttons/links with group class and ArrowRightIcon */
+  /* This applies to any element with group class that contains SVG icons */
+  .group:hover svg,
+  .group:hover .arrow-icon {
+    @apply translate-x-1;
+  }
+  
+  /* Ensure all svg icons in group elements have transition */
+  .group svg,
+  .group .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
   }
   
   .btn-outline {
@@ -65,7 +100,7 @@ body {
   }
   
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none transition-colors duration-200;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none transition-all duration-500 ease-in-out;
   }
   
   .section-padding {
@@ -282,29 +317,29 @@ body {
 
 /* Smooth transitions for interactive elements */
 a, button {
-  transition: all 0.2s ease;
+  transition: all 0.5s ease-in-out;
 }
 
 /* Optimized hover effects using GPU-accelerated properties */
 .group:hover .group-hover\:scale-110 {
   transform: scale(1.1);
-  transition: transform 0.2s ease-out;
+  transition: transform 0.5s ease-in-out;
 }
 
 .group:hover .group-hover\:scale-105 {
   transform: scale(1.05);
-  transition: transform 0.2s ease-out;
+  transition: transform 0.5s ease-in-out;
 }
 
 /* Optimized shadow transitions - only on hover, not during scroll */
 .hover\:shadow-lg:hover {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease-out;
+  transition: box-shadow 0.5s ease-in-out;
 }
 
 .hover\:shadow-xl:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.2s ease-out;
+  transition: box-shadow 0.5s ease-in-out;
 }
 
 /* Card hover effects */
@@ -354,7 +389,7 @@ a, button {
 
 /* Navigation Styles */
 .nav-link {
-  @apply text-gray-700 hover:text-champagne transition-colors duration-200 font-medium;
+  @apply text-gray-700 hover:text-champagne transition-all duration-500 ease-in-out font-medium;
 }
 
 .nav-link-active {

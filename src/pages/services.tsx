@@ -267,13 +267,13 @@ export default function Services() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href="/contact"
-                  className="bg-white text-champagne px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                  className="bg-white text-champagne border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-champagne-dark hover:text-white hover:border-champagne-dark transition-all duration-500 ease-in-out"
                 >
                   {t('cta.contactUs')}
                 </a>
                 <a
                   href="/properties"
-                  className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-champagne transition-colors"
+                  className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-champagne-dark transition-all duration-500 ease-in-out"
                 >
                   {t('cta.viewProperties')}
                 </a>

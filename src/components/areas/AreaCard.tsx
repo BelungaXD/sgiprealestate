@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslation } from 'next-i18next'
-import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon } from '@heroicons/react/24/outline'
+import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Area {
   id: string
@@ -136,15 +136,17 @@ export default function AreaCard({ area }: AreaCardProps) {
         <div className="flex space-x-2">
           <Link
             href={`/areas/${area.slug}`}
-            className="flex-1 btn-primary text-center text-sm py-2"
+            className="flex-1 btn-primary text-center text-sm py-2 inline-flex items-center justify-center group"
           >
             {t('learnMore')}
+            <ArrowRightIcon className="ml-2 h-4 w-4" />
           </Link>
           <Link
             href={`/properties?area=${encodeURIComponent(area.nameEn)}`}
-            className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm"
+            className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-all duration-500 ease-in-out text-sm inline-flex items-center group"
           >
             {t('viewProperties')}
+            <ArrowRightIcon className="ml-2 h-4 w-4" />
           </Link>
         </div>
       </div>

@@ -68,10 +68,10 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         {/* CTA Button */}
         <a
           href={`/contact?service=${service.id}`}
-          className="w-full btn-primary flex items-center justify-center group-hover:bg-champagne/90 transition-colors"
+          className="w-full btn-primary flex items-center justify-center group"
         >
           {t('cta.getStarted')}
-          <ArrowRightIcon className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          <ArrowRightIcon className="ml-2 h-4 w-4" />
         </a>
       </div>
     </div>

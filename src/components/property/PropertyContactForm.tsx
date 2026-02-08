@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'next-i18next'
-import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
+import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Property {
   id: string
@@ -60,40 +60,34 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
 
   if (isSubmitted) {
     return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="text-center py-12 bg-gradient-to-br from-green-50 to-white rounded-xl p-12 border border-green-100">
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-graphite mb-2">Thank You!</h3>
-        <p className="text-gray-600 mb-6">We've received your inquiry and will contact you within 24 hours.</p>
+        <h3 className="text-2xl font-bold text-graphite mb-3">Thank You!</h3>
+        <p className="text-gray-600 mb-8 text-lg">We've received your inquiry and will contact you within 24 hours.</p>
         <button
           onClick={() => setIsSubmitted(false)}
-          className="btn-primary"
+          className="btn-primary px-8 py-3 inline-flex items-center group"
         >
           Send Another Inquiry
+          <ArrowRightIcon className="ml-2 h-5 w-5" />
         </button>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Contact Form */}
         <div>
-          <h3 className="text-2xl font-semibold text-graphite mb-6">
-            {t('contactForm.title')}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {t('contactForm.description')}
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-2xl p-8 border border-gray-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   {t('contactForm.name')} *
                 </label>
                 <input
@@ -106,7 +100,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   {t('contactForm.email')} *
                 </label>
                 <input
@@ -121,7 +115,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('contactForm.phone')}
               </label>
               <input
@@ -134,7 +128,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('contactForm.preferredContact')}
               </label>
               <select
@@ -150,7 +144,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('contactForm.message')}
               </label>
               <textarea
@@ -190,9 +184,9 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   {t('contactForm.budget')}
                 </label>
                 <input
@@ -205,7 +199,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   {t('contactForm.timeline')}
                 </label>
                 <select
@@ -227,76 +221,63 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-primary py-3"
+              className="w-full btn-primary text-lg px-8 py-4 inline-flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? t('contactForm.submitting') : t('contactForm.submit')}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('contactForm.submitting')}
+                </span>
+              ) : (
+                <>
+                  {t('contactForm.submit')}
+                  <ArrowRightIcon className="ml-2 h-5 w-5" />
+                </>
+              )}
             </button>
           </form>
         </div>
 
-        {/* Contact Info & Quick Actions */}
+        {/* Sidebar - Property Info & Fast Response */}
         <div className="space-y-6">
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h4 className="text-lg font-semibold text-graphite mb-4">
-              {t('quickContact.title')}
+          {/* Property Info Card */}
+          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
+            <h4 className="text-lg font-bold text-graphite mb-5 flex items-center">
+              <div className="w-1 h-6 bg-champagne rounded-full mr-3 transition-all duration-300 group-hover:h-8"></div>
+              {t('propertyInfo.title')}
             </h4>
-            
             <div className="space-y-4">
-              <a
-                href="tel:+971505807871"
-                className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <PhoneIcon className="h-5 w-5 text-champagne" />
-                <div>
-                  <div className="font-medium text-graphite">+971 50 580 7871</div>
-                  <div className="text-sm text-gray-600">Call now</div>
+              <div className="pb-3 border-b border-gray-100 transition-all duration-300 group-hover:border-champagne/30">
+                <div className="text-xs uppercase tracking-wide text-gray-500 mb-1 font-semibold">PROPERTY</div>
+                <div className="font-bold text-graphite text-base">{property.title}</div>
+              </div>
+              <div className="pb-3 border-b border-gray-100 transition-all duration-300 group-hover:border-champagne/30">
+                <div className="text-xs uppercase tracking-wide text-gray-500 mb-1 font-semibold">PRICE</div>
+                <div className="font-bold text-xl text-champagne transition-colors duration-300 group-hover:text-champagne-dark">
+                  {formatPrice(property.price, property.currency)}
                 </div>
-              </a>
-              
-              <a
-                href="mailto:support@sgipreal.com"
-                className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <EnvelopeIcon className="h-5 w-5 text-champagne" />
-                <div>
-                  <div className="font-medium text-graphite">support@sgipreal.com</div>
-                  <div className="text-sm text-gray-600">Email us</div>
-                </div>
-              </a>
-              
-              <a
-                href="https://wa.me/971505807871"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-3 p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <ChatBubbleLeftRightIcon className="h-5 w-5 text-champagne" />
-                <div>
-                  <div className="font-medium text-graphite">WhatsApp Chat</div>
-                  <div className="text-sm text-gray-600">Quick response</div>
-                </div>
-              </a>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 mb-1 font-semibold">REFERENCE</div>
+                <div className="font-semibold text-graphite text-base font-mono">#{property.id.slice(0, 8).toUpperCase()}</div>
+              </div>
             </div>
           </div>
 
-          <div className="bg-champagne/5 rounded-lg p-6">
-            <h4 className="text-lg font-semibold text-graphite mb-4">
-              {t('propertyInfo.title')}
-            </h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Property:</span>
-                <span className="font-medium text-graphite">{property.title}</span>
+          {/* Response Time Card */}
+          <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border border-green-100 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-green-200 group-hover:scale-110">
+                <svg className="w-6 h-6 text-green-600 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Price:</span>
-                <span className="font-medium text-champagne">
-                  {formatPrice(property.price, property.currency)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Reference:</span>
-                <span className="font-medium text-graphite">#{property.id}</span>
+              <div>
+                <h5 className="font-bold text-graphite mb-1 transition-colors duration-300 group-hover:text-green-700">Fast Response</h5>
+                <p className="text-sm text-gray-600">We typically respond within 24 hours</p>
               </div>
             </div>
           </div>

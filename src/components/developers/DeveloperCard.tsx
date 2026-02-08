@@ -7,7 +7,8 @@ import {
   MapPinIcon, 
   StarIcon,
   GlobeAltIcon,
-  TrophyIcon
+  TrophyIcon,
+  ArrowRightIcon
 } from '@heroicons/react/24/outline'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
@@ -165,27 +166,29 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
         <div className="flex space-x-2">
           <Link
             href={`/developers/${developer.slug}`}
-            className="flex-1 btn-primary text-center text-sm py-2"
+            className="flex-1 btn-primary text-center text-sm py-2 inline-flex items-center justify-center group"
           >
             {t('learnMore')}
+            <ArrowRightIcon className="ml-2 h-4 w-4" />
           </Link>
           {developer.website && (
             <a
               href={developer.website.startsWith('http') ? developer.website : `https://${developer.website}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm flex items-center justify-center"
+              className="px-4 py-2 border-2 border-champagne bg-white text-champagne rounded-lg hover:bg-champagne-dark hover:text-white transition-all duration-500 ease-in-out text-sm flex items-center justify-center group"
               title={t('visitWebsite') || 'Visit Website'}
             >
-              <GlobeAltIcon className="h-4 w-4" />
+              <GlobeAltIcon className="h-4 w-4 group-hover:scale-110 transition-transform duration-500 ease-in-out" />
             </a>
           )}
           </div>
           <Link
             href={`/properties?developer=${encodeURIComponent(developer.nameEn)}`}
-            className="w-full btn-secondary text-center text-sm py-2"
+            className="w-full btn-secondary text-center text-sm py-2 inline-flex items-center justify-center group"
           >
             {t('viewProperties') || 'View Properties'}
+            <ArrowRightIcon className="ml-2 h-4 w-4" />
           </Link>
         </div>
       </div>

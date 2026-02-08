@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
-import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, CalendarIcon } from '@heroicons/react/24/outline'
+import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, CalendarIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Property {
   id: string
@@ -79,7 +79,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
               <div className="flex space-x-2">
                 <Link
                   href={`/properties/${property.slug || property.id}`}
-                  className="bg-white text-graphite px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                  className="bg-white text-graphite px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-500 ease-in-out"
                 >
                   {t('viewDetails')}
                 </Link>
@@ -139,11 +139,12 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
             <div className="flex space-x-2">
               <Link
                 href={`/properties/${property.slug || property.id}`}
-                className="flex-1 btn-primary text-center text-sm py-2"
+                className="flex-1 btn-primary text-center text-sm py-2 inline-flex items-center justify-center group"
               >
                 {t('viewDetails')}
+                <ArrowRightIcon className="ml-2 h-4 w-4" />
               </Link>
-              <button className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors text-sm">
+              <button className="px-4 py-2 border-2 border-champagne bg-white text-champagne rounded-lg hover:bg-champagne-dark hover:text-white transition-all duration-500 ease-in-out text-sm">
                 {t('save')}
               </button>
             </div>

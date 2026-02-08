@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface PropertyGalleryProps {
@@ -16,6 +16,8 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
   const images = imagesProp ?? []
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [thumbnailScrollPosition, setThumbnailScrollPosition] = useState(0)
+  const thumbnailScrollRef = useRef<HTMLDivElement>(null)
   // Per-URL: try alternate path once on error; then mark failed and show placeholder
   const [urlFallback, setUrlFallback] = useState<Record<string, string>>({})
   const [urlFailed, setUrlFailed] = useState<Set<string>>(new Set())
@@ -53,6 +55,15 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
   const closeLightbox = useCallback(() => {
     setIsLightboxOpen(false)
   }, [])
+
+  const scrollThumbnails = (direction: 'left' | 'right') => {
+    if (!thumbnailScrollRef.current) return
+    const scrollAmount = 300 // pixels to scroll
+    const newPosition = direction === 'left' 
+      ? thumbnailScrollRef.current.scrollLeft - scrollAmount
+      : thumbnailScrollRef.current.scrollLeft + scrollAmount
+    thumbnailScrollRef.current.scrollTo({ left: newPosition, behavior: 'smooth' })
+  }
 
   // Close lightbox on Escape
   useEffect(() => {
@@ -107,13 +118,13 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
     <>
       <div className="relative">
         {/* Main Image/Video - large preview container with fixed aspect ratio */}
-        <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-100 flex items-center justify-center">
+        <div className="relative w-full max-w-5xl mx-auto aspect-[16/9] overflow-hidden bg-gray-900 flex items-center justify-center">
           <div className="relative w-full h-full flex items-center justify-center">
             {isCurrentVideo ? (
               <video
                 key={currentIndex}
                 src={currentMedia}
-                className="w-full h-full object-contain cursor-pointer transition-opacity duration-300"
+                className="w-full h-full object-cover cursor-pointer transition-opacity duration-300"
                 onClick={() => openLightbox(currentIndex)}
                 controls={false}
                 muted
@@ -124,7 +135,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                 key={currentIndex}
                 src={mainDisplayUrl}
                 alt={`Property image ${currentIndex + 1}`}
-                className="w-full h-full object-contain cursor-pointer transition-opacity duration-300"
+                className="w-full h-full object-cover cursor-pointer transition-opacity duration-300"
                 onClick={() => openLightbox(currentIndex)}
                 onError={() => handleImageError(currentMedia)}
               />
@@ -143,14 +154,14 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
             <>
               <button
                 onClick={prevImage}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all duration-200 hover:scale-110 z-10"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-3 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 z-20"
                 aria-label="Previous image"
               >
                 <ChevronLeftIcon className="h-6 w-6" />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all duration-200 hover:scale-110 z-10"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-3 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 z-20"
                 aria-label="Next image"
               >
                 <ChevronRightIcon className="h-6 w-6" />
@@ -159,7 +170,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
           )}
           
           {/* Media Counter - improved design */}
-          <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg">
+          <div className="absolute bottom-4 right-4 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-2xl z-20">
             {currentIndex + 1} / {images.length}
             {isCurrentVideo && (
               <span className="ml-2 text-xs">🎥</span>
@@ -167,66 +178,90 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
           </div>
         </div>
 
-        {/* Thumbnail Strip - improved design */}
+        {/* Thumbnail Strip - horizontal scroll */}
         {images.length > 1 && (
-          <div className="flex flex-wrap justify-center gap-3 p-4 bg-gray-50 border-t border-gray-200">
-            {images.map((image, index) => {
-              const isThumbVideo = isVideo(image)
-              return (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-200 relative bg-gray-100 flex items-center justify-center ${
-                  index === currentIndex
-                    ? 'border-champagne ring-2 ring-champagne/50 shadow-lg scale-105'
-                    : 'border-gray-200 hover:border-gray-400 hover:shadow-md'
-                }`}
-                style={{ width: '90px', height: '90px' }}
-              >
-                {isThumbVideo ? (
-                  <video
-                    src={image}
-                    className="w-full h-full object-cover"
-                    muted
-                    preload="metadata"
-                  />
-                ) : (() => {
-                  const thumbUrl = resolveUrl(image)
-                  const thumbSrc = thumbUrl ? getThumbnailUrl(thumbUrl) : null
-                  const fullUrl = thumbUrl || image
-                  return thumbSrc ? (
-                    <img
-                      src={thumbSrc}
-                      alt={`Thumbnail ${index + 1}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        if (target.src !== fullUrl && thumbSrc !== fullUrl) {
-                          target.src = fullUrl
-                        } else {
-                          handleImageError(image)
-                        }
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
-                      </svg>
-                    </div>
-                  )
-                })()}
-                {isThumbVideo && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
-                  </div>
-                )}
-              </button>
-              )
-            })}
+          <div className="px-4 py-4 bg-white border-t border-gray-200 shadow-sm relative">
+            {/* Left Arrow */}
+            <button
+              onClick={() => scrollThumbnails('left')}
+              className="absolute left-6 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 border border-gray-200 rounded-full p-2 shadow-md transition-all duration-200 hover:shadow-lg"
+              aria-label="Scroll left"
+            >
+              <ChevronLeftIcon className="h-5 w-5 text-gray-700" />
+            </button>
+            
+            {/* Right Arrow */}
+            <button
+              onClick={() => scrollThumbnails('right')}
+              className="absolute right-6 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 border border-gray-200 rounded-full p-2 shadow-md transition-all duration-200 hover:shadow-lg"
+              aria-label="Scroll right"
+            >
+              <ChevronRightIcon className="h-5 w-5 text-gray-700" />
+            </button>
+
+            <div 
+              ref={thumbnailScrollRef}
+              className="flex gap-3 overflow-x-auto scrollbar-thin scrollbar-thumb-champagne scrollbar-track-gray-100 pb-2 px-12" 
+              style={{ scrollbarWidth: 'thin' }}
+            >
+              {images.map((image, index) => {
+                const isThumbVideo = isVideo(image)
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-200 relative bg-gray-100 flex items-center justify-center ${
+                      index === currentIndex
+                        ? 'border-champagne ring-2 ring-champagne/50 shadow-lg scale-105'
+                        : 'border-gray-200 hover:border-gray-400 hover:shadow-md'
+                    }`}
+                    style={{ width: '110px', height: '110px', minWidth: '110px' }}
+                  >
+                    {isThumbVideo ? (
+                      <video
+                        src={image}
+                        className="w-full h-full object-cover"
+                        muted
+                        preload="metadata"
+                      />
+                    ) : (() => {
+                      const thumbUrl = resolveUrl(image)
+                      const thumbSrc = thumbUrl ? getThumbnailUrl(thumbUrl) : null
+                      const fullUrl = thumbUrl || image
+                      return thumbSrc ? (
+                        <img
+                          src={thumbSrc}
+                          alt={`Thumbnail ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            if (target.src !== fullUrl && thumbSrc !== fullUrl) {
+                              target.src = fullUrl
+                            } else {
+                              handleImageError(image)
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                          </svg>
+                        </div>
+                      )
+                    })()}
+                    {isThumbVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
