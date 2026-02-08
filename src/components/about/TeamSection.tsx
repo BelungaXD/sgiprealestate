@@ -21,7 +21,6 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
-  const [shouldLoad, setShouldLoad] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
 
   if (!member || !member.image) {
@@ -30,16 +29,11 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
 
   const imageUrl = normalizeImageUrl(member.image)
   
-  // First 3 images load immediately, rest wait for scroll
-  const isPriority = index < 3
+  // All images load immediately when page opens
+  const isPriority = true
 
-  // Intersection Observer to detect when card is visible
+  // Intersection Observer only for animation visibility, not for loading
   useEffect(() => {
-    // Priority images start loading immediately
-    if (isPriority) {
-      setShouldLoad(true)
-    }
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -47,11 +41,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
             // Add small delay for animation visibility
             setTimeout(() => {
               setIsVisible(true)
-            }, isPriority ? 150 : 0)
-            
-            if (!isPriority) {
-              setShouldLoad(true)
-            }
+            }, 150)
             // Disconnect observer after first intersection
             observer.disconnect()
           }
@@ -59,16 +49,16 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
       },
       {
         threshold: 0.1,
-        rootMargin: isPriority ? '200px' : '50px', // Larger margin for priority images to trigger earlier
+        rootMargin: '200px', // Larger margin to trigger animation earlier
       }
     )
 
-    // Check if element is already visible (for priority images that are above fold)
+    // Check if element is already visible
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect()
       const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
       
-      if (isInViewport && isPriority) {
+      if (isInViewport) {
         // Element is already visible, trigger animation with delay
         setTimeout(() => {
           setIsVisible(true)
@@ -84,7 +74,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
         observer.unobserve(cardRef.current)
       }
     }
-  }, [isPriority])
+  }, [])
 
   const handleImageLoad = () => {
     setImageLoaded(true)
@@ -97,8 +87,8 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
 
   return (
     <>
-      {/* Preload critical images for instant display */}
-      {isPriority && imageUrl && (
+      {/* Preload all images for instant display */}
+      {imageUrl && (
         <Head>
           <link
             rel="preload"
@@ -116,13 +106,13 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
       >
         <div className="relative w-full h-[400px] bg-gray-200 overflow-hidden flex-shrink-0">
           {/* Skeleton loader with shimmer effect */}
-          {(!imageLoaded || !shouldLoad) && (
+          {!imageLoaded && (
             <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 z-10">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
             </div>
           )}
           
-          {imageUrl && !imageError && shouldLoad ? (
+          {imageUrl && !imageError ? (
             <Image
               src={imageUrl}
               alt={member.name || 'Team member'}
@@ -131,13 +121,13 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
               className={`object-cover object-top w-full h-full transition-opacity duration-500 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
-              loading={isPriority ? "eager" : "lazy"}
+              loading="eager"
               priority={isPriority}
               quality={95}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
               placeholder="blur"
               blurDataURL={blurDataURL}
-              fetchPriority={isPriority ? "high" : "auto"}
+              fetchPriority="high"
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
