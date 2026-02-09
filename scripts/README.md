@@ -94,11 +94,13 @@ If chunk requests return HTML or 404: purge CDN cache (Cloudflare → Purge Ever
 Syncs the `public/uploads` folder from production server to local machine. This allows you to work with real estate property files (images, videos, documents) locally.
 
 **Usage:**
+
 ```bash
 ./scripts/sync-uploads-from-prod.sh
 ```
 
 **What it does:**
+
 1. Connects to production server (default: `sgipreal`)
 2. Finds the `public/uploads` folder on production
 3. Uses rsync to sync files to local `public/uploads/` directory
@@ -106,13 +108,16 @@ Syncs the `public/uploads` folder from production server to local machine. This 
 5. Shows progress during sync
 
 **Environment Variables (optional):**
+
 ```bash
 export SSH_HOST=sgipreal          # Production server hostname
 export PROD_USER=belunga          # Production server user
 export PROD_BASE_PATH=~/sgiprealestate  # Production project path
+
 ```
 
 **Requirements:**
+
 - SSH access to production server
 - SSH key configured (or password access)
 - Sufficient disk space on local machine
@@ -124,35 +129,45 @@ export PROD_BASE_PATH=~/sgiprealestate  # Production project path
 Syncs the database from production server to local machine. This exports the production database and imports it locally so you can work with real estate property data locally.
 
 **Usage:**
+
 ```bash
 ./scripts/sync-database-from-prod.sh
 ```
 
 **What it does:**
+
 1. Connects to production server (default: `sgipreal`)
+
 2. Exports database dump from production
 3. Imports database dump to local database server
 4. Creates local database if it doesn't exist
 5. Overwrites existing local database (with confirmation)
 
 **Prerequisites:**
+
 - Local database server must be running (docker compose up -d in database-server)
 - SSH access to production server
 - Database name: `sgiprealestate` (default, can be overridden with DB_NAME env var)
 
 **Environment Variables (optional):**
+
 ```bash
+
 export SSH_HOST=sgipreal          # Production server hostname
 export PROD_USER=belunga          # Production server user
 export DB_NAME=sgiprealestate     # Database name
+
 export DB_SERVER_ADMIN_USER=dbadmin  # Database admin user
 ```
 
 **After sync:**
+
 1. Update DATABASE_URL in .env file to point to local database:
+
    ```
    DATABASE_URL=postgresql://dbadmin:password@localhost:5432/sgiprealestate
    ```
+
 2. Restart your development server
 3. Properties should now be visible on /properties page
 
