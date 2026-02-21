@@ -8,9 +8,11 @@ RUN apt-get update && apt-get install -y libc6 openssl && rm -rf /var/lib/apt/li
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
 ENV npm_config_update_notifier=false
-RUN npm install
+ENV npm_config_cache=/tmp/.npm
+# Use npm ci for reliable, reproducible builds (requires package-lock.json)
+RUN npm ci --prefer-offline --no-audit
 
 # Rebuild the source code only when needed
 FROM base AS builder
