@@ -44,8 +44,20 @@ body {
 
 /* Custom Components */
 @layer components {
+  /* Base button styles - unified for all buttons */
+  button {
+    @apply focus:outline-none;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important, transform 0.5s ease-in-out !important, opacity 0.5s ease-in-out !important;
+  }
+  
+  /* Primary button - main action button */
   .btn-primary {
-    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium transition-all duration-500 ease-in-out hover:bg-champagne-dark hover:text-white hover:border-champagne-dark hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important;
+  }
+  
+  .btn-primary:hover {
+    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
   }
   
   .btn-primary svg,
@@ -59,8 +71,14 @@ body {
     @apply translate-x-1;
   }
   
+  /* Secondary button - alternative action */
   .btn-secondary {
-    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium transition-all duration-500 ease-in-out hover:bg-champagne-dark hover:text-white hover:border-champagne-dark focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important;
+  }
+  
+  .btn-secondary:hover {
+    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
   }
   
   .btn-secondary svg,
@@ -74,6 +92,98 @@ body {
     @apply translate-x-1;
   }
   
+  /* Filled button - solid background */
+  .btn-filled {
+    @apply bg-champagne text-white border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important;
+  }
+  
+  .btn-filled:hover {
+    @apply bg-champagne-dark border-champagne-dark shadow-lg;
+  }
+  
+  .btn-filled svg,
+  .btn-filled .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+  
+  .btn-filled:hover svg,
+  .btn-filled:hover .arrow-icon,
+  .btn-filled.group:hover svg {
+    @apply translate-x-1;
+  }
+  
+  /* Outline button - transparent with border */
+  .btn-outline {
+    @apply bg-transparent border-2 border-champagne text-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important;
+  }
+  
+  .btn-outline:hover {
+    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
+  }
+  
+  .btn-outline svg,
+  .btn-outline .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+  
+  .btn-outline:hover svg,
+  .btn-outline:hover .arrow-icon,
+  .btn-outline.group:hover svg {
+    @apply translate-x-1;
+  }
+  
+  /* Ghost button - minimal style for secondary actions */
+  .btn-ghost {
+    @apply bg-transparent border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-gray-300/50 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important;
+  }
+  
+  .btn-ghost:hover {
+    @apply bg-gray-50 border-gray-400;
+  }
+  
+  /* Icon button - for icon-only buttons */
+  .btn-icon {
+    @apply bg-white/95 text-gray-800 p-3 rounded-full shadow-2xl focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
+    transition: background-color 0.5s ease-in-out !important, transform 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important;
+  }
+  
+  .btn-icon:hover {
+    @apply bg-white scale-110;
+  }
+  
+  /* Close button - minimal style for close/X buttons */
+  .btn-close {
+    @apply rounded p-1 text-gray-400 focus:outline-none;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important;
+  }
+  
+  .btn-close:hover {
+    @apply bg-gray-100 text-graphite;
+  }
+  
+  /* Danger button - for destructive actions */
+  .btn-danger {
+    @apply bg-red-600 text-white border-2 border-red-600 px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-red-600/50 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important;
+  }
+  
+  .btn-danger:hover {
+    @apply bg-red-700 border-red-700 shadow-lg;
+  }
+  
+  /* Small button variant */
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  /* Large button variant */
+  .btn-lg {
+    @apply px-8 py-4 text-lg;
+  }
+  
   /* Animation for all buttons/links with group class and ArrowRightIcon */
   /* This applies to any element with group class that contains SVG icons */
   .group:hover svg,
@@ -85,10 +195,6 @@ body {
   .group svg,
   .group .arrow-icon {
     @apply transition-transform duration-500 ease-in-out;
-  }
-  
-  .btn-outline {
-    @apply bg-transparent border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300;
   }
   
   .card {
@@ -317,7 +423,7 @@ body {
 
 /* Smooth transitions for interactive elements */
 a, button {
-  transition: all 0.5s ease-in-out;
+  transition: background-color 0.5s ease-in-out !important, color 0.5s ease-in-out !important, border-color 0.5s ease-in-out !important, box-shadow 0.5s ease-in-out !important, transform 0.5s ease-in-out !important, opacity 0.5s ease-in-out !important;
 }
 
 /* Optimized hover effects using GPU-accelerated properties */

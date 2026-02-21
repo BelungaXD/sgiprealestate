@@ -1,0 +1,72 @@
+{
+  "title": "Refund Policy",
+  "description": "Refund and cancellation policy for SGIP Real Estate services",
+  "lastUpdated": "Last Updated",
+  "lastUpdatedDate": "January 2025",
+  "introduction": {
+    "title": "1. Introduction",
+    "content": "This Refund Policy ('Policy') outlines the terms and conditions under which SGIP Real Estate ('we', 'us', 'our', or 'Company') will provide refunds for services rendered.",
+    "scope": "This Policy applies to all services provided by SGIP Real Estate, including but not limited to consultation services, transaction fees, and property-related services."
+  },
+  "generalPolicy": {
+    "title": "2. General Refund Policy",
+    "content": "Due to the nature of real estate services, which involve significant time, resources, and expertise, refunds are generally not available once services have been substantially performed or completed.",
+    "nature": "Real estate services are customized and involve professional consultation, market analysis, legal documentation, and transaction facilitation. Once these services have been provided, they cannot be 'returned' in the traditional sense."
+  },
+  "consultationServices": {
+    "title": "3. Consultation Services",
+    "content": "For consultation services (including investment consultation, property search consultation, and business setup consultation), the following refund policy applies:",
+    "cancellation": "Cancellation and refund eligibility:",
+    "moreThan48": "Cancellation more than 48 hours before the scheduled consultation: Full refund minus any third-party processing fees (typically 3-5% of the consultation fee)",
+    "lessThan48": "Cancellation less than 48 hours before the scheduled consultation: 50% refund of the consultation fee",
+    "noShow": "No-show or cancellation less than 24 hours before the scheduled consultation: No refund"
+  },
+  "transactionFees": {
+    "title": "4. Transaction Fees",
+    "content": "Transaction fees (commissions) are earned upon successful completion of a real estate transaction. These fees are non-refundable once the transaction has been completed and all services have been rendered.",
+    "completed": "If a transaction is completed and all contractual obligations have been fulfilled, no refund will be provided for transaction fees, regardless of subsequent events or circumstances.",
+    "cancelled": "If a transaction is cancelled before completion due to circumstances beyond our control (e.g., buyer/seller withdrawal, financing failure, legal issues), transaction fees may be partially refunded at our discretion, subject to the work already performed and expenses incurred."
+  },
+  "propertyPurchases": {
+    "title": "5. Property Purchase Deposits",
+    "content": "Deposits paid for property purchases are subject to the terms of the purchase agreement and are typically non-refundable unless:",
+    "deposit": "The seller fails to meet contractual obligations",
+    "contract": "The purchase agreement explicitly provides for refund under specific circumstances (e.g., failed inspections, financing contingencies)"
+  },
+  "refundProcess": {
+    "title": "6. Refund Process",
+    "content": "To request a refund, you must:",
+    "step1": "Submit a written refund request to support@sgipreal.com within 30 days of the service date or transaction completion",
+    "step2": "Provide detailed reasons for the refund request and any supporting documentation",
+    "step3": "Allow up to 14 business days for review and processing",
+    "step4": "If approved, refunds will be processed to the original payment method within 14-21 business days",
+    "step5": "You will receive written confirmation once the refund has been processed",
+    "timeline": "The entire refund process may take up to 35 business days from the date of your request."
+  },
+  "nonRefundable": {
+    "title": "7. Non-Refundable Items",
+    "content": "The following items are non-refundable:",
+    "completed": "Services that have been fully completed and delivered",
+    "thirdParty": "Third-party fees and charges (government fees, registration fees, legal fees paid to third parties)",
+    "documentation": "Documentation and legal services that have been completed",
+    "legal": "Legal and administrative work that has been performed",
+    "marketing": "Marketing and advertising expenses incurred on behalf of the client",
+    "digital": "Digital products, reports, or analyses that have been delivered"
+  },
+  "disputes": {
+    "title": "8. Disputes and Complaints",
+    "content": "If you are dissatisfied with our services or believe you are entitled to a refund, we encourage you to contact us first to discuss your concerns. We are committed to resolving issues fairly and amicably.",
+    "resolution": "If we cannot resolve your concern directly, you may escalate the matter through our formal complaint process or seek resolution through the Dubai Department of Economic Development or other relevant regulatory authorities."
+  },
+  "changes": {
+    "title": "9. Changes to This Policy",
+    "content": "We reserve the right to modify this Refund Policy at any time. Material changes will be notified to you via email or through a notice on our Website. Continued use of our services after such changes constitutes acceptance of the modified Policy."
+  },
+  "contact": {
+    "title": "10. Contact Information",
+    "content": "For refund requests or questions about this Policy, please contact us:",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address"
+  }
+}

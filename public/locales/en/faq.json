@@ -1,4 +1,209 @@
 {
   "title": "Frequently Asked Questions",
-  "description": "Find answers to common questions about our services"
+  "description": "Find answers to common questions about our services",
+  "categories": {
+    "buying": {
+      "title": "Buying Real Estate",
+      "questions": [
+        {
+          "question": "What documents do I need to buy property in UAE?",
+          "answer": "To buy property in UAE, you typically need: passport, visa copy, Emirates ID (if applicable), proof of income, bank statements, and a No Objection Certificate (NOC) from your employer. For off-plan properties, you may also need a reservation agreement and payment plan documentation."
+        },
+        {
+          "question": "Can foreigners buy property in UAE?",
+          "answer": "Yes, foreigners can buy property in UAE. In designated freehold areas, non-UAE nationals can own property with full ownership rights. These areas include Dubai Marina, Palm Jumeirah, Downtown Dubai, Business Bay, and many others. We can guide you through the process and help you find the right property in freehold areas."
+        },
+        {
+          "question": "What is the process of buying property in UAE?",
+          "answer": "The buying process typically involves: 1) Property search and selection, 2) Reservation and signing of Memorandum of Understanding (MOU), 3) Due diligence and property inspection, 4) Finalizing the sale agreement, 5) Payment and transfer of ownership, 6) Registration with Dubai Land Department (DLD). The entire process usually takes 2-6 weeks depending on the property type and transaction complexity."
+        },
+        {
+          "question": "What are the additional costs when buying property?",
+          "answer": "Additional costs include: DLD registration fee (4% of property value), agency commission (typically 2%), mortgage registration fee (0.25% if applicable), valuation fee, legal fees, and NOC fees. We provide a detailed breakdown of all costs before you commit to purchase."
+        },
+        {
+          "question": "Do I need a mortgage pre-approval?",
+          "answer": "While not mandatory, mortgage pre-approval is highly recommended. It helps you understand your budget, strengthens your offer, and speeds up the buying process. We can connect you with trusted mortgage advisors who can help you secure pre-approval from UAE banks."
+        },
+        {
+          "question": "What is the difference between freehold and leasehold?",
+          "answer": "Freehold ownership gives you complete ownership rights to the property and land, which you can sell, rent, or bequeath. Leasehold ownership gives you the right to use the property for a specific period (usually 99 years). Most properties in designated freehold areas are freehold, which is preferred by most investors."
+        },
+        {
+          "question": "Can I buy property with a mortgage as a foreigner?",
+          "answer": "Yes, many UAE banks offer mortgages to foreigners. Typically, you can get up to 75% financing for properties valued at AED 5 million or less, and up to 65% for properties above AED 5 million. Requirements include proof of income, employment letter, and bank statements. We can assist you in finding the best mortgage options."
+        },
+        {
+          "question": "What should I check before buying a property?",
+          "answer": "Before buying, verify: property title deed, outstanding service charges, building condition and maintenance history, developer reputation, location and amenities, resale potential, and any encumbrances or liens. We conduct thorough due diligence on all properties we recommend."
+        }
+      ]
+    },
+    "selling": {
+      "title": "Selling Real Estate",
+      "questions": [
+        {
+          "question": "How do I determine the right price for my property?",
+          "answer": "We conduct a comprehensive market analysis considering: recent sales of similar properties in the area, current market conditions, property condition and features, location advantages, and market trends. Our expert valuation helps you price competitively while maximizing your return."
+        },
+        {
+          "question": "What documents do I need to sell my property?",
+          "answer": "Required documents include: original title deed, Emirates ID or passport, NOC from the developer (for off-plan properties), service charge clearance certificate, utility bills clearance, and any relevant permits. We help you gather and verify all necessary documentation."
+        },
+        {
+          "question": "How long does it take to sell a property?",
+          "answer": "The selling timeline varies based on market conditions, pricing, property condition, and location. Typically, well-priced properties in good locations sell within 2-4 months. We use professional marketing strategies and our extensive network to expedite the sale process."
+        },
+        {
+          "question": "What are the costs involved in selling property?",
+          "answer": "Selling costs typically include: agency commission (usually 2% of sale price), DLD transfer fee (2% paid by buyer, but sometimes shared), NOC fees, service charge clearance, and any outstanding maintenance fees. We provide a transparent breakdown of all costs upfront."
+        },
+        {
+          "question": "Do I need to renovate before selling?",
+          "answer": "While not mandatory, strategic renovations can significantly increase property value and attract more buyers. We assess your property and recommend cost-effective improvements that provide the best return on investment. Minor updates like fresh paint, deep cleaning, and staging often yield excellent results."
+        },
+        {
+          "question": "Can I sell my property while there's a mortgage on it?",
+          "answer": "Yes, you can sell a property with an existing mortgage. The mortgage will be settled from the sale proceeds. We coordinate with your bank to ensure a smooth transfer process and handle all necessary clearances."
+        },
+        {
+          "question": "What is the best time to sell property in UAE?",
+          "answer": "The UAE real estate market is active year-round, but certain periods may be more favorable. Market conditions, your personal circumstances, and property readiness are more important than timing. We monitor market trends and advise you on optimal selling strategies."
+        },
+        {
+          "question": "How do you market my property?",
+          "answer": "We use a multi-channel approach: professional photography and virtual tours, listings on major property portals, social media marketing, email campaigns to our database, networking with other agents, open houses and viewings, and international marketing for luxury properties. Our comprehensive marketing ensures maximum visibility."
+        }
+      ]
+    },
+    "renting": {
+      "title": "Renting",
+      "questions": [
+        {
+          "question": "What documents do I need to rent a property?",
+          "answer": "For tenants, you typically need: passport and visa copies, Emirates ID, employment letter or proof of income, bank statements (usually 3-6 months), security deposit (usually 5% of annual rent), and sometimes a chequebook for post-dated cheques. We guide you through the complete documentation process."
+        },
+        {
+          "question": "What is the typical rental payment structure?",
+          "answer": "Rental payments in UAE are usually made via post-dated cheques. Common payment plans include: 1 cheque (annual payment), 2 cheques (biannual), 4 cheques (quarterly), or 6-12 cheques (monthly). The payment structure is negotiable and depends on the landlord's preferences and your financial situation."
+        },
+        {
+          "question": "What fees are involved in renting?",
+          "answer": "Rental costs include: security deposit (typically 5% of annual rent, refundable), agency commission (usually 5% of annual rent, one-time), Ejari registration fee (AED 220), DEWA (utilities) deposit, and sometimes a maintenance deposit. We provide a clear breakdown of all fees before you commit."
+        },
+        {
+          "question": "What is Ejari and why do I need it?",
+          "answer": "Ejari is the official rental registration system in Dubai. It's mandatory for all rental agreements and provides legal protection for both tenants and landlords. Ejari registration costs AED 220 and must be completed within 30 days of signing the tenancy contract. We assist with the Ejari registration process."
+        },
+        {
+          "question": "Can I negotiate the rent?",
+          "answer": "Yes, rent is negotiable, especially in a tenant-favorable market. Factors affecting negotiation include: market conditions, property condition, lease duration, payment terms, and your profile as a tenant. We negotiate on your behalf to secure the best possible terms."
+        },
+        {
+          "question": "What are my rights as a tenant?",
+          "answer": "Tenant rights in UAE include: peaceful enjoyment of the property, proper maintenance by the landlord, protection against arbitrary eviction, right to renew the lease (subject to terms), and protection of your security deposit. We ensure all rental agreements comply with UAE tenancy laws."
+        },
+        {
+          "question": "What happens if I need to break my lease early?",
+          "answer": "Breaking a lease early typically requires: notice period (usually 30-90 days), payment of early termination fees (often 2-3 months rent), and finding a replacement tenant (sometimes required). Terms vary by contract. We can help negotiate favorable terms or find replacement tenants if needed."
+        },
+        {
+          "question": "Who is responsible for maintenance and repairs?",
+          "answer": "Generally, landlords are responsible for structural repairs and major maintenance, while tenants handle minor repairs and day-to-day maintenance. The specific responsibilities should be clearly outlined in your tenancy agreement. We ensure all maintenance responsibilities are clearly defined in the contract."
+        },
+        {
+          "question": "Can I sublet the property?",
+          "answer": "Subletting is usually not allowed unless explicitly permitted in the tenancy agreement. Most standard contracts prohibit subletting without landlord consent. If you need to sublet, you must obtain written permission from the landlord and may need to update the Ejari registration."
+        }
+      ]
+    },
+    "ownership": {
+      "title": "Ownership Information",
+      "questions": [
+        {
+          "question": "What is a title deed and why is it important?",
+          "answer": "A title deed is the official document proving property ownership in UAE. It's issued by the Dubai Land Department (DLD) and contains details about the property, owner, and any encumbrances. It's essential for all property transactions and must be kept safely. We help verify title deeds and ensure their authenticity."
+        },
+        {
+          "question": "How do I transfer property ownership?",
+          "answer": "Property transfer involves: signing a sale agreement, obtaining NOC from developer (if applicable), paying DLD transfer fees (4% of property value), completing the transfer at DLD, and updating utility registrations. The process typically takes 1-2 weeks. We handle the entire transfer process on your behalf."
+        },
+        {
+          "question": "What are service charges and who pays them?",
+          "answer": "Service charges are fees paid to maintain common areas, facilities, and building infrastructure. They're paid by property owners (not tenants) and cover security, cleaning, maintenance, landscaping, and building insurance. Charges vary by building and are typically paid quarterly or annually. We provide information on service charges for all properties."
+        },
+        {
+          "question": "Can I own property jointly with others?",
+          "answer": "Yes, property can be owned jointly. You can register multiple owners on the title deed with specified ownership percentages. Joint ownership is common for married couples, business partners, or family members. All owners must be present or provide power of attorney for transactions."
+        },
+        {
+          "question": "What taxes apply to property ownership in UAE?",
+          "answer": "UAE has no property tax, income tax, or capital gains tax on property sales. However, there are transaction fees: DLD registration fee (4% on purchase), transfer fees, and service charges. This tax-free environment makes UAE an attractive investment destination."
+        },
+        {
+          "question": "What is a NOC and when do I need it?",
+          "answer": "NOC (No Objection Certificate) is required from the developer for resale properties in master communities. It confirms there are no outstanding dues and the developer has no objections to the transfer. NOC is typically valid for 30-60 days and costs around AED 500-2000 depending on the developer."
+        },
+        {
+          "question": "How do I check if there are any encumbrances on my property?",
+          "answer": "You can check for encumbrances (mortgages, liens, or other claims) through the Dubai Land Department. We conduct thorough due diligence including encumbrance checks before any transaction to ensure clear title and protect your interests."
+        },
+        {
+          "question": "What happens to my property if I leave UAE?",
+          "answer": "Your property ownership rights remain intact even if you leave UAE. You can continue to own, rent out, or sell the property from abroad. Many investors manage their UAE properties remotely. We offer property management services to help maintain and manage your investment."
+        },
+        {
+          "question": "Can I bequeath my property to heirs?",
+          "answer": "Yes, you can bequeath property to heirs through a will. For non-Muslims, Dubai International Financial Centre (DIFC) Wills and Probate Registry provides will registration services. It's recommended to register a will to ensure smooth inheritance process and avoid Sharia law complications."
+        }
+      ]
+    },
+    "general": {
+      "title": "General Questions",
+      "questions": [
+        {
+          "question": "What services do you provide?",
+          "answer": "We provide comprehensive real estate services including: property buying and selling, rental services, property management, investment consulting, property valuation, legal support, mortgage assistance, market analysis, and relocation services. Our team handles all aspects of real estate transactions."
+        },
+        {
+          "question": "In which areas do you operate?",
+          "answer": "We operate throughout UAE, with particular expertise in Dubai, Abu Dhabi, and other emirates. We have extensive knowledge of all major freehold areas, communities, and developments. Our services cover residential, commercial, and luxury properties across the UAE."
+        },
+        {
+          "question": "How much do your services cost?",
+          "answer": "Service fees vary by transaction type: buying (typically 2% commission), selling (2% commission), renting (5% of annual rent), property management (varies by service level), and consulting (AED 500-1000 per consultation). Initial consultations are often free. We provide transparent pricing with no hidden fees."
+        },
+        {
+          "question": "How long does the property transaction process take?",
+          "answer": "Transaction timelines vary: property purchase (2-6 weeks), property sale (2-4 months to find buyer, then 2-4 weeks for completion), rental (1-2 weeks), and property transfer (1-2 weeks). We work efficiently to minimize delays and keep you informed throughout the process."
+        },
+        {
+          "question": "Do you provide legal support?",
+          "answer": "Yes, we provide comprehensive legal support including: contract review and preparation, document verification, due diligence, title deed checks, NOC processing, and coordination with legal advisors. We work with trusted legal partners to ensure all transactions are legally sound."
+        },
+        {
+          "question": "Can you help with property investment advice?",
+          "answer": "Absolutely. Our investment consultants provide: market analysis, ROI calculations, property comparison, location analysis, growth potential assessment, and portfolio diversification advice. We help you make informed investment decisions aligned with your financial goals."
+        },
+        {
+          "question": "Do you offer property management services?",
+          "answer": "Yes, we offer comprehensive property management including: tenant screening and management, rent collection, property maintenance coordination, regular inspections, financial reporting, utility management, and emergency response. We ensure your property is well-maintained and profitable."
+        },
+        {
+          "question": "How do I get started?",
+          "answer": "Getting started is easy: contact us via phone, email, or our website, schedule a free consultation to discuss your needs, we'll assess your requirements and provide recommendations, and guide you through every step of the process. We're here to make your real estate journey smooth and successful."
+        },
+        {
+          "question": "What makes you different from other real estate agencies?",
+          "answer": "Our advantages include: extensive local market knowledge, multilingual team (English, Russian, Arabic), personalized service tailored to your needs, comprehensive support from search to completion, strong network of developers and partners, transparent pricing with no hidden fees, and commitment to client satisfaction. We build long-term relationships, not just transactions."
+        },
+        {
+          "question": "Do you work with international clients?",
+          "answer": "Yes, we work extensively with international clients. We understand the unique needs of foreign investors and provide services in multiple languages. We assist with visa requirements, bank account setup, and all aspects of property investment for non-residents. Distance is no barrier - we handle everything remotely when needed."
+        }
+      ]
+    }
+  },
+  "stillHaveQuestions": "Still have questions? We're here to help!",
+  "contactUs": "Contact us"
 }

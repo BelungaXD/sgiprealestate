@@ -20,8 +20,8 @@
     "support": "Support",
     "about": "About Us",
     "team": "Our Team",
-    "careers": "Careers",
-    "news": "News",
+    "partners": "Partners",
+    "blog": "Blog",
     "buy": "Buy Property",
     "sell": "Sell Property",
     "rent": "Rent Property",
@@ -32,6 +32,7 @@
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
     "cookies": "Cookie Policy",
+    "refund": "Refund Policy",
     "allRightsReserved": "All rights reserved."
   },
   "whatsapp": {

@@ -45,6 +45,15 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
         const response = await fetch('/api/developers')
         const data = await response.json()
         const developersFromAPI = (data.developers || [])
+          .filter((d: any) => {
+            // Exclude "Emaar" (without Properties) - only allow "Emaar Properties"
+            const name = ((d.nameEn || d.name || '').toLowerCase())
+            const slug = ((d.slug || '').toLowerCase())
+            if (name.includes('emaar') && !name.includes('emaar properties') && slug !== 'emaar-properties') {
+              return false
+            }
+            return true
+          })
           .map((d: any) => d.nameEn || d.name)
           .filter((name: string) => name && name.trim() !== '')
         setDevelopersList(developersFromAPI)
@@ -117,7 +126,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
       <div className="lg:hidden mb-4">
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="w-full flex items-center justify-center space-x-2 bg-champagne text-white px-4 py-3 rounded-lg font-medium"
+          className="w-full btn-filled flex items-center justify-center space-x-2"
         >
           <FunnelIcon className="h-5 w-5" />
           <span>{t('filters') || 'Filters'}</span>
@@ -139,7 +148,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
                 <h2 className="text-xl font-semibold text-graphite">{t('filters') || 'Filters'}</h2>
                 <button
                   onClick={() => setIsMobileOpen(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600"
+                  className="btn-close"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>

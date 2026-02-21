@@ -89,27 +89,38 @@ export default function Developers() {
         const data = await response.json()
         
         // Transform API data to match Developer interface
-        const transformedDevelopers: Developer[] = (data.developers || []).map((dev: any) => ({
-          id: dev.id,
-          name: dev.name,
-          nameEn: dev.nameEn || dev.name,
-          description: dev.description || '',
-          descriptionEn: dev.descriptionEn || dev.description || '',
-          logo: dev.logo || '',
-          founded: 0,
-          headquarters: dev.city || 'Dubai, UAE',
-          propertiesCount: dev.propertiesCount || 0,
-          averagePrice: 0,
-          currency: 'AED',
-          slug: dev.slug,
-          website: dev.website || '',
-          specialties: [],
-          notableProjects: [],
-          awards: [],
-          rating: 5,
-          marketShare: 0,
-          countries: ['UAE'],
-        }))
+        // Filter out "Emaar" (without Properties) - only allow "Emaar Properties"
+        const transformedDevelopers: Developer[] = (data.developers || [])
+          .filter((dev: any) => {
+            const name = (dev.nameEn || dev.name || '').toLowerCase()
+            const slug = (dev.slug || '').toLowerCase()
+            // Exclude "Emaar" without "Properties"
+            if (name.includes('emaar') && !name.includes('emaar properties') && slug !== 'emaar-properties') {
+              return false
+            }
+            return true
+          })
+          .map((dev: any) => ({
+            id: dev.id,
+            name: dev.name,
+            nameEn: dev.nameEn || dev.name,
+            description: dev.description || '',
+            descriptionEn: dev.descriptionEn || dev.description || '',
+            logo: dev.logo || '',
+            founded: 0,
+            headquarters: dev.city || 'Dubai, UAE',
+            propertiesCount: dev.propertiesCount || 0,
+            averagePrice: 0,
+            currency: 'AED',
+            slug: dev.slug,
+            website: dev.website || '',
+            specialties: [],
+            notableProjects: [],
+            awards: [],
+            rating: 5,
+            marketShare: 0,
+            countries: ['UAE'],
+          }))
         
         // Merge hardcoded developers with API developers (hardcoded first, avoid duplicates)
         const allDevelopers = [

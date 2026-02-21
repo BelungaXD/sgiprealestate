@@ -4,8 +4,8 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Layout from '@/components/layout/Layout'
 
-export default function Terms() {
-  const { t } = useTranslation('terms')
+export default function Refund() {
+  const { t } = useTranslation('refund')
 
   return (
     <>
@@ -34,175 +34,114 @@ export default function Terms() {
                     {t('introduction.content')}
                   </p>
                   <p className="text-gray-600 mb-4">
-                    {t('introduction.agreement')}
+                    {t('introduction.scope')}
                   </p>
                 </section>
 
                 <section className="mb-8">
                   <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('definitions.title')}
+                    {t('generalPolicy.title')}
                   </h2>
+                  <p className="text-gray-600 mb-4">
+                    {t('generalPolicy.content')}
+                  </p>
+                  <p className="text-gray-600 mb-4">
+                    {t('generalPolicy.nature')}
+                  </p>
+                </section>
+
+                <section className="mb-8">
+                  <h2 className="text-2xl font-semibold text-graphite mb-4">
+                    {t('consultationServices.title')}
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    {t('consultationServices.content')}
+                  </p>
+                  <p className="text-gray-600 mb-4">
+                    {t('consultationServices.cancellation')}
+                  </p>
                   <ul className="list-disc list-inside text-gray-600 space-y-2">
-                    <li><strong>{t('definitions.company')}</strong> {t('definitions.companyDesc')}</li>
-                    <li><strong>{t('definitions.website')}</strong> {t('definitions.websiteDesc')}</li>
-                    <li><strong>{t('definitions.services')}</strong> {t('definitions.servicesDesc')}</li>
-                    <li><strong>{t('definitions.user')}</strong> {t('definitions.userDesc')}</li>
-                    <li><strong>{t('definitions.client')}</strong> {t('definitions.clientDesc')}</li>
+                    <li>{t('consultationServices.moreThan48')}</li>
+                    <li>{t('consultationServices.lessThan48')}</li>
+                    <li>{t('consultationServices.noShow')}</li>
                   </ul>
                 </section>
 
                 <section className="mb-8">
                   <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('acceptance.title')}
+                    {t('transactionFees.title')}
                   </h2>
                   <p className="text-gray-600 mb-4">
-                    {t('acceptance.content')}
+                    {t('transactionFees.content')}
                   </p>
                   <p className="text-gray-600 mb-4">
-                    {t('acceptance.minimumAge')}
+                    {t('transactionFees.completed')}
+                  </p>
+                  <p className="text-gray-600 mb-4">
+                    {t('transactionFees.cancelled')}
                   </p>
                 </section>
 
                 <section className="mb-8">
                   <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('services.title')}
+                    {t('propertyPurchases.title')}
                   </h2>
                   <p className="text-gray-600 mb-4">
-                    {t('services.content')}
+                    {t('propertyPurchases.content')}
                   </p>
-                  <ul className="list-disc list-inside text-gray-600 space-y-2">
-                    <li>{t('services.buy')}</li>
-                    <li>{t('services.sell')}</li>
-                    <li>{t('services.rent')}</li>
-                    <li>{t('services.management')}</li>
-                    <li>{t('services.investment')}</li>
-                    <li>{t('services.mortgage')}</li>
-                    <li>{t('services.business')}</li>
-                  </ul>
+                  <p className="text-gray-600 mb-4">
+                    {t('propertyPurchases.deposit')}
+                  </p>
+                  <p className="text-gray-600 mb-4">
+                    {t('propertyPurchases.contract')}
+                  </p>
+                </section>
+
+                <section className="mb-8">
+                  <h2 className="text-2xl font-semibold text-graphite mb-4">
+                    {t('refundProcess.title')}
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    {t('refundProcess.content')}
+                  </p>
+                  <ol className="list-decimal list-inside text-gray-600 space-y-2">
+                    <li>{t('refundProcess.step1')}</li>
+                    <li>{t('refundProcess.step2')}</li>
+                    <li>{t('refundProcess.step3')}</li>
+                    <li>{t('refundProcess.step4')}</li>
+                    <li>{t('refundProcess.step5')}</li>
+                  </ol>
                   <p className="text-gray-600 mb-4 mt-4">
-                    {t('services.disclaimer')}
+                    {t('refundProcess.timeline')}
                   </p>
                 </section>
 
                 <section className="mb-8">
                   <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('userObligations.title')}
+                    {t('nonRefundable.title')}
                   </h2>
                   <p className="text-gray-600 mb-4">
-                    {t('userObligations.content')}
+                    {t('nonRefundable.content')}
                   </p>
                   <ul className="list-disc list-inside text-gray-600 space-y-2">
-                    <li>{t('userObligations.accurate')}</li>
-                    <li>{t('userObligations.lawful')}</li>
-                    <li>{t('userObligations.noFraud')}</li>
-                    <li>{t('userObligations.noUnauthorized')}</li>
-                    <li>{t('userObligations.respect')}</li>
-                    <li>{t('userObligations.compliance')}</li>
+                    <li>{t('nonRefundable.completed')}</li>
+                    <li>{t('nonRefundable.thirdParty')}</li>
+                    <li>{t('nonRefundable.documentation')}</li>
+                    <li>{t('nonRefundable.legal')}</li>
+                    <li>{t('nonRefundable.marketing')}</li>
+                    <li>{t('nonRefundable.digital')}</li>
                   </ul>
                 </section>
 
                 <section className="mb-8">
                   <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('propertyListings.title')}
+                    {t('disputes.title')}
                   </h2>
                   <p className="text-gray-600 mb-4">
-                    {t('propertyListings.content')}
+                    {t('disputes.content')}
                   </p>
                   <p className="text-gray-600 mb-4">
-                    {t('propertyListings.accuracy')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('propertyListings.availability')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('fees.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('fees.content')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('fees.transparency')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('fees.payment')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('intellectualProperty.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('intellectualProperty.content')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('intellectualProperty.restrictions')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('liability.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('liability.content')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('liability.limitation')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('liability.exclusions')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('indemnification.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('indemnification.content')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('termination.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('termination.content')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('termination.effects')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('governingLaw.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('governingLaw.content')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('governingLaw.jurisdiction')}
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-graphite mb-4">
-                    {t('disputeResolution.title')}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {t('disputeResolution.content')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('disputeResolution.mediation')}
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    {t('disputeResolution.arbitration')}
+                    {t('disputes.resolution')}
                   </p>
                 </section>
 
@@ -246,7 +185,7 @@ export default function Terms() {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? 'en', ['common', 'terms'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common', 'refund'])),
     },
   }
 }

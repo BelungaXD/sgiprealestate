@@ -18,12 +18,6 @@ export default function News() {
         <div className="container-custom py-12">
           <h1 className="text-3xl font-bold text-graphite mb-4">{t('title')}</h1>
           <p className="text-gray-600 mb-8">{t('description')}</p>
-          <Link
-            href="/market"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-champagne hover:bg-champagne/90"
-          >
-            Market &amp; analytics
-          </Link>
         </div>
       </Layout>
     </>

@@ -1,0 +1,81 @@
+{
+  "title": "Cookie Policy",
+  "description": "Cookie Policy for SGIP Real Estate website",
+  "lastUpdated": "Last Updated",
+  "lastUpdatedDate": "January 2025",
+  "introduction": {
+    "title": "1. Introduction",
+    "content": "This Cookie Policy explains how SGIP Real Estate ('we', 'us', 'our') uses cookies and similar tracking technologies on our website (sgipreal.com) and how you can control them.",
+    "purpose": "We use cookies to enhance your browsing experience, analyze website traffic, and provide personalized content. This Policy should be read in conjunction with our Privacy Policy."
+  },
+  "whatAreCookies": {
+    "title": "2. What Are Cookies?",
+    "content": "Cookies are small text files that are placed on your device (computer, tablet, or mobile) when you visit a website. They are widely used to make websites work more efficiently and provide information to website owners.",
+    "types": "Cookies can be 'persistent' (remain on your device until deleted or expired) or 'session' (deleted when you close your browser)."
+  },
+  "typesOfCookies": {
+    "title": "3. Types of Cookies We Use",
+    "essential": {
+      "title": "Essential Cookies",
+      "content": "These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and accessibility. You cannot opt-out of these cookies.",
+      "session": "Session management and user authentication",
+      "security": "Security and fraud prevention",
+      "preferences": "Remembering your preferences and settings"
+    },
+    "analytics": {
+      "title": "Analytics Cookies",
+      "content": "These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.",
+      "visitors": "Number of visitors and page views",
+      "behavior": "User behavior and navigation patterns",
+      "performance": "Website performance and loading times"
+    },
+    "functional": {
+      "title": "Functional Cookies",
+      "content": "These cookies enable enhanced functionality and personalization, such as remembering your language preference and other settings.",
+      "language": "Language and regional preferences",
+      "remember": "Remembering your previous interactions",
+      "customization": "Customizing your experience"
+    },
+    "marketing": {
+      "title": "Marketing Cookies",
+      "content": "These cookies are used to deliver advertisements that are relevant to you and your interests. They may also be used to limit the number of times you see an advertisement.",
+      "targeting": "Targeted advertising based on your interests",
+      "retargeting": "Retargeting campaigns",
+      "measurement": "Measuring the effectiveness of advertising campaigns"
+    }
+  },
+  "thirdPartyCookies": {
+    "title": "4. Third-Party Cookies",
+    "content": "We use third-party services that may set cookies on your device. These include:",
+    "googleAnalytics": "Used for website analytics and performance monitoring",
+    "googleTagManager": "Used for managing tags and tracking scripts",
+    "yandexMetrica": "Used for analytics and user behavior tracking",
+    "googleMaps": "Used for displaying maps and location services"
+  },
+  "managingCookies": {
+    "title": "5. Managing Cookies",
+    "content": "You have the right to accept or reject cookies. Most web browsers automatically accept cookies, but you can usually modify your browser settings to decline cookies if you prefer.",
+    "browser": "To manage cookies, you can adjust your browser settings. Instructions for popular browsers: Chrome, Firefox, Safari, Edge. Please note that disabling cookies may affect the functionality of our website.",
+    "impact": "If you choose to disable cookies, some features of our website may not function properly, and your user experience may be diminished."
+  },
+  "cookieConsent": {
+    "title": "6. Cookie Consent",
+    "content": "When you first visit our website, you will be presented with a cookie consent banner. By clicking 'Accept', you consent to our use of cookies in accordance with this Policy.",
+    "withdrawal": "You can withdraw your consent at any time by adjusting your browser settings or contacting us. However, this may affect your ability to use certain features of our website."
+  },
+  "retention": {
+    "title": "7. Cookie Retention",
+    "content": "Different cookies have different retention periods. Session cookies are deleted when you close your browser, while persistent cookies remain on your device until they expire or are deleted. Most cookies we use expire within 12 months."
+  },
+  "updates": {
+    "title": "8. Updates to This Policy",
+    "content": "We may update this Cookie Policy from time to time to reflect changes in our practices or for legal, operational, or regulatory reasons. We will notify you of any material changes by posting the updated Policy on our website."
+  },
+  "contact": {
+    "title": "9. Contact Information",
+    "content": "If you have questions about our use of cookies, please contact us:",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address"
+  }
+}

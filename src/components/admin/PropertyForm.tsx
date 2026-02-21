@@ -33,14 +33,6 @@ const PROPERTY_STATUSES = [
   { value: 'UNAVAILABLE', label: 'Unavailable' },
 ]
 
-const HARDCODED_AREAS = [
-  { id: 'beachfront', name: 'Beachfront', nameEn: 'Beachfront' },
-  { id: 'downtown', name: 'Downtown', nameEn: 'Downtown' },
-  { id: 'dubai-hills', name: 'Dubai Hills', nameEn: 'Dubai Hills' },
-  { id: 'marina-shores', name: 'Marina Shores', nameEn: 'Marina Shores' },
-  { id: 'the-oasis', name: 'The Oasis', nameEn: 'The Oasis' },
-]
-
 const HARDCODED_DEVELOPERS = [
   { id: 'emaar-properties', name: 'Emaar Properties', nameEn: 'Emaar Properties' },
   { id: 'sobha', name: 'Sobha', nameEn: 'Sobha' },
@@ -49,7 +41,6 @@ const HARDCODED_DEVELOPERS = [
 export default function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) {
   const [images, setImages] = useState<string[]>([])
   const [files, setFiles] = useState<FileWithLabel[]>([])
-  const [areas, setAreas] = useState<any[]>([])
   const [developers, setDevelopers] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
@@ -120,43 +111,29 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     }
   }, [title, property, setValue])
 
-  // Load areas and developers
+  // Load developers
   useEffect(() => {
     const loadData = async () => {
       setLoadingData(true)
       try {
-        const [areasRes, developersRes] = await Promise.all([
-          fetch('/api/areas'),
-          fetch('/api/developers'),
-        ])
+        const developersRes = await fetch('/api/developers')
 
-        if (!areasRes.ok || !developersRes.ok) {
+        if (!developersRes.ok) {
           throw new Error('Failed to fetch data')
         }
 
-        const areasData = await areasRes.json()
         const developersData = await developersRes.json()
 
-        // Combine API data with hardcoded options
-        const loadedAreas = areasData.areas || []
-        const loadedDevelopers = developersData.developers || []
-
-        // Merge hardcoded areas with database areas (hardcoded first)
-        const allAreas = [...HARDCODED_AREAS, ...loadedAreas.filter((area: { id: string }) => 
-          !HARDCODED_AREAS.some(hc => hc.id === area.id)
-        )]
-        
         // Prefer API developers (have real DB ids); add hardcoded only if API has none
+        const loadedDevelopers = developersData.developers || []
         const allDevelopers = loadedDevelopers.length > 0
           ? loadedDevelopers
           : HARDCODED_DEVELOPERS
 
-        setAreas(allAreas)
         setDevelopers(allDevelopers)
       } catch (error) {
         console.error('Error loading data:', error)
-        // No fallback - show empty lists
-        setAreas([])
+        // No fallback - show empty list
         setDevelopers([])
       } finally {
         setLoadingData(false)
@@ -571,6 +548,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <input
               type="text"
               {...register('district')}
+              autoComplete="off"
+              placeholder=""
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
             />
           </div>
@@ -579,27 +558,15 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Area (from list)
+              Area
             </label>
-            {loadingData ? (
-              <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
-                Loading areas...
-              </div>
-            ) : (
-              <>
-                <select
-                  {...register('areaId')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
-                >
-                  <option value="">Select Area</option>
-                  {areas.map((area) => (
-                    <option key={area.id} value={area.id}>
-                      {area.nameEn || area.name}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
+            <input
+              type="text"
+              {...register('areaId')}
+              autoComplete="off"
+              placeholder=""
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+            />
           </div>
 
           <div>
@@ -672,7 +639,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <button
               type="button"
               onClick={addFeature}
-              className="px-4 py-2 bg-champagne text-white rounded-md hover:bg-champagne/90"
+              className="btn-filled btn-sm"
             >
               Add
             </button>
@@ -712,7 +679,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <button
               type="button"
               onClick={addAmenity}
-              className="px-4 py-2 bg-champagne text-white rounded-md hover:bg-champagne/90"
+              className="btn-filled btn-sm"
             >
               Add
             </button>
@@ -805,14 +772,14 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         <button
           type="button"
           onClick={onCancel}
-          className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          className="btn-ghost"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2 bg-champagne text-white rounded-md hover:bg-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-filled"
         >
           {loading ? 'Saving...' : property ? 'Update Property' : 'Create Property'}
         </button>

@@ -1,0 +1,105 @@
+{
+  "title": "Terms & Conditions",
+  "description": "Terms and Conditions for SGIP Real Estate services",
+  "lastUpdated": "Last Updated",
+  "lastUpdatedDate": "January 2025",
+  "introduction": {
+    "title": "1. Introduction",
+    "content": "Welcome to SGIP Real Estate. These Terms and Conditions ('Terms') govern your access to and use of our website (sgipreal.com) and all related services provided by SGIP Real Estate ('we', 'us', 'our', or 'Company').",
+    "agreement": "By accessing or using our website and services, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our services."
+  },
+  "definitions": {
+    "title": "2. Definitions",
+    "company": "Company",
+    "companyDesc": "refers to SGIP Real Estate, a real estate agency operating in Dubai, United Arab Emirates.",
+    "website": "Website",
+    "websiteDesc": "refers to sgipreal.com and all associated domains and subdomains.",
+    "services": "Services",
+    "servicesDesc": "refers to all real estate services provided by the Company, including but not limited to property buying, selling, renting, property management, investment consultation, mortgage services, and business setup services.",
+    "user": "User",
+    "userDesc": "refers to any individual or entity accessing or using the Website.",
+    "client": "Client",
+    "clientDesc": "refers to a User who has entered into a service agreement with the Company."
+  },
+  "acceptance": {
+    "title": "3. Acceptance of Terms",
+    "content": "By accessing, browsing, or using our Website, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy.",
+    "minimumAge": "You must be at least 18 years old to use our services. By using our services, you represent and warrant that you are of legal age to enter into binding agreements in your jurisdiction."
+  },
+  "services": {
+    "title": "4. Services",
+    "content": "SGIP Real Estate provides comprehensive real estate services including:",
+    "buy": "Property purchase assistance and consultation",
+    "sell": "Property sale services and marketing",
+    "rent": "Property rental services",
+    "management": "Property management services",
+    "investment": "Real estate investment consultation",
+    "mortgage": "Mortgage and financing assistance",
+    "business": "Business setup services in the UAE",
+    "disclaimer": "All services are provided subject to separate service agreements. The Company acts as an intermediary and does not guarantee the availability, condition, or legal status of any property listed on the Website."
+  },
+  "userObligations": {
+    "title": "5. User Obligations",
+    "content": "You agree to:",
+    "accurate": "Provide accurate, current, and complete information when using our services",
+    "lawful": "Use our services only for lawful purposes and in accordance with applicable laws and regulations",
+    "noFraud": "Not engage in any fraudulent, deceptive, or illegal activities",
+    "noUnauthorized": "Not attempt to gain unauthorized access to our systems or interfere with the Website's operation",
+    "respect": "Respect the intellectual property rights of the Company and third parties",
+    "compliance": "Comply with all applicable local, national, and international laws and regulations"
+  },
+  "propertyListings": {
+    "title": "6. Property Listings",
+    "content": "Property listings on our Website are provided for informational purposes only. While we strive to ensure accuracy, we do not warrant or guarantee:",
+    "accuracy": "The accuracy, completeness, or currency of property information, including prices, specifications, and availability",
+    "availability": "The availability of any property at the time of inquiry or the continuation of any listing"
+  },
+  "fees": {
+    "title": "7. Fees and Payments",
+    "content": "Service fees will be disclosed to you before you enter into any service agreement. Fees may vary depending on the type and scope of services provided.",
+    "transparency": "All fees are clearly stated in writing before services commence. You will receive a detailed breakdown of all charges.",
+    "payment": "Payment terms will be specified in your service agreement. Late payments may incur additional charges as specified in the agreement."
+  },
+  "intellectualProperty": {
+    "title": "8. Intellectual Property",
+    "content": "All content on the Website, including but not limited to text, graphics, logos, images, software, and code, is the property of SGIP Real Estate or its licensors and is protected by copyright, trademark, and other intellectual property laws.",
+    "restrictions": "You may not reproduce, distribute, modify, create derivative works, publicly display, or exploit any content from the Website without our prior written consent."
+  },
+  "liability": {
+    "title": "9. Limitation of Liability",
+    "content": "To the maximum extent permitted by law, SGIP Real Estate shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, data, or business opportunities.",
+    "limitation": "Our total liability for any claims arising from or related to your use of our services shall not exceed the total fees paid by you to us in the 12 months preceding the claim.",
+    "exclusions": "Nothing in these Terms excludes or limits our liability for death or personal injury caused by our negligence, fraud, or any other liability that cannot be excluded or limited by law."
+  },
+  "indemnification": {
+    "title": "10. Indemnification",
+    "content": "You agree to indemnify, defend, and hold harmless SGIP Real Estate, its officers, directors, employees, and agents from and against any claims, damages, obligations, losses, liabilities, costs, or expenses arising from your use of the Website or violation of these Terms."
+  },
+  "termination": {
+    "title": "11. Termination",
+    "content": "We reserve the right to suspend or terminate your access to the Website and services at any time, with or without cause, and with or without notice, for any reason including but not limited to violation of these Terms.",
+    "effects": "Upon termination, your right to use the Website and services will immediately cease. All provisions of these Terms that by their nature should survive termination shall survive."
+  },
+  "governingLaw": {
+    "title": "12. Governing Law",
+    "content": "These Terms shall be governed by and construed in accordance with the laws of the United Arab Emirates, specifically the laws of the Emirate of Dubai.",
+    "jurisdiction": "Any disputes arising from or relating to these Terms shall be subject to the exclusive jurisdiction of the courts of Dubai, United Arab Emirates."
+  },
+  "disputeResolution": {
+    "title": "13. Dispute Resolution",
+    "content": "In the event of any dispute, controversy, or claim arising out of or relating to these Terms, the parties agree to first attempt to resolve the matter through good faith negotiations.",
+    "mediation": "If negotiations fail, the parties agree to submit the dispute to mediation in accordance with the rules of the Dubai International Arbitration Centre (DIAC) or another mutually agreed mediation service.",
+    "arbitration": "If mediation is unsuccessful, disputes shall be resolved through binding arbitration in Dubai in accordance with the rules of DIAC, or as otherwise agreed by the parties."
+  },
+  "changes": {
+    "title": "14. Changes to Terms",
+    "content": "We reserve the right to modify these Terms at any time. Material changes will be notified to you via email or through a notice on the Website. Your continued use of the Website after such changes constitutes acceptance of the modified Terms."
+  },
+  "contact": {
+    "title": "15. Contact Information",
+    "content": "If you have any questions about these Terms, please contact us:",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address"
+  }
+}

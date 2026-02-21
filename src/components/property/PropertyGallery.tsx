@@ -154,14 +154,14 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
             <>
               <button
                 onClick={prevImage}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-3 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 z-20"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 btn-icon z-20"
                 aria-label="Previous image"
               >
                 <ChevronLeftIcon className="h-6 w-6" />
               </button>
               <button
                 onClick={nextImage}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/95 hover:bg-white text-gray-800 p-3 rounded-full shadow-2xl transition-all duration-200 hover:scale-110 z-20"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 btn-icon z-20"
                 aria-label="Next image"
               >
                 <ChevronRightIcon className="h-6 w-6" />
@@ -184,7 +184,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
             {/* Left Arrow */}
             <button
               onClick={() => scrollThumbnails('left')}
-              className="absolute left-6 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 border border-gray-200 rounded-full p-2 shadow-md transition-all duration-200 hover:shadow-lg"
+              className="absolute left-6 top-1/2 -translate-y-1/2 z-10 btn-icon"
               aria-label="Scroll left"
             >
               <ChevronLeftIcon className="h-5 w-5 text-gray-700" />
@@ -193,7 +193,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
             {/* Right Arrow */}
             <button
               onClick={() => scrollThumbnails('right')}
-              className="absolute right-6 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 border border-gray-200 rounded-full p-2 shadow-md transition-all duration-200 hover:shadow-lg"
+              className="absolute right-6 top-1/2 -translate-y-1/2 z-10 btn-icon"
               aria-label="Scroll right"
             >
               <ChevronRightIcon className="h-5 w-5 text-gray-700" />
@@ -282,7 +282,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
             {/* Close Button - improved design */}
             <button
               onClick={closeLightbox}
-              className="absolute top-4 right-4 md:top-6 md:right-6 z-20 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all duration-200 hover:scale-110"
+              className="absolute top-4 right-4 md:top-6 md:right-6 z-20 btn-icon"
               aria-label="Close"
             >
               <XMarkIcon className="h-6 w-6" />
@@ -329,7 +329,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                     e.stopPropagation()
                     prevImage()
                   }}
-                  className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 p-4 rounded-full shadow-xl transition-all duration-200 hover:scale-110"
+                  className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20 btn-icon p-4"
                   aria-label="Previous image"
                 >
                   <ChevronLeftIcon className="h-8 w-8" />
@@ -339,7 +339,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                     e.stopPropagation()
                     nextImage()
                   }}
-                  className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 p-4 rounded-full shadow-xl transition-all duration-200 hover:scale-110"
+                  className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20 btn-icon p-4"
                   aria-label="Next image"
                 >
                   <ChevronRightIcon className="h-8 w-8" />

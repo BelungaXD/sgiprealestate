@@ -139,12 +139,12 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
             <div className="flex space-x-2">
               <Link
                 href={`/properties/${property.slug || property.id}`}
-                className="flex-1 btn-primary text-center text-sm py-2 inline-flex items-center justify-center group"
+                className="flex-1 btn-primary btn-sm text-center inline-flex items-center justify-center group"
               >
                 {t('viewDetails')}
                 <ArrowRightIcon className="ml-2 h-4 w-4" />
               </Link>
-              <button className="px-4 py-2 border-2 border-champagne bg-white text-champagne rounded-lg hover:bg-champagne-dark hover:text-white transition-all duration-500 ease-in-out text-sm">
+              <button className="btn-primary btn-sm inline-flex items-center justify-center">
                 {t('save')}
               </button>
             </div>

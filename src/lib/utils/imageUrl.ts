@@ -18,11 +18,12 @@ export function normalizeImageUrl(url: string | null | undefined): string {
     const encodedParts = pathParts.map(part => encodeURIComponent(part))
     const path = `/api/uploads/${encodedParts.join('/')}`
     
-    // In development, use server URL if available
-    if (isDevelopment && serverUrl) {
-      return serverUrl.replace(/\/$/, '') + path
+    // In development, always use relative path (works with Next.js dev server)
+    if (isDevelopment) {
+      return path
     }
     
+    // In production, use baseUrl if set, otherwise relative path
     return baseUrl ? baseUrl.replace(/\/$/, '') + path : path
   }
 
@@ -32,16 +33,12 @@ export function normalizeImageUrl(url: string | null | undefined): string {
     const encodedParts = pathParts.map(part => encodeURIComponent(part))
     const path = `/api/uploads/${encodedParts.join('/')}`
     
-    // In development, use server URL if available, otherwise use local API endpoint
-    if (isDevelopment && serverUrl) {
-      return serverUrl.replace(/\/$/, '') + path
-    }
-    
-    // In development without server URL, use local API endpoint (works with Next.js)
+    // In development, always use relative path (works with Next.js dev server)
     if (isDevelopment) {
       return path
     }
     
+    // In production, use baseUrl if set, otherwise relative path
     return baseUrl ? baseUrl.replace(/\/$/, '') + path : path
   }
 
@@ -56,10 +53,12 @@ export function normalizeImageUrl(url: string | null | undefined): string {
   }
 
   // Default: return as is (with optional base for relative paths)
-  if (isDevelopment && serverUrl && url.startsWith('/')) {
-    return serverUrl.replace(/\/$/, '') + url
+  // In development, always use relative paths
+  if (isDevelopment && url.startsWith('/')) {
+    return url
   }
   
+  // In production, use baseUrl if set
   if (baseUrl && url.startsWith('/')) {
     return baseUrl.replace(/\/$/, '') + url
   }

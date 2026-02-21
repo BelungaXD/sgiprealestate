@@ -86,7 +86,7 @@ export default function AreaProperties({ properties, areaName }: AreaPropertiesP
                   </div>
                 )}
                 <div className="absolute top-3 right-3">
-                  <button className="bg-white/90 backdrop-blur-sm text-gray-700 p-2 rounded-full hover:bg-white transition-colors">
+                  <button className="btn-icon">
                     <StarIcon className="h-4 w-4" />
                   </button>
                 </div>
@@ -126,10 +126,10 @@ export default function AreaProperties({ properties, areaName }: AreaPropertiesP
                 </div>
 
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-champagne text-white py-2 px-4 rounded-lg font-medium hover:bg-champagne/90 transition-colors">
+                  <button className="flex-1 btn-filled btn-sm">
                     {t('common.viewDetails', 'View Details')}
                   </button>
-                  <button className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-colors">
+                  <button className="btn-outline btn-sm inline-flex items-center justify-center">
                     <EyeIcon className="h-4 w-4" />
                   </button>
                 </div>
@@ -142,7 +142,7 @@ export default function AreaProperties({ properties, areaName }: AreaPropertiesP
       {/* Load More Button */}
       {properties.length > 0 && (
         <div className="text-center mt-8">
-          <button className="bg-gray-100 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+          <button className="btn-ghost btn-lg">
             {t('properties.loadMore', 'Load More Properties')}
           </button>
         </div>

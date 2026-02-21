@@ -17,6 +17,29 @@ export default async function handler(
 
   try {
     const developers = await prisma.developer.findMany({
+      where: {
+        // Exclude "Emaar" (without Properties) - only allow "Emaar Properties"
+        NOT: [
+          {
+            AND: [
+              {
+                OR: [
+                  { name: { contains: 'Emaar', mode: 'insensitive' } },
+                  { nameEn: { contains: 'Emaar', mode: 'insensitive' } },
+                  { slug: { contains: 'emaar', mode: 'insensitive' } },
+                ],
+              },
+              {
+                NOT: [
+                  { name: { contains: 'Emaar Properties', mode: 'insensitive' } },
+                  { nameEn: { contains: 'Emaar Properties', mode: 'insensitive' } },
+                  { slug: { contains: 'emaar-properties', mode: 'insensitive' } },
+                ],
+              },
+            ],
+          },
+        ],
+      },
       select: {
         id: true,
         name: true,

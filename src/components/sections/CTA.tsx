@@ -72,20 +72,20 @@ export default function CTA() {
           </AnimateOnScroll>
         </div>
 
-        <div className="text-center">
+        <div className="text-center flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
             href="/contact"
-            className="btn-primary text-lg px-8 py-4 inline-flex items-center group mr-4"
+            className="bg-champagne text-white border-2 border-champagne px-8 py-4 rounded-lg font-semibold text-lg inline-flex items-center justify-center group hover:bg-champagne-dark hover:border-champagne-dark hover:shadow-xl transition-all duration-300 min-w-[200px]"
           >
             {t('cta.getQuote')}
-            <ArrowRightIcon className="ml-2 h-5 w-5" />
+            <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
           <Link
             href="/properties"
-            className="btn-secondary text-lg px-8 py-4 inline-flex items-center group"
+            className="bg-transparent text-champagne border-2 border-champagne px-8 py-4 rounded-lg font-semibold text-lg inline-flex items-center justify-center group hover:bg-champagne/10 hover:border-champagne-dark hover:shadow-xl transition-all duration-300 min-w-[200px]"
           >
             {t('cta.browseProperties')}
-            <ArrowRightIcon className="ml-2 h-5 w-5" />
+            <ArrowRightIcon className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
         </div>
       </div>

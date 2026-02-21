@@ -1,0 +1,85 @@
+{
+  "title": "Privacy Policy",
+  "description": "Privacy Policy for SGIP Real Estate",
+  "lastUpdated": "Last Updated",
+  "lastUpdatedDate": "January 2025",
+  "introduction": {
+    "title": "1. Introduction",
+    "content": "SGIP Real Estate ('we', 'us', 'our', or 'Company') is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website sgipreal.com and use our services."
+  },
+  "dataCollection": {
+    "title": "2. Information We Collect",
+    "content": "We collect information that you provide directly to us and information that is automatically collected when you use our services:",
+    "personalInfo": "Personal identification information (name, email address, phone number)",
+    "contactInfo": "Contact information and communication preferences",
+    "propertyPreferences": "Property preferences, search history, and interests",
+    "websiteUsage": "Website usage data, including pages visited, time spent, and interactions",
+    "communications": "Communications with us, including inquiries, requests, and feedback"
+  },
+  "dataUsage": {
+    "title": "3. How We Use Your Information",
+    "content": "We use the collected information for the following purposes:",
+    "propertyServices": "To provide, maintain, and improve our real estate services",
+    "communication": "To communicate with you about properties, services, and inquiries",
+    "marketing": "To send you marketing communications (with your consent) about properties and services that may interest you",
+    "legalCompliance": "To comply with legal obligations and regulatory requirements",
+    "websiteImprovement": "To analyze and improve our website functionality and user experience"
+  },
+  "dataSharing": {
+    "title": "4. Information Sharing and Disclosure",
+    "content": "We may share your information in the following circumstances:",
+    "serviceProviders": "With service providers who assist us in operating our website and conducting our business",
+    "legalRequirements": "When required by law or to respond to legal process",
+    "businessTransfers": "In connection with any merger, sale, or transfer of assets",
+    "consent": "With your explicit consent or at your direction"
+  },
+  "dataSecurity": {
+    "title": "5. Data Security",
+    "content": "We implement appropriate technical and organizational measures to protect your personal information:",
+    "encryption": "Encryption of sensitive data during transmission and storage",
+    "accessControl": "Access controls and authentication mechanisms",
+    "regularAudits": "Regular security audits and assessments",
+    "staffTraining": "Staff training on data protection and privacy"
+  },
+  "yourRights": {
+    "title": "6. Your Rights (GDPR)",
+    "content": "If you are located in the European Economic Area (EEA), you have certain data protection rights:",
+    "access": "Right to access your personal data",
+    "correction": "Right to rectification of inaccurate data",
+    "deletion": "Right to erasure ('right to be forgotten')",
+    "portability": "Right to data portability",
+    "objection": "Right to object to processing of your personal data",
+    "withdrawal": "Right to withdraw consent at any time"
+  },
+  "cookies": {
+    "title": "7. Cookies and Tracking Technologies",
+    "content": "We use cookies and similar tracking technologies to track activity on our website. For detailed information, please see our Cookie Policy.",
+    "essential": "Essential cookies for website functionality",
+    "analytics": "Analytics cookies to understand website usage",
+    "marketing": "Marketing cookies for targeted advertising",
+    "preferences": "Preference cookies to remember your settings"
+  },
+  "dataRetention": {
+    "title": "8. Data Retention",
+    "content": "We retain your personal information only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law."
+  },
+  "internationalTransfers": {
+    "title": "9. International Data Transfers",
+    "content": "Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place to protect your data in accordance with applicable data protection laws."
+  },
+  "children": {
+    "title": "10. Children's Privacy",
+    "content": "Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children. If you believe we have collected information from a child, please contact us immediately."
+  },
+  "changes": {
+    "title": "11. Changes to This Privacy Policy",
+    "content": "We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the 'Last Updated' date."
+  },
+  "contact": {
+    "title": "12. Contact Us",
+    "content": "If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us:",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address"
+  }
+}

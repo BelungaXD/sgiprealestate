@@ -58,10 +58,10 @@ export default function AreaMap({ areaName, coordinates, properties = [] }: Area
         
         {/* Map Controls */}
         <div className="absolute top-4 right-4 flex space-x-2">
-          <button className="bg-white/90 backdrop-blur-sm text-gray-700 p-2 rounded-lg hover:bg-white transition-colors">
+          <button className="btn-icon">
             <span className="text-sm font-medium">+</span>
           </button>
-          <button className="bg-white/90 backdrop-blur-sm text-gray-700 p-2 rounded-lg hover:bg-white transition-colors">
+          <button className="btn-icon">
             <span className="text-sm font-medium">-</span>
           </button>
         </div>
@@ -140,7 +140,7 @@ export default function AreaMap({ areaName, coordinates, properties = [] }: Area
           
           {properties.length > 5 && (
             <div className="text-center mt-4">
-              <button className="text-champagne hover:text-champagne/80 text-sm font-medium">
+              <button className="btn-ghost btn-sm">
                 {t('map.viewAllProperties', 'View All Properties')} ({properties.length})
               </button>
             </div>
@@ -150,11 +150,11 @@ export default function AreaMap({ areaName, coordinates, properties = [] }: Area
 
       {/* Map Actions */}
       <div className="flex flex-col sm:flex-row gap-3 mt-6">
-        <button className="flex-1 bg-champagne text-white py-3 px-6 rounded-lg font-medium hover:bg-champagne/90 transition-colors flex items-center justify-center">
+        <button className="flex-1 btn-filled flex items-center justify-center">
           <MapPinIcon className="h-5 w-5 mr-2" />
           {t('map.getDirections', 'Get Directions')}
         </button>
-        <button className="flex-1 border border-champagne text-champagne py-3 px-6 rounded-lg font-medium hover:bg-champagne hover:text-white transition-colors flex items-center justify-center">
+        <button className="flex-1 btn-outline flex items-center justify-center">
           <StarIcon className="h-5 w-5 mr-2" />
           {t('map.saveLocation', 'Save Location')}
         </button>

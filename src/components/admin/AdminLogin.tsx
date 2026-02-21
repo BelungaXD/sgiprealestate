@@ -127,7 +127,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-champagne hover:bg-champagne/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-champagne disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full btn-filled"
               >
                 {isLoading ? t('login.signingIn') : t('login.signIn')}
               </button>

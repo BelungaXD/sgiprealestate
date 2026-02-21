@@ -264,10 +264,10 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
                         <button
                           key={tab.id}
                           onClick={() => setActiveTab(tab.id)}
-                          className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm transition-all duration-500 ease-in-out ${
+                          className={`flex-1 py-3 px-4 rounded-lg font-medium text-sm ${
                             activeTab === tab.id
-                              ? 'bg-champagne-dark text-white shadow-md'
-                              : 'bg-white text-champagne border-2 border-champagne hover:bg-champagne-dark hover:text-white hover:border-champagne-dark'
+                              ? 'btn-filled'
+                              : 'btn-primary'
                           }`}
                         >
                           {tab.label}

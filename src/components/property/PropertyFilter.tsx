@@ -158,7 +158,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
       <div className="lg:hidden mb-4">
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="w-full flex items-center justify-center space-x-2 bg-champagne text-white px-4 py-3 rounded-lg font-medium"
+          className="w-full btn-filled flex items-center justify-center space-x-2"
         >
           <FunnelIcon className="h-5 w-5" />
           <span>{t('filters')}</span>
@@ -185,7 +185,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
                 <h2 className="text-xl font-semibold text-graphite">{t('filters')}</h2>
                 <button
                   onClick={() => setIsMobileOpen(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600"
+                  className="btn-close"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -334,10 +334,10 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
               <button
                 key={bedrooms}
                 onClick={() => handleFilterChange('bedrooms', bedrooms.toString())}
-                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                className={`btn-sm ${
                   filters.bedrooms === bedrooms.toString()
-                    ? 'bg-champagne text-white border-champagne'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-champagne'
+                    ? 'btn-filled'
+                    : 'btn-ghost'
                 }`}
               >
                 {bedrooms === '4+' ? '4+' : bedrooms}
@@ -353,10 +353,10 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
               <button
                 key={bathrooms}
                 onClick={() => handleFilterChange('bathrooms', bathrooms.toString())}
-                className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                className={`btn-sm ${
                   filters.bathrooms === bathrooms.toString()
-                    ? 'bg-champagne text-white border-champagne'
-                    : 'bg-white text-gray-700 border-gray-300 hover:border-champagne'
+                    ? 'btn-filled'
+                    : 'btn-ghost'
                 }`}
               >
                 {bathrooms === '4+' ? '4+' : bathrooms}
@@ -445,7 +445,7 @@ export default function PropertyFilter({ filters, onFiltersChange, properties }:
         <div className="lg:hidden pt-6 border-t border-gray-200">
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="w-full bg-champagne text-white px-4 py-3 rounded-lg font-medium"
+            className="w-full btn-filled"
           >
             {t('applyFilters')}
           </button>

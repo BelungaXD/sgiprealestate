@@ -4,6 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import Layout from '@/components/layout/Layout'
 import {
   BuildingOfficeIcon,
@@ -42,12 +43,20 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
   const { t, i18n } = useTranslation('developers')
   const router = useRouter()
   const isRussian = i18n.language === 'ru'
+  const [logoError, setLogoError] = useState(false)
 
   const displayName = isRussian ? developer.name : (developer.nameEn || developer.name)
   const displayDescription = isRussian 
     ? (developer.description || '') 
     : (developer.descriptionEn || developer.description || '')
   const normalizedLogo = normalizeImageUrl(developer.logo)
+
+  useEffect(() => {
+    if (developer.logo) {
+      console.log('Developer logo:', developer.logo)
+      console.log('Normalized logo:', normalizedLogo)
+    }
+  }, [developer.logo, normalizedLogo])
 
   const handleViewProperties = () => {
     router.push(`/properties?developer=${encodeURIComponent(displayName)}`)
@@ -70,13 +79,22 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
             <div className="container-custom py-16">
               <div className="max-w-4xl">
                 <div className="flex items-start space-x-6 mb-6">
-                  {normalizedLogo && (
-                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+                  {normalizedLogo && !logoError ? (
+                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center flex-shrink-0 relative overflow-hidden shadow-md">
                       <img
                         src={normalizedLogo}
                         alt={displayName}
-                        className="max-w-full max-h-full object-contain"
+                        className="max-w-full max-h-full object-contain p-2"
+                        onError={(e) => {
+                          console.error('Logo failed to load:', normalizedLogo, e)
+                          setLogoError(true)
+                        }}
+                        onLoad={() => console.log('Logo loaded successfully:', normalizedLogo)}
                       />
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                      <BuildingOfficeIcon className="h-12 w-12 text-gray-400" />
                     </div>
                   )}
                   <div className="flex-1">
@@ -171,22 +189,24 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
               )}
 
               {/* Statistics */}
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold text-graphite mb-6">
-                  {t('statistics') || 'Statistics'}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gray-50 rounded-lg p-6 text-center">
-                    <BuildingOfficeIcon className="h-8 w-8 text-champagne mx-auto mb-2" />
-                    <div className="text-3xl font-bold text-graphite mb-1">
-                      {developer._count.properties}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {t('properties') || 'Properties'}
+              {developer._count.properties > 0 && (
+                <div className="mb-12">
+                  <h2 className="text-2xl font-bold text-graphite mb-6">
+                    {t('statistics') || 'Statistics'}
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition-shadow">
+                      <BuildingOfficeIcon className="h-8 w-8 text-champagne mx-auto mb-2" />
+                      <div className="text-3xl font-bold text-graphite mb-1">
+                        {developer._count.properties}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {t('properties') || 'Properties'}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* View Properties Button */}
               <div className="bg-champagne/10 rounded-lg p-8 text-center">

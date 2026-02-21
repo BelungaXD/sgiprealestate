@@ -16,7 +16,7 @@ export default function Partners() {
   // Trusted partners - developers
   const partners: Partner[] = [
     {
-      name: 'Emaar',
+      name: 'Emaar Properties',
       logo: '/uploads/developers/emaar_logo.png',
       website: 'https://www.emaar.com',
     },

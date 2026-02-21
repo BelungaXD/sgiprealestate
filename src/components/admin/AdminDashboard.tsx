@@ -401,7 +401,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     {properties.length > 0 && (
                       <button
                         onClick={handleDeleteAllProperties}
-                        className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                        className="btn-danger btn-sm"
                         title="Delete all properties"
                       >
                         Delete All
@@ -538,7 +538,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     <Dialog.Title as="h3" className="text-lg font-semibold text-graphite">
                       Import folder into: {importFolderProperty?.title}
                     </Dialog.Title>
-                    <button type="button" onClick={() => setImportFolderProperty(null)} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite">
+                    <button type="button" onClick={() => setImportFolderProperty(null)} className="btn-close">
                       <XMarkIcon className="h-5 w-5" />
                     </button>
                   </div>
@@ -552,14 +552,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                       className="flex-1 min-w-[200px] px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
                       disabled={importFolderLoading}
                     />
-                    <button type="button" onClick={openBrowseForImport} disabled={importFolderLoading} className="inline-flex items-center gap-2 px-4 py-2 border border-champagne text-champagne rounded-md text-sm font-medium hover:bg-champagne/10">
+                    <button type="button" onClick={openBrowseForImport} disabled={importFolderLoading} className="btn-outline btn-sm inline-flex items-center gap-2">
                       <FolderOpenIcon className="h-5 w-5" />
                       Browse
                     </button>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <button type="button" onClick={() => setImportFolderProperty(null)} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Cancel</button>
-                    <button type="button" onClick={handleImportFolderIntoProperty} disabled={importFolderLoading || !importFolderPath.trim()} className="px-4 py-2 bg-champagne text-white rounded-md text-sm font-medium hover:bg-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button type="button" onClick={() => setImportFolderProperty(null)} className="btn-ghost btn-sm">Cancel</button>
+                    <button type="button" onClick={handleImportFolderIntoProperty} disabled={importFolderLoading || !importFolderPath.trim()} className="btn-filled btn-sm">
                       {importFolderLoading ? 'Importing…' : 'Import'}
                     </button>
                   </div>
@@ -582,17 +582,17 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 <Dialog.Panel className="w-full max-w-lg rounded-xl bg-white p-4 shadow-xl">
                   <div className="flex items-center justify-between mb-3">
                     <Dialog.Title as="h3" className="text-lg font-semibold text-graphite">Choose folder</Dialog.Title>
-                    <button type="button" onClick={() => setBrowseOpen(false)} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite"><XMarkIcon className="h-5 w-5" /></button>
+                    <button type="button" onClick={() => setBrowseOpen(false)} className="btn-close"><XMarkIcon className="h-5 w-5" /></button>
                   </div>
                   {browseError && <p className="mb-3 text-sm text-red-600">{browseError}</p>}
                   <div className="mb-3 flex items-center gap-2">
                     {browseParentPath !== null && (
-                      <button type="button" onClick={() => loadBrowse(browseParentPath)} className="inline-flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50">
+                      <button type="button" onClick={() => loadBrowse(browseParentPath)} className="btn-ghost btn-sm inline-flex items-center gap-1">
                         <ChevronUpIcon className="h-4 w-4" /> Up
                       </button>
                     )}
                     {browseCurrentPath && (
-                      <button type="button" onClick={() => selectBrowseForImport(browseCurrentPath)} className="rounded bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90">Select this folder</button>
+                      <button type="button" onClick={() => selectBrowseForImport(browseCurrentPath)} className="btn-filled btn-sm">Select this folder</button>
                     )}
                   </div>
                   <p className="mb-2 truncate text-xs text-gray-500" title={browseCurrentPath || 'Select a location'}>{browseCurrentPath || 'Select a location'}</p>
@@ -602,14 +602,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     <ul className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
                       {browseRoots.map((r) => (
                         <li key={r.path}>
-                          <button type="button" onClick={() => loadBrowse(r.path)} className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100">
+                          <button type="button" onClick={() => loadBrowse(r.path)} className="btn-ghost btn-sm flex w-full items-center gap-2 text-left">
                             <FolderOpenIcon className="h-5 w-5 flex-shrink-0 text-champagne" />{r.name}
                           </button>
                         </li>
                       ))}
                       {browseFolders.map((f) => (
                         <li key={f.path}>
-                          <button type="button" onClick={() => loadBrowse(f.path)} className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100">
+                          <button type="button" onClick={() => loadBrowse(f.path)} className="btn-ghost btn-sm flex w-full items-center gap-2 text-left">
                             <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />{f.name}
                           </button>
                         </li>

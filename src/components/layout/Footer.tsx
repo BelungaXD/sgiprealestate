@@ -11,11 +11,9 @@ export default function Footer() {
     company: [
       { name: t('footer.about'), href: '/about' },
       { name: t('footer.team'), href: '/about#team' },
-      { name: t('footer.careers'), href: '/careers' },
-      { name: t('footer.news'), href: '/news' },
     ],
     services: [
-      { name: t('footer.buy'), href: '/properties' },
+      { name: t('footer.buy'), href: '/services' },
       { name: t('footer.sell'), href: '/services' },
       { name: t('footer.rent'), href: '/services' },
       { name: t('footer.investment'), href: '/services' },
@@ -151,6 +149,13 @@ export default function Footer() {
                 className="text-gray-400 hover:text-champagne transition-colors"
               >
                 {t('footer.cookies')}
+              </Link>
+              <Link
+                href="/refund"
+                prefetch={false}
+                className="text-gray-400 hover:text-champagne transition-colors"
+              >
+                {t('footer.refund')}
               </Link>
             </div>
           </div>
