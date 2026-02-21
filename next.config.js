@@ -22,7 +22,6 @@ const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
 const nextConfig = {
   ...(assetPrefix && { assetPrefix }),
   reactStrictMode: true,
-  swcMinify: true,
   // Exclude test files from being treated as pages
   pageExtensions: ['page.tsx', 'page.ts', 'tsx', 'ts', 'api.ts', 'api.tsx'],
   i18n: {
@@ -30,18 +29,40 @@ const nextConfig = {
     localeDetection: false,
   },
   images: {
-    domains: [
-      'localhost',
-      'sgiprealestate.alfares.cz',
-      'sgipreal.com',
-      'sgipreal.ru',
-      'sgipreality.statex.cz',
-      'images.unsplash.com',
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sgiprealestate.alfares.cz',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sgipreal.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sgipreal.ru',
+      },
+      {
+        protocol: 'https',
+        hostname: 'sgipreality.statex.cz',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
       // Add server domain from environment variable if set
       ...(process.env.NEXT_PUBLIC_SERVER_URL
         ? (() => {
             try {
-              return [new URL(process.env.NEXT_PUBLIC_SERVER_URL).hostname]
+              const url = new URL(process.env.NEXT_PUBLIC_SERVER_URL)
+              return [{
+                protocol: url.protocol.replace(':', '') || 'https',
+                hostname: url.hostname,
+              }]
             } catch (e) {
               console.warn('Invalid NEXT_PUBLIC_SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
               return []
@@ -141,6 +162,9 @@ const nextConfig = {
   },
   // Enable standalone output for Docker
   output: 'standalone',
+  // Explicitly use webpack instead of Turbopack (webpack config is required)
+  // Setting empty turbopack config tells Next.js we're intentionally using webpack
+  turbopack: {},
   async rewrites() {
     return [
       {
