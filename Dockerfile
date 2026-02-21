@@ -11,8 +11,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 ENV npm_config_update_notifier=false
 ENV npm_config_cache=/tmp/.npm
-# Use npm ci for reliable, reproducible builds (requires package-lock.json)
-RUN npm ci --prefer-offline --no-audit
+# Use npm install with legacy-peer-deps to handle peer dependency conflicts
+# --legacy-peer-deps handles peer dependency conflicts (e.g., eslint versions)
+# --prefer-offline uses cache when available, --no-audit skips security audit
+RUN npm install --prefer-offline --no-audit --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder

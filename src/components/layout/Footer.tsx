@@ -9,8 +9,8 @@ export default function Footer() {
 
   const footerLinks = {
     company: [
-      { name: t('footer.about'), href: '/about' },
-      { name: t('footer.team'), href: '/about#team' },
+      { name: t('footer.about'), href: '/about-us' },
+      { name: t('footer.team'), href: '/about-us#team' },
     ],
     services: [
       { name: t('footer.buy'), href: '/services' },

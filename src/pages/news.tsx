@@ -2,7 +2,6 @@ import { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
-import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 
 export default function News() {

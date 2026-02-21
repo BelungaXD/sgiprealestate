@@ -16,10 +16,7 @@ import {
   HomeIcon, 
   WrenchScrewdriverIcon, 
   Square3Stack3DIcon,
-  CalendarIcon,
-  CurrencyDollarIcon,
-  ShareIcon,
-  HeartIcon
+  CalendarIcon
 } from '@heroicons/react/24/outline'
 
 interface Property {
@@ -78,7 +75,6 @@ interface PropertyDetailProps {
 export default function PropertyDetail({ property }: PropertyDetailProps) {
   const { t } = useTranslation('property')
   const [activeTab, setActiveTab] = useState('overview')
-  const [isSaved, setIsSaved] = useState(false)
   const tabsSectionRef = useRef<HTMLDivElement>(null)
 
   const formatPrice = (price: number, currency: string) => {
@@ -87,39 +83,6 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
       currency: currency,
       minimumFractionDigits: 0,
     }).format(price)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long'
-    })
-  }
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: property.title,
-          text: property.description,
-          url: window.location.href,
-        })
-      } catch (err) {
-        console.log('Error sharing:', err)
-      }
-    } else {
-      // Fallback to copying URL
-      navigator.clipboard.writeText(window.location.href)
-      // You could show a toast notification here
-    }
-  }
-
-  const handleOpenContactTab = () => {
-    setActiveTab('contact')
-    // Scroll to tabs section smoothly
-    setTimeout(() => {
-      tabsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 100)
   }
 
   const tabs = [
