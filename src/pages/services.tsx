@@ -40,7 +40,6 @@ export default function Services() {
       title: t('buy.title'),
       titleEn: 'Buy Property',
       description: t('buy.description'),
-      icon: '🏠',
       features: [
         t('buy.features.propertySearch'),
         t('buy.features.marketAnalysis'),
@@ -69,7 +68,6 @@ export default function Services() {
       title: t('sell.title'),
       titleEn: 'Sell Property',
       description: t('sell.description'),
-      icon: '💰',
       features: [
         t('sell.features.valuation'),
         t('sell.features.marketing'),
@@ -98,7 +96,6 @@ export default function Services() {
       title: t('rent.title'),
       titleEn: 'Rent Property',
       description: t('rent.description'),
-      icon: '🔑',
       features: [
         t('rent.features.search'),
         t('rent.features.viewing'),
@@ -127,7 +124,6 @@ export default function Services() {
       title: t('investment.title'),
       titleEn: 'Investment Consultation',
       description: t('investment.description'),
-      icon: '📈',
       features: [
         t('investment.features.analysis'),
         t('investment.features.strategy'),
@@ -205,21 +201,11 @@ export default function Services() {
                 <p className="text-xl text-gray-200 mb-8">
                   {t('hero.subtitle')}
                 </p>
-                <div id="services-stats" className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div id="services-stats" className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
                   <div className="bg-white/10 rounded-lg p-4">
                     <div className="text-2xl font-bold text-champagne mb-2">
                       {isVisible ? (
-                        <AnimatedNumber value={4} duration={2000} />
-                      ) : (
-                        <span>0</span>
-                      )}
-                    </div>
-                    <div className="text-sm text-gray-200">{t('hero.services')}</div>
-                  </div>
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-champagne mb-2">
-                      {isVisible ? (
-                        <AnimatedNumber value={15} suffix="+" duration={2000} />
+                        <AnimatedNumber value={13} suffix="+" duration={2000} />
                       ) : (
                         <span>0+</span>
                       )}
@@ -229,7 +215,7 @@ export default function Services() {
                   <div className="bg-white/10 rounded-lg p-4">
                     <div className="text-2xl font-bold text-champagne mb-2">
                       {isVisible ? (
-                        <AnimatedNumber value={500} suffix="+" duration={2000} />
+                        <AnimatedNumber value={1280} suffix="+" duration={2000} />
                       ) : (
                         <span>0+</span>
                       )}

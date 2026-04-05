@@ -9,19 +9,27 @@
     "signIn": "Sign In",
     "signingIn": "Signing In...",
     "invalidCredentials": "Invalid username or password",
-    "demoCredentials": "Demo Credentials"
+    "notConfigured": "Admin login is not configured on the server. Set ADMIN_PASSWORD (and ADMIN_SESSION_SECRET in production) in .env.",
+    "serverError": "Could not reach the server. Try again."
   },
   "dashboard": {
     "title": "Admin Dashboard",
     "subtitle": "Manage your real estate properties and leads",
     "logout": "Logout",
     "properties": "Properties",
+    "developers": "Developers",
+    "areas": "Areas",
     "leads": "Leads",
     "analytics": "Analytics",
     "totalProperties": "Total Properties",
     "activeListings": "Active Listings",
-    "totalViews": "Total Views",
-    "leads": "Leads"
+    "totalViews": "Total Views"
+  },
+  "developers": {
+    "title": "Developers directory"
+  },
+  "areas": {
+    "title": "Areas directory"
   },
   "properties": {
     "title": "Property Management",

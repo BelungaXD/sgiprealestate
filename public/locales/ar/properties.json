@@ -37,6 +37,14 @@
     "newest": "الأحدث أولاً",
     "oldest": "الأقدم أولاً"
   },
+  "listingMarket": "نوع القائمة",
+  "allListings": "الكل",
+  "primary": "أولي / قيد الإنشاء",
+  "secondary": "ثانوي / إعادة بيع",
+  "vacant": "شاغر",
+  "tenanted": "مؤجر",
+  "occupancy": "الحالة",
+  "paymentPlan": "خطة الدفع",
   "types": {
     "apartment": "شقة",
     "villa": "فيلا",

@@ -9,7 +9,7 @@ export const PropertyTypeEnum = z.enum([
   'OFFICE',
   'RETAIL',
   'WAREHOUSE',
-  'LAND'
+  'LAND',
 ])
 
 export const PropertyStatusEnum = z.enum([
@@ -17,52 +17,65 @@ export const PropertyStatusEnum = z.enum([
   'SOLD',
   'RENTED',
   'RESERVED',
-  'UNAVAILABLE'
+  'UNAVAILABLE',
 ])
 
-export const propertySchema = z.object({
-  // Basic Information
-  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
-  description: z.string().min(10, 'Description must contain at least 10 characters').max(5000, 'Description is too long'),
-  type: PropertyTypeEnum.optional(),
-  price: z.number().positive('Price must be a positive number'),
-  currency: z.string().default('AED'),
-  status: PropertyStatusEnum.default('AVAILABLE'),
+export const ListingMarketEnum = z.enum(['PRIMARY', 'SECONDARY'])
 
-  // Specifications
-  areaSqm: z.number().positive('Area must be a positive number'),
-  bedrooms: z.number().int().min(0, 'Number of bedrooms cannot be negative'),
-  bathrooms: z.number().int().min(0, 'Number of bathrooms cannot be negative'),
-  parking: z.number().int().min(0).optional(),
-  floor: z.number().int().optional(),
-  totalFloors: z.number().int().positive().optional(),
-  yearBuilt: z.number().int().min(1800).max(2100).optional(),
-  completionDate: z.string().optional().transform((val) => val ? new Date(val) : undefined),
+export const OccupancyStatusEnum = z.enum(['VACANT', 'TENANTED'])
 
-  // Location
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  district: z.string().min(1, 'District is required'),
-  areaId: z.string().optional(),
-  developerId: z.string().optional(),
-  coordinates: z.object({
-    lat: z.number(),
-    lng: z.number()
-  }).optional(),
+export const propertySchema = z
+  .object({
+    title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+    description: z
+      .string()
+      .max(5000, 'Description is too long')
+      .optional()
+      .nullable(),
+    type: PropertyTypeEnum.optional(),
+    listingMarket: ListingMarketEnum.default('PRIMARY'),
+    price: z.number().positive('Price must be a positive number'),
+    currency: z.string().default('AED'),
+    status: PropertyStatusEnum.default('AVAILABLE'),
 
-  // Features
-  features: z.array(z.string()).default([]),
-  amenities: z.array(z.string()).default([]),
+    areaSqm: z.number().positive('Area must be a positive number'),
+    bedrooms: z.number().int().min(0, 'Number of bedrooms cannot be negative'),
+    bathrooms: z.number().int().min(0, 'Number of bathrooms cannot be negative'),
+    parking: z.number().int().min(0).optional(),
+    floor: z.number().int().optional(),
+    totalFloors: z.number().int().positive().optional(),
+    yearBuilt: z.number().int().min(1800).max(2100).optional(),
+    completionDate: z
+      .string()
+      .optional()
+      .transform((val) => (val ? new Date(val) : undefined)),
+    paymentPlan: z.string().max(20000).optional().nullable(),
+    occupancyStatus: z
+      .union([OccupancyStatusEnum, z.literal('')])
+      .optional()
+      .transform((v) => (v === '' ? undefined : v)),
 
-  // SEO
-  slug: z.string().min(1, 'Slug is required'),
-  metaTitle: z.string().max(60).optional(),
-  metaDescription: z.string().max(160).optional(),
+    address: z.string().min(1, 'Address is required'),
+    city: z.string().min(1, 'City is required'),
+    district: z.string().min(1, 'District is required'),
+    areaId: z.string().optional().nullable(),
+    developerId: z.string().optional().nullable(),
+    coordinates: z
+      .object({
+        lat: z.number(),
+        lng: z.number(),
+      })
+      .optional(),
 
-  // Flags
-  isPublished: z.boolean().default(false),
-  isFeatured: z.boolean().default(false),
-})
+    features: z.array(z.string()).default([]),
+    amenities: z.array(z.string()).default([]),
+
+    slug: z.string().min(1, 'Slug is required'),
+    metaTitle: z.string().max(60).optional(),
+    metaDescription: z.string().max(160).optional(),
+
+    isPublished: z.boolean().default(false),
+    isFeatured: z.boolean().default(false),
+  })
 
 export type PropertyFormData = z.infer<typeof propertySchema>
-

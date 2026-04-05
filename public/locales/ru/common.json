@@ -34,13 +34,22 @@
     "terms": "Условия использования",
     "cookies": "Политика использования файлов cookie",
     "refund": "Политика возврата",
-    "allRightsReserved": "Все права защищены."
+    "allRightsReserved": "Все права защищены.",
+    "followUs": "Мы в соцсетях",
+    "socialInstagram": "Instagram",
+    "socialYoutube": "YouTube",
+    "socialLinkedin": "LinkedIn",
+    "socialWebsite": "Сайт"
   },
   "whatsapp": {
-    "title": "Чат с нами в WhatsApp",
-    "description": "Получите мгновенные ответы на ваши вопросы о нашей недвижимости и услугах.",
+    "title": "WhatsApp и Telegram",
+    "description": "Свяжитесь с нами в WhatsApp или Telegram — ответим быстро.",
+    "phoneLine": "{{phone}}",
     "message": "Привет! Меня интересуют ваши услуги в сфере недвижимости.",
     "openChat": "Открыть чат WhatsApp"
+  },
+  "telegram": {
+    "openChat": "Открыть Telegram"
   },
   "buttons": {
     "learnMore": "Узнать больше",

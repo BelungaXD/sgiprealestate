@@ -25,17 +25,22 @@ interface Property {
   price: number
   currency: string
   type: string
+  listingMarket: 'PRIMARY' | 'SECONDARY'
   area: number
   bedrooms: number
   bathrooms: number
   parking: number
   location: string
   district: string
+  areaId: string
   image: string
   isFeatured: boolean
   yearBuilt: number
   completionDate: string
+  createdAt: string
   developer: string
+  developerLogo: string
+  occupancyStatus: string
 }
 
 export default function Properties() {
@@ -46,8 +51,9 @@ export default function Properties() {
   const [properties, setProperties] = useState<Property[]>([])
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([])
   const [filters, setFilters] = useState({
+    listingMarket: '' as '' | 'PRIMARY' | 'SECONDARY',
     type: '',
-    area: [] as string[],
+    areaIds: [] as string[],
     developer: [] as string[],
     minPrice: '',
     maxPrice: '',
@@ -57,7 +63,7 @@ export default function Properties() {
     maxArea: '',
     minYearBuilt: '',
     maxYearBuilt: '',
-    completionDate: ''
+    completionDate: '',
   })
   const [sortBy, setSortBy] = useState('price-asc')
   const [currentPage, setCurrentPage] = useState(1)
@@ -74,10 +80,8 @@ export default function Properties() {
       }))
     }
     if (areaParam) {
-      setFilters(prev => ({
-        ...prev,
-        area: [decodeURIComponent(areaParam)],
-      }))
+      const decoded = decodeURIComponent(areaParam)
+      setFilters((prev) => ({ ...prev, areaIds: [decoded] }))
     }
   }, [router.query])
 
@@ -91,7 +95,7 @@ export default function Properties() {
         
         // Transform API data to match Property interface
         const transformedProperties: Property[] = data.properties
-          .filter((p: any) => p.isPublished) // Only show published properties
+          .filter((p: any) => p.isPublished)
           .map((p: any) => ({
             id: p.id,
             slug: p.slug || p.id,
@@ -100,17 +104,22 @@ export default function Properties() {
             price: p.price,
             currency: p.currency,
             type: p.type,
+            listingMarket: p.listingMarket || 'PRIMARY',
             area: p.areaSqm,
             bedrooms: p.bedrooms,
             bathrooms: p.bathrooms,
             parking: p.parking || 0,
             location: p.city,
             district: p.district,
+            areaId: p.areaId || '',
             image: p.images && p.images.length > 0 ? p.images[0].url : '/images/hero.jpg',
             isFeatured: p.isFeatured,
             yearBuilt: p.yearBuilt || 0,
             completionDate: p.completionDate || '',
+            createdAt: p.createdAt || '',
             developer: p.developer?.name || p.developer?.nameEn || '',
+            developerLogo: p.developer?.logo || '',
+            occupancyStatus: p.occupancyStatus || '',
           }))
         
         setProperties(transformedProperties)
@@ -130,20 +139,33 @@ export default function Properties() {
   useEffect(() => {
     let filtered = [...properties]
 
-    // Apply filters
-    if (filters.type) {
-      filtered = filtered.filter(prop => prop.type === filters.type)
+    if (filters.listingMarket) {
+      filtered = filtered.filter((prop) => prop.listingMarket === filters.listingMarket)
     }
-    if (filters.area && filters.area.length > 0) {
-      filtered = filtered.filter(prop => filters.area.includes(prop.district))
+    if (filters.type) {
+      filtered = filtered.filter((prop) => prop.type === filters.type)
+    }
+    if (filters.areaIds && filters.areaIds.length > 0) {
+      filtered = filtered.filter((prop) => {
+        if (prop.areaId && filters.areaIds.includes(prop.areaId)) return true
+        return filters.areaIds.some(
+          (aid) =>
+            aid &&
+            (prop.district === aid ||
+              prop.district?.toLowerCase() === aid.toLowerCase())
+        )
+      })
     }
     if (filters.developer && filters.developer.length > 0) {
-      filtered = filtered.filter(prop => {
+      filtered = filtered.filter((prop) => {
+        if (prop.listingMarket === 'SECONDARY') return false
         const propDeveloper = prop.developer?.trim() || ''
-        return filters.developer.some(filterDeveloper => {
+        return filters.developer.some((filterDeveloper) => {
           const trimmedFilter = filterDeveloper.trim()
-          return propDeveloper === trimmedFilter || 
-                 propDeveloper.toLowerCase() === trimmedFilter.toLowerCase()
+          return (
+            propDeveloper === trimmedFilter ||
+            propDeveloper.toLowerCase() === trimmedFilter.toLowerCase()
+          )
         })
       })
     }
@@ -187,10 +209,16 @@ export default function Properties() {
         filtered.sort((a, b) => b.area - a.area)
         break
       case 'newest':
-        filtered.sort((a, b) => new Date(b.completionDate).getTime() - new Date(a.completionDate).getTime())
+        filtered.sort(
+          (a, b) =>
+            new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+        )
         break
       case 'oldest':
-        filtered.sort((a, b) => new Date(a.completionDate).getTime() - new Date(b.completionDate).getTime())
+        filtered.sort(
+          (a, b) =>
+            new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+        )
         break
     }
 
@@ -272,7 +300,8 @@ export default function Properties() {
                     {properties.filter(p => p.isFeatured).length} {t('featured', 'Featured')}
                   </div>
                   <div className="bg-white/10 rounded-full px-4 py-2">
-                    {new Set(properties.map(p => p.district)).size} {t('districts', 'Districts')}
+                    {new Set(properties.map((p) => p.district).filter(Boolean)).size}{' '}
+                    {t('districts', 'Districts')}
                   </div>
                 </div>
               </div>

@@ -28,17 +28,25 @@
     "investment": "Investment",
     "contact": "Contact Us",
     "faq": "FAQ",
-    "support": "Support",
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
     "cookies": "Cookie Policy",
     "refund": "Refund Policy",
-    "allRightsReserved": "All rights reserved."
+    "allRightsReserved": "All rights reserved.",
+    "followUs": "Follow us",
+    "socialInstagram": "Instagram",
+    "socialYoutube": "YouTube",
+    "socialLinkedin": "LinkedIn",
+    "socialWebsite": "Website"
   },
   "whatsapp": {
-    "title": "Chat with us on WhatsApp",
-    "description": "Get instant answers to your questions about our properties and services.",
+    "title": "WhatsApp & Telegram",
+    "description": "Contact us via WhatsApp or Telegram for a quick reply.",
+    "phoneLine": "{{phone}}",
     "message": "Hello! I'm interested in your real estate services.",
     "openChat": "Open WhatsApp Chat"
+  },
+  "telegram": {
+    "openChat": "Open Telegram"
   }
 }

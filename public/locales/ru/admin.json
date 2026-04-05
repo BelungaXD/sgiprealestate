@@ -9,19 +9,27 @@
     "signIn": "Войти",
     "signingIn": "Вход...",
     "invalidCredentials": "Неверное имя пользователя или пароль",
-    "demoCredentials": "Демо-учетные данные"
+    "notConfigured": "Вход в админку не настроен на сервере. Задайте ADMIN_PASSWORD (и ADMIN_SESSION_SECRET в production) в .env.",
+    "serverError": "Не удалось связаться с сервером. Попробуйте снова."
   },
   "dashboard": {
     "title": "Панель управления",
     "subtitle": "Управление недвижимостью и заявками",
     "logout": "Выйти",
     "properties": "Недвижимость",
+    "developers": "Застройщики",
+    "areas": "Районы",
     "leads": "Заявки",
     "analytics": "Аналитика",
     "totalProperties": "Всего объектов",
     "activeListings": "Активные объявления",
-    "totalViews": "Всего просмотров",
-    "leads": "Заявки"
+    "totalViews": "Всего просмотров"
+  },
+  "developers": {
+    "title": "Справочник застройщиков"
+  },
+  "areas": {
+    "title": "Справочник районов"
   },
   "properties": {
     "title": "Управление недвижимостью",

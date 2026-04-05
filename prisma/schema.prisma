@@ -18,6 +18,8 @@ model Property {
   price       Float
   currency    String   @default("AED")
   type        PropertyType
+  /// Primary (off-plan) vs secondary (resale) — distinct from `type` (APARTMENT, VILLA, …)
+  listingMarket ListingMarket @default(PRIMARY)
   status      PropertyStatus @default(AVAILABLE)
   areaSqm     Float // Property area in square meters
   bedrooms    Int
@@ -27,6 +29,10 @@ model Property {
   totalFloors Int?
   yearBuilt   Int?
   completionDate DateTime?
+  /// Payment plan / handover terms (primary listings)
+  paymentPlan String? @db.Text
+  /// Vacant / tenanted (secondary listings)
+  occupancyStatus OccupancyStatus?
   
   // Location
   address     String
@@ -120,6 +126,10 @@ model Area {
   nameEn      String?
   description String?
   descriptionEn String?
+  isActive    Boolean @default(true)
+  image       String?
+  sortOrder   Int?
+  tags        String[] @default([])
   
   // Location
   city        String
@@ -146,6 +156,7 @@ model Developer {
   nameEn      String?
   description String?
   descriptionEn String?
+  isActive    Boolean @default(true)
   logo        String?
   website     String?
   email       String?
@@ -246,6 +257,16 @@ enum PropertyType {
   RETAIL
   WAREHOUSE
   LAND
+}
+
+enum ListingMarket {
+  PRIMARY
+  SECONDARY
+}
+
+enum OccupancyStatus {
+  VACANT
+  TENANTED
 }
 
 enum PropertyStatus {

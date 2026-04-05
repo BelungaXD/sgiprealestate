@@ -20,9 +20,10 @@ jest.mock('next-i18next', () => ({
 describe('Footer Component', () => {
   it('renders footer with company info', () => {
     render(<Footer />)
-    
-    const logo = screen.getByText('SGIP')
-    expect(logo).toBeInTheDocument()
+
+    expect(
+      screen.getByRole('img', { name: /SGIP Real Estate/i })
+    ).toBeInTheDocument()
   })
 
   it('renders footer links', () => {

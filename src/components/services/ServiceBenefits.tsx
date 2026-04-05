@@ -1,11 +1,9 @@
 import { useTranslation } from 'next-i18next'
-import { 
-  ShieldCheckIcon, 
-  ClockIcon, 
-  CurrencyDollarIcon, 
+import {
+  ShieldCheckIcon,
   UserGroupIcon,
-  ChartBarIcon,
-  GlobeAltIcon
+  GlobeAltIcon,
+  Squares2X2Icon,
 } from '@heroicons/react/24/outline'
 
 export default function ServiceBenefits() {
@@ -16,44 +14,30 @@ export default function ServiceBenefits() {
       icon: ShieldCheckIcon,
       title: t('benefits.trust.title'),
       description: t('benefits.trust.description'),
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
+      color: 'text-graphite',
+      bgColor: 'bg-gray-100',
     },
     {
-      icon: ClockIcon,
-      title: t('benefits.speed.title'),
-      description: t('benefits.speed.description'),
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
-    },
-    {
-      icon: CurrencyDollarIcon,
-      title: t('benefits.value.title'),
-      description: t('benefits.value.description'),
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100'
+      icon: Squares2X2Icon,
+      title: t('benefits.fullCycle.title'),
+      description: t('benefits.fullCycle.description'),
+      color: 'text-graphite',
+      bgColor: 'bg-gray-100',
     },
     {
       icon: UserGroupIcon,
       title: t('benefits.expertise.title'),
       description: t('benefits.expertise.description'),
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100'
-    },
-    {
-      icon: ChartBarIcon,
-      title: t('benefits.analytics.title'),
-      description: t('benefits.analytics.description'),
-      color: 'text-red-600',
-      bgColor: 'bg-red-100'
+      color: 'text-graphite',
+      bgColor: 'bg-gray-100',
     },
     {
       icon: GlobeAltIcon,
       title: t('benefits.global.title'),
       description: t('benefits.global.description'),
       color: 'text-champagne',
-      bgColor: 'bg-champagne/10'
-    }
+      bgColor: 'bg-gray-100',
+    },
   ]
 
   return (
@@ -73,7 +57,7 @@ export default function ServiceBenefits() {
           return (
             <div key={index} className="text-center group hover:scale-105 transition-transform duration-300">
               <div className={`w-16 h-16 ${benefit.bgColor} rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                <IconComponent className={`h-8 w-8 ${benefit.color}`} />
+                <IconComponent className={`h-8 w-8 stroke-[1.25] ${benefit.color}`} />
               </div>
               <h3 className="text-xl font-semibold text-graphite mb-4">
                 {benefit.title}

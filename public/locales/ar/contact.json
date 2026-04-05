@@ -36,8 +36,26 @@
     "address": { "title": "عنوان المكتب", "description": "قم بزيارتنا للاستشارة" },
     "hours": { "title": "ساعات العمل", "description": "نحن متاحون في هذه الأوقات" },
     "social": { "title": "تابعنا" },
+    "messengers": {
+      "title": "واتساب وتيليجرام",
+      "body": "تواصل معنا عبر واتساب أو تيليجرام على"
+    },
+    "teamEmails": {
+      "title": "بريد الفريق",
+      "ru": "RU",
+      "alex": "Alex",
+      "elza": "Elza"
+    },
     "map": { "title": "اعثر علينا" },
     "emergency": { "title": "اتصال الطوارئ", "description": "للاحتياجات العاجلة خارج ساعات العمل" }
+  },
+  "social": {
+    "whatsapp": "واتساب",
+    "telegram": "تيليجرام",
+    "instagram": "إنستغرام",
+    "youtube": "يوتيوب",
+    "linkedin": "لينكد إن",
+    "website": "الموقع"
   }
 }
 

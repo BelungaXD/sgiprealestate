@@ -2,10 +2,25 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useTranslation } from 'next-i18next'
+import { GlobeAltIcon } from '@heroicons/react/24/outline'
 
 export default function Footer() {
   const { t } = useTranslation('common')
   const [logoError, setLogoError] = useState(false)
+  const logoSrc =
+    process.env.NEXT_PUBLIC_LOGO_FOOTER || '/images/sgip_logo_bright.png'
+  const contactEmail =
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'admin@sgipreal.com'
+  const instagramUrl =
+    process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
+    'https://www.instagram.com/rustam_dubai'
+  const youtubeUrl =
+    process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://youtube.com/@rustamdubai'
+  const linkedinUrl =
+    process.env.NEXT_PUBLIC_LINKEDIN_URL ||
+    'https://www.linkedin.com/in/rustam-umurzakov-74514059'
+
+  const socialLineIconClass = 'h-5 w-5 stroke-[1.5]'
 
   const footerLinks = {
     company: [
@@ -33,28 +48,24 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Company Info */}
             <div className="lg:col-span-1">
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center mb-4">
                 {logoError ? (
-                  <div className="w-10 h-10 bg-champagne rounded-lg flex items-center justify-center">
+                  <div className="w-14 h-14 bg-champagne rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-xl">S</span>
                   </div>
                 ) : (
-                  <div className="relative h-10 w-10">
+                  <div className="relative h-14 w-14 flex-shrink-0">
                     <Image
-                      src="/images/sgip_logo.png"
+                      src={logoSrc}
                       alt="SGIP Real Estate"
-                      width={40}
-                      height={40}
-                      className="h-10 w-10 object-contain rounded-lg"
+                      width={56}
+                      height={56}
+                      className="h-14 w-14 object-contain"
                       unoptimized
                       onError={() => setLogoError(true)}
                     />
                   </div>
                 )}
-                <div>
-                  <div className="text-xl font-bold">SGIP</div>
-                  <div className="text-xs text-gray-400 -mt-1">{t('footer.companyName')}</div>
-                </div>
               </div>
               <p className="text-gray-300 text-sm mb-6">
                 {t('footer.description')}
@@ -62,7 +73,97 @@ export default function Footer() {
               <div className="space-y-2 text-sm text-gray-300">
                 <p>📍 Dubai, Business Bay, Westburry 1, office 302</p>
                 <p>📞 +971 50 580 7871</p>
-                <p>✉️ support@sgipreal.com</p>
+                <p>
+                  ✉️{' '}
+                  <a
+                    href={`mailto:${contactEmail}`}
+                    className="hover:text-champagne transition-colors"
+                  >
+                    {contactEmail}
+                  </a>
+                </p>
+                <p className="pt-2 text-gray-400">{t('footer.followUs')}</p>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center text-champagne hover:bg-gray-600 transition-colors"
+                    aria-label={t('footer.socialInstagram')}
+                    title={t('footer.socialInstagram')}
+                  >
+                    <svg
+                      className={socialLineIconClass}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden
+                    >
+                      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <path d="M17.5 6.5h.01" strokeLinecap="round" />
+                    </svg>
+                  </a>
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center text-champagne hover:bg-gray-600 transition-colors"
+                    aria-label={t('footer.socialYoutube')}
+                    title={t('footer.socialYoutube')}
+                  >
+                    <svg
+                      className={socialLineIconClass}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 9.75C3 8.25 3.75 7.25 5.5 7c1.5-.25 6.5-.25 6.5-.25s5 0 6.5.25c1.75.25 2.5 1.25 2.5 2.75v4.5c0 1.5-.75 2.5-2.5 2.75-1.5.25-6.5.25-6.5.25s-5 0-6.5-.25C3.75 16.75 3 15.75 3 14.25v-4.5z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M10 9.75 14.5 12 10 14.25v-4.5z"
+                      />
+                    </svg>
+                  </a>
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center text-champagne hover:bg-gray-600 transition-colors"
+                    aria-label={t('footer.socialLinkedin')}
+                    title={t('footer.socialLinkedin')}
+                  >
+                    <svg
+                      className={socialLineIconClass}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"
+                      />
+                      <rect width="4" height="12" x="2" y="9" rx="1" />
+                      <circle cx="4" cy="4" r="2" />
+                    </svg>
+                  </a>
+                  <span
+                    className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center text-champagne/50 cursor-default"
+                    title={t('footer.socialWebsite')}
+                    aria-label={t('footer.socialWebsite')}
+                    role="img"
+                  >
+                    <GlobeAltIcon className="h-5 w-5 stroke-[1.5]" />
+                  </span>
+                </div>
               </div>
             </div>
 

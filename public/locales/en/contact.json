@@ -50,6 +50,16 @@
     "social": {
       "title": "Follow Us"
     },
+    "messengers": {
+      "title": "WhatsApp & Telegram",
+      "body": "Contact us via WhatsApp or Telegram at"
+    },
+    "teamEmails": {
+      "title": "Team contacts",
+      "ru": "RU",
+      "alex": "Alex",
+      "elza": "Elza"
+    },
     "map": {
       "title": "Find Us"
     },
@@ -57,5 +67,13 @@
       "title": "Emergency Contact",
       "description": "For urgent matters outside business hours"
     }
+  },
+  "social": {
+    "whatsapp": "WhatsApp",
+    "telegram": "Telegram",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "linkedin": "LinkedIn",
+    "website": "Website"
   }
 }

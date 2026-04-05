@@ -9,19 +9,27 @@
     "signIn": "تسجيل الدخول",
     "signingIn": "جاري تسجيل الدخول...",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
-    "demoCredentials": "بيانات اعتماد تجريبية"
+    "notConfigured": "لم يتم تهيئة تسجيل الدخول للإدارة على الخادم. عيّن ADMIN_PASSWORD (و ADMIN_SESSION_SECRET في الإنتاج) في ملف .env.",
+    "serverError": "تعذر الاتصال بالخادم. حاول مرة أخرى."
   },
   "dashboard": {
     "title": "لوحة التحكم",
     "subtitle": "إدارة العقارات والعروض",
     "logout": "تسجيل الخروج",
     "properties": "العقارات",
+    "developers": "المطورون",
+    "areas": "المناطق",
     "leads": "العروض",
     "analytics": "التحليلات",
     "totalProperties": "إجمالي العقارات",
     "activeListings": "القوائم النشطة",
-    "totalViews": "إجمالي المشاهدات",
-    "leads": "العروض"
+    "totalViews": "إجمالي المشاهدات"
+  },
+  "developers": {
+    "title": "دليل المطورين"
+  },
+  "areas": {
+    "title": "دليل المناطق"
   },
   "properties": {
     "title": "إدارة العقارات",

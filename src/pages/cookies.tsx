@@ -6,6 +6,8 @@ import Layout from '@/components/layout/Layout'
 
 export default function Cookies() {
   const { t } = useTranslation('cookies')
+  const contactEmail =
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'admin@sgipreal.com'
 
   return (
     <>
@@ -181,7 +183,7 @@ export default function Cookies() {
                   </p>
                   <div className="bg-gray-50 p-6 rounded-lg">
                     <p className="text-gray-700 mb-2">
-                      <strong>{t('contact.email')}:</strong> support@sgipreal.com
+                      <strong>{t('contact.email')}:</strong> {contactEmail}
                     </p>
                     <p className="text-gray-700 mb-2">
                       <strong>{t('contact.phone')}:</strong> +971 50 580 7871

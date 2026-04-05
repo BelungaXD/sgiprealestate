@@ -32,13 +32,22 @@
     "terms": "الشروط والأحكام",
     "cookies": "سياسة الكوكيز",
     "refund": "سياسة الاسترجاع",
-    "allRightsReserved": "جميع الحقوق محفوظة"
+    "allRightsReserved": "جميع الحقوق محفوظة",
+    "followUs": "تابعنا",
+    "socialInstagram": "إنستغرام",
+    "socialYoutube": "يوتيوب",
+    "socialLinkedin": "لينكد إن",
+    "socialWebsite": "الموقع"
   },
   "whatsapp": {
-    "title": "تواصل معنا عبر واتساب",
-    "description": "احصل على إجابات فورية حول عقاراتنا وخدماتنا.",
+    "title": "واتساب وتيليجرام",
+    "description": "تواصل معنا عبر واتساب أو تيليجرام للرد السريع.",
+    "phoneLine": "{{phone}}",
     "message": "مرحبًا! أنا مهتم بخدماتكم العقارية.",
     "openChat": "فتح محادثة واتساب"
+  },
+  "telegram": {
+    "openChat": "فتح تيليجرام"
   }
 }
 

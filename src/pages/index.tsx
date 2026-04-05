@@ -63,13 +63,31 @@ export default function Home({ featuredProperties }: HomeProps) {
             '@type': 'Organization',
             name: 'SGIP Real Estate',
             url: process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com',
-            logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/images/sgip_logo.png`,
-            ...(process.env.NEXT_PUBLIC_TELEGRAM_USERNAME || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ? {
-              sameAs: [
-                ...(process.env.NEXT_PUBLIC_TELEGRAM_USERNAME ? [`https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_USERNAME}`] : []),
-                ...(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ? [`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}`] : [])
+            logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/images/sgip_logo_dark.png`,
+            ...(() => {
+              const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971505807871'
+              const tg =
+                process.env.NEXT_PUBLIC_TELEGRAM_USERNAME
+                  ? `https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_USERNAME}`
+                  : process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/+971505807871'
+              const ig =
+                process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
+                'https://www.instagram.com/rustam_dubai'
+              const yt =
+                process.env.NEXT_PUBLIC_YOUTUBE_URL ||
+                'https://youtube.com/@rustamdubai'
+              const li =
+                process.env.NEXT_PUBLIC_LINKEDIN_URL ||
+                'https://www.linkedin.com/in/rustam-umurzakov-74514059'
+              const sameAs = [
+                tg,
+                `https://wa.me/${wa}`,
+                ig,
+                yt,
+                li,
               ]
-            } : {})
+              return { sameAs }
+            })()
           })
         }}
       />
@@ -123,6 +141,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         price: p.price,
         currency: p.currency,
         type: p.type,
+        listingMarket: p.listingMarket || 'PRIMARY',
         area: p.areaSqm,
         bedrooms: p.bedrooms,
         bathrooms: p.bathrooms,
@@ -138,7 +157,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
       featuredProperties,
-      ...(await serverSideTranslations(locale ?? 'en', ['common', 'home'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common', 'home', 'properties'])),
     },
   }
 }

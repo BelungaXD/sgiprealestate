@@ -123,7 +123,9 @@ export default function FAQ() {
                                 )}
                               </Disclosure.Button>
                               <Disclosure.Panel className="px-6 py-4 text-gray-600 bg-gray-50">
-                                <p className="leading-relaxed">{item.answer}</p>
+                                <p className="leading-relaxed whitespace-pre-line">
+                                  {item.answer}
+                                </p>
                               </Disclosure.Panel>
                             </>
                           )}

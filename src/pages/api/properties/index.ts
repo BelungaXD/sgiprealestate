@@ -33,9 +33,43 @@ export default async function handler(
       const page = parseInt(req.query.page as string) || 1
       const limit = parseInt(req.query.limit as string) || 20
       const status = req.query.status as string | undefined
+      const listingMarket = req.query.listingMarket as string | undefined
+      const areaId = req.query.areaId as string | undefined
+      const developerId = req.query.developerId as string | undefined
+      const sort = (req.query.sort as string) || 'createdAt-desc'
       const skip = (page - 1) * limit
 
-      const where = status ? { status: status as any } : {}
+      const where: Record<string, unknown> = {}
+      if (status) where.status = status
+      if (listingMarket === 'PRIMARY' || listingMarket === 'SECONDARY') {
+        where.listingMarket = listingMarket
+      }
+      if (areaId) where.areaId = areaId
+      if (developerId) where.developerId = developerId
+
+      let orderBy: Record<string, 'asc' | 'desc'> | Record<string, 'asc' | 'desc'>[] = {
+        createdAt: 'desc',
+      }
+      switch (sort) {
+        case 'price-asc':
+          orderBy = { price: 'asc' }
+          break
+        case 'price-desc':
+          orderBy = { price: 'desc' }
+          break
+        case 'area-asc':
+          orderBy = { areaSqm: 'asc' }
+          break
+        case 'area-desc':
+          orderBy = { areaSqm: 'desc' }
+          break
+        case 'createdAt-asc':
+          orderBy = { createdAt: 'asc' }
+          break
+        case 'createdAt-desc':
+        default:
+          orderBy = { createdAt: 'desc' }
+      }
 
       const [properties, total] = await Promise.all([
         prisma.property.findMany({
@@ -55,17 +89,18 @@ export default async function handler(
                 name: true,
                 nameEn: true,
                 slug: true,
+                logo: true,
               },
             },
-          images: {
-            orderBy: { order: 'asc' },
-            take: 1,
+            images: {
+              orderBy: { order: 'asc' },
+              take: 1,
+            },
+            files: {
+              orderBy: { order: 'asc' },
+            },
           },
-          files: {
-            orderBy: { order: 'asc' },
-          },
-          },
-          orderBy: { createdAt: 'desc' },
+          orderBy,
           skip,
           take: limit,
         }),
@@ -240,14 +275,20 @@ export default async function handler(
         }
       }
 
+      const listingMarket = validatedData.listingMarket || 'PRIMARY'
+      if (listingMarket === 'SECONDARY') {
+        developerId = null
+      }
+
       // Create property
       let property
       try {
         property = await prisma.property.create({
           data: {
             title: validatedData.title,
-            description: validatedData.description,
+            description: validatedData.description ?? null,
             type: (validatedData.type || 'APARTMENT') as any,
+            listingMarket: listingMarket as any,
             price: validatedData.price,
             currency: validatedData.currency,
             status: validatedData.status as any,
@@ -258,11 +299,19 @@ export default async function handler(
             floor: validatedData.floor,
             totalFloors: validatedData.totalFloors,
             yearBuilt: validatedData.yearBuilt,
-            completionDate: validatedData.completionDate 
-              ? (validatedData.completionDate instanceof Date 
-                  ? validatedData.completionDate 
-                  : new Date(validatedData.completionDate))
+            completionDate: validatedData.completionDate
+              ? validatedData.completionDate instanceof Date
+                ? validatedData.completionDate
+                : new Date(validatedData.completionDate)
               : null,
+            paymentPlan:
+              listingMarket === 'PRIMARY'
+                ? validatedData.paymentPlan?.trim() || null
+                : null,
+            occupancyStatus:
+              listingMarket === 'SECONDARY'
+                ? (validatedData.occupancyStatus as any) || null
+                : null,
             address: validatedData.address,
             city: validatedData.city,
             district: validatedData.district,

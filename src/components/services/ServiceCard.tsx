@@ -1,12 +1,20 @@
 import { useTranslation } from 'next-i18next'
+import type { LucideIcon } from 'lucide-react'
+import { Briefcase, Building2, Home, Tag } from 'lucide-react'
 import { ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline'
+
+const SERVICE_HEADER_ICONS: Record<string, LucideIcon> = {
+  buy: Building2,
+  sell: Tag,
+  rent: Home,
+  investment: Briefcase,
+}
 
 interface Service {
   id: string
   title: string
   titleEn: string
   description: string
-  icon: string
   features: string[]
   process: string[]
   benefits: string[]
@@ -18,13 +26,18 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ service }: ServiceCardProps) {
   const { t } = useTranslation('services')
+  const HeaderIcon = SERVICE_HEADER_ICONS[service.id] ?? Building2
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
       {/* Header */}
       <div className="bg-gradient-to-r from-champagne to-yellow-500 p-6 text-white">
-        <div className="flex items-center space-x-4">
-          <div className="text-4xl">{service.icon}</div>
+        <div className="flex items-start gap-4">
+          <HeaderIcon
+            className="h-10 w-10 shrink-0 text-white/95"
+            strokeWidth={1.25}
+            aria-hidden
+          />
           <div>
             <h3 className="text-2xl font-bold mb-2">
               {service.title}
@@ -53,7 +66,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         {/* Benefits */}
         <div className="mb-6">
           <h4 className="text-lg font-semibold text-graphite mb-4">
-            {t('benefits.title')}
+            {t('features.benefitsTitle')}
           </h4>
           <div className="grid grid-cols-1 gap-2">
             {service.benefits.map((benefit, index) => (

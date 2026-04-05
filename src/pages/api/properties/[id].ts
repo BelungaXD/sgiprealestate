@@ -179,13 +179,19 @@ export default async function handler(
         }
       }
 
+      const listingMarket = validatedData.listingMarket || 'PRIMARY'
+      if (listingMarket === 'SECONDARY') {
+        developerId = null
+      }
+
       // Update property
       const property = await prisma.property.update({
         where: { id },
         data: {
           title: validatedData.title,
-          description: validatedData.description,
+          description: validatedData.description ?? null,
           type: (validatedData.type || 'APARTMENT') as any,
+          listingMarket: listingMarket as any,
           price: validatedData.price,
           currency: validatedData.currency,
           status: validatedData.status as any,
@@ -196,7 +202,19 @@ export default async function handler(
           floor: validatedData.floor,
           totalFloors: validatedData.totalFloors,
           yearBuilt: validatedData.yearBuilt,
-          completionDate: validatedData.completionDate,
+          completionDate: validatedData.completionDate
+            ? validatedData.completionDate instanceof Date
+              ? validatedData.completionDate
+              : new Date(validatedData.completionDate as unknown as string)
+            : null,
+          paymentPlan:
+            listingMarket === 'PRIMARY'
+              ? validatedData.paymentPlan?.trim() || null
+              : null,
+          occupancyStatus:
+            listingMarket === 'SECONDARY'
+              ? (validatedData.occupancyStatus as any) || null
+              : null,
           address: validatedData.address,
           city: validatedData.city,
           district: validatedData.district,

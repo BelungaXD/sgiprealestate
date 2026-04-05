@@ -6,36 +6,42 @@ import Head from 'next/head'
 import AdminLogin from '@/components/admin/AdminLogin'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 
-const ADMIN_AUTH_KEY = 'sgip_admin_authenticated'
-
 export default function Admin() {
   const { t } = useTranslation('admin')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isHydrated, setIsHydrated] = useState(false)
 
-  // Restore auth state from localStorage on mount (persists across reloads)
   useEffect(() => {
-    const stored = typeof window !== 'undefined' && localStorage.getItem(ADMIN_AUTH_KEY) === 'true'
-    setIsAuthenticated(stored)
-    setIsHydrated(true)
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch('/api/admin/session', { credentials: 'same-origin' })
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean }
+        if (!cancelled && res.ok && data.ok) {
+          setIsAuthenticated(true)
+        }
+      } catch {
+        /* session check failed — stay logged out */
+      } finally {
+        if (!cancelled) setIsHydrated(true)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const handleLogin = (success: boolean) => {
     setIsAuthenticated(success)
-    if (typeof window !== 'undefined') {
-      if (success) {
-        localStorage.setItem(ADMIN_AUTH_KEY, 'true')
-      } else {
-        localStorage.removeItem(ADMIN_AUTH_KEY)
-      }
-    }
   }
 
-  const handleLogout = () => {
-    setIsAuthenticated(false)
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(ADMIN_AUTH_KEY)
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' })
+    } catch {
+      /* still clear UI */
     }
+    setIsAuthenticated(false)
   }
 
   // Avoid flash of login form before hydration

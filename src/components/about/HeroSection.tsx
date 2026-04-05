@@ -42,7 +42,7 @@ export default function HeroSection() {
             <div className="bg-white/10 rounded-lg p-4">
               <div className="text-2xl font-bold text-champagne mb-2">
                 {isVisible ? (
-                  <AnimatedNumber value={15} suffix="+" duration={2000} />
+                  <AnimatedNumber value={13} suffix="+" duration={2000} />
                 ) : (
                   <span>0+</span>
                 )}
@@ -52,7 +52,7 @@ export default function HeroSection() {
             <div className="bg-white/10 rounded-lg p-4">
               <div className="text-2xl font-bold text-champagne mb-2">
                 {isVisible ? (
-                  <AnimatedNumber value={500} suffix="+" duration={2000} />
+                  <AnimatedNumber value={1280} suffix="+" duration={2000} />
                 ) : (
                   <span>0+</span>
                 )}

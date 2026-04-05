@@ -36,6 +36,16 @@
     "address": { "title": "Адрес офиса", "description": "Приходите на очную консультацию" },
     "hours": { "title": "Часы работы", "description": "Мы доступны в эти часы" },
     "social": { "title": "Мы в соцсетях" },
+    "messengers": {
+      "title": "WhatsApp и Telegram",
+      "body": "Свяжитесь с нами в WhatsApp или Telegram:"
+    },
+    "teamEmails": {
+      "title": "Контакты команды",
+      "ru": "RU",
+      "alex": "Alex",
+      "elza": "Elza"
+    },
     "map": { "title": "Найдите нас" },
     "emergency": { "title": "Экстренная связь", "description": "Для срочных вопросов вне часов работы" }
   },
@@ -58,14 +68,14 @@
       "title": "Дубай",
       "address": "Dubai, Business Bay, Westburry 1, office 302",
       "phone": "+971 50 580 7871",
-      "email": "support@sgipreal.com",
+      "email": "admin@sgipreal.com",
       "workingHours": "Пн-Пт: 9:00-18:00, Сб: 9:00-14:00"
     },
     "abuDhabi": {
       "title": "Абу-Даби",
       "address": "Корниш, Абу-Даби, ОАЭ",
       "phone": "+971 2 123 4567",
-      "email": "support@sgipreal.com",
+      "email": "admin@sgipreal.com",
       "workingHours": "Пн-Пт: 9:00-18:00, Сб: 9:00-14:00"
     }
   },
@@ -130,7 +140,8 @@
     "facebook": "Facebook",
     "linkedin": "LinkedIn",
     "youtube": "YouTube",
-    "twitter": "Twitter"
+    "twitter": "Twitter",
+    "website": "Сайт"
   },
   "map": {
     "title": "Наше местоположение",

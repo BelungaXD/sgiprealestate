@@ -46,9 +46,10 @@ jest.mock('next-i18next', () => ({
 describe('Header Component', () => {
   it('renders header with logo', () => {
     render(<Header />)
-    
-    const logo = screen.getByText(/SGIP/i)
-    expect(logo).toBeInTheDocument()
+
+    expect(
+      screen.getByRole('link', { name: /SGIP Real Estate/i })
+    ).toBeInTheDocument()
   })
 
   it('renders navigation links', () => {

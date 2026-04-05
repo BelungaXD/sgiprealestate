@@ -5,6 +5,8 @@ import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
 export default function CTA() {
   const { t } = useTranslation('home')
+  const contactEmail =
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'admin@sgipreal.com'
 
   return (
     <section className="section-padding bg-graphite text-white">
@@ -45,10 +47,10 @@ export default function CTA() {
             <h3 className="text-xl font-semibold mb-2">{t('cta.email.title')}</h3>
             <p className="text-gray-300 mb-4">{t('cta.email.description')}</p>
             <a
-              href="mailto:support@sgipreal.com"
+              href={`mailto:${contactEmail}`}
               className="text-champagne hover:text-champagne/80 font-medium"
             >
-              support@sgipreal.com
+              {contactEmail}
             </a>
           </div>
           </AnimateOnScroll>

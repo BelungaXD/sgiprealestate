@@ -1,11 +1,11 @@
 import { useTranslation } from 'next-i18next'
-import { 
-  ShieldCheckIcon, 
-  CurrencyDollarIcon, 
-  GlobeAltIcon, 
+import {
+  ShieldCheckIcon,
+  CurrencyDollarIcon,
+  GlobeAltIcon,
   UserGroupIcon,
   ClockIcon,
-  ChartBarIcon
+  Squares2X2Icon,
 } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
@@ -39,7 +39,7 @@ export default function Advantages() {
       description: t('advantages.service.description'),
     },
     {
-      icon: ChartBarIcon,
+      icon: Squares2X2Icon,
       title: t('advantages.market.title'),
       description: t('advantages.market.description'),
     },

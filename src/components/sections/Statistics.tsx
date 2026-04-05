@@ -31,13 +31,13 @@ export default function Statistics() {
 
   const stats = [
     {
-      value: 15,
+      value: 13,
       suffix: '+',
       label: t('stats.yearsExperience'),
       description: t('stats.yearsDescription'),
     },
     {
-      value: 500,
+      value: 1280,
       suffix: '+',
       label: t('stats.propertiesSold'),
       description: t('stats.propertiesDescription'),

@@ -9,24 +9,26 @@ export default function WhatsAppWidget() {
   const [telegramHref, setTelegramHref] = useState('/contact')
   const { t } = useTranslation('common')
   const router = useRouter()
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+  const whatsappNumber =
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971505807871'
   const telegramUsername = process.env.NEXT_PUBLIC_TELEGRAM_USERNAME
+  const telegramUrl =
+    process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/+971505807871'
+  const displayPhone =
+    whatsappNumber.replace(/^971/, '0') || '0505807871'
 
   useEffect(() => {
     const message = encodeURIComponent(t('whatsapp.message'))
-    const locale = router.locale || 'en'
-    
+
     setWhatsappHref(
-      whatsappNumber
-        ? `https://wa.me/${whatsappNumber}?text=${message}`
-        : `/${locale}/contact`
+      `https://wa.me/${whatsappNumber}?text=${message}`
     )
     setTelegramHref(
       telegramUsername
         ? `https://t.me/${telegramUsername}`
-        : `/${locale}/contact`
+        : telegramUrl
     )
-  }, [whatsappNumber, telegramUsername, t, router.locale])
+  }, [whatsappNumber, telegramUsername, telegramUrl, t, router.locale])
 
   return (
     <>
@@ -65,26 +67,29 @@ export default function WhatsAppWidget() {
                     <ChatBubbleLeftRightIcon className="h-6 w-6 text-green-600" />
                   </div>
                   
-                  <p className="text-sm text-gray-500 mb-6">
+                  <p className="text-sm text-gray-500 mb-2">
                     {t('whatsapp.description')}
+                  </p>
+                  <p className="text-sm font-semibold text-graphite tabular-nums mb-6">
+                    {t('whatsapp.phoneLine', { phone: displayPhone })}
                   </p>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <a
                       href={whatsappHref}
-                      target={whatsappNumber ? '_blank' : undefined}
-                      rel={whatsappNumber ? 'noopener noreferrer' : undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center"
                     >
                       {t('whatsapp.openChat')}
                     </a>
                     <a
                       href={telegramHref}
-                      target={telegramUsername ? '_blank' : undefined}
-                      rel={telegramUsername ? 'noopener noreferrer' : undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 text-center"
                     >
-                      Telegram
+                      {t('telegram.openChat')}
                     </a>
                   </div>
                 </div>

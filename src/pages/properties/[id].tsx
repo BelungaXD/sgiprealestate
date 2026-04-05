@@ -27,6 +27,7 @@ interface Property {
   price: number
   currency: string
   type: string
+  listingMarket: 'PRIMARY' | 'SECONDARY'
   area: number
   bedrooms: number
   bathrooms: number
@@ -46,6 +47,8 @@ interface Property {
   amenities: string[]
   yearBuilt: number
   completionDate: string
+  paymentPlan: string
+  occupancyStatus: string
   developer: string
   developerLogo: string
   isFeatured: boolean
@@ -74,6 +77,7 @@ interface PropertyDetailProps {
 
 export default function PropertyDetail({ property }: PropertyDetailProps) {
   const { t } = useTranslation('property')
+  const { t: tProps } = useTranslation('properties')
   const [activeTab, setActiveTab] = useState('overview')
   const tabsSectionRef = useRef<HTMLDivElement>(null)
 
@@ -138,7 +142,12 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
           {/* Property Header - White Background */}
           <div className="bg-white border-b border-gray-200">
             <div className="container-custom py-6">
-              <div className="flex items-center space-x-3 mb-4">
+              <div className="flex items-center flex-wrap gap-2 mb-4">
+                <span className="bg-graphite text-white px-4 py-1.5 rounded-full text-sm font-semibold">
+                  {property.listingMarket === 'SECONDARY'
+                    ? tProps('secondary', 'Secondary')
+                    : tProps('primary', 'Primary')}
+                </span>
                 <span className="bg-champagne text-white px-4 py-1.5 rounded-full text-sm font-semibold">
                   {property.type}
                 </span>
@@ -396,6 +405,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       price: apiProperty.price,
       currency: apiProperty.currency,
       type: apiProperty.type,
+      listingMarket: apiProperty.listingMarket || 'PRIMARY',
       area: apiProperty.areaSqm,
       bedrooms: apiProperty.bedrooms,
       bathrooms: apiProperty.bathrooms,
@@ -417,6 +427,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       amenities: apiProperty.amenities || [],
       yearBuilt: apiProperty.yearBuilt || 0,
       completionDate: apiProperty.completionDate || '',
+      paymentPlan: apiProperty.paymentPlan || '',
+      occupancyStatus: apiProperty.occupancyStatus || '',
       developer: apiProperty.developer?.name || '',
       developerLogo: normalizeUploadUrl(apiProperty.developer?.logo) || '',
       isFeatured: apiProperty.isFeatured || false,
@@ -442,7 +454,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
   return {
     props: {
         property,
-      ...(await serverSideTranslations(locale ?? 'en', ['common', 'property'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common', 'property', 'properties'])),
     },
     }
   } catch (error) {

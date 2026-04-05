@@ -159,9 +159,9 @@ sgipreal.com/
 
 ### 4.1 Admin Authentication
 
-- [ ] Simple admin login system
-- [ ] Session management
-- [ ] Protected admin routes
+- [x] Simple admin login system (POST `/api/admin/login`, credentials from `ADMIN_USERNAME` / `ADMIN_PASSWORD`; httpOnly session cookie signed with `ADMIN_SESSION_SECRET`, required in production)
+- [x] Session management (`GET /api/admin/session`, `POST /api/admin/logout`)
+- [ ] Protected admin API routes (UI gated by cookie; property/area/developer APIs remain separate)
 
 ### 4.2 Property Management
 
@@ -282,3 +282,28 @@ sgipreal.com/
 - **Phase 9**: 1-2 days (Monitoring and Documentation)
 
 **Total Estimated Time**: 19-28 days
+
+## Content and public info updates (April 2026)
+
+- ✅ Home statistics: 13+ and 1280+ (EN labels “Years experience” / “Sold”; RU/AR aligned); third stat client satisfaction unchanged.
+- ✅ Home advantages: full-cycle block uses grid icon; EN title/description match client brief (“Company with Full Cycle”; “Rent, Buy-Sell, Investment, Business Consultancy”); RU/AR equivalents in `home.json`.
+- ✅ Services page: hero shows two stats only (13+ years, 1280+ sold); service card headers use Lucide line icons (Building2, Tag, Home, Briefcase); benefits grid reduced to four pillars including full-cycle (EN/RU/AR); fixed duplicate `process`/`benefits` keys in `en/services.json`; card “Key benefits” heading uses `features.benefitsTitle`.
+- ✅ About: Our Story as multi-paragraph text (EN/RU/AR); Rustam — Founder & CEO + UAE transactions / company growth (EN/RU/AR).
+- ✅ FAQ: buying documents (NOC list), buying process punctuation and 2–6 weeks; selling costs + DEWA/Empower; “renovate before selling” removed earlier; renting docs; property management answer (EN/RU/AR aligned).
+- ✅ Contact email: `admin@sgipreal.com` via `NEXT_PUBLIC_CONTACT_EMAIL` (default in code). Contact page lists team addresses `ru@`, `alex@`, `elza@` with `NEXT_PUBLIC_EMAIL_*` overrides (`.env.example` documents keys).
+- ✅ Footer and contact: Instagram, YouTube, LinkedIn defaults (new tab); globe icon decorative only (no URL per client brief); WhatsApp widget and contact block highlight WhatsApp/Telegram and `0505807871`; WhatsApp & Telegram deep links default `971505807871` / `https://t.me/+971505807871`.
+- ✅ FAQ answers: `whitespace-pre-line` for multi-line buying-process steps (EN/RU/AR).
+- ✅ Header/footer: larger logos, optional `NEXT_PUBLIC_LOGO_HEADER` / `NEXT_PUBLIC_LOGO_FOOTER`, subtle header contrast background for visibility.
+- ✅ Env: `.env.example` documents logo paths, team emails, `NEXT_PUBLIC_TELEGRAM_URL` (optional alongside `NEXT_PUBLIC_TELEGRAM_USERNAME`).
+- ⏳ Hosting: create and sync mailboxes `admin@`, `ru@`, `alex@`, `elza@` in your mail provider (not done in app code).
+- ✅ Admin login: env-based credentials and signed httpOnly cookie; `.env.example` documents `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`.
+
+## Admin, listings model & catalog (April 2026 — TZ primary/secondary, developers, areas)
+
+- ✅ Prisma: `ListingMarket` (PRIMARY | SECONDARY), `OccupancyStatus`, `paymentPlan`, `listingMarket` on `Property`; `isActive`, `image`, `sortOrder`, `tags` on `Area`; `isActive` on `Developer`. Existing rows default to PRIMARY via `@default(PRIMARY)` after `db push`.
+- ✅ Properties API: create/update with conditional developer/payment/occupancy; GET filters `listingMarket`, `areaId`, `developerId`, `sort`.
+- ✅ Areas REST: `GET/POST /api/areas`, `PUT/DELETE /api/areas/item/[id]`, `POST /api/areas/upload-image`; delete warns via 409 + optional `force=1` to unlink listings.
+- ✅ Developers REST: `GET` (public vs `admin=1`), `POST /api/developers`, `PUT/DELETE /api/developers/item/[id]` with same linked-listing behaviour.
+- ✅ Admin UI: sidebar tabs Developers & Areas with full CRUD; property form: market type, conditional fields, area/developer directory selects, quick add area/developer.
+- ✅ Public catalog: filters by listing type, areas from API (`areaIds`), developer filter hidden for secondary; sort “newest/oldest” uses `createdAt`; cards show Primary/Secondary badge, developer/logo or year/occupancy; detail page shows payment plan and occupancy.
+- ⏳ Deploy DB: run `npx prisma db push` (or migrate) on each environment with PostgreSQL running.

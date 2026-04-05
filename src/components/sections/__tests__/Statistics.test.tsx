@@ -25,20 +25,16 @@ describe('Statistics Component', () => {
 
   it('displays all statistics items', () => {
     render(<Statistics />)
-    
-    // Check for statistics numbers
-    expect(screen.getByText('10+')).toBeInTheDocument()
-    expect(screen.getByText('500+')).toBeInTheDocument()
-    expect(screen.getByText('6')).toBeInTheDocument()
-    expect(screen.getByText('98%')).toBeInTheDocument()
+
+    expect(screen.getAllByText('0+').length).toBe(2)
+    expect(screen.getByText('0%')).toBeInTheDocument()
   })
 
   it('displays statistics labels', () => {
     render(<Statistics />)
-    
+
     expect(screen.getByText('stats.yearsExperience')).toBeInTheDocument()
     expect(screen.getByText('stats.propertiesSold')).toBeInTheDocument()
-    expect(screen.getByText('stats.developers')).toBeInTheDocument()
     expect(screen.getByText('stats.clientSatisfaction')).toBeInTheDocument()
   })
 

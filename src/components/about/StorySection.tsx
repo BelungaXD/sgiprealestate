@@ -2,6 +2,10 @@ import { useTranslation } from 'next-i18next'
 
 export default function StorySection() {
   const { t } = useTranslation('about-us')
+  const parasRaw = t('story.paragraphs', { returnObjects: true })
+  const paragraphs = Array.isArray(parasRaw)
+    ? (parasRaw as string[])
+    : [t('story.body')]
 
   return (
     <div className="container-custom py-16">
@@ -9,16 +13,12 @@ export default function StorySection() {
         <h2 className="text-3xl font-bold text-graphite mb-8 text-center">
           {t('story.title')}
         </h2>
-        <div className="prose prose-lg mx-auto text-gray-600">
-          <p className="text-xl leading-relaxed mb-6">
-            {t('story.paragraph1')}
-          </p>
-          <p className="text-lg leading-relaxed mb-6">
-            {t('story.paragraph2')}
-          </p>
-          <p className="text-lg leading-relaxed">
-            {t('story.paragraph3')}
-          </p>
+        <div className="prose prose-lg mx-auto text-gray-600 space-y-6">
+          {paragraphs.map((text, i) => (
+            <p key={i} className="text-lg leading-relaxed">
+              {text}
+            </p>
+          ))}
         </div>
       </div>
     </div>

@@ -29,17 +29,35 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     setIsLoading(true)
     setError('')
 
-    // Simple authentication (in real app, this would be API call)
-    if (formData.username === 'admin' && formData.password === 'admin123') {
-      setTimeout(() => {
-        setIsLoading(false)
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      })
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean
+        error?: string
+      }
+
+      if (res.ok && data.ok) {
         onLogin(true)
-      }, 1000)
-    } else {
-      setTimeout(() => {
-        setIsLoading(false)
+        return
+      }
+
+      if (res.status === 503 || data.error === 'admin_not_configured') {
+        setError(t('login.notConfigured'))
+      } else {
         setError(t('login.invalidCredentials'))
-      }, 1000)
+      }
+    } catch {
+      setError(t('login.serverError'))
+    } finally {
+      setIsLoading(false)
     }
   }
 

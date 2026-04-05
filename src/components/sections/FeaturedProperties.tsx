@@ -11,6 +11,7 @@ interface FeaturedPropertiesProps {
 
 export default function FeaturedProperties({ initialProperties = [] }: FeaturedPropertiesProps) {
   const { t } = useTranslation('home')
+  const { t: tProps } = useTranslation('properties')
   const [properties, setProperties] = useState<any[]>(initialProperties)
   const [loading, setLoading] = useState(initialProperties.length === 0)
 
@@ -76,8 +77,15 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
-                <div className="absolute top-4 left-4 bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
-                  {property.type}
+                <div className="absolute top-4 left-4 flex flex-col gap-1 items-start">
+                  <span className="bg-graphite/90 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    {property.listingMarket === 'SECONDARY'
+                      ? tProps('secondary', 'Secondary')
+                      : tProps('primary', 'Primary')}
+                  </span>
+                  <span className="bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {property.type}
+                  </span>
                 </div>
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-graphite px-3 py-1 rounded-full text-sm font-semibold">
                   {formatPrice(property.price, property.currency)}

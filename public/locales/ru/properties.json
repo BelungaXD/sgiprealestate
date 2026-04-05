@@ -37,6 +37,14 @@
     "newest": "Сначала новые",
     "oldest": "Сначала старые"
   },
+  "listingMarket": "Тип объявления",
+  "allListings": "Все",
+  "primary": "Первичная / от застройщика",
+  "secondary": "Вторичная / resale",
+  "vacant": "Свободна",
+  "tenanted": "Сдана",
+  "occupancy": "Статус",
+  "paymentPlan": "План оплаты",
   "types": {
     "apartment": "Квартира",
     "villa": "Вилла",

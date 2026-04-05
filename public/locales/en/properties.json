@@ -44,5 +44,13 @@
     "penthouse": "Penthouse",
     "studio": "Studio",
     "office": "Office"
-  }
+  },
+  "listingMarket": "Listing type",
+  "allListings": "All",
+  "primary": "Primary / Off-plan",
+  "secondary": "Secondary / Resale",
+  "vacant": "Vacant",
+  "tenanted": "Tenanted",
+  "occupancy": "Status",
+  "paymentPlan": "Payment plan"
 }

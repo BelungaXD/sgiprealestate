@@ -16,6 +16,7 @@ interface Property {
   price: number
   currency: string
   type: string
+  listingMarket?: 'PRIMARY' | 'SECONDARY'
   area: number
   bedrooms: number
   bathrooms: number
@@ -26,6 +27,8 @@ interface Property {
   amenities: string[]
   yearBuilt: number
   completionDate: string
+  paymentPlan?: string
+  occupancyStatus?: string
   developer: string
   developerLogo: string
   isFeatured: boolean
@@ -38,6 +41,8 @@ interface PropertyDetailsProps {
 
 export default function PropertyDetails({ property }: PropertyDetailsProps) {
   const { t } = useTranslation('property')
+  const { t: tProps } = useTranslation('properties')
+  const isSecondary = property.listingMarket === 'SECONDARY'
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -127,20 +132,53 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
             </div>
           </div>
 
-          {/* Developer */}
-          {property.developer && (
+          {!isSecondary && property.developer && (
             <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
-              <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
-                <span className="text-xl font-bold text-champagne transition-colors duration-300 group-hover:text-white">{property.developer.charAt(0)}</span>
-              </div>
+              {property.developerLogo ? (
+                <img
+                  src={property.developerLogo}
+                  alt=""
+                  className="w-12 h-12 object-contain flex-shrink-0"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+                  <span className="text-xl font-bold text-champagne transition-colors duration-300 group-hover:text-white">
+                    {property.developer.charAt(0)}
+                  </span>
+                </div>
+              )}
               <div>
                 <div className="text-xs text-gray-600 font-medium mb-1">Developer</div>
                 <div className="text-lg font-bold text-graphite truncate">{property.developer}</div>
               </div>
             </div>
           )}
+
+          {isSecondary && property.occupancyStatus && (
+            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4">
+              <div>
+                <div className="text-xs text-gray-600 font-medium mb-1">
+                  {tProps('occupancy', 'Status')}
+                </div>
+                <div className="text-lg font-bold text-graphite">
+                  {property.occupancyStatus === 'VACANT'
+                    ? tProps('vacant', 'Vacant')
+                    : tProps('tenanted', 'Tenanted')}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {!isSecondary && property.paymentPlan && (
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <h3 className="text-2xl font-bold text-graphite mb-3">
+            {tProps('paymentPlan', 'Payment plan')}
+          </h3>
+          <p className="text-gray-700 whitespace-pre-wrap">{property.paymentPlan}</p>
+        </div>
+      )}
 
       {/* Features & Amenities Grid */}
       {(property.features && property.features.length > 0) || (property.amenities && property.amenities.length > 0) ? (

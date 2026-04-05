@@ -15,9 +15,13 @@ import {
   FolderIcon,
   ChevronUpIcon,
   XMarkIcon,
+  MapPinIcon,
+  BuildingLibraryIcon,
 } from '@heroicons/react/24/outline'
 import PropertyModal from './PropertyModal'
 import FolderImport from './FolderImport'
+import DevelopersAdminPanel from './DevelopersAdminPanel'
+import AreasAdminPanel from './AreasAdminPanel'
 import { PropertyFormData } from '@/lib/validations/property'
 import { FileWithLabel } from './FileUpload'
 
@@ -297,8 +301,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   const tabs = [
     { id: 'properties', name: t('dashboard.properties'), icon: BuildingOfficeIcon },
+    { id: 'developers', name: t('dashboard.developers'), icon: BuildingLibraryIcon },
+    { id: 'areas', name: t('dashboard.areas'), icon: MapPinIcon },
     { id: 'leads', name: t('dashboard.leads'), icon: UsersIcon },
-    { id: 'analytics', name: t('dashboard.analytics'), icon: ChartBarIcon }
+    { id: 'analytics', name: t('dashboard.analytics'), icon: ChartBarIcon },
   ]
 
   return (
@@ -494,6 +500,24 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 </div>
               )}
               </div>
+            </div>
+          )}
+
+          {activeTab === 'developers' && (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold text-graphite mb-4">
+                {t('developers.title')}
+              </h2>
+              <DevelopersAdminPanel />
+            </div>
+          )}
+
+          {activeTab === 'areas' && (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold text-graphite mb-4">
+                {t('areas.title')}
+              </h2>
+              <AreasAdminPanel />
             </div>
           )}
 
