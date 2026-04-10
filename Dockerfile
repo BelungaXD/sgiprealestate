@@ -23,15 +23,18 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Limit Node.js heap during build to reduce memory spike (avoids OOM/swap thrashing on low-RAM hosts)
-ENV NODE_OPTIONS=--max-old-space-size=768
+# Next.js 16 + webpack + TypeScript needs a larger V8 heap than 768MB; a low cap
+# causes extreme GC churn so "Running TypeScript ..." looks hung for many minutes.
+# Override on tiny build hosts: docker build --build-arg NEXT_BUILD_MAX_OLD_SPACE=1024 .
+ARG NEXT_BUILD_MAX_OLD_SPACE=2048
+ENV NODE_OPTIONS=--max-old-space-size=${NEXT_BUILD_MAX_OLD_SPACE}
 
 # Generate Prisma Client
-RUN npx prisma generate
+RUN echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] prisma generate start" && npx prisma generate && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] prisma generate done"
 
 # Build Next.js
 ENV NEXT_TELEMETRY_DISABLED 1
-RUN npm run build
+RUN echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm run build start" && npm run build && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm run build done"
 
 # Production image
 FROM base AS runner

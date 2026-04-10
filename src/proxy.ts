@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const url = req.nextUrl
   const host = url.host
   const country = req.headers.get('cf-ipcountry') || req.headers.get('x-vercel-ip-country') || ''
@@ -17,5 +17,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/((?!_next|api|static|favicon.ico|robots.txt|sitemap.xml).*)'],
 }
-
-
