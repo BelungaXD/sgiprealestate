@@ -8,14 +8,14 @@ export default function Footer() {
   const { t } = useTranslation('common')
   const [logoError, setLogoError] = useState(false)
   const logoSrc =
-    process.env.NEXT_PUBLIC_LOGO_FOOTER || '/images/sgip_logo_bright.png'
+    process.env.NEXT_PUBLIC_LOGO_FOOTER || '/images/sgip_logo.png'
   const contactEmail =
     process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'admin@sgipreal.com'
   const instagramUrl =
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
     'https://www.instagram.com/rustam_dubai'
   const youtubeUrl =
-    process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://youtube.com/@rustamdubai'
+    process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://www.youtube.com/@rustamdubai'
   const linkedinUrl =
     process.env.NEXT_PUBLIC_LINKEDIN_URL ||
     'https://www.linkedin.com/in/rustam-umurzakov-74514059'
@@ -50,8 +50,13 @@ export default function Footer() {
             <div className="lg:col-span-1">
               <div className="flex items-center mb-4">
                 {logoError ? (
-                  <div className="w-14 h-14 bg-champagne rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-xl">S</span>
+                  <div className="rounded-lg border border-champagne/50 bg-champagne/10 px-3 py-2">
+                    <p className="text-xs font-bold tracking-[0.18em] text-champagne">
+                      SGIP
+                    </p>
+                    <p className="text-[10px] uppercase tracking-[0.12em] text-gray-300">
+                      Real Estate
+                    </p>
                   </div>
                 ) : (
                   <div className="relative h-14 w-14 flex-shrink-0">

@@ -113,7 +113,7 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
                   </div>
                   <div className="flex items-center">
                     <Square3Stack3DIcon className="h-4 w-4 mr-1" />
-                    <span>{property.area} sq ft</span>
+                    <span>{property.area} m²</span>
                   </div>
                 </div>
                 

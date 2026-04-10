@@ -39,6 +39,7 @@ interface Property {
   completionDate: string
   createdAt: string
   developer: string
+  developerSlug: string
   developerLogo: string
   occupancyStatus: string
 }
@@ -88,13 +89,33 @@ export default function Properties() {
   // Load properties from API
   useEffect(() => {
     const fetchProperties = async () => {
-    setLoading(true)
+      setLoading(true)
       try {
         const response = await fetch('/api/properties?limit=100')
         const data = await response.json()
-        
+
+        if (!response.ok) {
+          console.error(
+            `[${new Date().toISOString()}] Properties API request failed`,
+            {
+              status: response.status,
+              statusText: response.statusText,
+              payload: data,
+            }
+          )
+          setProperties([])
+          setFilteredProperties([])
+          return
+        }
+
+        const apiProperties = Array.isArray(data?.properties)
+          ? data.properties
+          : Array.isArray(data)
+            ? data
+            : []
+
         // Transform API data to match Property interface
-        const transformedProperties: Property[] = data.properties
+        const transformedProperties: Property[] = apiProperties
           .filter((p: any) => p.isPublished)
           .map((p: any) => ({
             id: p.id,
@@ -117,11 +138,15 @@ export default function Properties() {
             yearBuilt: p.yearBuilt || 0,
             completionDate: p.completionDate || '',
             createdAt: p.createdAt || '',
-            developer: p.developer?.name || p.developer?.nameEn || '',
+            developer:
+              currentLocale === 'ru'
+                ? p.developer?.name || p.developer?.nameEn || ''
+                : p.developer?.nameEn || p.developer?.name || '',
+            developerSlug: p.developer?.slug || '',
             developerLogo: p.developer?.logo || '',
             occupancyStatus: p.occupancyStatus || '',
           }))
-        
+
         setProperties(transformedProperties)
         setFilteredProperties(transformedProperties)
       } catch (error) {
@@ -129,7 +154,7 @@ export default function Properties() {
         setProperties([])
         setFilteredProperties([])
       } finally {
-      setLoading(false)
+        setLoading(false)
       }
     }
 
@@ -159,12 +184,12 @@ export default function Properties() {
     if (filters.developer && filters.developer.length > 0) {
       filtered = filtered.filter((prop) => {
         if (prop.listingMarket === 'SECONDARY') return false
-        const propDeveloper = prop.developer?.trim() || ''
+        const propDeveloperSlug = prop.developerSlug?.trim() || ''
         return filters.developer.some((filterDeveloper) => {
           const trimmedFilter = filterDeveloper.trim()
           return (
-            propDeveloper === trimmedFilter ||
-            propDeveloper.toLowerCase() === trimmedFilter.toLowerCase()
+            propDeveloperSlug === trimmedFilter ||
+            propDeveloperSlug.toLowerCase() === trimmedFilter.toLowerCase()
           )
         })
       })

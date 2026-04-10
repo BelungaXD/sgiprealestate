@@ -217,10 +217,6 @@ body {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
   
-  .text-gradient {
-    @apply bg-gradient-to-r from-champagne to-champagne/80 bg-clip-text text-transparent;
-  }
-  
   .hero-bg {
     background: linear-gradient(135deg, var(--color-graphite) 0%, #2a2b30 100%);
   }
@@ -236,91 +232,8 @@ body {
     animation: slideUp 0.6s ease-out;
   }
   
-  .animate-slide-down {
-    animation: slideDown 0.6s ease-out;
-  }
-  
-  /* CSS-only scroll animations using @keyframes and animation-delay */
-  .animate-on-scroll {
-    opacity: 0;
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-
-  .animate-on-scroll-delay-0 {
-    animation-delay: 0s;
-  }
-
-  .animate-on-scroll-delay-100 {
-    animation-delay: 0.1s;
-  }
-
-  .animate-on-scroll-delay-200 {
-    animation-delay: 0.2s;
-  }
-
-  .animate-on-scroll-delay-300 {
-    animation-delay: 0.3s;
-  }
-
-  .animate-on-scroll-delay-400 {
-    animation-delay: 0.4s;
-  }
-
-  .animate-on-scroll-delay-500 {
-    animation-delay: 0.5s;
-  }
-
-  /* Fade-up animation */
-  .animate-fade-up {
-    opacity: 0;
-    transform: translateY(2rem);
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-
-  /* Fade-in animation */
-  .animate-fade-in-scroll {
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out forwards;
-  }
-
-  /* Slide-left animation */
-  .animate-slide-left {
-    opacity: 0;
-    transform: translateX(2rem);
-    animation: slideInLeft 0.8s ease-out forwards;
-  }
-
-  /* Slide-right animation */
-  .animate-slide-right {
-    opacity: 0;
-    transform: translateX(-2rem);
-    animation: slideInRight 0.8s ease-out forwards;
-  }
-
-  /* Scale-in animation */
-  .animate-scale-in {
-    opacity: 0;
-    transform: scale(0.95);
-    animation: scaleIn 0.8s ease-out forwards;
-  }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-
-  .animate-stagger {
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-
-  .animate-hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .animate-hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  }
 }
+
 
 @keyframes fadeIn {
   from {
@@ -342,82 +255,12 @@ body {
   }
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-2rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
   }
   100% {
     transform: translateX(100%);
-  }
-}
-
-/* CSS-only scroll animations using CSS scroll-driven animations (fallback to regular animations) */
-@supports (animation-timeline: scroll()) {
-  .animate-on-scroll {
-    animation-timeline: scroll();
-    animation-range: entry 0% entry 50%;
-  }
-}
-
-/* Fallback: use regular animations with delays for browsers that don't support scroll-driven animations */
-@supports not (animation-timeline: scroll()) {
-  .animate-on-scroll {
-    animation: fadeInUp 0.8s ease-out forwards;
   }
 }
 
@@ -457,11 +300,6 @@ a, button {
   transform: translateY(-4px);
 }
 
-/* Loading States */
-.loading-skeleton {
-  @apply animate-pulse bg-gray-200 rounded;
-}
-
 /* Shimmer animation for image loading */
 .animate-shimmer {
   animation: shimmer 1.5s infinite;
@@ -480,19 +318,6 @@ a, button {
   @apply transition-transform duration-300;
 }
 
-/* Form Styles */
-.form-group {
-  @apply space-y-2;
-}
-
-.form-label {
-  @apply block text-sm font-medium text-gray-700;
-}
-
-.form-error {
-  @apply text-sm text-red-600;
-}
-
 /* Navigation Styles */
 .nav-link {
   @apply text-gray-700 hover:text-champagne transition-all duration-500 ease-in-out font-medium;
@@ -500,19 +325,6 @@ a, button {
 
 .nav-link-active {
   @apply text-champagne font-semibold;
-}
-
-/* Mobile Menu */
-.mobile-menu {
-  @apply fixed inset-0 z-50 bg-white transform transition-transform duration-300 ease-in-out;
-}
-
-.mobile-menu-open {
-  @apply translate-x-0;
-}
-
-.mobile-menu-closed {
-  @apply translate-x-full;
 }
 
 /* Line Clamp Utilities */

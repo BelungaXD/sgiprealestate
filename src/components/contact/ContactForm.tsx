@@ -47,7 +47,6 @@ export default function ContactForm() {
     setIsSubmitting(false)
     setIsSubmitted(true)
     
-    console.log('Contact form submitted:', formData)
   }
 
   if (isSubmitted) {

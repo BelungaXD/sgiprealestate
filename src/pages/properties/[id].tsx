@@ -172,7 +172,9 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
                   {property.area > 0 && (
                     <div className="text-sm text-gray-600 border-t border-gray-100 pt-2 transition-all duration-300 group-hover:border-champagne/30">
                       <span className="font-medium">{t('pricePerSqft')}:</span>{' '}
-                      <span className="text-champagne font-semibold transition-colors duration-300 group-hover:text-champagne-dark">{formatPrice(property.price / property.area, property.currency)}</span>
+                      <span className="text-champagne font-semibold transition-colors duration-300 group-hover:text-champagne-dark">
+                        {formatPrice(property.price / property.area, property.currency)}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -216,7 +218,7 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
                         <Square3Stack3DIcon className="h-7 w-7 text-champagne transition-transform duration-300 group-hover:scale-110" />
                       </div>
                       <div className="text-2xl font-bold text-graphite mb-1">{property.area.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600">sq ft</div>
+                      <div className="text-sm text-gray-600">m²</div>
                     </div>
                     <div className="text-center transition-transform duration-300 group-hover:scale-105">
                       <div className="w-14 h-14 bg-champagne/10 rounded-xl flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:bg-champagne/20 group-hover:scale-110">
@@ -286,25 +288,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
     const id = params?.id as string
 
     if (!id) {
-      console.log('[getServerSideProps] No ID provided')
       return {
         notFound: true,
       }
     }
-
-    console.log('[getServerSideProps] Looking for property with ID/slug:', id)
-    console.log('[getServerSideProps] DATABASE_URL:', process.env.DATABASE_URL ? 'configured' : 'NOT configured')
 
     // Check if DATABASE_URL is configured
     if (!process.env.DATABASE_URL) {
-      console.log('[getServerSideProps] DATABASE_URL not configured')
       return {
         notFound: true,
       }
     }
 
-    console.log('[getServerSideProps] Attempting to query database...')
-    
     // Fetch property directly from database
     // Try to find by ID first, then by slug
     let apiProperty
@@ -325,7 +320,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
           },
         },
       })
-      console.log('[getServerSideProps] Query by ID result:', apiProperty ? 'found' : 'not found')
     } catch (error: any) {
       console.error('[getServerSideProps] Error querying by ID:', error.message)
       apiProperty = null
@@ -333,7 +327,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
 
     // If not found by ID, try to find by slug
     if (!apiProperty) {
-      console.log('[getServerSideProps] Not found by ID, trying slug:', id)
       try {
         apiProperty = await prisma.property.findUnique({
           where: { slug: id },
@@ -351,7 +344,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
             },
           },
         })
-        console.log('[getServerSideProps] Query by slug result:', apiProperty ? 'found' : 'not found')
       } catch (error: any) {
         console.error('[getServerSideProps] Error querying by slug:', error.message)
         apiProperty = null
@@ -359,31 +351,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
     }
 
     if (!apiProperty) {
-      console.log('[getServerSideProps] Property not found:', id)
-      // Try direct query to debug
-      try {
-        const directQuery = await prisma.property.findMany({
-          where: { slug: { contains: id } },
-          select: { id: true, slug: true, title: true, isPublished: true },
-          take: 5
-        })
-        console.log('[getServerSideProps] Direct query results:', directQuery)
-      } catch (debugError: any) {
-        console.error('[getServerSideProps] Debug query error:', debugError.message)
-      }
       return {
         notFound: true,
       }
     }
 
     if (!apiProperty.isPublished) {
-      console.log('[getServerSideProps] Property not published:', id)
       return {
         notFound: true,
       }
     }
-
-    console.log('[getServerSideProps] Property found:', apiProperty.title, 'Published:', apiProperty.isPublished, 'Images:', apiProperty.images?.length || 0)
 
     // Transform API data to match Property interface
     // Normalize upload URLs for standalone mode (/api/uploads/...)

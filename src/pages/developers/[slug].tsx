@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Layout from '@/components/layout/Layout'
 import {
   BuildingOfficeIcon,
@@ -51,15 +51,8 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
     : (developer.descriptionEn || developer.description || '')
   const normalizedLogo = normalizeImageUrl(developer.logo)
 
-  useEffect(() => {
-    if (developer.logo) {
-      console.log('Developer logo:', developer.logo)
-      console.log('Normalized logo:', normalizedLogo)
-    }
-  }, [developer.logo, normalizedLogo])
-
   const handleViewProperties = () => {
-    router.push(`/properties?developer=${encodeURIComponent(displayName)}`)
+    router.push(`/properties?developer=${encodeURIComponent(developer.slug)}`)
   }
 
   return (
@@ -89,7 +82,6 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                           console.error('Logo failed to load:', normalizedLogo, e)
                           setLogoError(true)
                         }}
-                        onLoad={() => console.log('Logo loaded successfully:', normalizedLogo)}
                       />
                     </div>
                   ) : (

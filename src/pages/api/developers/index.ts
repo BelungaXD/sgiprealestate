@@ -79,9 +79,11 @@ export default async function handler(
           isActive: true,
           _count: {
             select: {
-              properties: {
-                where: { isPublished: true },
-              },
+              properties: admin
+                ? true
+                : {
+                    where: { isPublished: true },
+                  },
             },
           },
         },

@@ -94,7 +94,7 @@ export default function RelatedProperties({ currentPropertyId, district, type }:
                 </div>
                 <div className="flex items-center">
                   <Square3Stack3DIcon className="h-4 w-4 mr-1" />
-                  <span>{property.area.toLocaleString()} sq ft</span>
+                  <span>{property.area.toLocaleString()} m²</span>
                 </div>
               </div>
               

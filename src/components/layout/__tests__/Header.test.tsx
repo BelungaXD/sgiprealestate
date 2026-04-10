@@ -30,7 +30,7 @@ jest.mock('next-i18next', () => ({
         'nav.areas': 'Areas',
         'nav.developers': 'Developers',
         'nav.services': 'Services',
-        'nav.about': 'About',
+        'nav.aboutUs': 'About Us',
         'nav.contact': 'Contact',
         'nav.getQuote': 'Get Quote',
       }
@@ -58,7 +58,7 @@ describe('Header Component', () => {
     expect(screen.getByText('Home')).toBeInTheDocument()
     expect(screen.getByText('Properties')).toBeInTheDocument()
     expect(screen.getByText('Areas')).toBeInTheDocument()
-    expect(screen.getByText('About')).toBeInTheDocument()
+    expect(screen.getByText('About Us')).toBeInTheDocument()
     expect(screen.getByText('Contact')).toBeInTheDocument()
   })
 

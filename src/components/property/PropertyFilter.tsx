@@ -8,6 +8,7 @@ interface Property {
   district: string
   listingMarket?: string
   areaId?: string
+  developerSlug?: string
   developer: string
   price: number
   bedrooms: number
@@ -17,6 +18,7 @@ interface Property {
 }
 
 type AreaOption = { id: string; name: string; nameEn: string | null; slug: string }
+type DeveloperOption = { slug: string; label: string }
 
 export interface PropertyFiltersState {
   listingMarket: '' | 'PRIMARY' | 'SECONDARY'
@@ -47,7 +49,7 @@ export default function PropertyFilter({
 }: PropertyFilterProps) {
   const { t } = useTranslation('properties')
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [developersList, setDevelopersList] = useState<string[]>([])
+  const [developersList, setDevelopersList] = useState<DeveloperOption[]>([])
   const [areasFromApi, setAreasFromApi] = useState<AreaOption[]>([])
 
   useEffect(() => {
@@ -60,8 +62,14 @@ export default function PropertyFilter({
         const dJson = await dRes.json()
         const aJson = await aRes.json()
         const developersFromAPI = (dJson.developers || [])
-          .map((x: { nameEn?: string; name?: string }) => x.nameEn || x.name)
-          .filter((name: string) => name && name.trim() !== '')
+          .map((x: { slug?: string; nameEn?: string; name?: string }) => ({
+            slug: x.slug || '',
+            label: x.nameEn || x.name || '',
+          }))
+          .filter(
+            (developer: DeveloperOption) =>
+              developer.slug && developer.label.trim() !== ''
+          )
         setDevelopersList(developersFromAPI)
         setAreasFromApi(aJson.areas || [])
       } catch (error) {
@@ -71,9 +79,17 @@ export default function PropertyFilter({
             new Set(
               properties
                 .filter((p) => p.listingMarket !== 'SECONDARY')
-                .map((p) => p.developer)
+                .map((p) =>
+                  JSON.stringify({
+                    slug: p.developerSlug || p.developer,
+                    label: p.developer,
+                  })
+                )
             )
-          ).filter((d) => d && d.trim() !== '') as string[]
+          )
+            .map((item) => JSON.parse(item) as DeveloperOption)
+            .filter((developer) => developer.slug && developer.label.trim() !== '')
+            .sort((a, b) => a.label.localeCompare(b.label))
         )
         setAreasFromApi([])
       }
@@ -99,11 +115,17 @@ export default function PropertyFilter({
           new Set(
             properties
               .filter((p) => p.listingMarket !== 'SECONDARY')
-              .map((p) => p.developer)
+              .map((p) =>
+                JSON.stringify({
+                  slug: p.developerSlug || p.developer,
+                  label: p.developer,
+                })
+              )
           )
         )
-          .filter((d) => d && d.trim() !== '')
-          .sort() as string[]
+          .map((item) => JSON.parse(item) as DeveloperOption)
+          .filter((developer) => developer.slug && developer.label.trim() !== '')
+          .sort((a, b) => a.label.localeCompare(b.label))
 
   const developers = allDevelopersFromAPI
 
@@ -122,6 +144,12 @@ export default function PropertyFilter({
 
   const showDeveloperFilter =
     filters.listingMarket !== 'SECONDARY'
+
+  useEffect(() => {
+    if (filters.listingMarket === 'SECONDARY' && filters.developer.length > 0) {
+      onFiltersChange({ ...filters, developer: [] })
+    }
+  }, [filters, onFiltersChange])
 
   const handleFilterChange = (key: string, value: string) => {
     onFiltersChange({
@@ -264,20 +292,21 @@ export default function PropertyFilter({
       <>
         <FilterSection title={t('listingMarket', 'Listing type')}>
           <div className="space-y-2">
-            {[
+            {([
               { value: '', label: t('allListings', 'All') },
               { value: 'PRIMARY', label: t('primary', 'Primary / Off-plan') },
               { value: 'SECONDARY', label: t('secondary', 'Secondary / Resale') },
-            ].map((opt) => (
+            ] as Array<{
+              value: PropertyFiltersState['listingMarket']
+              label: string
+            }>).map((opt) => (
               <label key={opt.value || 'all'} className="flex items-center">
                 <input
                   type="radio"
                   name="listingMarket"
                   value={opt.value}
                   checked={filters.listingMarket === opt.value}
-                  onChange={() =>
-                    onFiltersChange({ ...filters, listingMarket: opt.value as any })
-                  }
+                  onChange={() => onFiltersChange({ ...filters, listingMarket: opt.value })}
                   className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300"
                 />
                 <span className="ml-2 text-sm text-gray-700">{opt.label}</span>
@@ -365,16 +394,17 @@ export default function PropertyFilter({
           <FilterSection title={t('developer')}>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {developers.map((developer) => {
-                const isChecked = filters.developer && filters.developer.includes(developer)
+                const isChecked =
+                  filters.developer && filters.developer.includes(developer.slug)
                 return (
-                  <label key={developer} className="flex items-center cursor-pointer">
+                  <label key={developer.slug} className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={!!isChecked}
-                      onChange={() => handleDeveloperToggle(developer)}
+                      onChange={() => handleDeveloperToggle(developer.slug)}
                       className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
                     />
-                    <span className="ml-2 text-sm text-gray-700">{developer}</span>
+                    <span className="ml-2 text-sm text-gray-700">{developer.label}</span>
                   </label>
                 )
               })}

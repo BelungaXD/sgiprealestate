@@ -56,7 +56,7 @@ export default function PropertyFloorPlans({ floorPlans }: PropertyFloorPlansPro
                   <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
                     <div className="flex items-center">
                       <Square3Stack3DIcon className="h-4 w-4 mr-1" />
-                      <span>{plan.area} sq ft</span>
+                      <span>{plan.area} m²</span>
                     </div>
                     <div className="flex items-center">
                       <HomeIcon className="h-4 w-4 mr-1" />
@@ -90,7 +90,7 @@ export default function PropertyFloorPlans({ floorPlans }: PropertyFloorPlansPro
               <div className="mt-4 grid grid-cols-3 gap-4 text-center">
                 <div className="bg-white rounded-lg p-3">
                   <div className="text-2xl font-bold text-champagne">{selectedPlan.area}</div>
-                  <div className="text-sm text-gray-600">sq ft</div>
+                  <div className="text-sm text-gray-600">m²</div>
                 </div>
                 <div className="bg-white rounded-lg p-3">
                   <div className="text-2xl font-bold text-champagne">{selectedPlan.bedrooms}</div>

@@ -184,7 +184,7 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
           )}
           </div>
           <Link
-            href={`/properties?developer=${encodeURIComponent(developer.nameEn)}`}
+            href={`/properties?developer=${encodeURIComponent(developer.slug)}`}
             className="w-full btn-secondary text-center text-sm py-2 inline-flex items-center justify-center group"
           >
             {t('viewProperties') || 'View Properties'}

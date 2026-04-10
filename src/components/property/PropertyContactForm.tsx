@@ -47,7 +47,6 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
     setIsSubmitting(false)
     setIsSubmitted(true)
     
-    console.log('Form submitted:', formData)
   }
 
   const formatPrice = (price: number, currency: string) => {

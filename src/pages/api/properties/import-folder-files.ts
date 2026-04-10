@@ -424,13 +424,6 @@ export default async function handler(
     return res.status(500).json({ message: 'Database not configured' })
   }
 
-  // Log request headers to debug 413 error
-  console.log('[IMPORT] Request headers:', {
-    'content-type': req.headers['content-type'],
-    'content-length': req.headers['content-length'],
-    'content-encoding': req.headers['content-encoding'],
-  })
-
   try {
     // Парсим FormData
     const form = formidable({
@@ -459,18 +452,8 @@ export default async function handler(
       return res.status(400).json({ message: 'No files uploaded' })
     }
 
-    // Логируем первые несколько файлов для отладки
-    if (fileArray.length > 0) {
-      console.log('[IMPORT] Sample files:', fileArray.slice(0, 3).map(f => ({
-        originalFilename: f.originalFilename,
-        size: f.size,
-        mimetype: f.mimetype,
-      })))
-    }
-
     // Группируем файлы по папкам объектов (формат: "РАЙОН - НАЗВАНИЕ")
     // Ищем папки с таким форматом на любом уровне вложенности
-    console.log('[IMPORT] Grouping files by folders...')
     const filesByFolder = new Map<string, File[]>()
     
     for (const file of fileArray) {
@@ -519,8 +502,6 @@ export default async function handler(
       filesByFolder.get(propertyFolderName)!.push(file)
     }
 
-    console.log(`[IMPORT] Files grouped into ${filesByFolder.size} folders:`, Array.from(filesByFolder.keys()))
-
     const results = {
       success: [] as string[],
       errors: [] as string[],
@@ -533,14 +514,8 @@ export default async function handler(
     for (const [folderName, folderFiles] of Array.from(filesByFolder.entries())) {
       processedFolders++
       try {
-        console.log(`[IMPORT] [${processedFolders}/${totalFolders}] Processing folder: ${folderName} with ${folderFiles.length} files`)
-        const startTime = Date.now()
-        
         await processPropertyFiles(folderFiles, folderName)
-        
-        const duration = Date.now() - startTime
         results.success.push(folderName)
-        console.log(`[IMPORT] ✓ Successfully processed folder: ${folderName} (${duration}ms)`)
       } catch (error: any) {
         console.error(`[IMPORT] ✗ Error processing folder ${folderName}:`, error)
         console.error(`[IMPORT] Error stack:`, error.stack)
@@ -549,8 +524,6 @@ export default async function handler(
       }
     }
     
-    console.log(`[IMPORT] Import completed. Success: ${results.success.length}, Errors: ${results.errors.length}`)
-
     return res.status(200).json({
       message: 'Import completed',
       results,

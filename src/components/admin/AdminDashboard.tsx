@@ -303,8 +303,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'properties', name: t('dashboard.properties'), icon: BuildingOfficeIcon },
     { id: 'developers', name: t('dashboard.developers'), icon: BuildingLibraryIcon },
     { id: 'areas', name: t('dashboard.areas'), icon: MapPinIcon },
-    { id: 'leads', name: t('dashboard.leads'), icon: UsersIcon },
-    { id: 'analytics', name: t('dashboard.analytics'), icon: ChartBarIcon },
+    { id: 'pages', name: t('dashboard.pages'), icon: ChartBarIcon },
+    { id: 'inquiries', name: t('dashboard.inquiries'), icon: UsersIcon },
+    { id: 'settings', name: t('dashboard.settings'), icon: FolderIcon },
   ]
 
   return (
@@ -521,17 +522,24 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             </div>
           )}
 
-          {activeTab === 'leads' && (
+          {activeTab === 'pages' && (
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-graphite mb-4">{t('leads.title')}</h2>
-              <p className="text-gray-600">{t('leads.comingSoon')}</p>
+              <h2 className="text-lg font-semibold text-graphite mb-4">{t('pages.title')}</h2>
+              <p className="text-gray-600">{t('pages.comingSoon')}</p>
             </div>
           )}
 
-          {activeTab === 'analytics' && (
+          {activeTab === 'inquiries' && (
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-graphite mb-4">{t('analytics.title')}</h2>
-              <p className="text-gray-600">{t('analytics.comingSoon')}</p>
+              <h2 className="text-lg font-semibold text-graphite mb-4">{t('inquiries.title')}</h2>
+              <p className="text-gray-600">{t('inquiries.comingSoon')}</p>
+            </div>
+          )}
+
+          {activeTab === 'settings' && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-graphite mb-4">{t('settings.title')}</h2>
+              <p className="text-gray-600">{t('settings.comingSoon')}</p>
             </div>
           )}
         </div>

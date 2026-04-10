@@ -128,7 +128,7 @@ export default async function handler(
         totalPages: Math.ceil(total / limit),
       })
     } catch (error: any) {
-      console.error('Error fetching properties:', error)
+      console.error(`[${new Date().toISOString()}] Error fetching properties:`, error)
       
       // If database connection error or Prisma not initialized, return empty array
       if (
@@ -148,7 +148,14 @@ export default async function handler(
         })
       }
       
-      return res.status(500).json({ message: 'Internal server error' })
+      return res.status(500).json({
+        properties: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+        totalPages: 0,
+        message: 'Internal server error',
+      })
     }
   }
 

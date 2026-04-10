@@ -39,7 +39,6 @@ interface PropertyGridProps {
 
 export default function PropertyGrid({ properties }: PropertyGridProps) {
   const { t } = useTranslation('properties')
-  const { t: tCommon, i18n } = useTranslation('common')
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -137,15 +136,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
                 </div>
                 <div className="flex items-center">
                   <Square3Stack3DIcon className="h-4 w-4 mr-1" />
-                  <span>
-                    {(() => {
-                      const isMetric = i18n.language === 'ru' || i18n.language === 'ar'
-                      const areaSqm = Math.round(property.area * 0.092903)
-                      return isMetric
-                        ? `${areaSqm.toLocaleString()} ${tCommon('units.sqm')}`
-                        : `${property.area.toLocaleString()} sq ft`
-                    })()}
-                  </span>
+                  <span>{property.area.toLocaleString()} m²</span>
                 </div>
               </div>
 

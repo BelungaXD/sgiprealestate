@@ -1,5 +1,4 @@
 const baseUrl = typeof process !== 'undefined' ? (process.env.NEXT_PUBLIC_SITE_URL || '') : ''
-const serverUrl = typeof process !== 'undefined' ? (process.env.NEXT_PUBLIC_SERVER_URL || '') : ''
 const isDevelopment = typeof process !== 'undefined' ? process.env.NODE_ENV === 'development' : false
 
 /**

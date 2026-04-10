@@ -162,10 +162,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     const relativePath = firstFile.webkitRelativePath || ''
     const folderName = relativePath.split('/')[0] || 'Selected folder'
     
-    console.log('Selected folder:', folderName)
-    console.log('Total files:', files.length)
-    console.log('First file path:', relativePath)
-    
     setSelectedFolder(folderName)
     processFiles(files)
   }
@@ -226,8 +222,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
         }
       })
 
-      console.log('Phase 1: Uploading folder:', filesArray.length, `Total size: ${(totalSize / (1024 * 1024 * 1024)).toFixed(2)}GB`)
-
       // Phase 1: upload folder to server (uploads/incoming/), no DB import
       const uploadResponse = await fetch('/api/properties/upload-folder', {
         method: 'POST',
@@ -265,8 +259,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       if (!folderPath || typeof folderPath !== 'string') {
         throw new Error('Upload succeeded but server did not return folder path')
       }
-
-      console.log('Phase 2: Importing from uploaded folder:', folderPath)
 
       // Phase 2: import from uploaded folder and create property in DB
       const importResponse = await fetch('/api/properties/import-folder', {

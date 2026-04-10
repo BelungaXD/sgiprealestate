@@ -106,7 +106,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
             </div>
             <div>
               <div className="text-xs text-gray-600 font-medium mb-1">Area</div>
-              <div className="text-lg font-bold text-graphite">{property.area.toLocaleString()} sq ft</div>
+              <div className="text-lg font-bold text-graphite">{property.area.toLocaleString()} m²</div>
             </div>
           </div>
 

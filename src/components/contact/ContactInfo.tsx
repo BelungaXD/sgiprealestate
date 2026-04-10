@@ -22,7 +22,7 @@ export default function ContactInfo() {
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
     'https://www.instagram.com/rustam_dubai'
   const youtubeUrl =
-    process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://youtube.com/@rustamdubai'
+    process.env.NEXT_PUBLIC_YOUTUBE_URL || 'https://www.youtube.com/@rustamdubai'
   const linkedinUrl =
     process.env.NEXT_PUBLIC_LINKEDIN_URL ||
     'https://www.linkedin.com/in/rustam-umurzakov-74514059'

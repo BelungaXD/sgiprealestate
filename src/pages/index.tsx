@@ -63,7 +63,7 @@ export default function Home({ featuredProperties }: HomeProps) {
             '@type': 'Organization',
             name: 'SGIP Real Estate',
             url: process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com',
-            logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/images/sgip_logo_dark.png`,
+            logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/images/sgip_logo.png`,
             ...(() => {
               const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971505807871'
               const tg =
@@ -75,7 +75,7 @@ export default function Home({ featuredProperties }: HomeProps) {
                 'https://www.instagram.com/rustam_dubai'
               const yt =
                 process.env.NEXT_PUBLIC_YOUTUBE_URL ||
-                'https://youtube.com/@rustamdubai'
+                'https://www.youtube.com/@rustamdubai'
               const li =
                 process.env.NEXT_PUBLIC_LINKEDIN_URL ||
                 'https://www.linkedin.com/in/rustam-umurzakov-74514059'

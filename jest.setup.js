@@ -47,8 +47,15 @@ jest.mock('next-i18next', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props) => {
+    const imgProps = { ...props }
+    delete imgProps.priority
+    delete imgProps.unoptimized
+    delete imgProps.blurDataURL
+    delete imgProps.placeholder
+    delete imgProps.loader
+    delete imgProps.onLoadingComplete
     // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-    return <img {...props} />
+    return <img {...imgProps} />
   },
 }))
 
@@ -73,6 +80,13 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
+}))
+
+global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+  takeRecords: jest.fn(() => []),
 }))
 
 // Mock window.matchMedia

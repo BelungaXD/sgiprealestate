@@ -19,8 +19,9 @@
     "properties": "Properties",
     "developers": "Developers",
     "areas": "Areas",
-    "leads": "Leads",
-    "analytics": "Analytics",
+    "pages": "Pages",
+    "inquiries": "Inquiries",
+    "settings": "Settings",
     "totalProperties": "Total Properties",
     "activeListings": "Active Listings",
     "totalViews": "Total Views"
@@ -41,13 +42,17 @@
     "actions": "Actions",
     "noProperties": "No properties found"
   },
-  "leads": {
-    "title": "Lead Management",
-    "comingSoon": "Lead management features coming soon..."
+  "pages": {
+    "title": "Page Content",
+    "comingSoon": "Page content management is coming soon..."
   },
-  "analytics": {
-    "title": "Analytics Dashboard",
-    "comingSoon": "Analytics features coming soon..."
+  "inquiries": {
+    "title": "Inquiry Management",
+    "comingSoon": "Inquiry management features are coming soon..."
+  },
+  "settings": {
+    "title": "Settings",
+    "comingSoon": "Settings management is coming soon..."
   },
   "form": {
     "basicInfo": "Basic Information",

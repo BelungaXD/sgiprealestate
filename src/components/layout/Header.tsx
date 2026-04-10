@@ -12,7 +12,7 @@ export default function Header() {
   const { t } = useTranslation('common')
   const router = useRouter()
   const logoSrc =
-    process.env.NEXT_PUBLIC_LOGO_HEADER || '/images/sgip_logo_dark.png'
+    process.env.NEXT_PUBLIC_LOGO_HEADER || '/images/sgip_logo.png'
   // WhatsApp chat button removed per request
 
   const navigation = router.locale === 'ru'
@@ -49,8 +49,13 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             {logoError ? (
-              <div className="w-14 h-14 bg-champagne rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                <span className="text-white font-bold text-xl">S</span>
+              <div className="rounded-lg border border-champagne/50 bg-champagne/10 px-2 py-1.5 transition-transform duration-300 group-hover:scale-105">
+                <p className="text-[10px] font-bold tracking-[0.14em] text-champagne">
+                  SGIP
+                </p>
+                <p className="text-[9px] uppercase tracking-[0.08em] text-graphite/80">
+                  Real Estate
+                </p>
               </div>
             ) : (
               <div className="relative h-14 w-14 flex-shrink-0 rounded-lg bg-graphite/5 p-1 ring-1 ring-graphite/10">
