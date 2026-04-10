@@ -3,7 +3,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://sgipreal.com/</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/" />
@@ -12,7 +12,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ru/</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/" />
@@ -21,7 +21,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ar/</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/" />
@@ -32,7 +32,7 @@
   <!-- Properties -->
   <url>
     <loc>https://sgipreal.com/properties</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/properties" />
@@ -41,7 +41,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ru/properties</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/properties" />
@@ -50,7 +50,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ar/properties</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/properties" />
@@ -58,30 +58,10 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/properties" />
   </url>
 
-  <!-- Individual Properties -->
-  <url>
-    <loc>https://sgipreal.com/properties/1</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sgipreal.com/properties/2</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://sgipreal.com/properties/3</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
   <!-- Areas -->
   <url>
     <loc>https://sgipreal.com/areas</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/areas" />
@@ -90,7 +70,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ru/areas</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/areas" />
@@ -99,7 +79,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ar/areas</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/areas" />
@@ -107,30 +87,10 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/areas" />
   </url>
 
-  <!-- Area Details -->
-  <url>
-    <loc>https://sgipreal.com/areas/downtown-dubai</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sgipreal.com/areas/palm-jumeirah</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://sgipreal.com/areas/dubai-marina</loc>
-    <lastmod>2024-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
   <!-- Developers -->
   <url>
     <loc>https://sgipreal.com/developers</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/developers" />
@@ -139,7 +99,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ru/developers</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/developers" />
@@ -148,7 +108,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ar/developers</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/developers" />
@@ -159,7 +119,7 @@
   <!-- Services -->
   <url>
     <loc>https://sgipreal.com/services</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/services" />
@@ -168,7 +128,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ru/services</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/services" />
@@ -177,7 +137,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ar/services</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/services" />
@@ -185,39 +145,39 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/services" />
   </url>
 
-  <!-- About -->
+  <!-- About Us -->
   <url>
-    <loc>https://sgipreal.com/about</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://sgipreal.com/about-us</loc>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/about" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/about" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/about-us" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/about-us" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/about-us" />
   </url>
   <url>
-    <loc>https://sgipreal.com/ru/about</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://sgipreal.com/ru/about-us</loc>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/about" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/about" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/about-us" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/about-us" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/about-us" />
   </url>
   <url>
-    <loc>https://sgipreal.com/ar/about</loc>
-    <lastmod>2024-01-15</lastmod>
+    <loc>https://sgipreal.com/ar/about-us</loc>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/about" />
-    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/about" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/about" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/about-us" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/about-us" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/about-us" />
   </url>
 
   <!-- Contact -->
   <url>
     <loc>https://sgipreal.com/contact</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/contact" />
@@ -226,7 +186,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ru/contact</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/contact" />
@@ -235,7 +195,7 @@
   </url>
   <url>
     <loc>https://sgipreal.com/ar/contact</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/contact" />
@@ -243,22 +203,66 @@
     <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/contact" />
   </url>
 
+  <!-- FAQ -->
+  <url>
+    <loc>https://sgipreal.com/faq</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/faq" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/faq" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/faq" />
+  </url>
+
+  <!-- Careers -->
+  <url>
+    <loc>https://sgipreal.com/careers</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/careers" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/careers" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/careers" />
+  </url>
+
+  <!-- Partners -->
+  <url>
+    <loc>https://sgipreal.com/partners</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/partners" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/partners" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/partners" />
+  </url>
+
+  <!-- News -->
+  <url>
+    <loc>https://sgipreal.com/news</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://sgipreal.com/news" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://sgipreal.com/ru/news" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://sgipreal.com/ar/news" />
+  </url>
+
   <!-- Legal Pages -->
   <url>
     <loc>https://sgipreal.com/privacy</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://sgipreal.com/terms</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://sgipreal.com/cookies</loc>
-    <lastmod>2024-01-15</lastmod>
+    <lastmod>2026-04-10</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

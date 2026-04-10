@@ -50,7 +50,9 @@ function initializePrisma(): any {
       databaseUrl = databaseUrl.slice(1, -1)
     }
     
-    console.log('[Prisma] Initializing with DATABASE_URL:', databaseUrl.replace(/:[^:@]+@/, ':****@'))
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Prisma] Initializing with DATABASE_URL:', databaseUrl.replace(/:[^:@]+@/, ':****@'))
+    }
     
     // Ensure proper URL encoding for special characters in password
     // If the URL doesn't have proper encoding, try to fix it

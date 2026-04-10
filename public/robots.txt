@@ -21,10 +21,12 @@ Allow: /services
 Allow: /about
 Allow: /contact
 
-# Block specific file types
+# Allow sitemap and robots explicitly before blocking other file types
+Allow: /sitemap.xml
+Allow: /robots.txt
+
+# Block other raw data files
 Disallow: *.json$
-Disallow: *.xml$
-Disallow: *.txt$
 
 # Allow images and assets
 Allow: /images/
