@@ -5,14 +5,14 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import LanguageSwitcher from '../ui/LanguageSwitcher'
+import defaultHeaderLogo from '../../../public/images/sgip_logo.png'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [logoError, setLogoError] = useState(false)
   const { t } = useTranslation('common')
   const router = useRouter()
-  const logoSrc =
-    process.env.NEXT_PUBLIC_LOGO_HEADER || '/images/sgip_logo.png'
+  const logoSrc = process.env.NEXT_PUBLIC_LOGO_HEADER || defaultHeaderLogo
   // WhatsApp chat button removed per request
 
   const navigation = router.locale === 'ru'

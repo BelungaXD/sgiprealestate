@@ -3,12 +3,12 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useTranslation } from 'next-i18next'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
+import defaultFooterLogo from '../../../public/images/sgip_logo.png'
 
 export default function Footer() {
   const { t } = useTranslation('common')
   const [logoError, setLogoError] = useState(false)
-  const logoSrc =
-    process.env.NEXT_PUBLIC_LOGO_FOOTER || '/images/sgip_logo.png'
+  const logoSrc = process.env.NEXT_PUBLIC_LOGO_FOOTER || defaultFooterLogo
   const contactEmail =
     process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'admin@sgipreal.com'
   const instagramUrl =

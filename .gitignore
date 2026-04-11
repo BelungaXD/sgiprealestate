@@ -70,6 +70,12 @@ public/uploads/files/
 public/uploads/
 
 # Large media files in uploads (prevent future commits of large files)
+public/uploads/**/*.jpg
+public/uploads/**/*.jpeg
+public/uploads/**/*.png
+public/uploads/**/*.webp
+public/uploads/**/*.gif
+public/uploads/**/*.heic
 public/uploads/**/*.mp4
 public/uploads/**/*.mov
 public/uploads/**/*.avi
