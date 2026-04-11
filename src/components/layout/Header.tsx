@@ -64,9 +64,9 @@ export default function Header() {
                   alt="SGIP Real Estate"
                   width={56}
                   height={56}
+                  sizes="56px"
                   className="h-12 w-12 object-contain mx-auto"
                   priority
-                  unoptimized
                   onError={() => setLogoError(true)}
                 />
               </div>
@@ -80,7 +80,6 @@ export default function Header() {
                 key={item.name}
                 href={item.href}
                 locale={router.locale}
-                prefetch={false}
                 className={`nav-link whitespace-nowrap ${
                   isActive(item.href) ? 'nav-link-active' : ''
                 }`}
@@ -96,7 +95,6 @@ export default function Header() {
             <Link
               href="/contact"
               locale={router.locale}
-              prefetch={false}
               className="btn-primary text-sm px-4 py-2"
             >
               {t('nav.getQuote')}
@@ -130,7 +128,6 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  prefetch={false}
                   className={`block px-4 py-2 text-base font-medium rounded-lg transition-colors ${
                     isActive(item.href)
                       ? 'text-champagne bg-champagne/10'
@@ -145,7 +142,6 @@ export default function Header() {
                 <Link
                   href="/contact"
                   locale={router.locale}
-                  prefetch={false}
                   className="block w-full text-center btn-primary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

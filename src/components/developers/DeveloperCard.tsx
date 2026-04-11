@@ -66,8 +66,8 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
                 alt={displayName}
                 width={64}
                 height={64}
+                sizes="64px"
                 className="max-w-full max-h-full object-contain"
-                unoptimized
               />
             </div>
           ) : (

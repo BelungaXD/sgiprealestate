@@ -61,8 +61,8 @@ export default function Partners() {
                       alt={partner.name}
                       width={120}
                       height={80}
+                      sizes="(max-width: 768px) 45vw, 120px"
                       className="max-w-full max-h-full object-contain"
-                      unoptimized
                     />
                   </div>
                 </a>
@@ -74,8 +74,8 @@ export default function Partners() {
                       alt={partner.name}
                       width={120}
                       height={80}
+                      sizes="(max-width: 768px) 45vw, 120px"
                       className="max-w-full max-h-full object-contain"
-                      unoptimized
                     />
                   </div>
                 </div>

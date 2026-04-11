@@ -65,8 +65,8 @@ export default function Footer() {
                       alt="SGIP Real Estate"
                       width={56}
                       height={56}
+                      sizes="56px"
                       className="h-14 w-14 object-contain"
-                      unoptimized
                       onError={() => setLogoError(true)}
                     />
                   </div>
