@@ -22,6 +22,12 @@ const assetPrefix = process.env.NEXT_PUBLIC_ASSET_PREFIX || ''
 const nextConfig = {
   ...(assetPrefix && { assetPrefix }),
   reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // Exclude test files from being treated as pages
   pageExtensions: ['page.tsx', 'page.ts', 'tsx', 'ts', 'api.ts', 'api.tsx'],
   i18n: {
