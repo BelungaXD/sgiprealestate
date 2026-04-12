@@ -42,7 +42,7 @@ const StorySection = dynamic(() => import('@/components/about/StorySection'), {
 })
 
 const TeamSection = dynamic(() => import('@/components/about/TeamSection'), {
-  ssr: false,
+  ssr: true,
   loading: () => (
     <div className="bg-gray-50 py-16">
       <div className="container-custom">

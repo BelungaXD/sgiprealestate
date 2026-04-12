@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'next-i18next'
-import Head from 'next/head'
 import Image from 'next/image'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
@@ -20,7 +19,8 @@ interface TeamMemberCardProps {
 function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
+  const isAboveFold = index < 3
+  const [isVisible, setIsVisible] = useState(isAboveFold)
   const cardRef = useRef<HTMLDivElement>(null)
 
   if (!member || !member.image) {
@@ -28,43 +28,36 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   }
 
   const imageUrl = normalizeImageUrl(member.image)
-  
-  // All images load immediately when page opens
-  const isPriority = true
 
-  // Intersection Observer only for animation visibility, not for loading
   useEffect(() => {
+    if (isAboveFold) return
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Add small delay for animation visibility
             setTimeout(() => {
               setIsVisible(true)
             }, 150)
-            // Disconnect observer after first intersection
             observer.disconnect()
           }
         })
       },
       {
         threshold: 0.1,
-        rootMargin: '200px', // Larger margin to trigger animation earlier
+        rootMargin: '200px',
       }
     )
 
-    // Check if element is already visible
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect()
       const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
-      
+
       if (isInViewport) {
-        // Element is already visible, trigger animation with delay
         setTimeout(() => {
           setIsVisible(true)
         }, 150)
       } else {
-        // Use observer for scroll-triggered animation
         observer.observe(cardRef.current)
       }
     }
@@ -74,7 +67,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
         observer.unobserve(cardRef.current)
       }
     }
-  }, [])
+  }, [isAboveFold])
 
   const handleImageLoad = () => {
     setImageLoaded(true)
@@ -86,18 +79,6 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   }
 
   return (
-    <>
-      {/* Preload all images for instant display */}
-      {imageUrl && (
-        <Head>
-          <link
-            rel="preload"
-            as="image"
-            href={imageUrl}
-            fetchPriority="high"
-          />
-        </Head>
-      )}
       <div
         ref={cardRef}
         className={`bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full transition-all duration-700 ${
@@ -105,13 +86,12 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
         }`}
       >
         <div className="relative w-full h-[400px] bg-gray-200 overflow-hidden flex-shrink-0">
-          {/* Skeleton loader with shimmer effect */}
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 z-10">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
             </div>
           )}
-          
+
           {imageUrl && !imageError ? (
             <Image
               src={imageUrl}
@@ -121,13 +101,12 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
               className={`object-cover object-top w-full h-full transition-opacity duration-500 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
-              loading="eager"
-              priority={isPriority}
-              quality={95}
+              loading={isAboveFold ? 'eager' : 'lazy'}
+              priority={isAboveFold}
+              quality={75}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
               placeholder="blur"
               blurDataURL={blurDataURL}
-              fetchPriority="high"
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
@@ -151,7 +130,6 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
         )}
       </div>
     </div>
-    </>
   )
 }
 
