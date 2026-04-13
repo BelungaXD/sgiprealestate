@@ -27,6 +27,7 @@ const customJestConfig = {
     '/.next/',
     '/out/',
   ],
+  modulePathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/out/'],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

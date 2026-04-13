@@ -25,7 +25,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // ESLint during build: use `next build --no-lint` (Next.js 16 removed `eslint` here)
+  // Next.js 16.1.x: no `eslint` key here; run `npm run lint` in CI when you want lint gating
   // Exclude test files from being treated as pages
   pageExtensions: ['page.tsx', 'page.ts', 'tsx', 'ts', 'api.ts', 'api.tsx'],
   i18n: {
