@@ -1,6 +1,8 @@
 # Multi-stage build for Next.js
 # Force linux/amd64 so sharp binaries match production (avoids darwin/arm64 when building on Mac)
 FROM --platform=linux/amd64 node:20-slim AS base
+# Node image ships npm 10.x; bump to npm 11 so install/build logs are not spammed with upgrade notices
+RUN npm install -g npm@11.12.1 && npm cache clean --force
 
 # Install dependencies only when needed
 FROM base AS deps
