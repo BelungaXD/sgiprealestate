@@ -25,9 +25,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // ESLint during build: use `next build --no-lint` (Next.js 16 removed `eslint` here)
   // Exclude test files from being treated as pages
   pageExtensions: ['page.tsx', 'page.ts', 'tsx', 'ts', 'api.ts', 'api.tsx'],
   i18n: {

@@ -4,13 +4,17 @@ FROM --platform=linux/amd64 node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apt-get update && apt-get install -y libc6 openssl && rm -rf /var/lib/apt/lists/*
+# libvips-dev + toolchain: compile sharp from source for hosts without x86-64-v2 (prebuilt sharp aborts)
+RUN apt-get update && apt-get install -y libc6 openssl libvips-dev build-essential python3 pkg-config && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
 ENV npm_config_update_notifier=false
 ENV npm_config_cache=/tmp/.npm
+ENV npm_config_build_from_source=true
+ENV CXXFLAGS=-march=x86-64
+ENV CFLAGS=-march=x86-64
 # Use npm install with legacy-peer-deps to handle peer dependency conflicts
 # --legacy-peer-deps handles peer dependency conflicts (e.g., eslint versions)
 # --prefer-offline uses cache when available, --no-audit skips security audit
@@ -18,10 +22,22 @@ RUN npm install --prefer-offline --no-audit --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y openssl libvips-dev build-essential python3 pkg-config && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Recompile every sharp tree (root + next's nested copy) for baseline x86-64 CPUs
+ENV CXXFLAGS=-march=x86-64
+ENV CFLAGS=-march=x86-64
+ENV npm_config_build_from_source=true
+RUN set -e; \
+  for d in node_modules/sharp node_modules/next/node_modules/sharp; do \
+    if [ -d "$d" ]; then \
+      echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp in $d"; \
+      (cd "$d" && npm rebuild --build-from-source); \
+    fi; \
+  done
 
 # Next.js 16 + webpack + TypeScript needs a larger V8 heap than 768MB; a low cap
 # causes extreme GC churn so "Running TypeScript ..." looks hung for many minutes.
@@ -44,7 +60,7 @@ ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Install wget for healthcheck, openssl for Prisma
-RUN apt-get update && apt-get install -y wget ca-certificates openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget ca-certificates openssl libvips42 && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --system --gid 1001 nodejs
 RUN useradd --system --uid 1001 nextjs
