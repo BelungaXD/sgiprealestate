@@ -3,6 +3,7 @@ import {
   ADMIN_SESSION_COOKIE,
   adminSessionConfigured,
   createAdminSessionToken,
+  useSecureAdminSessionCookie,
   verifyAdminCredentials,
 } from '@/lib/adminSession'
 
@@ -33,9 +34,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const maxAge = 60 * 60 * 24 * 7
+    const secure = useSecureAdminSessionCookie(req) ? '; Secure' : ''
     res.setHeader(
       'Set-Cookie',
-      `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`
+      `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`
     )
 
     return res.status(200).json({ ok: true })

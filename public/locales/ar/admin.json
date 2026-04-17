@@ -9,7 +9,7 @@
     "signIn": "تسجيل الدخول",
     "signingIn": "جاري تسجيل الدخول...",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
-    "notConfigured": "لم يتم تهيئة تسجيل الدخول للإدارة على الخادم. عيّن ADMIN_SESSION_SECRET في ملف .env.",
+    "notConfigured": "لم يتم تهيئة تسجيل الدخول للإدارة على الخادم. عيّن ADMIN_PASSWORD أو ADMIN_SESSION_SECRET (16+ حرفًا) في ملف .env.",
     "serverError": "تعذر الاتصال بالخادم. حاول مرة أخرى."
   },
   "dashboard": {

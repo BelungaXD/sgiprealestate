@@ -9,7 +9,7 @@
     "signIn": "Sign In",
     "signingIn": "Signing In...",
     "invalidCredentials": "Invalid username or password",
-    "notConfigured": "Admin login is not configured on the server. Set ADMIN_SESSION_SECRET in .env.",
+    "notConfigured": "Admin login is not configured on the server. Set ADMIN_PASSWORD or ADMIN_SESSION_SECRET (16+ chars) in .env.",
     "serverError": "Could not reach the server. Try again."
   },
   "dashboard": {

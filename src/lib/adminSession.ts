@@ -4,15 +4,45 @@ import { prisma } from '@/lib/prisma'
 
 export const ADMIN_SESSION_COOKIE = 'sgip_admin_session'
 const MAX_AGE_SEC = 60 * 60 * 24 * 7
+
+/**
+ * Set `Secure` on admin cookies only when the request is actually HTTPS (TLS or
+ * `x-forwarded-proto`). Using `NODE_ENV === 'production'` alone breaks `next start`
+ * on http://localhost — the browser drops the cookie and login appears broken.
+ */
+export function useSecureAdminSessionCookie(req: NextApiRequest): boolean {
+  const socket = req.socket as { encrypted?: boolean } | undefined
+  if (socket?.encrypted) return true
+  const forwarded = req.headers['x-forwarded-proto']
+  const raw = Array.isArray(forwarded)
+    ? forwarded[0]?.trim().toLowerCase()
+    : typeof forwarded === 'string'
+      ? forwarded.split(',')[0]?.trim().toLowerCase()
+      : undefined
+  if (raw === 'https') return true
+  if (raw === 'http') return false
+  const host = (req.headers.host || '').split(':')[0].toLowerCase()
+  if (host === 'localhost' || host === '127.0.0.1' || host === '[::1]') return false
+  return process.env.NODE_ENV === 'production'
+}
 const PASSWORD_HASH_PREFIX = 'pbkdf2'
 const PASSWORD_HASH_ITERATIONS = 120000
 const PASSWORD_HASH_LENGTH = 64
 
+/** Stable HMAC key when ADMIN_SESSION_SECRET is unset (avoids 503 if only ADMIN_PASSWORD is configured). */
+function sessionSecretFromAdminPassword(): string {
+  const pass = process.env.ADMIN_PASSWORD?.trim()
+  if (!pass) return ''
+  return crypto.createHash('sha256').update(`sgip-admin-session-v1:${pass}`, 'utf8').digest('hex')
+}
+
 function sessionSecret(): string {
   const fromEnv = process.env.ADMIN_SESSION_SECRET?.trim()
   if (fromEnv && fromEnv.length >= 16) return fromEnv
+  const derived = sessionSecretFromAdminPassword()
+  if (derived) return derived
   if (process.env.NODE_ENV !== 'production') {
-    // Dev-only fallback so local admin works with only ADMIN_PASSWORD set
+    // Dev-only fallback so local admin works with no admin env at all
     return 'dev-sgip-admin-session-secret-min-32-chars'
   }
   return ''
@@ -61,7 +91,7 @@ export function verifyAdminSessionToken(token: string | undefined): boolean {
 
 function verifyEnvAdminCredentials(username: string, password: string): boolean {
   const expectedUser = (process.env.ADMIN_USERNAME || 'admin').trim()
-  const expectedPass = process.env.ADMIN_PASSWORD || ''
+  const expectedPass = (process.env.ADMIN_PASSWORD || '').trim()
   if (!expectedPass) return false
   const uOk =
     expectedUser.length === username.length &&

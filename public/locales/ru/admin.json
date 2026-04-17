@@ -9,7 +9,7 @@
     "signIn": "Войти",
     "signingIn": "Вход...",
     "invalidCredentials": "Неверное имя пользователя или пароль",
-    "notConfigured": "Вход в админку не настроен на сервере. Задайте ADMIN_SESSION_SECRET в .env.",
+    "notConfigured": "Вход в админку не настроен на сервере. Задайте ADMIN_PASSWORD или ADMIN_SESSION_SECRET (≥16 символов) в .env.",
     "serverError": "Не удалось связаться с сервером. Попробуйте снова."
   },
   "dashboard": {

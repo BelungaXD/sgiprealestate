@@ -23,7 +23,7 @@ import PropertyModal from './PropertyModal'
 import FolderImport from './FolderImport'
 import DevelopersAdminPanel from './DevelopersAdminPanel'
 import AreasAdminPanel from './AreasAdminPanel'
-import { PropertyFormData } from '@/lib/validations/property'
+import { PropertyFormData, pickPropertyApiPayload } from '@/lib/validations/property'
 import { FileWithLabel } from './FileUpload'
 import { getErrorMessage } from '@/lib/utils/errorMessage'
 import { uploadUrlCompareKey } from '@/lib/utils/imageUrl'
@@ -294,7 +294,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       }
 
       const url = editingProperty
-        ? `/api/properties/${editingProperty.id}`
+        ? `/api/properties/${encodeURIComponent(String(editingProperty.id))}`
         : '/api/properties'
 
       const method = editingProperty ? 'PUT' : 'POST'
@@ -308,10 +308,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         mimeType: f.mimeType,
       }))
 
-      const payload: Record<string, unknown> = {
+      const payload: Record<string, unknown> = pickPropertyApiPayload({
         ...data,
         files: mappedFiles,
-      }
+      })
 
       if (method === 'PUT' && editingProperty) {
         const prevImg = (editingProperty.images || []).map(

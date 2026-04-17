@@ -160,4 +160,22 @@ export const propertySchema = z
     isFeatured: z.boolean().default(false),
   })
 
+const PROPERTY_API_EXTRA_FIELDS = ['images', 'files'] as const
+
+/** Drops Prisma relation objects and other stray keys so admin save stays JSON-safe. */
+export function pickPropertyApiPayload(payload: Record<string, unknown>): Record<string, unknown> {
+  const allowed = new Set<string>([
+    ...Object.keys(propertySchema.shape),
+    ...PROPERTY_API_EXTRA_FIELDS,
+  ])
+  const out: Record<string, unknown> = {}
+  for (const key of allowed) {
+    if (!Object.prototype.hasOwnProperty.call(payload, key)) continue
+    const v = payload[key]
+    if (v === undefined) continue
+    out[key] = v
+  }
+  return out
+}
+
 export type PropertyFormData = z.infer<typeof propertySchema>
