@@ -51,3 +51,27 @@ export async function generateUniqueSlug(
   return slug
 }
 
+/** Slug for create when admin leaves title/slug empty */
+export function resolveNewPropertySlug(
+  slugInput: string | undefined,
+  title: string
+): string {
+  const s = slugInput?.trim()
+  if (s) return s
+  const fromTitle = generateSlug((title || '').trim())
+  if (fromTitle) return fromTitle
+  return `listing-${Date.now()}`
+}
+
+/** Slug for update: never return empty (keep current if needed) */
+export function resolveUpdatePropertySlug(
+  slugInput: string | undefined,
+  title: string,
+  currentSlug: string
+): string {
+  const s = slugInput?.trim()
+  if (s) return s
+  const fromTitle = generateSlug((title || '').trim())
+  if (fromTitle) return fromTitle
+  return currentSlug
+}

@@ -53,6 +53,7 @@ interface Property {
   developerLogo: string
   isFeatured: boolean
   coordinates: { lat: number; lng: number }
+  googleMapsUrl?: string | null
   infrastructure: Array<{
     category: string
     items: Array<{
@@ -410,6 +411,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       developerLogo: normalizeUploadUrl(apiProperty.developer?.logo) || '',
       isFeatured: apiProperty.isFeatured || false,
       coordinates: apiProperty.coordinates || { lat: 0, lng: 0 },
+      googleMapsUrl: apiProperty.googleMapsUrl || null,
       infrastructure: [], // Can be added later if needed
       files: apiProperty.files
         ?.filter((file: any) => {

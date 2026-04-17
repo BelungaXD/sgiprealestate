@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment } from 'react'
+import { useState, useEffect, useCallback, Fragment, FormEvent } from 'react'
 import { useTranslation } from 'next-i18next'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -10,6 +10,7 @@ import {
   HomeIcon,
   BuildingOfficeIcon,
   UsersIcon,
+  UserPlusIcon,
   ChartBarIcon,
   FolderOpenIcon,
   FolderIcon,
@@ -24,9 +25,19 @@ import DevelopersAdminPanel from './DevelopersAdminPanel'
 import AreasAdminPanel from './AreasAdminPanel'
 import { PropertyFormData } from '@/lib/validations/property'
 import { FileWithLabel } from './FileUpload'
+import { getErrorMessage } from '@/lib/utils/errorMessage'
+import { uploadUrlCompareKey } from '@/lib/utils/imageUrl'
 
 interface AdminDashboardProps {
   onLogout: () => void
+}
+
+interface AdminUser {
+  id: string
+  email: string
+  name: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
@@ -54,6 +65,15 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [browseCurrentPath, setBrowseCurrentPath] = useState('')
   const [browseLoading, setBrowseLoading] = useState(false)
   const [browseError, setBrowseError] = useState<string | null>(null)
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([])
+  const [usersLoading, setUsersLoading] = useState(false)
+  const [usersSaving, setUsersSaving] = useState(false)
+  const [usersError, setUsersError] = useState('')
+  const [newUserForm, setNewUserForm] = useState({
+    email: '',
+    name: '',
+    password: '',
+  })
 
   const loadBrowse = useCallback(async (path: string | null) => {
     setBrowseLoading(true)
@@ -139,9 +159,39 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }, [])
 
+  const loadAdminUsers = useCallback(async () => {
+    setUsersLoading(true)
+    setUsersError('')
+    try {
+      const response = await fetch('/api/admin/users', { credentials: 'same-origin' })
+      const data = (await response.json().catch(() => ({}))) as {
+        ok?: boolean
+        users?: AdminUser[]
+        error?: string
+      }
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || 'Failed to load users')
+      }
+
+      setAdminUsers(data.users || [])
+    } catch (error: unknown) {
+      console.error('Error loading admin users:', error)
+      setUsersError(t('settings.loadError'))
+    } finally {
+      setUsersLoading(false)
+    }
+  }, [t])
+
   useEffect(() => {
     loadProperties()
   }, [loadProperties])
+
+  useEffect(() => {
+    if (activeTab === 'settings') {
+      loadAdminUsers()
+    }
+  }, [activeTab, loadAdminUsers])
 
   const statsData = [
     { name: t('dashboard.totalProperties'), value: stats.total.toString(), icon: BuildingOfficeIcon, color: 'text-blue-600' },
@@ -187,11 +237,20 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       if (response.ok) {
         await loadProperties()
       } else {
-        alert('Error deleting property')
+        let detail = `HTTP ${response.status}`
+        try {
+          const data = await response.json()
+          if (data && typeof data.message === 'string' && data.message) {
+            detail = data.message
+          }
+        } catch {
+          /* ignore */
+        }
+        alert(detail)
       }
     } catch (error) {
       console.error('Error deleting property:', error)
-      alert('Error deleting property')
+      alert(error instanceof Error ? error.message : 'Error deleting property')
     }
   }
 
@@ -225,33 +284,106 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
   const handleSaveProperty = async (data: PropertyFormData & { images: string[]; files: FileWithLabel[] }) => {
     try {
+      const embedded = (data.images || []).some(
+        (i) => typeof i === 'string' && i.startsWith('data:')
+      )
+      if (embedded) {
+        throw new Error(
+          'Gallery still contains raw uploads (data URLs). Wait for each file to finish uploading, or remove those rows.'
+        )
+      }
+
       const url = editingProperty
         ? `/api/properties/${editingProperty.id}`
         : '/api/properties'
-      
+
       const method = editingProperty ? 'PUT' : 'POST'
+
+      const mappedFiles = (data.files || []).map((f) => ({
+        id: f.id,
+        label: f.label,
+        url: f.url,
+        filename: f.filename,
+        size: f.size,
+        mimeType: f.mimeType,
+      }))
+
+      const payload: Record<string, unknown> = {
+        ...data,
+        files: mappedFiles,
+      }
+
+      if (method === 'PUT' && editingProperty) {
+        const prevImg = (editingProperty.images || []).map(
+          (img: { url?: string } | string) =>
+            typeof img === 'string' ? img : img?.url ?? ''
+        )
+        const nextImg = data.images || []
+        const imagesSame =
+          prevImg.length === nextImg.length &&
+                   prevImg.every(
+            (u: string, i: number) =>
+              uploadUrlCompareKey(u) === uploadUrlCompareKey(nextImg[i] ?? '')
+          )
+        if (imagesSame) {
+          delete payload.images
+        }
+
+        const ef = editingProperty.files || []
+        const df = data.files || []
+        const filesSame =
+          ef.length === df.length &&
+          ef.every(
+            (pf: { label?: string; url?: string }, i: number) =>
+              pf.label === df[i]?.label &&
+              uploadUrlCompareKey(pf.url) === uploadUrlCompareKey(df[i]?.url)
+          )
+        if (filesSame) {
+          delete payload.files
+        }
+      }
+
+      let body: string
+      try {
+        body = JSON.stringify(payload)
+      } catch {
+        throw new Error('Could not serialize the form. Check for invalid values and try again.')
+      }
+      if (body.length > 4_500_000) {
+        throw new Error(
+          'Request is too large to save in one step. Change fewer images at once or contact support.'
+        )
+      }
 
       const response = await fetch(url, {
         method,
+        credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body,
       })
 
       if (!response.ok) {
-        // Try to parse JSON error, but handle HTML responses
         let errorMessage = 'Error saving property'
         try {
           const contentType = response.headers.get('content-type')
           if (contentType && contentType.includes('application/json')) {
             const error = await response.json()
-            errorMessage = error.message || error.errors?.[0]?.message || errorMessage
+            if (Array.isArray(error.errors) && error.errors.length > 0) {
+              errorMessage = error.errors
+                .map(
+                  (e: { path?: string[]; message?: string }) =>
+                    `${e.path?.length ? e.path.join('.') : 'field'}: ${e.message || 'invalid'}`
+                )
+                .join('; ')
+            } else {
+              errorMessage = error.message || errorMessage
+            }
           } else {
-            // If response is HTML (like error page), get status text
             errorMessage = `Server error: ${response.status} ${response.statusText}`
           }
-        } catch (parseError) {
+        } catch {
           errorMessage = `Server error: ${response.status} ${response.statusText}`
         }
         throw new Error(errorMessage)
@@ -292,17 +424,83 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         setIsModalOpen(false)
         setEditingProperty(null)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving property:', error)
-      alert(error.message || 'Error saving property')
       throw error
+    }
+  }
+
+  const handleCreateAdminUser = async (e: FormEvent) => {
+    e.preventDefault()
+    setUsersSaving(true)
+    setUsersError('')
+    try {
+      const response = await fetch('/api/admin/users', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: newUserForm.email.trim(),
+          name: newUserForm.name.trim() || undefined,
+          password: newUserForm.password,
+        }),
+      })
+
+      const data = (await response.json().catch(() => ({}))) as {
+        ok?: boolean
+        error?: string
+      }
+
+      if (!response.ok || !data.ok) {
+        if (response.status === 409 && data.error === 'email_already_exists') {
+          throw new Error(t('settings.emailExists'))
+        }
+        throw new Error(t('settings.createError'))
+      }
+
+      setNewUserForm({ email: '', name: '', password: '' })
+      await loadAdminUsers()
+    } catch (error: unknown) {
+      setUsersError(getErrorMessage(error, t('settings.createError')))
+    } finally {
+      setUsersSaving(false)
+    }
+  }
+
+  const handleDeleteAdminUser = async (id: string) => {
+    if (!confirm(t('settings.deleteConfirm'))) return
+
+    setUsersSaving(true)
+    setUsersError('')
+    try {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+      const data = (await response.json().catch(() => ({}))) as {
+        ok?: boolean
+        error?: string
+      }
+
+      if (!response.ok || !data.ok) {
+        if (response.status === 409 && data.error === 'cannot_delete_last_user') {
+          throw new Error(t('settings.lastUserError'))
+        }
+        throw new Error(t('settings.deleteError'))
+      }
+
+      await loadAdminUsers()
+    } catch (error: unknown) {
+      setUsersError(getErrorMessage(error, t('settings.deleteError')))
+    } finally {
+      setUsersSaving(false)
     }
   }
 
   const tabs = [
     { id: 'properties', name: t('dashboard.properties'), icon: BuildingOfficeIcon },
-    { id: 'developers', name: t('dashboard.developers'), icon: BuildingLibraryIcon },
     { id: 'areas', name: t('dashboard.areas'), icon: MapPinIcon },
+    { id: 'developers', name: t('dashboard.developers'), icon: BuildingLibraryIcon },
     { id: 'pages', name: t('dashboard.pages'), icon: ChartBarIcon },
     { id: 'inquiries', name: t('dashboard.inquiries'), icon: UsersIcon },
     { id: 'settings', name: t('dashboard.settings'), icon: FolderIcon },
@@ -537,9 +735,113 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           )}
 
           {activeTab === 'settings' && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-graphite mb-4">{t('settings.title')}</h2>
-              <p className="text-gray-600">{t('settings.comingSoon')}</p>
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold text-graphite mb-4">{t('settings.title')}</h2>
+                <p className="text-gray-600">{t('settings.description')}</p>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <UserPlusIcon className="h-5 w-5 text-champagne" />
+                  <h3 className="text-base font-semibold text-graphite">{t('settings.addPeople')}</h3>
+                </div>
+
+                {usersError && (
+                  <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {usersError}
+                  </div>
+                )}
+
+                <form onSubmit={handleCreateAdminUser} className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <input
+                    type="email"
+                    required
+                    value={newUserForm.email}
+                    onChange={(e) => setNewUserForm((prev) => ({ ...prev, email: e.target.value }))}
+                    placeholder={t('settings.emailPlaceholder')}
+                    className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
+                  />
+                  <input
+                    type="text"
+                    value={newUserForm.name}
+                    onChange={(e) => setNewUserForm((prev) => ({ ...prev, name: e.target.value }))}
+                    placeholder={t('settings.namePlaceholder')}
+                    className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
+                  />
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={newUserForm.password}
+                    onChange={(e) => setNewUserForm((prev) => ({ ...prev, password: e.target.value }))}
+                    placeholder={t('settings.passwordPlaceholder')}
+                    className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
+                  />
+                  <div className="md:col-span-3">
+                    <button
+                      type="submit"
+                      disabled={usersSaving}
+                      className="btn-filled inline-flex items-center space-x-2"
+                    >
+                      <UserPlusIcon className="h-4 w-4" />
+                      <span>{usersSaving ? t('settings.saving') : t('settings.addUser')}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div className="bg-white rounded-lg shadow">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-base font-semibold text-graphite">{t('settings.peopleList')}</h3>
+                </div>
+                {usersLoading ? (
+                  <div className="p-6 text-sm text-gray-500">{t('settings.loadingUsers')}</div>
+                ) : adminUsers.length === 0 ? (
+                  <div className="p-6 text-sm text-gray-500">{t('settings.noUsers')}</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('settings.user')}
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('settings.createdAt')}
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('settings.actions')}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {adminUsers.map((user) => (
+                          <tr key={user.id}>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-graphite">{user.email}</div>
+                              {user.name && <div className="text-xs text-gray-500">{user.name}</div>}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                              {new Date(user.createdAt).toLocaleString()}
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteAdminUser(user.id)}
+                                disabled={usersSaving}
+                                className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                              >
+                                {t('settings.delete')}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

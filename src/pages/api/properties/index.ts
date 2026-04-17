@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
-import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { resolveNewPropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 
 export const config = {
@@ -201,28 +201,22 @@ export default async function handler(
         })
       }
 
-      // Validate data
-      let validatedData
-      try {
-        validatedData = propertySchema.parse({
-          ...body,
-          // Handle images array - can be file URLs or base64
-          // For now, we'll expect image URLs as strings
+      const parsed = propertySchema.safeParse(body)
+      if (!parsed.success) {
+        const message = parsed.error.errors
+          .map((e) => `${e.path.length ? e.path.join('.') : 'field'}: ${e.message}`)
+          .join('; ')
+        console.warn(`[${new Date().toISOString()}] Property POST validation failed:`, message)
+        return res.status(400).json({
+          success: false,
+          message: message || 'Validation error',
+          errors: parsed.error.errors,
         })
-      } catch (validationError: any) {
-        console.error('Validation error:', validationError)
-        if (validationError.name === 'ZodError') {
-          return res.status(400).json({
-            success: false,
-            message: 'Validation error',
-            errors: validationError.errors,
-          })
-        }
-        throw validationError
       }
+      const validatedData = parsed.data
 
       // Generate unique slug if not provided
-      let slug = validatedData.slug || generateSlug(validatedData.title)
+      let slug = resolveNewPropertySlug(validatedData.slug, validatedData.title)
       let slugExists = null
       try {
         slugExists = await prisma.property.findUnique({ where: { slug } })
@@ -271,9 +265,15 @@ export default async function handler(
       if (developerId && (developerId === '' || developerId === 'null')) developerId = null
       if (developerId) {
         try {
-          let dev = await prisma.developer.findUnique({ where: { id: developerId } })
+          let dev = await prisma.developer.findUnique({
+            where: { id: developerId },
+            select: { id: true },
+          })
           if (!dev) {
-            dev = await prisma.developer.findUnique({ where: { slug: developerId } })
+            dev = await prisma.developer.findUnique({
+              where: { slug: developerId },
+              select: { id: true },
+            })
             if (dev) developerId = dev.id
             else developerId = null
           }
@@ -325,6 +325,7 @@ export default async function handler(
             areaId: validatedData.areaId || null,
             developerId,
             coordinates: validatedData.coordinates || null,
+            googleMapsUrl: validatedData.googleMapsUrl,
             features: validatedData.features || [],
             amenities: validatedData.amenities || [],
             slug,

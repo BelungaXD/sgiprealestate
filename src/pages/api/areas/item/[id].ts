@@ -14,6 +14,22 @@ const updateAreaSchema = z.object({
   tags: z.array(z.string()).optional(),
 })
 
+const hasMissingAreaIsActiveColumn = (error: unknown) => {
+  if (!error || typeof error !== 'object') return false
+
+  const prismaError = error as {
+    code?: string
+    meta?: { column?: string }
+    message?: string
+  }
+
+  return (
+    prismaError.code === 'P2022' &&
+    (prismaError.meta?.column === 'areas.isActive' ||
+      prismaError.message?.includes('areas.isActive'))
+  )
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -65,32 +81,54 @@ export default async function handler(
         }
       }
 
-      const area = await prisma.area.update({
-        where: { id },
-        data: {
-          name,
-          nameEn: nameEn,
-          ...(parsed.description !== undefined && {
-            description: parsed.description?.trim() || null,
-          }),
-          ...(parsed.city !== undefined && {
-            city: parsed.city?.trim() || existing.city,
-          }),
-          ...(parsed.image !== undefined && { image: parsed.image || null }),
-          ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
-          ...(parsed.sortOrder !== undefined && { sortOrder: parsed.sortOrder }),
-          ...(parsed.tags !== undefined && { tags: parsed.tags }),
-          slug,
-        },
-      })
+      const baseData = {
+        name,
+        nameEn: nameEn,
+        ...(parsed.description !== undefined && {
+          description: parsed.description?.trim() || null,
+        }),
+        ...(parsed.city !== undefined && {
+          city: parsed.city?.trim() || existing.city,
+        }),
+        ...(parsed.image !== undefined && { image: parsed.image || null }),
+        ...(parsed.sortOrder !== undefined && { sortOrder: parsed.sortOrder }),
+        ...(parsed.tags !== undefined && { tags: parsed.tags }),
+        slug,
+      }
+
+      const area = await prisma.area
+        .update({
+          where: { id },
+          data: {
+            ...baseData,
+            ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
+          },
+        })
+        .catch(async (error) => {
+          if (
+            !(
+              parsed.isActive !== undefined &&
+              hasMissingAreaIsActiveColumn(error)
+            )
+          ) {
+            throw error
+          }
+
+          return prisma.area.update({
+            where: { id },
+            data: baseData,
+          })
+        })
 
       return res.status(200).json({ success: true, area })
-    } catch (error: any) {
-      if (error.name === 'ZodError') {
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, errors: error.errors })
       }
       console.error('Error updating area:', error)
-      return res.status(500).json({ message: error.message || 'Internal server error' })
+      return res.status(500).json({
+        message: error instanceof Error ? error.message : 'Internal server error',
+      })
     }
   }
 
@@ -114,8 +152,12 @@ export default async function handler(
       }
       await prisma.area.delete({ where: { id } })
       return res.status(200).json({ success: true })
-    } catch (error: any) {
-      if (error.code === 'P2025') {
+    } catch (error: unknown) {
+      const code =
+        typeof error === 'object' && error !== null && 'code' in error
+          ? String((error as { code?: unknown }).code)
+          : undefined
+      if (code === 'P2025') {
         return res.status(404).json({ message: 'Area not found' })
       }
       console.error('Error deleting area:', error)

@@ -109,7 +109,25 @@ const nextConfig = {
         },
       })
     )
-    
+
+    if (dev) {
+      const prev = config.watchOptions?.ignored
+      const fromPrev = Array.isArray(prev)
+        ? prev.filter((item) => typeof item === 'string' && item.length > 0)
+        : typeof prev === 'string' && prev.length > 0
+          ? [prev]
+          : []
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: [
+          '**/node_modules/**',
+          '**/.git/**',
+          ...fromPrev,
+          '**/public/uploads/**',
+        ],
+      }
+    }
+
     if (!dev && !isServer) {
       // Optimize chunk splitting for better code splitting
       config.optimization = {
@@ -166,8 +184,7 @@ const nextConfig = {
   },
   // Enable standalone output for Docker
   output: 'standalone',
-  // Explicitly use webpack instead of Turbopack (webpack config is required)
-  // Setting empty turbopack config tells Next.js we're intentionally using webpack
+  // Dev: use `next dev --webpack` so watchOptions above apply. Turbopack ignores webpack watchOptions.
   turbopack: {},
   async rewrites() {
     return [

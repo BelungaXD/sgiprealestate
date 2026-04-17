@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { mkdir, readFile, writeFile } from 'fs/promises'
-import { join, dirname } from 'path'
+import { mkdir, copyFile } from 'fs/promises'
+import { join, dirname, normalize } from 'path'
 import formidable, { File } from 'formidable'
 
 /**
@@ -17,6 +17,16 @@ export const config = {
 }
 
 const INCOMING_BASE = join(process.cwd(), 'public', 'uploads', 'incoming')
+const LOG_SCOPE = 'upload-folder'
+
+function log(message: string, details?: Record<string, unknown>) {
+  const ts = new Date().toISOString()
+  if (details) {
+    console.info(`[${ts}] [${LOG_SCOPE}] ${message}`, details)
+    return
+  }
+  console.info(`[${ts}] [${LOG_SCOPE}] ${message}`)
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -27,6 +37,9 @@ export default async function handler(
   }
 
   try {
+    const startedAt = Date.now()
+    log('request started')
+
     const form = formidable({
       maxFileSize: 2 * 1024 * 1024 * 1024, // 2GB per file
       maxTotalFileSize: 10 * 1024 * 1024 * 1024, // 10GB total
@@ -37,6 +50,7 @@ export default async function handler(
     })
 
     const [, files] = await form.parse(req)
+    log('form parsed')
 
     let fileArray: File[] = []
     if (files.files) {
@@ -50,21 +64,39 @@ export default async function handler(
     const uploadId = String(Date.now())
     const baseDir = join(INCOMING_BASE, uploadId)
     await mkdir(baseDir, { recursive: true })
+    log('incoming directory ready', { uploadId, baseDir, files: fileArray.length })
 
     let saved = 0
+    const skipped: string[] = []
     for (const file of fileArray) {
       const relativePath = file.originalFilename || file.newFilename || ''
       if (!relativePath || relativePath.startsWith('.') || relativePath.includes('.DS_Store')) {
+        skipped.push(relativePath || 'unknown')
         continue
       }
-      const destPath = join(baseDir, relativePath)
+      const safeRelativePath = normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/, '')
+      if (!safeRelativePath || safeRelativePath.startsWith('..')) {
+        skipped.push(relativePath)
+        continue
+      }
+      const destPath = join(baseDir, safeRelativePath)
       await mkdir(dirname(destPath), { recursive: true })
-      const buf = await readFile(file.filepath)
-      await writeFile(destPath, buf)
+      // copyFile avoids loading entire media file into JS memory.
+      await copyFile(file.filepath, destPath)
       saved++
+      if (saved % 50 === 0) {
+        log('files copied progress', { saved, total: fileArray.length })
+      }
     }
 
     const folderPath = baseDir
+    log('request completed', {
+      uploadId,
+      filesReceived: fileArray.length,
+      filesSaved: saved,
+      filesSkipped: skipped.length,
+      durationMs: Date.now() - startedAt,
+    })
     return res.status(200).json({
       message: 'Upload completed',
       folderPath,
@@ -73,7 +105,7 @@ export default async function handler(
     })
   } catch (error: unknown) {
     const err = error as { statusCode?: number; code?: string; message?: string }
-    console.error('[upload-folder] Error:', err)
+    console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] Error:`, err)
 
     if (
       err.statusCode === 413 ||

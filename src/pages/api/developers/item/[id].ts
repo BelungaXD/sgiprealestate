@@ -12,6 +12,22 @@ const updateDeveloperSchema = z.object({
   isActive: z.boolean().optional(),
 })
 
+const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
+  if (!error || typeof error !== 'object') return false
+
+  const prismaError = error as {
+    code?: string
+    meta?: { column?: string }
+    message?: string
+  }
+
+  return (
+    prismaError.code === 'P2022' &&
+    (prismaError.meta?.column === 'developers.isActive' ||
+      prismaError.message?.includes('developers.isActive'))
+  )
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -27,7 +43,10 @@ export default async function handler(
 
   if (req.method === 'PUT') {
     try {
-      const existing = await prisma.developer.findUnique({ where: { id } })
+      const existing = await prisma.developer.findUnique({
+        where: { id },
+        select: { id: true, name: true, nameEn: true, slug: true },
+      })
       if (!existing) return res.status(404).json({ message: 'Developer not found' })
 
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
@@ -70,20 +89,40 @@ export default async function handler(
             : null
           : undefined
 
-      const developer = await prisma.developer.update({
-        where: { id },
-        data: {
-          name,
-          nameEn,
-          ...(parsed.description !== undefined && {
-            description: parsed.description?.trim() || null,
-          }),
-          ...(parsed.logo !== undefined && { logo: parsed.logo || null }),
-          ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
-          ...(website !== undefined && { website }),
-          slug,
-        },
-      })
+      const baseData = {
+        name,
+        nameEn,
+        ...(parsed.description !== undefined && {
+          description: parsed.description?.trim() || null,
+        }),
+        ...(parsed.logo !== undefined && { logo: parsed.logo || null }),
+        ...(website !== undefined && { website }),
+        slug,
+      }
+
+      const developer = await prisma.developer
+        .update({
+          where: { id },
+          data: {
+            ...baseData,
+            ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
+          },
+        })
+        .catch(async (error) => {
+          if (
+            !(
+              parsed.isActive !== undefined &&
+              hasMissingDeveloperIsActiveColumn(error)
+            )
+          ) {
+            throw error
+          }
+
+          return prisma.developer.update({
+            where: { id },
+            data: baseData,
+          })
+        })
 
       return res.status(200).json({ success: true, developer })
     } catch (error: any) {

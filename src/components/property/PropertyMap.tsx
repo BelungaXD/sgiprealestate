@@ -2,13 +2,17 @@
 
 /**
  * PropertyMap - Google Maps embed for property location.
- * Uses Maps Embed API when NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is set.
+ * Prefers admin-pasted Google Maps link (share or embed URL).
+ * Else uses Maps Embed API when NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is set.
  * Fallback: link to Google Maps with the address.
  */
+
+import { googleMapsEmbedSrcFromUserUrl } from '@/lib/utils/googleMapsEmbed'
 
 interface PropertyMapProps {
   location: string
   coordinates?: { lat: number; lng: number } | null
+  googleMapsUrl?: string | null
 }
 
 const isValidCoords = (coords: { lat: number; lng: number }) =>
@@ -16,7 +20,29 @@ const isValidCoords = (coords: { lat: number; lng: number }) =>
   coords.lat !== 0 && coords.lng !== 0 &&
   coords.lat >= -90 && coords.lat <= 90 && coords.lng >= -180 && coords.lng <= 180
 
-export default function PropertyMap({ location, coordinates }: PropertyMapProps) {
+export default function PropertyMap({
+  location,
+  coordinates,
+  googleMapsUrl,
+}: PropertyMapProps) {
+  const pastedEmbed = googleMapsEmbedSrcFromUserUrl(googleMapsUrl, location)
+  if (pastedEmbed) {
+    return (
+      <div className="h-64 sm:h-80 rounded-lg overflow-hidden">
+        <iframe
+          title={location}
+          src={pastedEmbed}
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+    )
+  }
+
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
   const hasValidCoords = coordinates && isValidCoords(coordinates)
 

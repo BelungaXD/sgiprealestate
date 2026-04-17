@@ -33,6 +33,7 @@ interface Property {
   developerLogo: string
   isFeatured: boolean
   coordinates: { lat: number; lng: number }
+  googleMapsUrl?: string | null
 }
 
 interface PropertyDetailsProps {
@@ -236,6 +237,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           <PropertyMap
             location={property.location}
             coordinates={property.coordinates}
+            googleMapsUrl={property.googleMapsUrl}
           />
         </div>
       </div>

@@ -71,3 +71,49 @@ export function normalizeImageUrl(url: string | null | undefined): string {
 export function normalizeUploadUrl(url: string | null | undefined): string {
   return normalizeImageUrl(url)
 }
+
+/**
+ * Stable key for comparing upload URLs that may differ by /uploads vs /api/uploads,
+ * percent-encoding, or absolute origin (same logical file).
+ */
+export function uploadUrlCompareKey(url: string | null | undefined): string {
+  if (url == null || url === '') return ''
+  const s = String(url).trim()
+  if (s.startsWith('data:')) return s
+
+  let pathname = s
+  if (s.startsWith('http://') || s.startsWith('https://')) {
+    try {
+      pathname = new URL(s).pathname
+    } catch {
+      return s
+    }
+  }
+
+  const apiMarker = '/api/uploads/'
+  const directMarker = '/uploads/'
+  let rest = ''
+  const apiIdx = pathname.indexOf(apiMarker)
+  if (apiIdx >= 0) {
+    rest = pathname.slice(apiIdx + apiMarker.length)
+  } else {
+    const upIdx = pathname.indexOf(directMarker)
+    if (upIdx >= 0) {
+      rest = pathname.slice(upIdx + directMarker.length)
+    } else {
+      return s
+    }
+  }
+
+  return rest
+    .split('/')
+    .map((seg) => {
+      if (!seg) return seg
+      try {
+        return decodeURIComponent(seg)
+      } catch {
+        return seg
+      }
+    })
+    .join('/')
+}

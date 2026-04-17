@@ -57,7 +57,7 @@ export default function Admin() {
     return (
       <>
         <Head>
-          <title>{t('login.title')} | SGIP Real Estate</title>
+          <title>{`${t('login.title')} | SGIP Real Estate`}</title>
           <meta name="robots" content="noindex, nofollow" />
         </Head>
         <AdminLogin onLogin={handleLogin} />
@@ -68,7 +68,7 @@ export default function Admin() {
   return (
     <>
       <Head>
-        <title>{t('dashboard.title')} | SGIP Real Estate</title>
+        <title>{`${t('dashboard.title')} | SGIP Real Estate`}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <AdminDashboard onLogout={handleLogout} />

@@ -13,17 +13,17 @@ datasource db {
 
 model Property {
   id          String   @id @default(cuid())
-  title       String
+  title       String   @default("")
   description String?
-  price       Float
+  price       Float    @default(0)
   currency    String   @default("AED")
   type        PropertyType
   /// Primary (off-plan) vs secondary (resale) — distinct from `type` (APARTMENT, VILLA, …)
   listingMarket ListingMarket @default(PRIMARY)
   status      PropertyStatus @default(AVAILABLE)
-  areaSqm     Float // Property area in square meters
-  bedrooms    Int
-  bathrooms   Int
+  areaSqm     Float    @default(0)
+  bedrooms    Int      @default(0)
+  bathrooms   Int      @default(0)
   parking     Int?
   floor       Int?
   totalFloors Int?
@@ -35,11 +35,13 @@ model Property {
   occupancyStatus OccupancyStatus?
   
   // Location
-  address     String
-  city        String
-  district    String
+  address     String   @default("")
+  city        String   @default("")
+  district    String   @default("")
   coordinates Json? // { lat: number, lng: number }
-  
+  /// Share or embed link from Google Maps (admin pastes URL)
+  googleMapsUrl String? @db.Text
+
   // Relations
   areaId      String?
   area        Area? @relation(fields: [areaId], references: [id])
@@ -190,7 +192,7 @@ model Lead {
   
   // Property interest
   propertyId  String?
-  property    Property? @relation(fields: [propertyId], references: [id])
+  property    Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
   
   // Lead source
   source      String? // website, whatsapp, phone, etc.

@@ -1,0 +1,58 @@
+{
+  "bedrooms": "غرف النوم",
+  "bathrooms": "الحمامات",
+  "featured": "مميز",
+  "price": "السعر",
+  "type": "النوع",
+  "quickInfo": "معلومات سريعة",
+  "pricePerSqft": "السعر لكل متر مربع",
+  "requestInfo": "طلب معلومات",
+  "scheduleViewing": "حجز معاينة",
+  "saved": "تم الحفظ",
+  "save": "حفظ",
+  "share": "مشاركة",
+  "tabs": {
+    "overview": "نظرة عامة",
+    "floorPlans": "مخططات الطوابق",
+    "infrastructure": "البنية التحتية",
+    "contact": "التواصل"
+  },
+  "description": "الوصف",
+  "keyDetails": "التفاصيل الأساسية",
+  "area": "المساحة",
+  "yearBuilt": "سنة البناء",
+  "parking": "مواقف السيارات",
+  "spaces": "مواقف",
+  "developer": "المطور",
+  "features": "المميزات",
+  "amenities": "المرافق",
+  "location": "الموقع",
+  "developerDescription": "مطور رائد يمتلك سجلًا مثبتًا في تقديم عقارات استثنائية.",
+  "contactForm": {
+    "title": "تواصل معنا",
+    "description": "مهتم بهذا العقار؟ املأ النموذج أدناه وسيتواصل فريقنا معك خلال 24 ساعة.",
+    "name": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الهاتف",
+    "preferredContact": "طريقة التواصل المفضلة",
+    "message": "الرسالة",
+    "messagePlaceholder": "أخبرنا بمتطلباتك أو أسئلتك أو أي معلومات محددة تحتاجها عن هذا العقار...",
+    "scheduleViewing": "أرغب في حجز معاينة",
+    "requestInfo": "أرسلوا لي المزيد من المعلومات عن هذا العقار",
+    "budget": "نطاق الميزانية",
+    "timeline": "متى تخطط للشراء؟",
+    "submit": "إرسال الطلب",
+    "submitting": "جارٍ الإرسال..."
+  },
+  "quickContact": {
+    "title": "تواصل سريع"
+  },
+  "propertyInfo": {
+    "title": "معلومات العقار"
+  },
+  "relatedProperties": {
+    "title": "عقارات مشابهة",
+    "description": "قد يهمك أيضًا هذه العقارات في نفس المنطقة أو بمواصفات مشابهة.",
+    "viewAll": "عرض جميع العقارات"
+  }
+}

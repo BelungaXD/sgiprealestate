@@ -1,12 +1,12 @@
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { propertySchema, type PropertyFormData } from '@/lib/validations/property'
+import { getErrorMessage } from '@/lib/utils/errorMessage'
 import { generateSlug } from '@/lib/utils/slug'
 import ImageUpload from './ImageUpload'
 import FileUpload, { type FileWithLabel } from './FileUpload'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Dialog, Transition } from '@headlessui/react'
 
 interface PropertyFormProps {
   property?: any
@@ -56,11 +56,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const [amenities, setAmenities] = useState<string[]>([])
   const [newFeature, setNewFeature] = useState('')
   const [newAmenity, setNewAmenity] = useState('')
-  const [quickAreaOpen, setQuickAreaOpen] = useState(false)
-  const [quickDevOpen, setQuickDevOpen] = useState(false)
-  const [quickArea, setQuickArea] = useState({ nameEn: '', nameRu: '', city: 'Dubai' })
-  const [quickDev, setQuickDev] = useState({ nameEn: '', nameRu: '' })
-  const [quickSaving, setQuickSaving] = useState(false)
 
   const {
     register,
@@ -98,7 +93,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           district: property.district || '',
           areaId: property.areaId || '',
           developerId: property.developerId || '',
-          coordinates: property.coordinates || undefined,
+          googleMapsUrl: property.googleMapsUrl || '',
           features: property.features || [],
           amenities: property.amenities || [],
           slug: property.slug || '',
@@ -118,6 +113,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           amenities: [],
           isPublished: false,
           isFeatured: false,
+          googleMapsUrl: '',
         },
   })
 
@@ -141,16 +137,50 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const loadLookup = async () => {
     setLoadingData(true)
     try {
-      const [devRes, areaRes] = await Promise.all([
+      const [devResult, areaResult] = await Promise.allSettled([
         fetch('/api/developers?admin=1'),
-        fetch('/api/areas'),
+        fetch('/api/areas?admin=1'),
       ])
-      const devData = await devRes.json()
-      const areaData = await areaRes.json()
-      setDevelopers(devData.developers || [])
-      setAreas(areaData.areas || [])
+
+      if (devResult.status === 'fulfilled') {
+        if (!devResult.value.ok) {
+          console.error(
+            `[${new Date().toISOString()}] Failed to load developers for admin form`,
+            { status: devResult.value.status }
+          )
+          setDevelopers([])
+        } else {
+          const devData = await devResult.value.json()
+          setDevelopers(devData.developers || [])
+        }
+      } else {
+        console.error(
+          `[${new Date().toISOString()}] Developers lookup request failed`,
+          devResult.reason
+        )
+        setDevelopers([])
+      }
+
+      if (areaResult.status === 'fulfilled') {
+        if (!areaResult.value.ok) {
+          console.error(
+            `[${new Date().toISOString()}] Failed to load areas for admin form`,
+            { status: areaResult.value.status }
+          )
+          setAreas([])
+        } else {
+          const areaData = await areaResult.value.json()
+          setAreas(areaData.areas || [])
+        }
+      } else {
+        console.error(
+          `[${new Date().toISOString()}] Areas lookup request failed`,
+          areaResult.reason
+        )
+        setAreas([])
+      }
     } catch (e) {
-      console.error(e)
+      console.error(`[${new Date().toISOString()}] Unexpected lookup error`, e)
       setDevelopers([])
       setAreas([])
     } finally {
@@ -198,72 +228,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     }
   }, [property])
 
-  const saveQuickArea = async () => {
-    if (!quickArea.nameEn.trim()) return
-    setQuickSaving(true)
-    try {
-      const res = await fetch('/api/areas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nameEn: quickArea.nameEn.trim(),
-          nameRu: quickArea.nameRu.trim() || null,
-          city: quickArea.city.trim() || 'Dubai',
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Failed')
-      await loadLookup()
-      if (data.area?.id) {
-        setValue('areaId', data.area.id)
-        setValue(
-          'district',
-          data.area.nameEn || data.area.name || quickArea.nameEn.trim()
-        )
-      }
-      setQuickAreaOpen(false)
-      setQuickArea({ nameEn: '', nameRu: '', city: 'Dubai' })
-    } catch (e: unknown) {
-      alert((e as Error).message)
-    } finally {
-      setQuickSaving(false)
-    }
-  }
-
-  const saveQuickDev = async () => {
-    if (!quickDev.nameEn.trim()) return
-    setQuickSaving(true)
-    try {
-      const res = await fetch('/api/developers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nameEn: quickDev.nameEn.trim(),
-          nameRu: quickDev.nameRu.trim() || null,
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Failed')
-      await loadLookup()
-      if (data.developer?.id) setValue('developerId', data.developer.id)
-      setQuickDevOpen(false)
-      setQuickDev({ nameEn: '', nameRu: '' })
-    } catch (e: unknown) {
-      alert((e as Error).message)
-    } finally {
-      setQuickSaving(false)
-    }
-  }
-
   const onSubmit = async (data: PropertyFormData) => {
-    if (!property && images.length === 0) {
-      alert('Add at least one photo before saving.')
-      return
-    }
-    if (!data.areaId) {
-      alert('Select an area from the directory.')
-      return
-    }
     setLoading(true)
     try {
       const uploadedImages = await Promise.all(
@@ -272,33 +237,34 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             return image
           }
           if (image.startsWith('data:')) {
-            try {
-              const isVideo = image.startsWith('data:video/')
-              const mimeType = image.split(';')[0].split(':')[1]
-              const extension = isVideo
-                ? mimeType.includes('mp4')
-                  ? '.mp4'
-                  : mimeType.includes('mov')
-                    ? '.mov'
-                    : '.mp4'
-                : mimeType.includes('webp')
-                  ? '.webp'
-                  : mimeType.includes('jpeg')
-                    ? '.jpg'
-                    : '.png'
-              const filename = `image-${Date.now()}${extension}`
-              const uploadResponse = await fetch('/api/properties/upload-image', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ file: image, filename, mimeType }),
-              })
-              if (!uploadResponse.ok) throw new Error('Failed to upload image/video')
-              const uploadResult = await uploadResponse.json()
-              return uploadResult.url
-            } catch (error) {
-              console.error('Error uploading image/video:', error)
-              return image
+            const isVideo = image.startsWith('data:video/')
+            const mimeType = image.split(';')[0].split(':')[1]
+            const extension = isVideo
+              ? mimeType.includes('mp4')
+                ? '.mp4'
+                : mimeType.includes('mov')
+                  ? '.mov'
+                  : '.mp4'
+              : mimeType.includes('webp')
+                ? '.webp'
+                : mimeType.includes('jpeg')
+                  ? '.jpg'
+                  : '.png'
+            const filename = `image-${Date.now()}${extension}`
+            const uploadResponse = await fetch('/api/properties/upload-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({ file: image, filename, mimeType }),
+            })
+            if (!uploadResponse.ok) {
+              const errText = await uploadResponse.text().catch(() => '')
+              throw new Error(
+                `Image/video upload failed (${uploadResponse.status}). ${errText.slice(0, 200)}`
+              )
             }
+            const uploadResult = await uploadResponse.json()
+            return uploadResult.url
           }
           return image
         })
@@ -310,33 +276,43 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             return fileItem
           }
           if (fileItem.file) {
-            try {
-              const base64 = await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader()
-                reader.onload = () => resolve(reader.result as string)
-                reader.onerror = reject
-                reader.readAsDataURL(fileItem.file!)
-              })
-              const uploadResponse = await fetch('/api/properties/upload-file', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  file: base64,
-                  filename: fileItem.filename || fileItem.file.name,
-                  mimeType: fileItem.mimeType || fileItem.file.type,
-                }),
-              })
-              if (!uploadResponse.ok) throw new Error('Failed to upload file')
-              const uploadResult = await uploadResponse.json()
-              return { ...fileItem, url: uploadResult.url, file: null }
-            } catch (error) {
-              console.error('Error uploading file:', error)
-              return fileItem
+            const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader()
+              reader.onload = () => resolve(reader.result as string)
+              reader.onerror = reject
+              reader.readAsDataURL(fileItem.file!)
+            })
+            const uploadResponse = await fetch('/api/properties/upload-file', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({
+                file: base64,
+                filename: fileItem.filename || fileItem.file.name,
+                mimeType: fileItem.mimeType || fileItem.file.type,
+              }),
+            })
+            if (!uploadResponse.ok) {
+              const errText = await uploadResponse.text().catch(() => '')
+              throw new Error(
+                `File upload failed (${uploadResponse.status}). ${errText.slice(0, 200)}`
+              )
             }
+            const uploadResult = await uploadResponse.json()
+            return { ...fileItem, url: uploadResult.url, file: null }
           }
           return fileItem
         })
       )
+
+      const stillDataUrl = uploadedImages.some(
+        (i) => typeof i === 'string' && i.startsWith('data:')
+      )
+      if (stillDataUrl) {
+        throw new Error(
+          'Some gallery items are still raw uploads (not saved to disk). Fix failed uploads or remove those items.'
+        )
+      }
 
       await onSave({
         ...data,
@@ -347,6 +323,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       })
     } catch (error) {
       console.error('Error saving property:', error)
+      alert(getErrorMessage(error, 'Error saving property'))
     } finally {
       setLoading(false)
     }
@@ -383,14 +360,13 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const areaLabel = (a: AreaOpt) => a.nameEn || a.name
 
   return (
-    <>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="bg-gray-50 p-6 rounded-lg space-y-4">
           <h3 className="text-lg font-semibold text-graphite">Basic Information</h3>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Listing market *
+              Listing market
             </label>
             <select
               {...register('listingMarket')}
@@ -403,7 +379,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title *
+              Title
             </label>
             <input
               type="text"
@@ -432,7 +408,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status *
+                Status
               </label>
               <select
                 {...register('status')}
@@ -450,7 +426,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Price *
+                Price
               </label>
               <input
                 type="number"
@@ -480,7 +456,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Unit type *
+              Unit type
             </label>
             <select
               {...register('type')}
@@ -508,7 +484,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Bedrooms *
+                Bedrooms
               </label>
               <select
                 {...register('bedrooms', { valueAsNumber: true })}
@@ -523,7 +499,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Bathrooms *
+                Bathrooms
               </label>
               <input
                 type="number"
@@ -624,7 +600,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Address *
+              Address
             </label>
             <input
               type="text"
@@ -636,7 +612,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                City *
+                City
               </label>
               <input
                 type="text"
@@ -646,7 +622,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                District *
+                District
               </label>
               <input
                 type="text"
@@ -657,20 +633,34 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </div>
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Google Maps link
+            </label>
+            <input
+              type="text"
+              inputMode="url"
+              autoComplete="off"
+              {...register('googleMapsUrl')}
+              placeholder="https://maps.app.goo.gl/… or Share → Copy link"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+            />
+            {errors.googleMapsUrl && (
+              <p className="mt-1 text-sm text-red-600">{errors.googleMapsUrl.message as string}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Paste the link from Google Maps (Share). Embed links from “Embed a map” also work.
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  Area (directory) *
-                </label>
-                <button
-                  type="button"
-                  className="text-xs text-champagne hover:underline"
-                  onClick={() => setQuickAreaOpen(true)}
-                >
-                  + Add area
-                </button>
-              </div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Area (catalog)
+              </label>
+              <p className="text-xs text-gray-500 mb-1">
+                Manage areas in the sidebar: Areas.
+              </p>
               {loadingData ? (
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm">
                   Loading areas…
@@ -686,7 +676,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
                 >
-                  <option value="">Select area</option>
+                  <option value="">Not set</option>
                   {areas.map((a) => (
                     <option key={a.id} value={a.id}>
                       {areaLabel(a)}
@@ -698,18 +688,12 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
 
             {listingMarket === 'PRIMARY' && (
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Developer
-                  </label>
-                  <button
-                    type="button"
-                    className="text-xs text-champagne hover:underline"
-                    onClick={() => setQuickDevOpen(true)}
-                  >
-                    + Add developer
-                  </button>
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Developer (catalog)
+                </label>
+                <p className="text-xs text-gray-500 mb-1">
+                  Manage developers in the sidebar: Developers.
+                </p>
                 {loadingData ? (
                   <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm">
                     Loading developers…
@@ -719,7 +703,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                     {...register('developerId')}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
                   >
-                    <option value="">Select developer</option>
+                    <option value="">Not set</option>
                     {developers.map((developer) => (
                       <option key={developer.id} value={developer.id}>
                         {developer.nameEn || developer.name}
@@ -831,8 +815,11 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           <h3 className="text-lg font-semibold text-graphite">SEO</h3>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Slug *
+              Slug
             </label>
+            <p className="text-xs text-gray-500 mb-1">
+              Leave empty to auto-generate from the title.
+            </p>
             <input
               type="text"
               {...register('slug')}
@@ -884,104 +871,5 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           </button>
         </div>
       </form>
-
-      <Transition appear show={quickAreaOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-[60]" onClose={() => setQuickAreaOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/40" />
-          </Transition.Child>
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="bg-white rounded-xl p-6 max-w-md w-full space-y-3 shadow-xl">
-              <Dialog.Title className="font-semibold text-graphite">New area</Dialog.Title>
-              <input
-                placeholder="Name (EN) *"
-                className="w-full border rounded-md px-3 py-2 text-sm"
-                value={quickArea.nameEn}
-                onChange={(e) => setQuickArea((q) => ({ ...q, nameEn: e.target.value }))}
-              />
-              <input
-                placeholder="Name (RU)"
-                className="w-full border rounded-md px-3 py-2 text-sm"
-                value={quickArea.nameRu}
-                onChange={(e) => setQuickArea((q) => ({ ...q, nameRu: e.target.value }))}
-              />
-              <input
-                placeholder="City"
-                className="w-full border rounded-md px-3 py-2 text-sm"
-                value={quickArea.city}
-                onChange={(e) => setQuickArea((q) => ({ ...q, city: e.target.value }))}
-              />
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" className="btn-ghost btn-sm" onClick={() => setQuickAreaOpen(false)}>
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn-filled btn-sm"
-                  disabled={quickSaving}
-                  onClick={saveQuickArea}
-                >
-                  Save
-                </button>
-              </div>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      </Transition>
-
-      <Transition appear show={quickDevOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-[60]" onClose={() => setQuickDevOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/40" />
-          </Transition.Child>
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="bg-white rounded-xl p-6 max-w-md w-full space-y-3 shadow-xl">
-              <Dialog.Title className="font-semibold text-graphite">New developer</Dialog.Title>
-              <input
-                placeholder="Name (EN) *"
-                className="w-full border rounded-md px-3 py-2 text-sm"
-                value={quickDev.nameEn}
-                onChange={(e) => setQuickDev((q) => ({ ...q, nameEn: e.target.value }))}
-              />
-              <input
-                placeholder="Name (RU)"
-                className="w-full border rounded-md px-3 py-2 text-sm"
-                value={quickDev.nameRu}
-                onChange={(e) => setQuickDev((q) => ({ ...q, nameRu: e.target.value }))}
-              />
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" className="btn-ghost btn-sm" onClick={() => setQuickDevOpen(false)}>
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn-filled btn-sm"
-                  disabled={quickSaving}
-                  onClick={saveQuickDev}
-                >
-                  Save
-                </button>
-              </div>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
   )
 }

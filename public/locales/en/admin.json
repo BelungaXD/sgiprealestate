@@ -2,14 +2,14 @@
   "login": {
     "title": "Admin Login",
     "subtitle": "Sign in to access the admin dashboard",
-    "username": "Username",
-    "usernamePlaceholder": "Enter your username",
+    "username": "Username or email",
+    "usernamePlaceholder": "Enter username or email",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
     "signIn": "Sign In",
     "signingIn": "Signing In...",
     "invalidCredentials": "Invalid username or password",
-    "notConfigured": "Admin login is not configured on the server. Set ADMIN_PASSWORD (and ADMIN_SESSION_SECRET in production) in .env.",
+    "notConfigured": "Admin login is not configured on the server. Set ADMIN_SESSION_SECRET in .env.",
     "serverError": "Could not reach the server. Try again."
   },
   "dashboard": {
@@ -52,7 +52,26 @@
   },
   "settings": {
     "title": "Settings",
-    "comingSoon": "Settings management is coming soon..."
+    "description": "Manage admin access and team members.",
+    "addPeople": "Add team member",
+    "addUser": "Add user",
+    "peopleList": "Team members",
+    "loadingUsers": "Loading users...",
+    "noUsers": "No admin users yet.",
+    "emailPlaceholder": "Email (login)",
+    "namePlaceholder": "Display name (optional)",
+    "passwordPlaceholder": "Password (min 8 characters)",
+    "saving": "Saving...",
+    "user": "User",
+    "createdAt": "Created",
+    "actions": "Actions",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this user?",
+    "loadError": "Failed to load users.",
+    "createError": "Failed to create user.",
+    "deleteError": "Failed to delete user.",
+    "emailExists": "User with this email already exists.",
+    "lastUserError": "Cannot delete the last admin user."
   },
   "form": {
     "basicInfo": "Basic Information",

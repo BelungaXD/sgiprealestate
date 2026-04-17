@@ -36,6 +36,22 @@ const createDeveloperSchema = z.object({
   isActive: z.boolean().optional().default(true),
 })
 
+const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
+  if (!error || typeof error !== 'object') return false
+
+  const prismaError = error as {
+    code?: string
+    meta?: { column?: string }
+    message?: string
+  }
+
+  return (
+    prismaError.code === 'P2022' &&
+    (prismaError.meta?.column === 'developers.isActive' ||
+      prismaError.message?.includes('developers.isActive'))
+  )
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -51,12 +67,9 @@ export default async function handler(
       const search = (req.query.search as string)?.trim()
       const sort = req.query.sort as string | undefined
 
-      const andClauses: object[] = [emaarNoiseFilter]
-      if (!admin) {
-        andClauses.push({ isActive: true })
-      }
+      const baseAndClauses: object[] = [emaarNoiseFilter]
       if (search) {
-        andClauses.push({
+        baseAndClauses.push({
           OR: [
             { name: { contains: search, mode: 'insensitive' } },
             { nameEn: { contains: search, mode: 'insensitive' } },
@@ -64,39 +77,81 @@ export default async function handler(
         })
       }
 
-      const developers = await prisma.developer.findMany({
-        where: { AND: andClauses },
-        select: {
-          id: true,
-          name: true,
-          nameEn: true,
-          slug: true,
-          logo: true,
-          description: true,
-          descriptionEn: true,
-          city: true,
-          website: true,
-          isActive: true,
-          _count: {
-            select: {
-              properties: admin
-                ? true
-                : {
-                    where: { isPublished: true },
-                  },
+      const orderBy =
+        sort === 'properties'
+          ? undefined
+          : {
+              name: 'asc' as const,
+            }
+
+      let includesIsActive = true
+      const developers = await prisma.developer
+        .findMany({
+          where: {
+            AND: admin
+              ? baseAndClauses
+              : [...baseAndClauses, { isActive: true }],
+          },
+          select: {
+            id: true,
+            name: true,
+            nameEn: true,
+            slug: true,
+            logo: true,
+            description: true,
+            descriptionEn: true,
+            city: true,
+            website: true,
+            isActive: true,
+            _count: {
+              select: {
+                properties: admin
+                  ? true
+                  : {
+                      where: { isPublished: true },
+                    },
+              },
             },
           },
-        },
-        orderBy:
-          sort === 'properties'
-            ? undefined
-            : {
-                name: 'asc',
+          orderBy,
+        })
+        .catch(async (error) => {
+          if (!hasMissingDeveloperIsActiveColumn(error)) {
+            throw error
+          }
+
+          includesIsActive = false
+          return prisma.developer.findMany({
+            where: { AND: baseAndClauses },
+            select: {
+              id: true,
+              name: true,
+              nameEn: true,
+              slug: true,
+              logo: true,
+              description: true,
+              descriptionEn: true,
+              city: true,
+              website: true,
+              _count: {
+                select: {
+                  properties: admin
+                    ? true
+                    : {
+                        where: { isPublished: true },
+                      },
+                },
               },
-      })
+            },
+            orderBy,
+          })
+        })
 
       let list = developers.map((dev: (typeof developers)[number]) => ({
         ...dev,
+        isActive: includesIsActive
+          ? (dev as { isActive?: boolean }).isActive ?? true
+          : true,
         logo: normalizeImageUrl(dev.logo),
         propertiesCount: dev._count.properties,
       }))
@@ -131,24 +186,44 @@ export default async function handler(
       const name = nameRu || nameEn
       let slug = generateSlug(nameEn)
       slug = await generateUniqueSlug(slug, async (s) => {
-        const ex = await prisma.developer.findUnique({ where: { slug: s } })
+        const ex = await prisma.developer.findUnique({
+          where: { slug: s },
+          select: { id: true },
+        })
         return !!ex
       })
 
       const website =
         parsed.website && parsed.website.trim() !== '' ? parsed.website.trim() : null
 
-      const developer = await prisma.developer.create({
-        data: {
-          name,
-          nameEn,
-          description: parsed.description?.trim() || null,
-          logo: parsed.logo || null,
-          website,
-          isActive: parsed.isActive ?? true,
-          slug,
-        },
-      })
+      const developer = await prisma.developer
+        .create({
+          data: {
+            name,
+            nameEn,
+            description: parsed.description?.trim() || null,
+            logo: parsed.logo || null,
+            website,
+            isActive: parsed.isActive ?? true,
+            slug,
+          },
+        })
+        .catch(async (error) => {
+          if (!hasMissingDeveloperIsActiveColumn(error)) {
+            throw error
+          }
+
+          return prisma.developer.create({
+            data: {
+              name,
+              nameEn,
+              description: parsed.description?.trim() || null,
+              logo: parsed.logo || null,
+              website,
+              slug,
+            },
+          })
+        })
 
       return res.status(201).json({ success: true, developer })
     } catch (error: any) {

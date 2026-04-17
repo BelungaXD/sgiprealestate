@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
+import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,8 +19,27 @@ export default async function handler(
       })
     }
 
-    // Delete all properties (images and files will be deleted via cascade)
+    const listed = await prisma.property.findMany({
+      include: {
+        images: { select: { url: true } },
+        files: { select: { url: true } },
+        floorPlans: { select: { url: true } },
+      },
+    })
+
     const deletedCount = await prisma.property.deleteMany({})
+
+    const allMediaUrls: string[] = []
+    for (const p of listed) {
+      allMediaUrls.push(
+        ...p.images.map((i: { url: string }) => i.url),
+        ...p.files.map((f: { url: string }) => f.url),
+        ...p.floorPlans.map((fp: { url: string }) => fp.url)
+      )
+    }
+    void deletePropertyMediaFiles(allMediaUrls).catch((err) => {
+      console.error(`[${new Date().toISOString()}] delete-all media cleanup failed:`, err)
+    })
 
     return res.status(200).json({
       success: true,

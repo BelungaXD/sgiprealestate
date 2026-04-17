@@ -1,12 +1,54 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
-import { readdir, stat, copyFile, mkdir } from 'fs/promises'
-import { join, extname, basename } from 'path'
+import { readdir, stat, copyFile, mkdir, rm } from 'fs/promises'
+import { join, extname, basename, resolve, relative, sep } from 'path'
 import { existsSync } from 'fs'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 
 const execAsync = promisify(exec)
+const LOG_SCOPE = 'import-folder'
+const FFPROBE_TIMEOUT_MS = 15000
+
+function log(message: string, details?: Record<string, unknown>) {
+  const ts = new Date().toISOString()
+  if (details) {
+    console.info(`[${ts}] [${LOG_SCOPE}] ${message}`, details)
+    return
+  }
+  console.info(`[${ts}] [${LOG_SCOPE}] ${message}`)
+}
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  return 'Unknown error'
+}
+
+/** Staging root from upload-folder: public/uploads/incoming/{uploadId}/ */
+const INCOMING_STAGING_ROOT = resolve(join(process.cwd(), 'public', 'uploads', 'incoming'))
+
+function isIncomingBatchDir(dir: string): boolean {
+  const abs = resolve(dir)
+  const rel = relative(INCOMING_STAGING_ROOT, abs)
+  if (rel.startsWith('..')) return false
+  if (rel === '') return false
+  return abs.startsWith(INCOMING_STAGING_ROOT + sep)
+}
+
+/** Drop browser-upload staging after import; never touch paths outside incoming or the incoming root itself. */
+async function removeIncomingStagingDirIfApplicable(folderPath: string): Promise<void> {
+  if (!isIncomingBatchDir(folderPath)) return
+  try {
+    await rm(resolve(folderPath), { recursive: true, force: true })
+    log('incoming staging removed', { folderPath: resolve(folderPath) })
+  } catch (e) {
+    console.warn(`[${new Date().toISOString()}] [${LOG_SCOPE}] incoming staging remove failed`, {
+      folderPath,
+      error: e,
+    })
+  }
+}
 
 // Lazy-load sharp to avoid import-time failure (e.g. linux-x64 runtime error in Docker)
 let sharpModule: typeof import('sharp') | null | false = null
@@ -36,9 +78,8 @@ export const config = {
 const VALID_DISTRICTS = ['Beachfront', 'Downtown', 'Dubai Hills', 'Marina Shores', 'The Oasis']
 
 // Расширения изображений
-const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp']
-const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv']
-const DOCUMENT_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.txt']
+const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.heic', '.heif', '.avif', '.tiff', '.tif']
+const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.m4v', '.mpg', '.mpeg', '.3gp', '.wmv']
 
 // Получить MIME type
 function getMimeType(filepath: string): string {
@@ -49,15 +90,53 @@ function getMimeType(filepath: string): string {
     '.png': 'image/png',
     '.webp': 'image/webp',
     '.gif': 'image/gif',
+    '.bmp': 'image/bmp',
+    '.heic': 'image/heic',
+    '.heif': 'image/heif',
+    '.avif': 'image/avif',
+    '.tiff': 'image/tiff',
+    '.tif': 'image/tiff',
     '.mp4': 'video/mp4',
     '.mov': 'video/quicktime',
     '.avi': 'video/x-msvideo',
     '.webm': 'video/webm',
+    '.mkv': 'video/x-matroska',
+    '.m4v': 'video/x-m4v',
+    '.mpg': 'video/mpeg',
+    '.mpeg': 'video/mpeg',
+    '.3gp': 'video/3gpp',
+    '.wmv': 'video/x-ms-wmv',
     '.pdf': 'application/pdf',
     '.doc': 'application/msword',
     '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.txt': 'text/plain',
+    '.zip': 'application/zip',
+    '.rar': 'application/vnd.rar',
+    '.7z': 'application/x-7z-compressed',
+    '.csv': 'text/csv',
   }
   return mimeTypes[ext] || 'application/octet-stream'
+}
+
+function isVisibleFile(entryName: string): boolean {
+  return !entryName.startsWith('.') && entryName !== '.DS_Store'
+}
+
+async function hasVisibleFilesRecursive(dirPath: string): Promise<boolean> {
+  const entries = await readdir(dirPath, { withFileTypes: true })
+  for (const entry of entries) {
+    const fullPath = join(dirPath, entry.name)
+    if (entry.isFile() && isVisibleFile(entry.name)) {
+      return true
+    }
+    if (entry.isDirectory()) {
+      const hasFiles = await hasVisibleFilesRecursive(fullPath)
+      if (hasFiles) return true
+    }
+  }
+  return false
 }
 
 // Проверить соотношение сторон видео (16:9)
@@ -71,17 +150,31 @@ async function isVideo16x9(videoPath: string): Promise<boolean> {
       return true // Если ffprobe не установлен, принимаем все видео
     }
     
+    const startedAt = Date.now()
     const { stdout } = await execAsync(
-      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "${videoPath}"`
+      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "${videoPath}"`,
+      { timeout: FFPROBE_TIMEOUT_MS }
     )
     const [width, height] = stdout.trim().split('x').map(Number)
     if (!width || !height) return false
     
     const ratio = width / height
     // Проверяем, что соотношение близко к 16:9 (1.777...)
-    return Math.abs(ratio - 16/9) < 0.1
+    const isValid = Math.abs(ratio - 16 / 9) < 0.1
+    log('ffprobe completed', {
+      file: videoPath,
+      width,
+      height,
+      ratio,
+      isValid,
+      durationMs: Date.now() - startedAt,
+    })
+    return isValid
   } catch (error) {
-    console.error('Error checking video aspect ratio:', error)
+    console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] Error checking video aspect ratio:`, {
+      file: videoPath,
+      error,
+    })
     // В случае ошибки принимаем видео (лучше добавить, чем пропустить)
     return true
   }
@@ -231,7 +324,7 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
 
       if (entry.isDirectory()) {
         await processDirectory(fullPath)
-      } else if (entry.isFile() && !entry.name.startsWith('.') && entry.name !== '.DS_Store') {
+      } else if (entry.isFile() && isVisibleFile(entry.name)) {
         const ext = extname(entry.name).toLowerCase()
         
         if (IMAGE_EXTENSIONS.includes(ext)) {
@@ -277,7 +370,7 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
               order: videos.length,
             })
           }
-        } else if (DOCUMENT_EXTENSIONS.includes(ext)) {
+        } else {
           const fileInfo = await processFile(fullPath, 'file')
           files.push({
             url: fileInfo.url,
@@ -432,7 +525,7 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
       const fullPath = join(dirPath, entry.name)
       if (entry.isDirectory()) {
         await processDirectory(fullPath)
-      } else if (entry.isFile() && !entry.name.startsWith('.') && entry.name !== '.DS_Store') {
+      } else if (entry.isFile() && isVisibleFile(entry.name)) {
         const ext = extname(entry.name).toLowerCase()
         if (IMAGE_EXTENSIONS.includes(ext)) {
           const fileInfo = await processFile(fullPath, 'image')
@@ -468,7 +561,7 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
               order: videos.length,
             })
           }
-        } else if (DOCUMENT_EXTENSIONS.includes(ext)) {
+        } else {
           const fileInfo = await processFile(fullPath, 'file')
           files.push({
             url: fileInfo.url,
@@ -538,9 +631,14 @@ export default async function handler(
   }
 
   try {
+    const startedAt = Date.now()
     const body = req.body as { folderPath?: string; propertyId?: string } | undefined
     const folderPath = body?.folderPath
     const propertyId = body?.propertyId
+    log('request started', {
+      folderPath,
+      propertyId: typeof propertyId === 'string' ? propertyId : undefined,
+    })
 
     if (!folderPath || typeof folderPath !== 'string') {
       return res.status(400).json({ message: 'Folder path is required' })
@@ -561,14 +659,14 @@ export default async function handler(
       if (!property) {
         return res.status(404).json({ message: 'Property not found' })
       }
-      const entries = await readdir(folderPath, { withFileTypes: true })
-      const subdirs = entries.filter(entry => entry.isDirectory())
-      const hasFiles = entries.some(entry => entry.isFile() && !entry.name.startsWith('.'))
-      const targetPath = hasFiles ? folderPath : (subdirs.length === 1 ? join(folderPath, subdirs[0].name) : null)
-      if (!targetPath || !existsSync(targetPath)) {
-        return res.status(400).json({ message: 'Choose a folder that contains images or files (or a single subfolder with them)' })
+      const hasAnyFiles = await hasVisibleFilesRecursive(folderPath)
+      if (!hasAnyFiles) {
+        return res.status(400).json({ message: 'Choose a folder that contains at least one file in any nested level' })
       }
-      await processFolderIntoProperty(propertyId, targetPath)
+      log('attaching folder into existing property', { propertyId, sourceFolder: folderPath })
+      await processFolderIntoProperty(propertyId, folderPath)
+      log('attach completed', { propertyId, sourceFolder: folderPath, durationMs: Date.now() - startedAt })
+      await removeIncomingStagingDirIfApplicable(folderPath)
       return res.status(200).json({
         message: 'Folder imported into property',
         results: { success: [property.title], errors: [] },
@@ -622,16 +720,43 @@ export default async function handler(
       return res.status(400).json({ message: 'No property folders or files found in directory' })
     }
 
+    log('folders resolved', {
+      sourceFolder: folderPath,
+      foldersToProcess: foldersToProcess.map((folder) => folder.path),
+    })
     const results = { success: [] as string[], errors: [] as string[] }
     for (const { path: propertyFolderPath, name: folderName } of foldersToProcess) {
       try {
+        const folderStartedAt = Date.now()
+        log('folder processing started', { folderName, propertyFolderPath })
         await processPropertyFolder(propertyFolderPath)
         results.success.push(folderName)
-      } catch (error: any) {
-        results.errors.push(`${folderName}: ${error.message}`)
+        log('folder processing completed', {
+          folderName,
+          propertyFolderPath,
+          durationMs: Date.now() - folderStartedAt,
+        })
+      } catch (error: unknown) {
+        const message = errorMessage(error)
+        console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] folder processing failed`, {
+          folderName,
+          propertyFolderPath,
+          error: message,
+        })
+        results.errors.push(`${folderName}: ${message}`)
       }
     }
 
+    log('request completed', {
+      sourceFolder: folderPath,
+      total: foldersToProcess.length,
+      successful: results.success.length,
+      failed: results.errors.length,
+      durationMs: Date.now() - startedAt,
+    })
+    if (results.errors.length === 0) {
+      await removeIncomingStagingDirIfApplicable(folderPath)
+    }
     return res.status(200).json({
       message: 'Import completed',
       results,
@@ -639,11 +764,12 @@ export default async function handler(
       successful: results.success.length,
       failed: results.errors.length,
     })
-  } catch (error: any) {
-    console.error('Error importing properties:', error)
+  } catch (error: unknown) {
+    const message = errorMessage(error)
+    console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] Error importing properties:`, error)
     return res.status(500).json({
       message: 'Error importing properties',
-      error: error.message,
+      error: message,
     })
   }
 }

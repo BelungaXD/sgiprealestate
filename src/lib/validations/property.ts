@@ -24,9 +24,54 @@ export const ListingMarketEnum = z.enum(['PRIMARY', 'SECONDARY'])
 
 export const OccupancyStatusEnum = z.enum(['VACANT', 'TENANTED'])
 
+const asFiniteNumber = (v: unknown): number | undefined => {
+  if (v === '' || v === null || v === undefined) return undefined
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) ? n : undefined
+}
+
+const numOrZero = z.preprocess(
+  (v) => {
+    const n = asFiniteNumber(v)
+    return n === undefined ? 0 : n
+  },
+  z.number()
+)
+
+const optionalNonNegInt = z.preprocess(
+  (v) => {
+    const n = asFiniteNumber(v)
+    if (n === undefined) return undefined
+    const x = Math.trunc(n)
+    return x >= 0 ? x : undefined
+  },
+  z.number().int().min(0).optional()
+)
+
+const optionalPositiveInt = z.preprocess(
+  (v) => {
+    const n = asFiniteNumber(v)
+    if (n === undefined) return undefined
+    const x = Math.trunc(n)
+    return x > 0 ? x : undefined
+  },
+  z.number().int().positive().optional()
+)
+
+const optionalYear = z.preprocess(
+  (v) => {
+    const n = asFiniteNumber(v)
+    if (n === undefined) return undefined
+    const y = Math.trunc(n)
+    if (y < 1800 || y > 2100) return undefined
+    return y
+  },
+  z.number().int().optional()
+)
+
 export const propertySchema = z
   .object({
-    title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+    title: z.string().max(200).optional().default(''),
     description: z
       .string()
       .max(5000, 'Description is too long')
@@ -34,17 +79,40 @@ export const propertySchema = z
       .nullable(),
     type: PropertyTypeEnum.optional(),
     listingMarket: ListingMarketEnum.default('PRIMARY'),
-    price: z.number().positive('Price must be a positive number'),
-    currency: z.string().default('AED'),
+    price: numOrZero,
+    currency: z.preprocess(
+      (v) => {
+        if (v === '' || v === null || v === undefined) return 'AED'
+        const s = String(v).trim()
+        return s || 'AED'
+      },
+      z.string().max(16)
+    ),
     status: PropertyStatusEnum.default('AVAILABLE'),
 
-    areaSqm: z.number().positive('Area must be a positive number'),
-    bedrooms: z.number().int().min(0, 'Number of bedrooms cannot be negative'),
-    bathrooms: z.number().int().min(0, 'Number of bathrooms cannot be negative'),
-    parking: z.number().int().min(0).optional(),
-    floor: z.number().int().optional(),
-    totalFloors: z.number().int().positive().optional(),
-    yearBuilt: z.number().int().min(1800).max(2100).optional(),
+    areaSqm: numOrZero,
+    bedrooms: z.preprocess(
+      (v) => {
+        const n = asFiniteNumber(v)
+        if (n === undefined) return 0
+        const x = Math.trunc(n)
+        return x >= 0 ? x : 0
+      },
+      z.number().int().min(0)
+    ),
+    bathrooms: z.preprocess(
+      (v) => {
+        const n = asFiniteNumber(v)
+        if (n === undefined) return 0
+        const x = Math.trunc(n)
+        return x >= 0 ? x : 0
+      },
+      z.number().int().min(0)
+    ),
+    parking: optionalNonNegInt,
+    floor: optionalNonNegInt,
+    totalFloors: optionalPositiveInt,
+    yearBuilt: optionalYear,
     completionDate: z
       .string()
       .optional()
@@ -55,9 +123,9 @@ export const propertySchema = z
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
 
-    address: z.string().min(1, 'Address is required'),
-    city: z.string().min(1, 'City is required'),
-    district: z.string().min(1, 'District is required'),
+    address: z.string().max(500).optional().default(''),
+    city: z.string().max(500).optional().default(''),
+    district: z.string().max(500).optional().default(''),
     areaId: z.string().optional().nullable(),
     developerId: z.string().optional().nullable(),
     coordinates: z
@@ -66,13 +134,27 @@ export const propertySchema = z
         lng: z.number(),
       })
       .optional(),
+    googleMapsUrl: z
+      .union([z.string(), z.null(), z.undefined()])
+      .transform((v) => {
+        if (v == null || v === undefined) return null
+        const t = String(v).trim()
+        if (!t) return null
+        const withProto = /^https?:\/\//i.test(t) ? t : `https://${t}`
+        try {
+          new URL(withProto)
+          return withProto
+        } catch {
+          return null
+        }
+      }),
 
     features: z.array(z.string()).default([]),
     amenities: z.array(z.string()).default([]),
 
-    slug: z.string().min(1, 'Slug is required'),
-    metaTitle: z.string().max(60).optional(),
-    metaDescription: z.string().max(160).optional(),
+    slug: z.string().max(200).optional().default(''),
+    metaTitle: z.string().max(200).optional().nullable(),
+    metaDescription: z.string().max(2000).optional().nullable(),
 
     isPublished: z.boolean().default(false),
     isFeatured: z.boolean().default(false),

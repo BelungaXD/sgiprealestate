@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
-import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { resolveUpdatePropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
+import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
 
 export const config = {
   api: {
@@ -116,11 +117,54 @@ export default async function handler(
       // Parse JSON body
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
 
-      // Validate data
-      const validatedData = propertySchema.parse(body)
+      const clRaw = req.headers['content-length']
+      const cl =
+        typeof clRaw === 'string'
+          ? parseInt(clRaw, 10)
+          : Array.isArray(clRaw)
+            ? parseInt(clRaw[0], 10)
+            : NaN
+      const bodyBytes =
+        Number.isFinite(cl) && cl > 0
+          ? cl
+          : typeof req.body === 'string'
+            ? Buffer.byteLength(req.body, 'utf8')
+            : (() => {
+                try {
+                  return Buffer.byteLength(JSON.stringify(req.body), 'utf8')
+                } catch {
+                  return 0
+                }
+              })()
+      if (bodyBytes > 400_000) {
+        console.warn(
+          `[${new Date().toISOString()}] PUT property ${id} body ~${bodyBytes} bytes (images/files omitted in log)`
+        )
+      }
 
-      // Generate unique slug if changed
-      let slug = validatedData.slug || generateSlug(validatedData.title)
+      const parsed = propertySchema.safeParse(body)
+      if (!parsed.success) {
+        const message = parsed.error.errors
+          .map((e) => `${e.path.length ? e.path.join('.') : 'field'}: ${e.message}`)
+          .join('; ')
+        console.warn(
+          `[${new Date().toISOString()}] Property PUT validation failed for ${id}:`,
+          message
+        )
+        return res.status(400).json({
+          success: false,
+          message: message || 'Validation error',
+          errors: parsed.error.errors,
+        })
+      }
+      const validatedData = parsed.data
+
+      // Generate unique slug if changed (never empty)
+      let slug = resolveUpdatePropertySlug(
+        validatedData.slug,
+        validatedData.title,
+        existingProperty.slug
+      )
       if (slug !== existingProperty.slug) {
         const slugExists = await prisma.property.findUnique({ where: { slug } })
         if (slugExists && slugExists.id !== id) {
@@ -164,9 +208,15 @@ export default async function handler(
       // Verify developerId exists in database if provided
       if (developerId) {
         try {
-          let developerExists = await prisma.developer.findUnique({ where: { id: developerId } })
+          let developerExists = await prisma.developer.findUnique({
+            where: { id: developerId },
+            select: { id: true },
+          })
           if (!developerExists) {
-            developerExists = await prisma.developer.findUnique({ where: { slug: developerId } })
+            developerExists = await prisma.developer.findUnique({
+              where: { slug: developerId },
+              select: { id: true },
+            })
             if (developerExists) developerId = developerExists.id
           }
           if (!developerExists) {
@@ -184,51 +234,57 @@ export default async function handler(
         developerId = null
       }
 
+      const updateData: Record<string, unknown> = {
+        title: validatedData.title,
+        description: validatedData.description ?? null,
+        type: (validatedData.type || 'APARTMENT') as any,
+        listingMarket: listingMarket as any,
+        price: validatedData.price,
+        currency: validatedData.currency,
+        status: validatedData.status as any,
+        areaSqm: validatedData.areaSqm,
+        bedrooms: validatedData.bedrooms,
+        bathrooms: validatedData.bathrooms,
+        parking: validatedData.parking,
+        floor: validatedData.floor,
+        totalFloors: validatedData.totalFloors,
+        yearBuilt: validatedData.yearBuilt,
+        completionDate: validatedData.completionDate
+          ? validatedData.completionDate instanceof Date
+            ? validatedData.completionDate
+            : new Date(validatedData.completionDate as unknown as string)
+          : null,
+        paymentPlan:
+          listingMarket === 'PRIMARY'
+            ? validatedData.paymentPlan?.trim() || null
+            : null,
+        occupancyStatus:
+          listingMarket === 'SECONDARY'
+            ? (validatedData.occupancyStatus as any) || null
+            : null,
+        address: validatedData.address,
+        city: validatedData.city,
+        district: validatedData.district,
+        areaId: areaId,
+        developerId: developerId,
+        googleMapsUrl: validatedData.googleMapsUrl,
+        features: validatedData.features || [],
+        amenities: validatedData.amenities || [],
+        slug,
+        metaTitle: validatedData.metaTitle || null,
+        metaDescription: validatedData.metaDescription || null,
+        isPublished: validatedData.isPublished,
+        isFeatured: validatedData.isFeatured,
+      }
+
+      if (Object.prototype.hasOwnProperty.call(body, 'coordinates')) {
+        updateData.coordinates = validatedData.coordinates ?? null
+      }
+
       // Update property
       const property = await prisma.property.update({
         where: { id },
-        data: {
-          title: validatedData.title,
-          description: validatedData.description ?? null,
-          type: (validatedData.type || 'APARTMENT') as any,
-          listingMarket: listingMarket as any,
-          price: validatedData.price,
-          currency: validatedData.currency,
-          status: validatedData.status as any,
-          areaSqm: validatedData.areaSqm,
-          bedrooms: validatedData.bedrooms,
-          bathrooms: validatedData.bathrooms,
-          parking: validatedData.parking,
-          floor: validatedData.floor,
-          totalFloors: validatedData.totalFloors,
-          yearBuilt: validatedData.yearBuilt,
-          completionDate: validatedData.completionDate
-            ? validatedData.completionDate instanceof Date
-              ? validatedData.completionDate
-              : new Date(validatedData.completionDate as unknown as string)
-            : null,
-          paymentPlan:
-            listingMarket === 'PRIMARY'
-              ? validatedData.paymentPlan?.trim() || null
-              : null,
-          occupancyStatus:
-            listingMarket === 'SECONDARY'
-              ? (validatedData.occupancyStatus as any) || null
-              : null,
-          address: validatedData.address,
-          city: validatedData.city,
-          district: validatedData.district,
-          areaId: areaId,
-          developerId: developerId,
-          coordinates: validatedData.coordinates || null,
-          features: validatedData.features || [],
-          amenities: validatedData.amenities || [],
-          slug,
-          metaTitle: validatedData.metaTitle || null,
-          metaDescription: validatedData.metaDescription || null,
-          isPublished: validatedData.isPublished,
-          isFeatured: validatedData.isFeatured,
-        },
+        data: updateData as any,
         include: {
           area: true,
           developer: true,
@@ -368,26 +424,52 @@ export default async function handler(
     try {
       const property = await prisma.property.findUnique({
         where: { id },
+        include: {
+          images: { select: { url: true } },
+          files: { select: { url: true } },
+          floorPlans: { select: { url: true } },
+        },
       })
 
       if (!property) {
         return res.status(404).json({ message: 'Property not found' })
       }
 
-      // Delete property (images and floor plans will be deleted via cascade)
+      const mediaUrls = [
+        ...property.images.map((i: { url: string }) => i.url),
+        ...property.files.map((f: { url: string }) => f.url),
+        ...property.floorPlans.map((fp: { url: string }) => fp.url),
+      ]
+
       await prisma.property.delete({
         where: { id },
+      })
+
+      void deletePropertyMediaFiles(mediaUrls).catch((err) => {
+        console.error(`[${new Date().toISOString()}] Property ${id} media cleanup failed:`, err)
       })
 
       return res.status(200).json({
         success: true,
         message: 'Property deleted successfully',
       })
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error deleting property:', error)
+      const code =
+        typeof error === 'object' && error !== null && 'code' in error
+          ? String((error as { code: unknown }).code)
+          : ''
+      if (code === 'P2003') {
+        return res.status(409).json({
+          success: false,
+          message: 'Cannot delete property: linked records block deletion. Run DB migration (Lead onDelete: SetNull) or remove links.',
+        })
+      }
+      const message =
+        error instanceof Error ? error.message : 'Internal server error'
       return res.status(500).json({
         success: false,
-        message: 'Internal server error',
+        message: message || 'Internal server error',
       })
     }
   }

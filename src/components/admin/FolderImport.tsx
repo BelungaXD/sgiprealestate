@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, type InputHTMLAttributes } from 'react'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -10,6 +10,11 @@ import {
   FolderOpenIcon,
   ChevronUpIcon,
   XMarkIcon,
+  DocumentIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  ArrowsRightLeftIcon,
+  PlusIcon,
 } from '@heroicons/react/24/outline'
 
 interface FolderImportProps {
@@ -25,10 +30,18 @@ interface FileWithPath {
   lastModified: number
   webkitRelativePath?: string
   path?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export default function FolderImport({ onImportComplete }: FolderImportProps) {
+  const folderInputAttributes: InputHTMLAttributes<HTMLInputElement> & {
+    webkitdirectory?: string
+    directory?: string
+  } = {
+    webkitdirectory: '',
+    directory: '',
+  }
+
   const [isImporting, setIsImporting] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<string>('')
@@ -49,9 +62,12 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const [browseCurrentPath, setBrowseCurrentPath] = useState('')
   const [browseRoots, setBrowseRoots] = useState<{ name: string; path: string }[]>([])
   const [browseFolders, setBrowseFolders] = useState<{ name: string; path: string }[]>([])
+  const [browseFiles, setBrowseFiles] = useState<{ name: string; path: string; size: number }[]>([])
   const [browseParentPath, setBrowseParentPath] = useState<string | null>(null)
   const [browseLoading, setBrowseLoading] = useState(false)
+  const [browseActionLoading, setBrowseActionLoading] = useState<string | null>(null)
   const [browseError, setBrowseError] = useState<string | null>(null)
+  const [moveSource, setMoveSource] = useState<{ path: string; name: string; type: 'folder' | 'file' } | null>(null)
 
   const loadBrowse = useCallback(async (path: string | null) => {
     setBrowseLoading(true)
@@ -63,17 +79,44 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       if (!res.ok) throw new Error(data.message || data.error || 'Failed to load')
       setBrowseRoots(data.roots || [])
       setBrowseFolders(data.folders || [])
+      setBrowseFiles(data.files || [])
       setBrowseParentPath(data.parentPath ?? null)
       setBrowseCurrentPath(data.currentPath ?? (path || ''))
     } catch (e: unknown) {
       setBrowseError((e as Error).message)
       setBrowseRoots([])
       setBrowseFolders([])
+      setBrowseFiles([])
       setBrowseParentPath(null)
     } finally {
       setBrowseLoading(false)
     }
   }, [])
+
+  const runBrowseAction = useCallback(async (
+    action: 'create_folder' | 'rename' | 'delete' | 'move',
+    payload: Record<string, string>
+  ) => {
+    setBrowseActionLoading(`${action}:${payload.path || payload.parentPath || ''}`)
+    setBrowseError(null)
+    try {
+      const res = await fetch('/api/properties/browse-folders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, ...payload }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.message || data.error || 'Failed to perform action')
+      }
+      await loadBrowse(browseCurrentPath || null)
+      setMoveSource(null)
+    } catch (error: unknown) {
+      setBrowseError((error as Error).message)
+    } finally {
+      setBrowseActionLoading(null)
+    }
+  }, [browseCurrentPath, loadBrowse])
 
   const openBrowse = () => {
     setBrowseOpen(true)
@@ -84,6 +127,50 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const selectBrowseFolder = (path: string) => {
     setServerPath(path)
     setBrowseOpen(false)
+  }
+
+  const createFolderInCurrentPath = async () => {
+    if (!browseCurrentPath) return
+    const name = window.prompt('New folder name')
+    if (!name || !name.trim()) return
+    await runBrowseAction('create_folder', { parentPath: browseCurrentPath, name: name.trim() })
+  }
+
+  const renameItem = async (path: string, currentName: string) => {
+    const nextName = window.prompt('New name', currentName)
+    if (!nextName || !nextName.trim() || nextName.trim() === currentName) return
+    await runBrowseAction('rename', { path, newName: nextName.trim() })
+  }
+
+  const deleteItem = async (path: string, name: string, type: 'folder' | 'file') => {
+    const confirmed = window.confirm(`Delete ${type} "${name}"? This cannot be undone.`)
+    if (!confirmed) return
+    await runBrowseAction('delete', { path })
+  }
+
+  const moveItemHere = async () => {
+    if (!moveSource || !browseCurrentPath) return
+    await runBrowseAction('move', { path: moveSource.path, targetPath: browseCurrentPath })
+  }
+
+  const formatSize = (size: number) => {
+    if (size < 1024) return `${size} B`
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`
+    if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)} MB`
+    return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`
+  }
+
+  const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) return error.message
+    return fallback
+  }
+
+  const getReadableImportError = (error: unknown, fallback: string) => {
+    const message = getErrorMessage(error, fallback)
+    if (message.includes('Failed to fetch')) {
+      return 'Network error while importing. Check API logs and try again.'
+    }
+    return message
   }
 
   const handleImportFromServerPath = async () => {
@@ -136,9 +223,12 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       if ((data.successful ?? 0) > 0) {
         onImportComplete()
       }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Import failed'
-      alert(`Import error: ${errorMessage}`)
+    } catch (error: unknown) {
+      const errorMessage = getReadableImportError(error, 'Import failed')
+      console.error(`[${new Date().toISOString()}] [folder-import] import from server path failed`, {
+        path,
+        error: errorMessage,
+      })
       setImportResults({
         success: [],
         errors: [errorMessage],
@@ -296,11 +386,12 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       if ((data.successful ?? 0) > 0) {
         onImportComplete()
       }
-    } catch (error: any) {
-      console.error('Upload/import error:', error)
-      const errorMessage = error.message || 'Unknown error'
+    } catch (error: unknown) {
+      const errorMessage = getReadableImportError(error, 'Unknown error')
+      console.error(`[${new Date().toISOString()}] [folder-import] upload/import failed`, {
+        error: errorMessage,
+      })
       // If upload succeeded but import failed, data is still in uploads/ – user can re-import from server path
-      alert(`Error: ${errorMessage}`)
       setImportResults({
         success: [],
         errors: [errorMessage],
@@ -348,8 +439,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
             <input
               ref={fileInputRef}
               type="file"
-              {...({ webkitdirectory: '' } as any)}
-              {...({ directory: '' } as any)}
+              {...folderInputAttributes}
               multiple
               onChange={handleFileInputChange}
               className="hidden"
@@ -483,6 +573,17 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                       {browseCurrentPath && (
                         <button
                           type="button"
+                          onClick={createFolderInCurrentPath}
+                          disabled={Boolean(browseActionLoading)}
+                          className="inline-flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                          New folder
+                        </button>
+                      )}
+                      {browseCurrentPath && (
+                        <button
+                          type="button"
                           onClick={() => selectBrowseFolder(browseCurrentPath)}
                           className="rounded bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90"
                         >
@@ -490,6 +591,32 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         </button>
                       )}
                     </div>
+                    {moveSource && (
+                      <div className="mb-3 rounded border border-champagne/40 bg-champagne/10 p-2 text-xs text-gray-700">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="truncate">
+                            Move pending: {moveSource.name}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={moveItemHere}
+                              disabled={!browseCurrentPath || Boolean(browseActionLoading)}
+                              className="rounded bg-champagne px-2 py-1 text-white hover:bg-champagne/90 disabled:opacity-50"
+                            >
+                              Move here
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setMoveSource(null)}
+                              className="rounded border border-gray-300 px-2 py-1 hover:bg-gray-50"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <p className="mb-2 truncate text-xs text-gray-500" title={browseCurrentPath || 'Select a location'}>
                       {browseCurrentPath || 'Select a location'}
                     </p>
@@ -511,17 +638,78 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         ))}
                         {browseFolders.map((f) => (
                           <li key={f.path}>
-                            <button
-                              type="button"
-                              onClick={() => loadBrowse(f.path)}
-                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100"
-                            >
-                              <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />
-                              {f.name}
-                            </button>
+                            <div className="flex items-center gap-1 rounded px-1 py-1 hover:bg-gray-100">
+                              <button
+                                type="button"
+                                onClick={() => loadBrowse(f.path)}
+                                className="flex min-w-0 flex-1 items-center gap-2 rounded px-1 py-1 text-left text-sm"
+                              >
+                                <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />
+                                <span className="truncate">{f.name}</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setMoveSource({ path: f.path, name: f.name, type: 'folder' })}
+                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
+                                title="Move"
+                              >
+                                <ArrowsRightLeftIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => renameItem(f.path, f.name)}
+                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
+                                title="Rename"
+                              >
+                                <PencilSquareIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteItem(f.path, f.name, 'folder')}
+                                className="rounded p-1 text-red-600 hover:bg-red-100"
+                                title="Delete"
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </button>
+                            </div>
                           </li>
                         ))}
-                        {!browseLoading && browseRoots.length === 0 && browseFolders.length === 0 && !browseError && (
+                        {browseFiles.map((f) => (
+                          <li key={f.path}>
+                            <div className="flex items-center gap-1 rounded px-1 py-1 hover:bg-gray-100">
+                              <div className="flex min-w-0 flex-1 items-center gap-2 px-1 py-1 text-sm text-gray-700">
+                                <DocumentIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                                <span className="truncate">{f.name}</span>
+                                <span className="flex-shrink-0 text-xs text-gray-400">{formatSize(f.size)}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => setMoveSource({ path: f.path, name: f.name, type: 'file' })}
+                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
+                                title="Move"
+                              >
+                                <ArrowsRightLeftIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => renameItem(f.path, f.name)}
+                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
+                                title="Rename"
+                              >
+                                <PencilSquareIcon className="h-4 w-4" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteItem(f.path, f.name, 'file')}
+                                className="rounded p-1 text-red-600 hover:bg-red-100"
+                                title="Delete"
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                        {!browseLoading && browseRoots.length === 0 && browseFolders.length === 0 && browseFiles.length === 0 && !browseError && (
                           <li className="py-2 text-center text-sm text-gray-500">No folders here</li>
                         )}
                       </ul>

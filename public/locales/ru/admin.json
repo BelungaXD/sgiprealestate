@@ -2,14 +2,14 @@
   "login": {
     "title": "Вход в админ-панель",
     "subtitle": "Войдите для доступа к панели управления",
-    "username": "Имя пользователя",
-    "usernamePlaceholder": "Введите имя пользователя",
+    "username": "Имя пользователя или email",
+    "usernamePlaceholder": "Введите имя пользователя или email",
     "password": "Пароль",
     "passwordPlaceholder": "Введите пароль",
     "signIn": "Войти",
     "signingIn": "Вход...",
     "invalidCredentials": "Неверное имя пользователя или пароль",
-    "notConfigured": "Вход в админку не настроен на сервере. Задайте ADMIN_PASSWORD (и ADMIN_SESSION_SECRET в production) в .env.",
+    "notConfigured": "Вход в админку не настроен на сервере. Задайте ADMIN_SESSION_SECRET в .env.",
     "serverError": "Не удалось связаться с сервером. Попробуйте снова."
   },
   "dashboard": {
@@ -51,7 +51,26 @@
   },
   "settings": {
     "title": "Настройки",
-    "comingSoon": "Управление настройками скоро будет доступно..."
+    "description": "Управление доступом в админку и участниками команды.",
+    "addPeople": "Добавить сотрудника",
+    "addUser": "Добавить пользователя",
+    "peopleList": "Список сотрудников",
+    "loadingUsers": "Загрузка пользователей...",
+    "noUsers": "Пользователей админки пока нет.",
+    "emailPlaceholder": "Email (логин)",
+    "namePlaceholder": "Имя (необязательно)",
+    "passwordPlaceholder": "Пароль (минимум 8 символов)",
+    "saving": "Сохранение...",
+    "user": "Пользователь",
+    "createdAt": "Создан",
+    "actions": "Действия",
+    "delete": "Удалить",
+    "deleteConfirm": "Удалить этого пользователя?",
+    "loadError": "Не удалось загрузить пользователей.",
+    "createError": "Не удалось создать пользователя.",
+    "deleteError": "Не удалось удалить пользователя.",
+    "emailExists": "Пользователь с таким email уже существует.",
+    "lastUserError": "Нельзя удалить последнего администратора."
   },
   "form": {
     "basicInfo": "Основная информация",

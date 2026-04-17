@@ -22,7 +22,23 @@ export default async function handler(
     try {
       const developer = await prisma.developer.findUnique({
         where: { slug },
-        include: {
+        select: {
+          id: true,
+          name: true,
+          nameEn: true,
+          description: true,
+          descriptionEn: true,
+          logo: true,
+          website: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          slug: true,
+          metaTitle: true,
+          metaDescription: true,
+          createdAt: true,
+          updatedAt: true,
           _count: {
             select: {
               properties: true,

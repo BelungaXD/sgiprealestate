@@ -2,14 +2,14 @@
   "login": {
     "title": "تسجيل الدخول إلى لوحة الإدارة",
     "subtitle": "قم بتسجيل الدخول للوصول إلى لوحة التحكم",
-    "username": "اسم المستخدم",
-    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "username": "اسم المستخدم أو البريد الإلكتروني",
+    "usernamePlaceholder": "أدخل اسم المستخدم أو البريد الإلكتروني",
     "password": "كلمة المرور",
     "passwordPlaceholder": "أدخل كلمة المرور",
     "signIn": "تسجيل الدخول",
     "signingIn": "جاري تسجيل الدخول...",
     "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
-    "notConfigured": "لم يتم تهيئة تسجيل الدخول للإدارة على الخادم. عيّن ADMIN_PASSWORD (و ADMIN_SESSION_SECRET في الإنتاج) في ملف .env.",
+    "notConfigured": "لم يتم تهيئة تسجيل الدخول للإدارة على الخادم. عيّن ADMIN_SESSION_SECRET في ملف .env.",
     "serverError": "تعذر الاتصال بالخادم. حاول مرة أخرى."
   },
   "dashboard": {
@@ -51,7 +51,26 @@
   },
   "settings": {
     "title": "الإعدادات",
-    "comingSoon": "ميزات الإعدادات قريباً..."
+    "description": "إدارة صلاحيات لوحة الإدارة وأعضاء الفريق.",
+    "addPeople": "إضافة عضو فريق",
+    "addUser": "إضافة مستخدم",
+    "peopleList": "أعضاء الفريق",
+    "loadingUsers": "جارٍ تحميل المستخدمين...",
+    "noUsers": "لا يوجد مستخدمون إداريون بعد.",
+    "emailPlaceholder": "البريد الإلكتروني (تسجيل الدخول)",
+    "namePlaceholder": "الاسم المعروض (اختياري)",
+    "passwordPlaceholder": "كلمة المرور (8 أحرف على الأقل)",
+    "saving": "جارٍ الحفظ...",
+    "user": "المستخدم",
+    "createdAt": "تاريخ الإنشاء",
+    "actions": "الإجراءات",
+    "delete": "حذف",
+    "deleteConfirm": "حذف هذا المستخدم؟",
+    "loadError": "فشل تحميل المستخدمين.",
+    "createError": "فشل إنشاء المستخدم.",
+    "deleteError": "فشل حذف المستخدم.",
+    "emailExists": "يوجد مستخدم بهذا البريد الإلكتروني بالفعل.",
+    "lastUserError": "لا يمكن حذف آخر مستخدم إداري."
   },
   "form": {
     "basicInfo": "المعلومات الأساسية",
