@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 import AnimatedNumber from '@/components/ui/AnimatedNumber'
 

@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import Link from 'next/link'
 import Head from 'next/head'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'

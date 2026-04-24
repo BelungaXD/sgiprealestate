@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, type InputHTMLAttributes } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {

@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { propertySchema, type PropertyFormData } from '@/lib/validations/property'
+import {
+  propertySchema,
+  type PropertyFormData,
+  type PropertyFormInput,
+} from '@/lib/validations/property'
 import { getErrorMessage } from '@/lib/utils/errorMessage'
 import { generateSlug } from '@/lib/utils/slug'
 import ImageUpload from './ImageUpload'
@@ -63,7 +67,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     formState: { errors },
     watch,
     setValue,
-  } = useForm<PropertyFormData>({
+  } = useForm<PropertyFormInput, unknown, PropertyFormData>({
     resolver: zodResolver(propertySchema),
     defaultValues: property
       ? {

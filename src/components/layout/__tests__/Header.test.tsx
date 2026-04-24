@@ -21,7 +21,7 @@ jest.mock('@/components/ui/LanguageSwitcher', () => {
 })
 
 // Mock next-i18next with proper translations
-jest.mock('next-i18next', () => ({
+jest.mock('next-i18next/pages', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {

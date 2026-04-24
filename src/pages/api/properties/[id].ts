@@ -245,9 +245,7 @@ export default async function handler(
         totalFloors: validatedData.totalFloors,
         yearBuilt: validatedData.yearBuilt,
         completionDate: validatedData.completionDate
-          ? validatedData.completionDate instanceof Date
-            ? validatedData.completionDate
-            : new Date(validatedData.completionDate as unknown as string)
+          ? new Date(validatedData.completionDate)
           : null,
         paymentPlan:
           listingMarket === 'PRIMARY'

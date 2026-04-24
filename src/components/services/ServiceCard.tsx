@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import type { LucideIcon } from 'lucide-react'
 import { Briefcase, Building2, Home, Tag } from 'lucide-react'
 import { ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline'

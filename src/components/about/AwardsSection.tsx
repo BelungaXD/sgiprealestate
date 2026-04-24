@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { TrophyIcon, StarIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
 export default function AwardsSection() {
