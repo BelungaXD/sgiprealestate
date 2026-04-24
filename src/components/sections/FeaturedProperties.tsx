@@ -1,9 +1,9 @@
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { ArrowRightIcon, MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
+import PropertyListingImage from '@/components/property/PropertyListingImage'
 
 interface FeaturedPropertiesProps {
   initialProperties?: any[]
@@ -65,17 +65,10 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
             >
               <div className="property-card">
               <div className="relative overflow-hidden">
-                <Image
-                  src={property.image}
+                <PropertyListingImage
+                  imageUrl={property.image}
                   alt={property.title}
-                  width={800}
-                  height={400}
                   className="property-image w-full h-64 object-cover"
-                  loading="lazy"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  quality={85}
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                 />
                 <div className="absolute top-4 left-4 flex flex-col gap-1 items-start">
                   <span className="bg-graphite/90 text-white px-3 py-1 rounded-full text-xs font-semibold">

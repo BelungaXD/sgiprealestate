@@ -14,7 +14,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 ENV npm_config_update_notifier=false
 ENV npm_config_cache=/tmp/.npm
-ENV npm_config_build_from_source=true
 ENV CXXFLAGS=-march=x86-64
 ENV CFLAGS=-march=x86-64
 # Use npm install with legacy-peer-deps to handle peer dependency conflicts
@@ -32,7 +31,6 @@ COPY . .
 # Recompile every sharp tree (root + next's nested copy) for baseline x86-64 CPUs
 ENV CXXFLAGS=-march=x86-64
 ENV CFLAGS=-march=x86-64
-ENV npm_config_build_from_source=true
 RUN set -e; \
   for d in node_modules/sharp node_modules/next/node_modules/sharp; do \
     if [ -d "$d" ]; then \

@@ -1,13 +1,13 @@
 # Automatic Folder Import – How It Works
 
-## Current Flow (Browser Upload) – Two-Phase
+## Current Flow (Browser Upload) – Two-Phase, Parallel Streaming
 
 1. **User** selects a folder (e.g. `Creek Vistas Reserve`) in admin.
-2. **Phase 1 – Upload**: **Client** (`FolderImport.tsx`) builds `FormData` with all files and `webkitRelativePath` and sends POST to `/api/properties/upload-folder`.
-3. **Server** (`upload-folder.ts`): saves all files to `public/uploads/incoming/{uploadId}/` preserving folder structure. No DB write. Returns `folderPath` (absolute path).
+2. **Phase 1 – Upload (parallel)**: **Client** (`FolderImport.tsx`) generates an `uploadId` and uploads every file as a separate raw-body POST to `/api/properties/upload-folder-stream?uploadId=...&path=<relative>`. Up to 6 files are uploaded concurrently; per-file retries happen automatically. Client aggregates progress (loaded / total bytes, % and files done) across all parallel uploads.
+3. **Server** (`upload-folder-stream.ts`): pipes each request body straight to `public/uploads/incoming/{uploadId}/<relative path>` — single write, no multipart, no temp file. Returns `folderPath` (absolute).
 4. **Phase 2 – Import**: **Client** sends POST to `/api/properties/import-folder` with `{ folderPath }`.
 5. **Server** (`import-folder.ts`): reads from that path, converts/copies to `public/uploads/properties/{images|videos|files}/`, creates Property and related records in DB.
-6. **Result**: Upload completes first and is stored under `uploads/`; only after that does import run and create the property in the database.
+6. **Result**: Upload saturates the uplink via concurrency; only after that does import run and create the property in the database.
 
 **If import fails:** The uploaded data **remains** in `public/uploads/incoming/{uploadId}/`. Nothing is deleted when the import step fails (DB error, timeout, validation, etc.). You can re-import later via **"Import from server path"** using that path (e.g. `/app/public/uploads/incoming/1738827600000` in container, or the path shown in server logs).
 
@@ -105,20 +105,20 @@ An API exists for importing from disk when files are already on the server: **`/
 | Endpoint | Purpose |
 |----------|---------|
 | `GET /api/properties/browse-folders?path=` | List directories under allowed upload roots (e.g. `/uploads`, `public/uploads/incoming`) for the Browse picker. |
-| `POST /api/properties/upload-folder` | Upload only: save files to `public/uploads/incoming/{uploadId}/`. Returns `folderPath`. |
+| `POST /api/properties/upload-folder-stream?uploadId=&path=` | Stream one file per request (raw body) to `public/uploads/incoming/{uploadId}/<path>`. Called in parallel by client. Returns `folderPath` for each file. |
 | `POST /api/properties/import-folder` | Import from server path: read from `folderPath`, create property in DB. Optional `propertyId` in body: attach folder media to that existing property instead of creating a new one. |
-| `POST /api/properties/import-folder-files` | Legacy: upload + import in one request (still available). |
 
 ---
 
 ## Possible Future Improvements
 
-1. ~~**Two-phase import**~~ ✅ Implemented: upload-folder then import-folder.
+1. ~~**Two-phase import**~~ ✅ Implemented: upload-folder-stream then import-folder.
+2. ~~**Parallel per-file streaming upload**~~ ✅ Implemented.
 
-2. **Checksum-based deduplication**
+3. **Checksum-based deduplication**
    - Client sends filename + size (or hash)
    - Server returns which files are already present
    - Client skips those files when uploading
 
-3. **Chunked upload**
-   - Split large folders into smaller requests to avoid 413 and timeouts
+4. **Resumable per-file upload (tus/Range)**
+   - Currently a failed file is retried from byte 0 (max 2 attempts). For very large individual files (multi-GB videos) Range-based resume would be better.

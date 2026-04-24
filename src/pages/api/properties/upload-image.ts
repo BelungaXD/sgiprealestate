@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import sharp from 'sharp'
+import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
 
 export const config = {
   api: {
@@ -60,7 +60,7 @@ export default async function handler(
         // Save full image
         await writeFile(filePath, buffer)
         
-        // Generate thumbnail (200x200px max, maintaining aspect ratio)
+        // Listing thumbnail: small file for grid cards (see propertyThumbnails)
         const thumbnailDir = join(uploadsDir, 'thumbnails')
         if (!existsSync(thumbnailDir)) {
           await mkdir(thumbnailDir, { recursive: true })
@@ -69,16 +69,9 @@ export default async function handler(
         const thumbnailPath = join(thumbnailDir, uniqueFilename)
         
         try {
-          await sharp(buffer)
-            .resize(200, 200, {
-              fit: 'inside',
-              withoutEnlargement: true,
-            })
-            .webp({ quality: 70 })
-            .toFile(thumbnailPath)
+          await writePropertyListingThumbnail(buffer, thumbnailPath)
         } catch (sharpError) {
           console.warn('Failed to generate thumbnail:', sharpError)
-          // Continue without thumbnail if generation fails
         }
       } else {
         // For videos, just save the file

@@ -1,4 +1,5 @@
 import { useTranslation } from 'next-i18next'
+import PropertyListingImage from '@/components/property/PropertyListingImage'
 import { 
   HomeIcon, 
   CurrencyDollarIcon, 
@@ -73,8 +74,8 @@ export default function AreaProperties({ properties, areaName }: AreaPropertiesP
             <div key={property.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
               {/* Property Image */}
               <div className="relative h-48">
-                <img
-                  src={property.image}
+                <PropertyListingImage
+                  imageUrl={property.image}
                   alt={isRussian ? property.title : property.titleEn}
                   className="w-full h-full object-cover"
                 />

@@ -110,7 +110,7 @@ export default function Developers() {
             founded: 0,
             headquarters: dev.city || 'Dubai, UAE',
             propertiesCount: dev.propertiesCount || 0,
-            averagePrice: 0,
+            averagePrice: dev.averagePrice || 0,
             currency: 'AED',
             slug: dev.slug,
             website: dev.website || '',
@@ -118,16 +118,29 @@ export default function Developers() {
             notableProjects: [],
             awards: [],
             rating: 5,
-            marketShare: 0,
+            marketShare: dev.marketShare || 0,
             countries: ['UAE'],
           }))
-        
-        // Merge hardcoded developers with API developers (hardcoded first, avoid duplicates)
+
+        // Keep curated content from hardcoded cards, but always hydrate dynamic stats from API.
+        const apiBySlug = new Map(transformedDevelopers.map((dev) => [dev.slug, dev]))
+        const mergedHardcoded = HARDCODED_DEVELOPERS.map((hardcodedDev) => {
+          const apiDev = apiBySlug.get(hardcodedDev.slug)
+          return apiDev
+            ? {
+                ...hardcodedDev,
+                id: apiDev.id || hardcodedDev.id,
+                propertiesCount: apiDev.propertiesCount,
+                averagePrice: apiDev.averagePrice,
+                marketShare: apiDev.marketShare,
+              }
+            : hardcodedDev
+        })
         const allDevelopers = [
-          ...HARDCODED_DEVELOPERS,
-          ...transformedDevelopers.filter(dev => 
-            !HARDCODED_DEVELOPERS.some(hc => hc.id === dev.id || hc.slug === dev.slug)
-          )
+          ...mergedHardcoded,
+          ...transformedDevelopers.filter((dev) =>
+            !HARDCODED_DEVELOPERS.some((hc) => hc.slug === dev.slug)
+          ),
         ]
         
         setDevelopers(allDevelopers)

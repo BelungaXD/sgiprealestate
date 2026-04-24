@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
+import PropertyListingImage from '@/components/property/PropertyListingImage'
 import {
   MapPinIcon,
   HomeIcon,
@@ -72,8 +73,8 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
         return (
           <div key={property.id} className="property-card group">
             <div className="relative overflow-hidden">
-              <img
-                src={property.image}
+              <PropertyListingImage
+                imageUrl={property.image}
                 alt={property.title}
                 className="property-image w-full h-64 object-cover"
               />

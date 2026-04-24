@@ -1,13 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { lstat, mkdir, readdir, rename, rm, stat } from 'fs/promises'
+import { prisma } from '@/lib/prisma'
+import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
+import { lstat, mkdir, readdir, rename, rm, stat, readFile } from 'fs/promises'
 import { basename, dirname, join, resolve, sep } from 'path'
 import { existsSync } from 'fs'
 
 const cwd = process.cwd()
+const PROPERTY_LINK_FILE = '.sgip-property-link.json'
 const allowedBases = [
   '/uploads',
   join(cwd, 'public', 'uploads'),
 ]
+
+const VALID_DISTRICTS = ['Beachfront', 'Downtown', 'Dubai Hills', 'Marina Shores', 'The Oasis']
 
 function ts(): string {
   return new Date().toISOString()
@@ -16,15 +21,11 @@ function ts(): string {
 function getRoots(): { name: string; path: string }[] {
   const roots: { name: string; path: string }[] = []
   if (existsSync('/uploads')) {
-    roots.push({ name: 'Server uploads (scp)', path: '/uploads' })
-  }
-  const publicUploads = join(cwd, 'public', 'uploads')
-  if (existsSync(publicUploads)) {
-    roots.push({ name: 'App uploads', path: publicUploads })
+    roots.push({ name: 'Property folders on server', path: '/uploads' })
   }
   const incoming = join(cwd, 'public', 'uploads', 'incoming')
   if (existsSync(incoming)) {
-    roots.push({ name: 'Recent uploads (incoming)', path: incoming })
+    roots.push({ name: 'Recent drag-and-drop uploads', path: incoming })
   }
   return roots
 }
@@ -38,6 +39,92 @@ function resolveAllowedPath(inputPath: string): string {
     throw new Error('Path not allowed')
   }
   return resolved
+}
+
+function parseFolderName(folderName: string): { district: string | null; propertyName: string } {
+  const parts = folderName.split(' - ').map((s) => s.trim())
+  if (parts.length >= 2) {
+    const district = parts[0]
+    const propertyName = parts.slice(1).join(' - ')
+    if (VALID_DISTRICTS.includes(district)) {
+      return { district, propertyName }
+    }
+  }
+  return { district: null, propertyName: folderName }
+}
+
+async function readLinkedPropertyIdsFromFolder(folderPath: string): Promise<string[]> {
+  try {
+    const markerPath = join(folderPath, PROPERTY_LINK_FILE)
+    const raw = await readFile(markerPath, 'utf8')
+    const parsed = JSON.parse(raw) as { propertyId?: string; propertyIds?: unknown }
+    const ids = new Set<string>()
+    if (typeof parsed.propertyId === 'string' && parsed.propertyId.trim()) {
+      ids.add(parsed.propertyId.trim())
+    }
+    if (Array.isArray(parsed.propertyIds)) {
+      for (const id of parsed.propertyIds) {
+        if (typeof id === 'string' && id.trim()) ids.add(id.trim())
+      }
+    }
+    return Array.from(ids)
+  } catch {
+    return []
+  }
+}
+
+async function resolveLinkedPropertyIdsByFolderName(folderPath: string): Promise<string[]> {
+  const folderName = basename(folderPath)
+  const { district, propertyName } = parseFolderName(folderName)
+  const where = district
+    ? {
+        title: { equals: propertyName, mode: 'insensitive' as const },
+        district: { equals: district, mode: 'insensitive' as const },
+      }
+    : {
+        title: { equals: propertyName, mode: 'insensitive' as const },
+      }
+  const matches = await prisma.property.findMany({
+    where,
+    select: { id: true },
+    take: 10,
+  })
+  return matches.map((m: { id: string }) => m.id)
+}
+
+async function resolveLinkedPropertyIds(folderPath: string): Promise<string[]> {
+  const fromMarker = await readLinkedPropertyIdsFromFolder(folderPath)
+  if (fromMarker.length > 0) return fromMarker
+  return resolveLinkedPropertyIdsByFolderName(folderPath)
+}
+
+async function deletePropertyAndMedia(propertyId: string): Promise<{ deleted: boolean; reason?: string }> {
+  try {
+    const property = await prisma.property.findUnique({
+      where: { id: propertyId },
+      select: {
+        id: true,
+        images: { select: { url: true } },
+        files: { select: { url: true } },
+        floorPlans: { select: { url: true } },
+      },
+    })
+    if (!property) {
+      return { deleted: false, reason: 'not-found' }
+    }
+    const mediaUrls = [
+      ...property.images.map((i: { url: string }) => i.url),
+      ...property.files.map((f: { url: string }) => f.url),
+      ...property.floorPlans.map((fp: { url: string }) => fp.url),
+    ]
+    // Delete media first; only then remove DB record to avoid orphaned disk files.
+    await deletePropertyMediaFiles(mediaUrls)
+    await prisma.property.delete({ where: { id: propertyId } })
+    return { deleted: true }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'unknown error'
+    return { deleted: false, reason: message }
+  }
 }
 
 async function listPath(normalizedPath: string | null): Promise<{
@@ -107,6 +194,7 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
     name?: string
     newName?: string
     targetPath?: string
+    deleteLinkedPropertyData?: boolean
   } | null
   const action = body?.action
 
@@ -153,9 +241,49 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
     }
     const safeTarget = resolveAllowedPath(itemPath)
     const targetStats = await lstat(safeTarget)
-    await rm(safeTarget, { recursive: targetStats.isDirectory(), force: false })
-    console.info(`[${ts()}] [browse-folders] delete ${safeTarget}`)
-    return res.status(200).json({ message: 'Deleted' })
+    const deleteLinkedPropertyData = body?.deleteLinkedPropertyData !== false
+
+    let linkedFound = 0
+    let linkedDeleted = 0
+    const linkedDeleteErrors: string[] = []
+    if (targetStats.isDirectory() && deleteLinkedPropertyData) {
+      const linkedPropertyIds = await resolveLinkedPropertyIds(safeTarget)
+      linkedFound = linkedPropertyIds.length
+      for (const propertyId of linkedPropertyIds) {
+        const result = await deletePropertyAndMedia(propertyId)
+        if (result.deleted) {
+          linkedDeleted++
+        } else if (result.reason && result.reason !== 'not-found') {
+          linkedDeleteErrors.push(result.reason)
+        }
+      }
+      if (linkedDeleteErrors.length > 0) {
+        throw new Error(`Failed to delete linked properties/media: ${linkedDeleteErrors.join('; ')}`)
+      }
+      if (linkedDeleted !== linkedFound) {
+        throw new Error(`Linked property deletion mismatch: deleted ${linkedDeleted} of ${linkedFound}`)
+      }
+    }
+
+    // Do not use force=true here: deletion problems must fail the request.
+    await rm(safeTarget, { recursive: targetStats.isDirectory(), force: false, maxRetries: 2, retryDelay: 100 })
+    if (existsSync(safeTarget)) {
+      throw new Error(`Delete verification failed: ${safeTarget} still exists`)
+    }
+    console.info(`[${ts()}] [browse-folders] delete ${safeTarget}`, {
+      linkedFound,
+      linkedDeleted,
+      linkedDeleteErrors: linkedDeleteErrors.length,
+    })
+    return res.status(200).json({
+      message:
+        targetStats.isDirectory() && deleteLinkedPropertyData
+          ? `Deleted folder. Linked properties removed: ${linkedDeleted}/${linkedFound}.`
+          : 'Deleted',
+      linkedPropertiesFound: linkedFound,
+      linkedPropertiesDeleted: linkedDeleted,
+      linkedDeleteErrors,
+    })
   }
 
   if (action === 'move') {

@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, type InputHTMLAttributes } from 'react'
+import { useTranslation } from 'next-i18next'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -10,30 +11,58 @@ import {
   FolderOpenIcon,
   ChevronUpIcon,
   XMarkIcon,
-  DocumentIcon,
-  PencilSquareIcon,
-  TrashIcon,
-  ArrowsRightLeftIcon,
-  PlusIcon,
 } from '@heroicons/react/24/outline'
 
 interface FolderImportProps {
-  onImportComplete: () => void
+  onImportComplete: (createdPropertyId?: string) => void
 }
 
-// FileWithPath interface - extends File with optional path properties
-// Note: webkitRelativePath is already in File type, but we make it explicitly optional
-interface FileWithPath {
+type UploadUiState =
+  | null
+  | {
+      kind: 'progress'
+      loaded: number
+      total: number
+      filesDone: number
+      filesTotal: number
+    }
+
+type UploadEntry = { file: File; relPath: string }
+
+type FileSystemEntryLike = {
+  isFile: boolean
+  isDirectory: boolean
   name: string
-  size: number
-  type: string
-  lastModified: number
-  webkitRelativePath?: string
-  path?: string
-  [key: string]: unknown
+  fullPath?: string
+}
+
+type FileSystemFileEntryLike = FileSystemEntryLike & {
+  file: (callback: (file: File) => void, errorCallback?: (error: DOMException) => void) => void
+}
+
+type FileSystemDirectoryEntryLike = FileSystemEntryLike & {
+  createReader: () => {
+    readEntries: (
+      successCallback: (entries: FileSystemEntryLike[]) => void,
+      errorCallback?: (error: DOMException) => void
+    ) => void
+  }
+}
+
+type DataTransferItemWithEntry = DataTransferItem & {
+  webkitGetAsEntry?: () => FileSystemEntryLike | null
+}
+
+const UPLOAD_CONCURRENCY = 6
+const MAX_RETRIES_PER_FILE = 2
+
+function genUploadId(): string {
+  const rand = Math.random().toString(36).slice(2, 10)
+  return `${Date.now()}-${rand}`
 }
 
 export default function FolderImport({ onImportComplete }: FolderImportProps) {
+  const { t } = useTranslation('admin')
   const folderInputAttributes: InputHTMLAttributes<HTMLInputElement> & {
     webkitdirectory?: string
     directory?: string
@@ -43,6 +72,10 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   }
 
   const [isImporting, setIsImporting] = useState(false)
+  /** Browser upload is often the bottleneck on prod (single huge multipart request). */
+  const [importPhase, setImportPhase] = useState<'idle' | 'upload' | 'import'>('idle')
+  const [importStats, setImportStats] = useState<{ files: number; mb: string } | null>(null)
+  const [uploadUi, setUploadUi] = useState<UploadUiState>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<string>('')
   const [importResults, setImportResults] = useState<{
@@ -62,12 +95,9 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const [browseCurrentPath, setBrowseCurrentPath] = useState('')
   const [browseRoots, setBrowseRoots] = useState<{ name: string; path: string }[]>([])
   const [browseFolders, setBrowseFolders] = useState<{ name: string; path: string }[]>([])
-  const [browseFiles, setBrowseFiles] = useState<{ name: string; path: string; size: number }[]>([])
   const [browseParentPath, setBrowseParentPath] = useState<string | null>(null)
   const [browseLoading, setBrowseLoading] = useState(false)
-  const [browseActionLoading, setBrowseActionLoading] = useState<string | null>(null)
   const [browseError, setBrowseError] = useState<string | null>(null)
-  const [moveSource, setMoveSource] = useState<{ path: string; name: string; type: 'folder' | 'file' } | null>(null)
 
   const loadBrowse = useCallback(async (path: string | null) => {
     setBrowseLoading(true)
@@ -79,44 +109,17 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       if (!res.ok) throw new Error(data.message || data.error || 'Failed to load')
       setBrowseRoots(data.roots || [])
       setBrowseFolders(data.folders || [])
-      setBrowseFiles(data.files || [])
       setBrowseParentPath(data.parentPath ?? null)
       setBrowseCurrentPath(data.currentPath ?? (path || ''))
     } catch (e: unknown) {
       setBrowseError((e as Error).message)
       setBrowseRoots([])
       setBrowseFolders([])
-      setBrowseFiles([])
       setBrowseParentPath(null)
     } finally {
       setBrowseLoading(false)
     }
   }, [])
-
-  const runBrowseAction = useCallback(async (
-    action: 'create_folder' | 'rename' | 'delete' | 'move',
-    payload: Record<string, string>
-  ) => {
-    setBrowseActionLoading(`${action}:${payload.path || payload.parentPath || ''}`)
-    setBrowseError(null)
-    try {
-      const res = await fetch('/api/properties/browse-folders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, ...payload }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        throw new Error(data.message || data.error || 'Failed to perform action')
-      }
-      await loadBrowse(browseCurrentPath || null)
-      setMoveSource(null)
-    } catch (error: unknown) {
-      setBrowseError((error as Error).message)
-    } finally {
-      setBrowseActionLoading(null)
-    }
-  }, [browseCurrentPath, loadBrowse])
 
   const openBrowse = () => {
     setBrowseOpen(true)
@@ -129,29 +132,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     setBrowseOpen(false)
   }
 
-  const createFolderInCurrentPath = async () => {
-    if (!browseCurrentPath) return
-    const name = window.prompt('New folder name')
-    if (!name || !name.trim()) return
-    await runBrowseAction('create_folder', { parentPath: browseCurrentPath, name: name.trim() })
-  }
-
-  const renameItem = async (path: string, currentName: string) => {
-    const nextName = window.prompt('New name', currentName)
-    if (!nextName || !nextName.trim() || nextName.trim() === currentName) return
-    await runBrowseAction('rename', { path, newName: nextName.trim() })
-  }
-
-  const deleteItem = async (path: string, name: string, type: 'folder' | 'file') => {
-    const confirmed = window.confirm(`Delete ${type} "${name}"? This cannot be undone.`)
-    if (!confirmed) return
-    await runBrowseAction('delete', { path })
-  }
-
-  const moveItemHere = async () => {
-    if (!moveSource || !browseCurrentPath) return
-    await runBrowseAction('move', { path: moveSource.path, targetPath: browseCurrentPath })
-  }
 
   const formatSize = (size: number) => {
     if (size < 1024) return `${size} B`
@@ -168,19 +148,235 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const getReadableImportError = (error: unknown, fallback: string) => {
     const message = getErrorMessage(error, fallback)
     if (message.includes('Failed to fetch')) {
-      return 'Network error while importing. Check API logs and try again.'
+      return t('folderImport.networkError')
+    }
+    if (message.includes('does not exist in the current database')) {
+      return t('folderImport.dbSchemaMismatch')
     }
     return message
   }
 
+  const readFileEntry = (entry: FileSystemFileEntryLike): Promise<File> =>
+    new Promise((resolveFile, rejectFile) => {
+      entry.file(resolveFile, rejectFile)
+    })
+
+  const readAllDirectoryEntries = async (dirEntry: FileSystemDirectoryEntryLike): Promise<FileSystemEntryLike[]> => {
+    const reader = dirEntry.createReader()
+    const entries: FileSystemEntryLike[] = []
+    while (true) {
+      const chunk = await new Promise<FileSystemEntryLike[]>((resolveChunk, rejectChunk) => {
+        reader.readEntries(resolveChunk, rejectChunk)
+      })
+      if (chunk.length === 0) break
+      entries.push(...chunk)
+    }
+    return entries
+  }
+
+  const collectEntriesFromDrop = useCallback(async (dataTransfer: DataTransfer): Promise<UploadEntry[]> => {
+    const results: UploadEntry[] = []
+
+    const walk = async (entry: FileSystemEntryLike, prefix: string) => {
+      if (entry.isFile) {
+        const file = await readFileEntry(entry as FileSystemFileEntryLike)
+        results.push({ file, relPath: `${prefix}${entry.name}` })
+        return
+      }
+      if (!entry.isDirectory) return
+      const dir = entry as FileSystemDirectoryEntryLike
+      const children = await readAllDirectoryEntries(dir)
+      const nextPrefix = `${prefix}${entry.name}/`
+      await Promise.all(children.map((child) => walk(child, nextPrefix)))
+    }
+
+    const items = Array.from(dataTransfer.items || [])
+    const entries = items
+      .map((item) => (item as DataTransferItemWithEntry).webkitGetAsEntry?.() || null)
+      .filter((entry): entry is FileSystemEntryLike => Boolean(entry))
+
+    if (entries.length > 0) {
+      await Promise.all(entries.map((entry) => walk(entry, '')))
+      return results
+    }
+
+    return Array.from(dataTransfer.files || []).map((file) => ({ file, relPath: file.name }))
+  }, [])
+
+  /**
+   * Upload one file via raw streaming XHR. Reports per-chunk byte delta via onDelta,
+   * so the caller can aggregate progress across N parallel uploads without races.
+   */
+  const uploadSingleFile = useCallback(
+    (
+      file: File,
+      relPath: string,
+      uploadId: string,
+      onDelta: (delta: number) => void
+    ) =>
+      new Promise<{ folderPath: string }>((resolveUpload, rejectUpload) => {
+        const url =
+          `/api/properties/upload-folder-stream` +
+          `?uploadId=${encodeURIComponent(uploadId)}` +
+          `&path=${encodeURIComponent(relPath)}`
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', url)
+        xhr.setRequestHeader('Content-Type', 'application/octet-stream')
+
+        let lastLoaded = 0
+        xhr.upload.onprogress = (ev) => {
+          if (!ev.lengthComputable) return
+          const delta = ev.loaded - lastLoaded
+          if (delta > 0) {
+            lastLoaded = ev.loaded
+            onDelta(delta)
+          }
+        }
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            // Account for any bytes not reported by final onprogress event.
+            const remaining = file.size - lastLoaded
+            if (remaining > 0) onDelta(remaining)
+            try {
+              const data = JSON.parse(xhr.responseText || '{}') as { folderPath?: string }
+              if (!data.folderPath) {
+                rejectUpload(new Error(t('folderImport.uploadNoPath')))
+                return
+              }
+              resolveUpload({ folderPath: data.folderPath })
+            } catch {
+              rejectUpload(new Error(t('folderImport.uploadBadResponse')))
+            }
+            return
+          }
+          let msg = `${t('folderImport.serverErrorShort')}: ${xhr.status}`
+          try {
+            const err = JSON.parse(xhr.responseText || '{}') as { message?: string; error?: string }
+            msg = err.message || err.error || msg
+          } catch {
+            /* ignore */
+          }
+          if (xhr.status === 413) msg = t('folderImport.tooLarge')
+          rejectUpload(new Error(msg))
+        }
+        xhr.onerror = () => rejectUpload(new TypeError('Failed to fetch'))
+        xhr.onabort = () => rejectUpload(new Error('Upload aborted'))
+        xhr.send(file)
+      }),
+    [t]
+  )
+
+  /**
+   * Upload all files in parallel (N at a time). Reports aggregate progress via setUploadUi.
+   * Returns the uploaded folderPath (absolute path on server under uploads/incoming/{uploadId}/).
+   */
+  const uploadFolderParallel = useCallback(
+    async (
+      entries: { file: File; relPath: string }[]
+    ): Promise<{ folderPath: string }> => {
+      const uploadId = genUploadId()
+      const totalBytes = entries.reduce((acc, e) => acc + e.file.size, 0)
+      let loadedBytes = 0
+      let filesDone = 0
+
+      // Throttle React updates (every ~100ms) so rapid onprogress deltas don't spam re-renders.
+      let pendingFlush: number | null = null
+      const flushUi = () => {
+        pendingFlush = null
+        setUploadUi({
+          kind: 'progress',
+          loaded: loadedBytes,
+          total: totalBytes,
+          filesDone,
+          filesTotal: entries.length,
+        })
+      }
+      const scheduleFlush = () => {
+        if (pendingFlush !== null) return
+        pendingFlush = window.setTimeout(flushUi, 100)
+      }
+
+      const onDelta = (delta: number) => {
+        loadedBytes += delta
+        scheduleFlush()
+      }
+
+      setUploadUi({
+        kind: 'progress',
+        loaded: 0,
+        total: totalBytes,
+        filesDone: 0,
+        filesTotal: entries.length,
+      })
+
+      let folderPath = ''
+      let nextIndex = 0
+      let failure: Error | null = null
+
+      const worker = async () => {
+        while (true) {
+          if (failure) return
+          const i = nextIndex++
+          if (i >= entries.length) return
+          const { file, relPath } = entries[i]
+          let attempt = 0
+          let bytesReportedThisFile = 0
+          while (true) {
+            try {
+              const localOnDelta = (d: number) => {
+                bytesReportedThisFile += d
+                onDelta(d)
+              }
+              const res = await uploadSingleFile(file, relPath, uploadId, localOnDelta)
+              if (!folderPath) folderPath = res.folderPath
+              filesDone++
+              scheduleFlush()
+              break
+            } catch (err) {
+              // Roll back byte counter for this file before retry so UI doesn't overshoot.
+              if (bytesReportedThisFile > 0) {
+                loadedBytes -= bytesReportedThisFile
+                bytesReportedThisFile = 0
+                scheduleFlush()
+              }
+              if (attempt >= MAX_RETRIES_PER_FILE) {
+                failure = err as Error
+                return
+              }
+              attempt++
+              await new Promise((r) => setTimeout(r, 500 * attempt))
+            }
+          }
+        }
+      }
+
+      const workers: Promise<void>[] = []
+      const concurrency = Math.min(UPLOAD_CONCURRENCY, entries.length)
+      for (let c = 0; c < concurrency; c++) workers.push(worker())
+      await Promise.all(workers)
+
+      if (pendingFlush !== null) {
+        window.clearTimeout(pendingFlush)
+        flushUi()
+      }
+
+      if (failure) throw failure
+      if (!folderPath) throw new Error(t('folderImport.uploadNoPath'))
+      return { folderPath }
+    },
+    [t, uploadSingleFile]
+  )
+
   const handleImportFromServerPath = async () => {
     const path = serverPath.trim()
     if (!path) {
-      alert('Enter server path to folder containing property subfolders (e.g. /uploads or /uploads/PropertyName)')
+      alert(t('folderImport.pathRequired'))
       return
     }
     if (isImportingFromPath) return
     setIsImportingFromPath(true)
+    setImportPhase('import')
+    setImportStats(null)
     setImportResults(null)
 
     try {
@@ -190,16 +386,14 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
         body: JSON.stringify({ folderPath: path }),
       })
       const contentType = response.headers.get('content-type')
-      let data: { results?: { success?: string[]; errors?: string[] }; total?: number; successful?: number; failed?: number; error?: string; message?: string } = {}
+      let data: { results?: { success?: string[]; errors?: string[] }; total?: number; successful?: number; failed?: number; error?: string; message?: string; createdPropertyIds?: string[] } = {}
       try {
         const text = await response.text()
         const isHtml = text && (text.trimStart().toLowerCase().startsWith('<!') || text.includes('<html'))
         if (text && contentType?.includes('application/json') && !isHtml) {
           data = JSON.parse(text) as typeof data
         } else if (isHtml || (!response.ok && text)) {
-          const msg = isHtml
-            ? `Server error ${response.status}: Import may have timed out or the API returned an error page. Check container logs: docker logs sgiprealestate-service-green`
-            : text.slice(0, 200)
+          const msg = isHtml ? t('folderImport.importHtmlError') : text.slice(0, 200)
           throw new Error(msg)
         }
       } catch (parseError: unknown) {
@@ -221,7 +415,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
         failed: data.failed ?? 0,
       })
       if ((data.successful ?? 0) > 0) {
-        onImportComplete()
+        onImportComplete(data.createdPropertyIds?.[0])
       }
     } catch (error: unknown) {
       const errorMessage = getReadableImportError(error, 'Import failed')
@@ -238,22 +432,26 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       })
     } finally {
       setIsImportingFromPath(false)
+      setImportPhase('idle')
     }
   }
 
   const handleFolderSelect = (files: FileList | null) => {
     if (!files || files.length === 0) {
-      alert('No files selected')
+      alert(t('folderImport.noFilesSelected'))
       return
     }
 
-    // Get folder name from first file
-    const firstFile = files[0] as FileWithPath
-    const relativePath = firstFile.webkitRelativePath || ''
+    const entries = Array.from(files).map((file) => ({
+      file,
+      relPath: file.webkitRelativePath || file.name,
+    }))
+    const firstFile = entries[0]
+    const relativePath = firstFile.relPath || ''
     const folderName = relativePath.split('/')[0] || 'Selected folder'
-    
+
     setSelectedFolder(folderName)
-    processFiles(files)
+    processEntries(entries)
   }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -272,83 +470,69 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     setIsDragging(false)
   }
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(false)
-
-    // For drag & drop we need to use input for folder selection
-    // Browser doesn't provide webkitRelativePath with drag & drop
-    if (fileInputRef.current) {
-      fileInputRef.current.click()
+    if (isImporting) return
+    try {
+      const entries = await collectEntriesFromDrop(e.dataTransfer)
+      if (entries.length === 0) {
+        alert(t('folderImport.noFilesDropped'))
+        return
+      }
+      const folderName = entries[0].relPath.split('/')[0] || 'Selected folder'
+      setSelectedFolder(folderName)
+      await processEntries(entries)
+    } catch (error) {
+      console.error(`[${new Date().toISOString()}] [folder-import] drag-drop read failed`, { error })
+      alert(t('folderImport.uploadBadResponse'))
     }
   }
 
-  const processFiles = async (files: FileList) => {
+  const processEntries = async (entries: UploadEntry[]) => {
     if (isProcessingRef.current) return
     isProcessingRef.current = true
     setIsImporting(true)
+    setImportPhase('upload')
     setImportResults(null)
 
     try {
-      const filesArray = Array.from(files)
-
       const MAX_TOTAL_SIZE = 10 * 1024 * 1024 * 1024 // 10GB
       let totalSize = 0
-      filesArray.forEach((file) => { totalSize += file.size })
+      entries.forEach(({ file }) => { totalSize += file.size })
 
       if (totalSize > MAX_TOTAL_SIZE) {
         const sizeInGB = (totalSize / (1024 * 1024 * 1024)).toFixed(2)
-        throw new Error(`Общий размер файлов (${sizeInGB}GB) превышает максимальный лимит (10GB). Попробуйте загрузить папки по отдельности.`)
+        throw new Error(t('folderImport.totalSizeExceeded', { sizeInGB }))
       }
 
-      const formData = new FormData()
-      filesArray.forEach((file) => {
-        const fileWithPath = file as FileWithPath
-        if (fileWithPath.webkitRelativePath) {
-          formData.append('files', file, fileWithPath.webkitRelativePath)
-        } else {
-          formData.append('files', file)
-        }
+      setImportStats({
+        files: entries.length,
+        mb: (totalSize / (1024 * 1024)).toFixed(1),
       })
 
-      // Phase 1: upload folder to server (uploads/incoming/), no DB import
-      const uploadResponse = await fetch('/api/properties/upload-folder', {
-        method: 'POST',
-        body: formData,
-        redirect: 'manual',
-      })
-
-      if (uploadResponse.type === 'opaqueredirect' || (uploadResponse.status >= 300 && uploadResponse.status < 400)) {
-        throw new Error('Request was redirected. Ensure you use https://sgipreal.com (not http) and are not behind a proxy that redirects.')
+      // Build relative paths; skip hidden junk files (.DS_Store etc.) early.
+      const normalizedEntries: UploadEntry[] = []
+      for (const { file, relPath } of entries) {
+        const rel = relPath || file.name
+        const base = rel.split('/').pop() || rel
+        if (base.startsWith('.')) continue
+        normalizedEntries.push({ file, relPath: rel })
+      }
+      if (normalizedEntries.length === 0) {
+        throw new Error(t('folderImport.uploadNoPath'))
       }
 
-      if (!uploadResponse.ok) {
-        let errorMessage = `Server error: ${uploadResponse.status} ${uploadResponse.statusText}`
-        if (uploadResponse.status === 413) {
-          try {
-            const errorData = await uploadResponse.json()
-            errorMessage = errorData.error || errorData.message || 'Размер загружаемых файлов превышает лимит сервера. Попробуйте загрузить папки по отдельности.'
-          } catch {
-            errorMessage = 'Размер загружаемых файлов превышает лимит сервера (413 Payload Too Large). Максимальный размер: 10GB.'
-          }
-        } else {
-          try {
-            const errorData = await uploadResponse.json()
-            errorMessage = errorData.error || errorData.message || errorMessage
-          } catch {
-            const errorText = await uploadResponse.text()
-            if (errorText) console.error('Server error:', errorText)
-          }
-        }
-        throw new Error(errorMessage)
-      }
-
-      const uploadData = await uploadResponse.json()
+      // Phase 1: parallel streaming upload — 6 files at a time, real aggregate progress.
+      const uploadData = await uploadFolderParallel(normalizedEntries)
       const folderPath = uploadData.folderPath
       if (!folderPath || typeof folderPath !== 'string') {
-        throw new Error('Upload succeeded but server did not return folder path')
+        throw new Error(t('folderImport.uploadNoPath'))
       }
+
+      setUploadUi(null)
+      setImportPhase('import')
 
       // Phase 2: import from uploaded folder and create property in DB
       const importResponse = await fetch('/api/properties/import-folder', {
@@ -358,17 +542,15 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       })
 
       const contentType = importResponse.headers.get('content-type')
-      let data: { results?: { success?: string[]; errors?: string[] }; total?: number; successful?: number; failed?: number; error?: string; message?: string } = {}
+      let data: { results?: { success?: string[]; errors?: string[] }; total?: number; successful?: number; failed?: number; error?: string; message?: string; createdPropertyIds?: string[] } = {}
       const text = await importResponse.text()
       const isHtml = text && (text.trimStart().toLowerCase().startsWith('<!') || text.includes('<html'))
       if (text && contentType?.includes('application/json') && !isHtml) {
         data = JSON.parse(text) as typeof data
-      } else if (isHtml || (!importResponse.ok && text)) {
-        const msg = isHtml
-          ? `Import failed (${importResponse.status}). Check container logs.`
-          : text.slice(0, 200)
-        throw new Error(msg)
-      }
+        } else if (isHtml || (!importResponse.ok && text)) {
+          const msg = isHtml ? t('folderImport.importHtmlError') : text.slice(0, 200)
+          throw new Error(msg)
+        }
 
       if (!importResponse.ok) {
         // Uploaded files remain in uploads/incoming/{uploadId}/; user can re-import via "Import from server path"
@@ -384,7 +566,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
       })
 
       if ((data.successful ?? 0) > 0) {
-        onImportComplete()
+        onImportComplete(data.createdPropertyIds?.[0])
       }
     } catch (error: unknown) {
       const errorMessage = getReadableImportError(error, 'Unknown error')
@@ -402,6 +584,9 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     } finally {
       isProcessingRef.current = false
       setIsImporting(false)
+      setImportPhase('idle')
+      setImportStats(null)
+      setUploadUi(null)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -410,23 +595,26 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
 
   return (
     <div>
-      <div className="flex items-center space-x-3 mb-6">
+      <div className="flex items-center space-x-3 mb-4">
         <FolderIcon className="h-6 w-6 text-champagne" />
-        <h2 className="text-xl font-semibold text-graphite">Automatic Folder Import</h2>
+        <h2 className="text-xl font-semibold text-graphite">{t('folderImport.title')}</h2>
       </div>
 
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select folder with property objects
+            {t('folderImport.dropHint')}
           </label>
-          
+
           {/* Drag & Drop Area */}
           <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              if (isImporting) return
+              fileInputRef.current?.click()
+            }}
             className={`
               relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
               ${isDragging 
@@ -453,20 +641,57 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <p className="text-lg font-medium text-graphite mb-2">Import in progress...</p>
-                  <p className="text-sm text-gray-500">Please wait</p>
+                  <p className="text-lg font-medium text-graphite mb-2">
+                    {importPhase === 'upload' ? t('folderImport.phaseUpload') : t('folderImport.phaseProcess')}
+                  </p>
+                  <p className="text-sm text-gray-500 max-w-md mx-auto">
+                    {importPhase === 'upload'
+                      ? t('folderImport.phaseUploadHelp')
+                      : t('folderImport.phaseProcessHelp')}
+                  </p>
+                  {importPhase === 'upload' && importStats && (
+                    <p className="text-xs text-champagne mt-2 font-medium">
+                      {t('folderImport.filesSize', { count: importStats.files, mb: importStats.mb })}
+                    </p>
+                  )}
+                  {importPhase === 'upload' && uploadUi?.kind === 'progress' && (
+                    <div className="w-full max-w-md mx-auto mt-4">
+                      {(() => {
+                        const pct = uploadUi.total > 0
+                          ? Math.min(100, Math.floor((uploadUi.loaded / uploadUi.total) * 100))
+                          : 0
+                        return (
+                          <>
+                            <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-champagne transition-[width] duration-300 ease-out"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <p className="text-xs text-gray-700 mt-1.5 font-medium">
+                              {t('folderImport.uploadProgress', {
+                                loaded: formatSize(uploadUi.loaded),
+                                total: formatSize(uploadUi.total),
+                                pct,
+                              })}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {t('folderImport.uploadFiles', {
+                                done: uploadUi.filesDone,
+                                total: uploadUi.filesTotal,
+                              })}
+                            </p>
+                          </>
+                        )
+                      })()}
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
                   <ArrowUpTrayIcon className={`h-12 w-12 mb-4 ${isDragging ? 'text-champagne' : 'text-gray-400'}`} />
                   <p className="text-lg font-medium text-graphite mb-2">
-                    {selectedFolder || 'Drag folder here or click to select'}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Select any folder. The system will automatically find all property objects inside.
-                  </p>
-                  <p className="text-xs text-champagne mt-2 font-medium">
-                    Drag & drop is preferable
+                    {selectedFolder || t('folderImport.dropHint')}
                   </p>
                 </>
               )}
@@ -475,48 +700,46 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
 
           {selectedFolder && !isImporting && (
             <div className="mt-2 text-sm text-green-600">
-              ✓ Selected folder: <strong>{selectedFolder}</strong>
+              ✓ {t('folderImport.selected', { name: selectedFolder })}
             </div>
           )}
         </div>
 
-        {/* Import from server path - no upload, files already on disk */}
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-            <ServerStackIcon className="h-5 w-5 text-champagne" />
-            Or import from server (no upload)
-          </h3>
-          <p className="text-xs text-gray-500 mb-2">
-            Choose a property folder already on the server (e.g. after scp/rsync or a previous upload). Use Browse to pick from disk.
-          </p>
-          <div className="flex gap-2 flex-wrap">
-            <input
-              type="text"
-              value={serverPath}
-              onChange={(e) => setServerPath(e.target.value)}
-              placeholder="Choose folder with Browse or enter path"
-              className="flex-1 min-w-[200px] px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-champagne focus:border-champagne"
-              disabled={isImporting || isImportingFromPath}
-            />
+        <details className="border-t border-gray-200 pt-4 group">
+          <summary className="text-sm font-medium text-gray-700 cursor-pointer list-none flex items-center justify-center gap-2 [&::-webkit-details-marker]:hidden">
+            <ServerStackIcon className="h-5 w-5 text-champagne shrink-0" />
+            <span className="underline underline-offset-2">{t('folderImport.advancedSummary')}</span>
+          </summary>
+          <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={openBrowse}
               disabled={isImporting || isImportingFromPath}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-champagne text-champagne rounded-md text-sm font-medium hover:bg-champagne/10 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-md border border-champagne px-5 py-2.5 text-sm font-semibold text-champagne hover:bg-champagne/10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FolderOpenIcon className="h-5 w-5" />
-              Browse
+              {t('folderImport.browse')}
             </button>
             <button
               type="button"
               onClick={handleImportFromServerPath}
               disabled={isImporting || isImportingFromPath || !serverPath.trim()}
-              className="px-4 py-2 bg-champagne text-white rounded-md text-sm font-medium hover:bg-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-md bg-champagne px-5 py-2.5 text-sm font-semibold text-white hover:bg-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isImportingFromPath ? 'Importing...' : 'Import'}
+              {isImportingFromPath ? t('folderImport.importing') : t('folderImport.import')}
             </button>
+            <div className="ml-auto max-w-full text-right text-[11px] text-gray-400">
+              {serverPath ? (
+                <span className="inline-block max-w-[340px] truncate align-middle">{serverPath}</span>
+              ) : (
+                <span>{t('folderImport.serverPlaceholder')}</span>
+              )}
+            </div>
           </div>
-        </div>
+        </details>
+        <p className="mt-1 text-center text-[11px] text-gray-400">
+          {t('folderImport.advancedHint')}
+        </p>
 
         {/* Browse server folders modal */}
         <Transition appear show={browseOpen} as={Fragment}>
@@ -573,17 +796,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                       {browseCurrentPath && (
                         <button
                           type="button"
-                          onClick={createFolderInCurrentPath}
-                          disabled={Boolean(browseActionLoading)}
-                          className="inline-flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                          New folder
-                        </button>
-                      )}
-                      {browseCurrentPath && (
-                        <button
-                          type="button"
                           onClick={() => selectBrowseFolder(browseCurrentPath)}
                           className="rounded bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90"
                         >
@@ -591,32 +803,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         </button>
                       )}
                     </div>
-                    {moveSource && (
-                      <div className="mb-3 rounded border border-champagne/40 bg-champagne/10 p-2 text-xs text-gray-700">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="truncate">
-                            Move pending: {moveSource.name}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={moveItemHere}
-                              disabled={!browseCurrentPath || Boolean(browseActionLoading)}
-                              className="rounded bg-champagne px-2 py-1 text-white hover:bg-champagne/90 disabled:opacity-50"
-                            >
-                              Move here
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setMoveSource(null)}
-                              className="rounded border border-gray-300 px-2 py-1 hover:bg-gray-50"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                     <p className="mb-2 truncate text-xs text-gray-500" title={browseCurrentPath || 'Select a location'}>
                       {browseCurrentPath || 'Select a location'}
                     </p>
@@ -638,78 +824,17 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         ))}
                         {browseFolders.map((f) => (
                           <li key={f.path}>
-                            <div className="flex items-center gap-1 rounded px-1 py-1 hover:bg-gray-100">
-                              <button
-                                type="button"
-                                onClick={() => loadBrowse(f.path)}
-                                className="flex min-w-0 flex-1 items-center gap-2 rounded px-1 py-1 text-left text-sm"
-                              >
-                                <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />
-                                <span className="truncate">{f.name}</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setMoveSource({ path: f.path, name: f.name, type: 'folder' })}
-                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
-                                title="Move"
-                              >
-                                <ArrowsRightLeftIcon className="h-4 w-4" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => renameItem(f.path, f.name)}
-                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
-                                title="Rename"
-                              >
-                                <PencilSquareIcon className="h-4 w-4" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => deleteItem(f.path, f.name, 'folder')}
-                                className="rounded p-1 text-red-600 hover:bg-red-100"
-                                title="Delete"
-                              >
-                                <TrashIcon className="h-4 w-4" />
-                              </button>
-                            </div>
+                            <button
+                              type="button"
+                              onClick={() => loadBrowse(f.path)}
+                              className="flex w-full min-w-0 items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100"
+                            >
+                              <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />
+                              <span className="truncate">{f.name}</span>
+                            </button>
                           </li>
                         ))}
-                        {browseFiles.map((f) => (
-                          <li key={f.path}>
-                            <div className="flex items-center gap-1 rounded px-1 py-1 hover:bg-gray-100">
-                              <div className="flex min-w-0 flex-1 items-center gap-2 px-1 py-1 text-sm text-gray-700">
-                                <DocumentIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
-                                <span className="truncate">{f.name}</span>
-                                <span className="flex-shrink-0 text-xs text-gray-400">{formatSize(f.size)}</span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => setMoveSource({ path: f.path, name: f.name, type: 'file' })}
-                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
-                                title="Move"
-                              >
-                                <ArrowsRightLeftIcon className="h-4 w-4" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => renameItem(f.path, f.name)}
-                                className="rounded p-1 text-gray-500 hover:bg-gray-200"
-                                title="Rename"
-                              >
-                                <PencilSquareIcon className="h-4 w-4" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => deleteItem(f.path, f.name, 'file')}
-                                className="rounded p-1 text-red-600 hover:bg-red-100"
-                                title="Delete"
-                              >
-                                <TrashIcon className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </li>
-                        ))}
-                        {!browseLoading && browseRoots.length === 0 && browseFolders.length === 0 && browseFiles.length === 0 && !browseError && (
+                        {!browseLoading && browseRoots.length === 0 && browseFolders.length === 0 && !browseError && (
                           <li className="py-2 text-center text-sm text-gray-500">No folders here</li>
                         )}
                       </ul>

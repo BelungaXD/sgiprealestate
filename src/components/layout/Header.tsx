@@ -58,14 +58,14 @@ export default function Header() {
                 </p>
               </div>
             ) : (
-              <div className="relative h-14 w-14 flex-shrink-0 rounded-lg bg-graphite/5 p-1 ring-1 ring-graphite/10">
+              <div className="relative h-16 w-16 flex-shrink-0">
                 <Image
                   src={logoSrc}
                   alt="SGIP Real Estate"
-                  width={56}
-                  height={56}
-                  sizes="56px"
-                  className="h-12 w-12 object-contain mx-auto"
+                  width={64}
+                  height={64}
+                  sizes="64px"
+                  className="h-14 w-14 object-contain rounded-xl mx-auto"
                   priority
                   onError={() => setLogoError(true)}
                 />

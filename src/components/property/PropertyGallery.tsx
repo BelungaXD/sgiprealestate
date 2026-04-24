@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { propertyGalleryThumbSrcCandidates } from '@/lib/utils/imageUrl'
 
 interface PropertyGalleryProps {
   images?: string[] | null
@@ -87,32 +88,10 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
            url.endsWith('.WEBM')
   }
 
-  // Get thumbnail URL - import stores thumbnails as thumb-{filename} in thumbnails/
-  const getThumbnailUrl = (url: string): string => {
-    if (isVideo(url)) return url
-    const urlParts = url.split('/')
-    const filename = urlParts[urlParts.length - 1]
-    const thumbFilename = filename.startsWith('thumb-') ? filename : `thumb-${filename}`
-    return url.replace(/\/images\/[^/]+$/, `/images/thumbnails/${thumbFilename}`)
-  }
-
   const currentMedia = images[currentIndex] || ''
   const isCurrentVideo = isVideo(currentMedia)
   const mainDisplayUrl = resolveUrl(currentMedia)
   // Main hero: use full resolution for best quality; thumbnails only used in thumbnail strip below
-
-  // After page load, preload full-size images in background so lightbox opens fast
-  useEffect(() => {
-    const imageUrls = images.filter((url) => !isVideo(url))
-    if (imageUrls.length === 0) return
-    const timer = window.setTimeout(() => {
-      imageUrls.forEach((url) => {
-        const img = new Image()
-        img.src = url
-      })
-    }, 1000)
-    return () => window.clearTimeout(timer)
-  }, [images])
 
   return (
     <>
@@ -225,19 +204,22 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                         preload="metadata"
                       />
                     ) : (() => {
-                      const thumbUrl = resolveUrl(image)
-                      const thumbSrc = thumbUrl ? getThumbnailUrl(thumbUrl) : null
-                      const fullUrl = thumbUrl || image
-                      return thumbSrc ? (
+                      const displayUrl = resolveUrl(image) || image
+                      const candidates = propertyGalleryThumbSrcCandidates(displayUrl)
+                      return candidates.length > 0 ? (
                         <img
-                          src={thumbSrc}
+                          src={candidates[0]}
                           alt={`Thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
-                          loading="lazy"
+                          loading={index < 6 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          data-fallback="0"
                           onError={(e) => {
-                            const target = e.target as HTMLImageElement
-                            if (target.src !== fullUrl && thumbSrc !== fullUrl) {
-                              target.src = fullUrl
+                            const target = e.currentTarget
+                            const step = Number(target.dataset.fallback || '0') + 1
+                            if (step < candidates.length) {
+                              target.dataset.fallback = String(step)
+                              target.src = candidates[step]!
                             } else {
                               handleImageError(image)
                             }

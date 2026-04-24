@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next'
+import PropertyListingImage from '@/components/property/PropertyListingImage'
 import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Property {
@@ -52,8 +53,8 @@ export default function RelatedProperties({ currentPropertyId, district, type }:
         {relatedProperties.map((property) => (
           <div key={property.id} className="property-card group">
             <div className="relative overflow-hidden">
-              <img
-                src={property.image}
+              <PropertyListingImage
+                imageUrl={property.image}
                 alt={property.title}
                 className="property-image w-full h-48 object-cover"
               />

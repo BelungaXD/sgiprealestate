@@ -147,13 +147,42 @@ export default async function handler(
           })
         })
 
+      const developerIds = developers.map((dev) => dev.id)
+      const propertyWhere = admin ? {} : { isPublished: true }
+      const propertyStats = developerIds.length
+        ? await prisma.property.groupBy({
+            by: ['developerId'],
+            where: {
+              ...propertyWhere,
+              developerId: { in: developerIds },
+            },
+            _count: { _all: true },
+            _avg: { price: true },
+          })
+        : []
+      const statsByDeveloperId = new Map(
+        propertyStats.map((row) => [
+          row.developerId,
+          {
+            count: row._count._all,
+            avgPrice: row._avg.price ? Number(row._avg.price) : 0,
+          },
+        ])
+      )
+      const totalProperties = propertyStats.reduce((sum, row) => sum + row._count._all, 0)
+
       let list = developers.map((dev: (typeof developers)[number]) => ({
         ...dev,
         isActive: includesIsActive
           ? (dev as { isActive?: boolean }).isActive ?? true
           : true,
         logo: normalizeImageUrl(dev.logo),
-        propertiesCount: dev._count.properties,
+        propertiesCount: statsByDeveloperId.get(dev.id)?.count ?? dev._count.properties,
+        averagePrice: statsByDeveloperId.get(dev.id)?.avgPrice ?? 0,
+        marketShare:
+          totalProperties > 0
+            ? Number((((statsByDeveloperId.get(dev.id)?.count ?? dev._count.properties) / totalProperties) * 100).toFixed(1))
+            : 0,
       }))
 
       if (sort === 'properties') {

@@ -59,14 +59,14 @@ export default function Footer() {
                     </p>
                   </div>
                 ) : (
-                  <div className="relative h-14 w-14 flex-shrink-0">
+                  <div className="relative h-16 w-16 flex-shrink-0">
                     <Image
                       src={logoSrc}
                       alt="SGIP Real Estate"
-                      width={56}
-                      height={56}
-                      sizes="56px"
-                      className="h-14 w-14 object-contain"
+                      width={64}
+                      height={64}
+                      sizes="64px"
+                      className="h-16 w-16 object-contain rounded-xl"
                       onError={() => setLogoError(true)}
                     />
                   </div>

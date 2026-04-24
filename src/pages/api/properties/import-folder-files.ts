@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join, extname, basename, dirname } from 'path'
 import { existsSync } from 'fs'
 import sharp from 'sharp'
+import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import formidable, { File } from 'formidable'
@@ -27,7 +28,7 @@ const VALID_DISTRICTS = ['Beachfront', 'Downtown', 'Dubai Hills', 'Marina Shores
 // Расширения изображений
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp']
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv']
-const DOCUMENT_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.txt']
+const DOCUMENT_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx']
 
 // Получить MIME type
 function getMimeType(filepath: string): string {
@@ -45,8 +46,16 @@ function getMimeType(filepath: string): string {
     '.pdf': 'application/pdf',
     '.doc': 'application/msword',
     '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   }
   return mimeTypes[ext] || 'application/octet-stream'
+}
+
+function resolvePublicAssetPath(assetUrl: string): string {
+  return join(process.cwd(), 'public', assetUrl.replace(/^\/+/, ''))
 }
 
 // Проверить соотношение сторон видео (16:9)
@@ -262,17 +271,11 @@ async function processPropertyFiles(
         if (!existsSync(thumbnailDir)) {
           await mkdir(thumbnailDir, { recursive: true })
         }
-        const thumbnailFilename = `thumb-${fileInfo.filename}`
+        const thumbnailFilename = fileInfo.filename
         const thumbnailPath = join(thumbnailDir, thumbnailFilename)
-        
-        const imagePath = join(process.cwd(), 'public', fileInfo.url)
-        await sharp(imagePath)
-          .resize(200, 200, {
-            fit: sharp.fit.inside,
-            withoutEnlargement: true,
-          })
-          .webp({ quality: 70 })
-          .toFile(thumbnailPath)
+
+        const imagePath = resolvePublicAssetPath(fileInfo.url)
+        await writePropertyListingThumbnail(imagePath, thumbnailPath)
         
         images.push({
           url: fileInfo.url,

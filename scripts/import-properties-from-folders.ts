@@ -23,6 +23,9 @@ const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.sv
 // Video extensions (for viewing in browser)
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv']
 
+// Property documents allowed under uploads/properties/files
+const PROPERTY_FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx']
+
 // Get language from filename
 function getLanguageFromFilename(filename: string): string | null {
   const upperFilename = filename.toUpperCase()
@@ -59,16 +62,21 @@ function getMimeType(filepath: string): string {
     '.pdf': 'application/pdf',
     '.doc': 'application/msword',
     '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   }
   return mimeTypes[ext] || 'application/octet-stream'
 }
 
-// Determine file category
-function getFileCategory(filepath: string): 'image' | 'video' | 'file' {
+// Determine file category (null = skip unsupported extension)
+function getFileCategory(filepath: string): 'image' | 'video' | 'file' | null {
   const ext = extname(filepath).toLowerCase()
   if (IMAGE_EXTENSIONS.includes(ext)) return 'image'
   if (VIDEO_EXTENSIONS.includes(ext)) return 'video'
-  return 'file'
+  if (PROPERTY_FILE_EXTENSIONS.includes(ext)) return 'file'
+  return null
 }
 
 // Copy file to destination
@@ -141,6 +149,7 @@ async function processPropertyFolder(
         await processDirectory(fullPath, entry.name)
       } else if (entry.isFile()) {
         const fileCategory = getFileCategory(fullPath)
+        if (!fileCategory) continue
         const language = getLanguageFromFilename(entry.name)
         const fileInfo = await copyFileToDestination(fullPath, fileCategory, language)
 

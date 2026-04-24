@@ -1,4 +1,5 @@
 import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
 import {
   HomeIcon,
   WrenchScrewdriverIcon,
@@ -30,6 +31,7 @@ interface Property {
   paymentPlan?: string
   occupancyStatus?: string
   developer: string
+  developerSlug?: string
   developerLogo: string
   isFeatured: boolean
   coordinates: { lat: number; lng: number }
@@ -134,7 +136,10 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           </div>
 
           {!isSecondary && property.developer && (
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
+            <Link
+              href={property.developerSlug ? `/developers#developer-${property.developerSlug}` : '/developers'}
+              className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer"
+            >
               {property.developerLogo ? (
                 <img
                   src={property.developerLogo}
@@ -152,7 +157,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
                 <div className="text-xs text-gray-600 font-medium mb-1">Developer</div>
                 <div className="text-lg font-bold text-graphite truncate">{property.developer}</div>
               </div>
-            </div>
+            </Link>
           )}
 
           {isSecondary && property.occupancyStatus && (

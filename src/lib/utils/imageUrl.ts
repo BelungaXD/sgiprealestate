@@ -73,9 +73,46 @@ export function normalizeUploadUrl(url: string | null | undefined): string {
 }
 
 /**
- * Stable key for comparing upload URLs that may differ by /uploads vs /api/uploads,
- * percent-encoding, or absolute origin (same logical file).
+ * Pre-generated small file under `images/thumbnails/` (same basename as main) for list/grid cards.
  */
+export function propertyListingImageUrl(url: string | null | undefined): string {
+  if (!url) return ''
+  const key = uploadUrlCompareKey(url)
+  if (!key || !key.startsWith('properties/images/') || key.includes('/thumbnails/')) {
+    return normalizeImageUrl(url)
+  }
+  const parts = key.split('/')
+  const file = parts[parts.length - 1]
+  if (!file) {
+    return normalizeImageUrl(url)
+  }
+  const dir = parts.slice(0, -1)
+  const thumbKey = [...dir, 'thumbnails', file].join('/')
+  return normalizeImageUrl(`/uploads/${thumbKey}`)
+}
+
+/**
+ * Gallery bottom strip: try modern `thumbnails/name`, then legacy `thumbnails/thumb-name`, then full file.
+ * Prevents 404 + accidental multi-MB loads for 110px previews.
+ */
+export function propertyGalleryThumbSrcCandidates(resolvedImageUrl: string): string[] {
+  if (!resolvedImageUrl) return []
+  const key = uploadUrlCompareKey(resolvedImageUrl)
+  if (!key.startsWith('properties/images/') || key.includes('/thumbnails/')) {
+    const one = normalizeImageUrl(resolvedImageUrl)
+    return one ? [one] : []
+  }
+  const parts = key.split('/')
+  const file = parts[parts.length - 1] || ''
+  const ordered: string[] = [propertyListingImageUrl(resolvedImageUrl)]
+  if (file && !file.startsWith('thumb-')) {
+    const legacyKey = [...parts.slice(0, 2), 'thumbnails', `thumb-${file}`].join('/')
+    ordered.push(normalizeImageUrl(`/uploads/${legacyKey}`))
+  }
+  ordered.push(normalizeImageUrl(resolvedImageUrl))
+  return [...new Set(ordered.filter(Boolean))]
+}
+
 export function uploadUrlCompareKey(url: string | null | undefined): string {
   if (url == null || url === '') return ''
   const s = String(url).trim()

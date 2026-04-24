@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { readFile, stat } from 'fs/promises'
 import { join, resolve } from 'path'
-import { existsSync, readdirSync } from 'fs'
+import { existsSync, createReadStream } from 'fs'
 
 // Cache for public directory location to avoid repeated lookups
 let cachedPublicDir: string | null = null
@@ -10,6 +10,16 @@ let cachedPublicDir: string | null = null
 const imageCache = new Map<string, { buffer: Buffer; contentType: string; timestamp: number }>()
 const MAX_CACHE_SIZE = 50 // Maximum number of cached images
 const CACHE_TTL = 3600000 // 1 hour in milliseconds
+const STREAM_DIRECT_THRESHOLD_BYTES = 4 * 1024 * 1024
+
+function log(message: string, details?: Record<string, unknown>) {
+  const ts = new Date().toISOString()
+  if (details) {
+    console.info(`[${ts}] [api/uploads] ${message}`, details)
+    return
+  }
+  console.info(`[${ts}] [api/uploads] ${message}`)
+}
 
 function getPublicDir(): string {
   if (cachedPublicDir) {
@@ -175,13 +185,72 @@ export default async function handler(
       return res.status(404).json({ message: 'File not found' })
     }
 
-    // Read file
-    const fileBuffer = await readFile(filePath)
+    const fileStats = await stat(filePath)
+    const fileSize = fileStats.size
     const ext = decodedPath[decodedPath.length - 1].split('.').pop()?.toLowerCase()
     const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext || '')
+    const isVideo = ['mp4', 'mov', 'avi', 'webm', 'mkv', 'm4v', 'mpg', 'mpeg', '3gp', 'wmv'].includes(ext || '')
 
     let outputBuffer: Buffer
     let contentType: string
+
+    if (isVideo || (!isImage && fileSize > STREAM_DIRECT_THRESHOLD_BYTES)) {
+      const contentTypeMap: Record<string, string> = {
+        mp4: 'video/mp4',
+        mov: 'video/quicktime',
+        avi: 'video/x-msvideo',
+        webm: 'video/webm',
+        mkv: 'video/x-matroska',
+        m4v: 'video/x-m4v',
+        mpg: 'video/mpeg',
+        mpeg: 'video/mpeg',
+        '3gp': 'video/3gpp',
+        wmv: 'video/x-ms-wmv',
+        pdf: 'application/pdf',
+        doc: 'application/msword',
+        docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      }
+      contentType = contentTypeMap[ext || ''] || 'application/octet-stream'
+
+      const range = req.headers.range
+      if (range && isVideo) {
+        const [startText, endText] = range.replace(/bytes=/, '').split('-')
+        const start = Number.parseInt(startText, 10)
+        const end = endText ? Number.parseInt(endText, 10) : fileSize - 1
+        const safeStart = Number.isFinite(start) ? Math.max(0, start) : 0
+        const safeEnd = Number.isFinite(end) ? Math.min(end, fileSize - 1) : fileSize - 1
+        if (safeStart > safeEnd || safeStart >= fileSize) {
+          res.setHeader('Content-Range', `bytes */${fileSize}`)
+          return res.status(416).end()
+        }
+        const chunkSize = safeEnd - safeStart + 1
+        log('streaming video range', { path: decodedPath.join('/'), fileSize, safeStart, safeEnd, chunkSize })
+        res.writeHead(206, {
+          'Content-Range': `bytes ${safeStart}-${safeEnd}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunkSize,
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        })
+        createReadStream(filePath, { start: safeStart, end: safeEnd }).pipe(res)
+        return
+      }
+
+      if (fileSize > STREAM_DIRECT_THRESHOLD_BYTES) {
+        log('streaming large file', { path: decodedPath.join('/'), fileSize, isVideo })
+      }
+      res.setHeader('Content-Type', contentType)
+      res.setHeader('Content-Length', fileSize)
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+      if (isVideo) {
+        res.setHeader('Accept-Ranges', 'bytes')
+      }
+      createReadStream(filePath).pipe(res)
+      return
+    }
+
+    // Small files/images are safe to read into memory
+    const fileBuffer = await readFile(filePath)
 
     // Optimize images if parameters are provided
     if (isImage && (width || format)) {
@@ -202,6 +271,15 @@ export default async function handler(
         contentType,
         timestamp: Date.now(),
       })
+      if (outputBuffer.length > STREAM_DIRECT_THRESHOLD_BYTES) {
+        log('cached optimized image over 4MB', {
+          path: decodedPath.join('/'),
+          outputBytes: outputBuffer.length,
+          width: width ?? null,
+          quality,
+          format: format || 'original',
+        })
+      }
     } else {
       // Serve original file
       const contentTypeMap: Record<string, string> = {

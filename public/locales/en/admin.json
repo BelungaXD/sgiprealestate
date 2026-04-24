@@ -24,7 +24,8 @@
     "settings": "Settings",
     "totalProperties": "Total Properties",
     "activeListings": "Active Listings",
-    "totalViews": "Total Views"
+    "totalViews": "Total Views",
+    "serverUsageWarning": "Warning: server storage is {{percent}}% full."
   },
   "developers": {
     "title": "Developers directory"
@@ -121,5 +122,47 @@
     "uploading": "Uploading...",
     "imageInfo": "PNG, JPG, GIF up to 10MB each",
     "main": "Main"
+  },
+  "folderImport": {
+    "title": "New listing from a folder",
+    "intro": "Browser only: pick a folder and the listing is created for you. No terminal or server setup.",
+    "stepsTitle": "Five quick steps",
+    "step1": "You are here: Properties → folder import.",
+    "step2": "Click the dashed area below.",
+    "step3": "In the file picker, choose the folder that contains the photos/files for one (or more) listings, then confirm.",
+    "step4": "Wait until it finishes: first the upload bar, then a short “creating listing” step. Keep this tab open.",
+    "step5": "Done — the new listing appears in the table above.",
+    "dropHint": "Click here and choose a folder",
+    "dropSub": "Put photos (and optional documents) inside the folder. One folder can be one listing, or several subfolders for several listings.",
+    "selected": "Selected: {{name}}",
+    "phaseUpload": "Step 1 of 2: uploading…",
+    "phaseProcess": "Step 2 of 2: creating listing…",
+    "phaseUploadHelp": "Large photos and a slow connection are normal; watch the progress bar and do not close the tab.",
+    "phaseProcessHelp": "The server is processing files; this is usually faster than the upload.",
+    "filesSize": "{{count}} files · ~{{mb}} MB",
+    "uploadPercent": "{{pct}}% uploaded",
+    "uploadProgress": "{{loaded}} / {{total}} ({{pct}}%)",
+    "uploadFiles": "{{done}} of {{total}} files",
+    "advancedSummary": "Import",
+    "advancedHint": "If drag n drop did not work, choose the property folder.",
+    "serverBlockTitle": "Path on the server",
+    "serverPlaceholder": "No folder selected yet",
+    "browse": "Browse",
+    "import": "Import",
+    "importing": "Importing…",
+    "tooLarge": "Files exceed the server limit. Split the folder or ask an administrator.",
+    "noFilesSelected": "No files selected.",
+    "noFilesDropped": "No files dropped.",
+    "totalSizeExceeded": "Total file size ({{sizeInGB}}GB) exceeds the maximum limit (10GB). Try uploading folders separately.",
+    "uploadNoPath": "Server did not return a path after upload. Try again.",
+    "uploadBadResponse": "Server returned an unexpected response.",
+    "serverErrorShort": "Server error",
+    "pathRequired": "Enter a folder path or use Browse.",
+    "networkError": "Could not reach the server. Check your connection and try again.",
+    "dbSchemaMismatch": "Server database schema is outdated for import. Ask administrator to run migrations, then retry.",
+    "importHtmlError": "Import was interrupted or took too long. Try again or use a smaller folder.",
+    "deleteFolderConfirm": "Delete folder \"{{name}}\"? This cannot be undone.",
+    "deleteFileConfirm": "Delete file \"{{name}}\"? This cannot be undone.",
+    "deleteFolderDataConfirm": "Also delete linked property data (listing + media files) for \"{{name}}\"?"
   }
 }

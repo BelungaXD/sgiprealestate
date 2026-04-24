@@ -1,14 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
-import { readdir, stat, copyFile, mkdir, rm } from 'fs/promises'
+import { readdir, stat, copyFile, mkdir, rm, readFile, writeFile } from 'fs/promises'
 import { join, extname, basename, resolve, relative, sep } from 'path'
 import { existsSync } from 'fs'
+import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 
 const execAsync = promisify(exec)
 const LOG_SCOPE = 'import-folder'
 const FFPROBE_TIMEOUT_MS = 15000
+const PROPERTY_LINK_FILE = '.sgip-property-link.json'
+
+/** Avoid `which ffprobe` on every video (was slowing batch imports). */
+let ffprobeResolved: string | false | undefined
+async function resolveFfprobePath(): Promise<string | false> {
+  if (ffprobeResolved !== undefined) return ffprobeResolved
+  try {
+    const { stdout } = await execAsync('which ffprobe')
+    const p = stdout.trim().split('\n')[0]?.trim()
+    ffprobeResolved = p || false
+  } catch {
+    ffprobeResolved = false
+    console.warn(`[${new Date().toISOString()}] [${LOG_SCOPE}] ffprobe not found; video aspect ratio checks skipped`)
+  }
+  return ffprobeResolved
+}
 
 function log(message: string, details?: Record<string, unknown>) {
   const ts = new Date().toISOString()
@@ -25,7 +42,52 @@ function errorMessage(error: unknown): string {
   return 'Unknown error'
 }
 
-/** Staging root from upload-folder: public/uploads/incoming/{uploadId}/ */
+function resolvePublicAssetPath(assetUrl: string): string {
+  return join(process.cwd(), 'public', assetUrl.replace(/^\/+/, ''))
+}
+
+async function saveFolderPropertyLink(folderPath: string, propertyId: string): Promise<void> {
+  const markerPath = join(folderPath, PROPERTY_LINK_FILE)
+  try {
+    let existingIds: string[] = []
+    try {
+      const raw = await readFile(markerPath, 'utf8')
+      const parsed = JSON.parse(raw) as { propertyId?: string; propertyIds?: unknown }
+      const ids = new Set<string>()
+      if (typeof parsed.propertyId === 'string' && parsed.propertyId.trim()) ids.add(parsed.propertyId.trim())
+      if (Array.isArray(parsed.propertyIds)) {
+        for (const id of parsed.propertyIds) {
+          if (typeof id === 'string' && id.trim()) ids.add(id.trim())
+        }
+      }
+      existingIds = Array.from(ids)
+    } catch {
+      existingIds = []
+    }
+    const nextIds = Array.from(new Set([...existingIds, propertyId]))
+    await writeFile(
+      markerPath,
+      JSON.stringify(
+        {
+          source: 'import-folder',
+          updatedAt: new Date().toISOString(),
+          propertyIds: nextIds,
+          propertyId: nextIds[0] || propertyId,
+        },
+        null,
+        2
+      )
+    )
+  } catch (e) {
+    console.warn(`[${new Date().toISOString()}] [${LOG_SCOPE}] failed to write folder-property link`, {
+      folderPath,
+      propertyId,
+      error: e,
+    })
+  }
+}
+
+/** Staging root from upload-folder-stream: public/uploads/incoming/{uploadId}/ */
 const INCOMING_STAGING_ROOT = resolve(join(process.cwd(), 'public', 'uploads', 'incoming'))
 
 function isIncomingBatchDir(dir: string): boolean {
@@ -80,6 +142,8 @@ const VALID_DISTRICTS = ['Beachfront', 'Downtown', 'Dubai Hills', 'Marina Shores
 // Расширения изображений
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.heic', '.heif', '.avif', '.tiff', '.tif']
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv', '.m4v', '.mpg', '.mpeg', '.3gp', '.wmv']
+/** Allowed property documents under uploads/properties/files. */
+const PROPERTY_FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx']
 
 // Получить MIME type
 function getMimeType(filepath: string): string {
@@ -111,6 +175,8 @@ function getMimeType(filepath: string): string {
     '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     '.xls': 'application/vnd.ms-excel',
     '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     '.txt': 'text/plain',
     '.zip': 'application/zip',
     '.rar': 'application/vnd.rar',
@@ -142,17 +208,14 @@ async function hasVisibleFilesRecursive(dirPath: string): Promise<boolean> {
 // Проверить соотношение сторон видео (16:9)
 async function isVideo16x9(videoPath: string): Promise<boolean> {
   try {
-    // Проверяем наличие ffprobe
-    try {
-      await execAsync('which ffprobe')
-    } catch {
-      console.warn('ffprobe not found, accepting all videos')
-      return true // Если ffprobe не установлен, принимаем все видео
+    const ffprobeBin = await resolveFfprobePath()
+    if (!ffprobeBin) {
+      return true
     }
-    
+
     const startedAt = Date.now()
     const { stdout } = await execAsync(
-      `ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "${videoPath}"`,
+      `"${ffprobeBin}" -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "${videoPath}"`,
       { timeout: FFPROBE_TIMEOUT_MS }
     )
     const [width, height] = stdout.trim().split('x').map(Number)
@@ -304,7 +367,7 @@ function generateMetaDescription(propertyName: string, district: string | null):
 }
 
 // Обработать папку объекта
-async function processPropertyFolder(folderPath: string): Promise<void> {
+async function processPropertyFolder(folderPath: string): Promise<{ id: string; title: string }> {
   const folderName = basename(folderPath)
   const { district, propertyName } = parseFolderName(folderName)
   
@@ -314,6 +377,9 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
   const images: Array<{ url: string; alt?: string; order: number; isMain: boolean }> = []
   const videos: Array<{ url: string; title: string; order: number }> = []
   const files: Array<{ url: string; label: string; filename: string; size: number; mimeType: string; order: number }> = []
+
+  const folderStartedAt = Date.now()
+  let visibleFilesProcessed = 0
 
   // Рекурсивно обработать все файлы
   async function processDirectory(dirPath: string) {
@@ -330,27 +396,16 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
         if (IMAGE_EXTENSIONS.includes(ext)) {
           const fileInfo = await processFile(fullPath, 'image')
           
-          // Создать thumbnail (пропускаем если sharp недоступен)
-          const sharpForThumb = await getSharp()
-          if (sharpForThumb) {
-            try {
-              const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
-              if (!existsSync(thumbnailDir)) {
-                await mkdir(thumbnailDir, { recursive: true })
-              }
-              const thumbnailFilename = `thumb-${fileInfo.filename}`
-              const thumbnailPath = join(thumbnailDir, thumbnailFilename)
-              const imagePath = join(process.cwd(), 'public', fileInfo.url)
-              await sharpForThumb(imagePath)
-                .resize(200, 200, {
-                  fit: sharpForThumb.fit.inside,
-                  withoutEnlargement: true,
-                })
-                .webp({ quality: 70 })
-                .toFile(thumbnailPath)
-            } catch (thumbErr) {
-              console.warn('[import-folder] thumbnail creation failed:', thumbErr)
+          try {
+            const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
+            if (!existsSync(thumbnailDir)) {
+              await mkdir(thumbnailDir, { recursive: true })
             }
+            const thumbnailPath = join(thumbnailDir, fileInfo.filename)
+            const imagePath = resolvePublicAssetPath(fileInfo.url)
+            await writePropertyListingThumbnail(imagePath, thumbnailPath)
+          } catch (thumbErr) {
+            console.warn('[import-folder] thumbnail creation failed:', thumbErr)
           }
           
           images.push({
@@ -370,7 +425,7 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
               order: videos.length,
             })
           }
-        } else {
+        } else if (PROPERTY_FILE_EXTENSIONS.includes(ext)) {
           const fileInfo = await processFile(fullPath, 'file')
           files.push({
             url: fileInfo.url,
@@ -379,6 +434,15 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
             size: fileInfo.size,
             mimeType: fileInfo.mimeType,
             order: files.length,
+          })
+        }
+
+        visibleFilesProcessed++
+        if (visibleFilesProcessed % 5 === 0) {
+          log('folder file progress', {
+            folder: folderName,
+            filesDone: visibleFilesProcessed,
+            elapsedMs: Date.now() - folderStartedAt,
           })
         }
       }
@@ -446,7 +510,9 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
       isPublished: true,
       isFeatured: false,
     },
+    select: { id: true },
   })
+  await saveFolderPropertyLink(folderPath, property.id)
 
     // Добавить изображения
     if (images.length > 0) {
@@ -488,6 +554,7 @@ async function processPropertyFolder(folderPath: string): Promise<void> {
       })),
     })
   }
+  return { id: property.id, title: safePropertyName }
 }
 
 // Генерировать уникальный slug
@@ -498,6 +565,7 @@ async function generateUniqueSlug(baseSlug: string): Promise<string> {
   while (true) {
     const existing = await prisma.property.findUnique({
       where: { slug },
+      select: { id: true },
     })
 
     if (!existing) {
@@ -519,6 +587,9 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
   const videos: Array<{ url: string; title: string; order: number }> = []
   const files: Array<{ url: string; label: string; filename: string; size: number; mimeType: string; order: number }> = []
 
+  const folderStartedAt = Date.now()
+  let visibleFilesProcessed = 0
+
   async function processDirectory(dirPath: string) {
     const entries = await readdir(dirPath, { withFileTypes: true })
     for (const entry of entries) {
@@ -529,21 +600,14 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
         const ext = extname(entry.name).toLowerCase()
         if (IMAGE_EXTENSIONS.includes(ext)) {
           const fileInfo = await processFile(fullPath, 'image')
-          const sharpForThumb = await getSharp()
-          if (sharpForThumb) {
-            try {
-              const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
-              if (!existsSync(thumbnailDir)) await mkdir(thumbnailDir, { recursive: true })
-              const thumbnailFilename = `thumb-${fileInfo.filename}`
-              const thumbnailPath = join(thumbnailDir, thumbnailFilename)
-              const imagePath = join(process.cwd(), 'public', fileInfo.url)
-              await sharpForThumb(imagePath)
-                .resize(200, 200, { fit: sharpForThumb.fit.inside, withoutEnlargement: true })
-                .webp({ quality: 70 })
-                .toFile(thumbnailPath)
-            } catch (thumbErr) {
-              console.warn('[import-folder] thumbnail creation failed:', thumbErr)
-            }
+          try {
+            const thumbnailDir = join(process.cwd(), 'public', 'uploads', 'properties', 'images', 'thumbnails')
+            if (!existsSync(thumbnailDir)) await mkdir(thumbnailDir, { recursive: true })
+            const thumbnailPath = join(thumbnailDir, fileInfo.filename)
+            const imagePath = resolvePublicAssetPath(fileInfo.url)
+            await writePropertyListingThumbnail(imagePath, thumbnailPath)
+          } catch (thumbErr) {
+            console.warn('[import-folder] thumbnail creation failed:', thumbErr)
           }
           images.push({
             url: fileInfo.url,
@@ -561,7 +625,7 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
               order: videos.length,
             })
           }
-        } else {
+        } else if (PROPERTY_FILE_EXTENSIONS.includes(ext)) {
           const fileInfo = await processFile(fullPath, 'file')
           files.push({
             url: fileInfo.url,
@@ -570,6 +634,16 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
             size: fileInfo.size,
             mimeType: fileInfo.mimeType,
             order: files.length,
+          })
+        }
+
+        visibleFilesProcessed++
+        if (visibleFilesProcessed % 5 === 0) {
+          log('attach folder file progress', {
+            propertyId,
+            folder: folderName,
+            filesDone: visibleFilesProcessed,
+            elapsedMs: Date.now() - folderStartedAt,
           })
         }
       }
@@ -655,7 +729,10 @@ export default async function handler(
 
     // Attach folder to existing property (import one folder into one property)
     if (propertyId && typeof propertyId === 'string') {
-      const property = await prisma.property.findUnique({ where: { id: propertyId } })
+      const property = await prisma.property.findUnique({
+        where: { id: propertyId },
+        select: { id: true, title: true },
+      })
       if (!property) {
         return res.status(404).json({ message: 'Property not found' })
       }
@@ -673,6 +750,7 @@ export default async function handler(
         total: 1,
         successful: 1,
         failed: 0,
+        createdPropertyIds: [property.id],
       })
     }
 
@@ -725,11 +803,13 @@ export default async function handler(
       foldersToProcess: foldersToProcess.map((folder) => folder.path),
     })
     const results = { success: [] as string[], errors: [] as string[] }
+    const createdPropertyIds: string[] = []
     for (const { path: propertyFolderPath, name: folderName } of foldersToProcess) {
       try {
         const folderStartedAt = Date.now()
         log('folder processing started', { folderName, propertyFolderPath })
-        await processPropertyFolder(propertyFolderPath)
+        const createdProperty = await processPropertyFolder(propertyFolderPath)
+        createdPropertyIds.push(createdProperty.id)
         results.success.push(folderName)
         log('folder processing completed', {
           folderName,
@@ -763,6 +843,7 @@ export default async function handler(
       total: foldersToProcess.length,
       successful: results.success.length,
       failed: results.errors.length,
+      createdPropertyIds,
     })
   } catch (error: unknown) {
     const message = errorMessage(error)

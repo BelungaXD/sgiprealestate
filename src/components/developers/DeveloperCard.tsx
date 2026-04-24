@@ -55,7 +55,7 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
   }
 
   return (
-    <div className="card-hover group">
+    <div id={`developer-${developer.slug}`} className="card-hover group">
       <div className="p-6">
         {/* Logo and Basic Info */}
         <div className="flex items-start space-x-4 mb-6">

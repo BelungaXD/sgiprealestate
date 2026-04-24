@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, Fragment, FormEvent } from 'react'
 import { useTranslation } from 'next-i18next'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   PlusIcon,
@@ -74,6 +75,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     name: '',
     password: '',
   })
+  const [serverStorageUsagePercent, setServerStorageUsagePercent] = useState<number | null>(null)
 
   const loadBrowse = useCallback(async (path: string | null) => {
     setBrowseLoading(true)
@@ -159,6 +161,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }, [])
 
+  const handleFolderImportComplete = useCallback(async (createdPropertyId?: string) => {
+    await loadProperties()
+    if (!createdPropertyId) return
+    try {
+      const response = await fetch(`/api/properties/${encodeURIComponent(createdPropertyId)}`)
+      if (!response.ok) return
+      const data = await response.json()
+      if (!data?.property) return
+      setEditingProperty(data.property)
+      setIsModalOpen(true)
+    } catch (error) {
+      console.error('Error opening newly imported property:', error)
+    }
+  }, [loadProperties])
+
   const loadAdminUsers = useCallback(async () => {
     setUsersLoading(true)
     setUsersError('')
@@ -186,6 +203,30 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   useEffect(() => {
     loadProperties()
   }, [loadProperties])
+
+  useEffect(() => {
+    const loadServerStorageUsage = async () => {
+      try {
+        const response = await fetch('/api/admin/server-storage', { credentials: 'same-origin' })
+        const data = (await response.json().catch(() => ({}))) as {
+          ok?: boolean
+          usagePercent?: number
+        }
+
+        if (!response.ok || !data.ok || typeof data.usagePercent !== 'number') {
+          setServerStorageUsagePercent(null)
+          return
+        }
+
+        setServerStorageUsagePercent(Math.round(data.usagePercent))
+      } catch (error) {
+        console.error('Error loading server storage usage:', error)
+        setServerStorageUsagePercent(null)
+      }
+    }
+
+    loadServerStorageUsage()
+  }, [])
 
   useEffect(() => {
     if (activeTab === 'settings') {
@@ -513,8 +554,15 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-champagne rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">S</span>
+              <div className="relative h-16 w-16 flex-shrink-0">
+                <Image
+                  src="/images/sgip_logo.png"
+                  alt="SGIP"
+                  width={64}
+                  height={64}
+                  sizes="64px"
+                  className="h-14 w-14 object-contain rounded-xl mx-auto"
+                />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-graphite">{t('dashboard.title')}</h1>
@@ -556,6 +604,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
         {/* Main Content */}
         <div className="flex-1 p-8">
+          {typeof serverStorageUsagePercent === 'number' && serverStorageUsagePercent >= 80 && (
+            <div
+              className={`mb-6 rounded-lg border px-4 py-3 text-sm ${
+                serverStorageUsagePercent >= 90
+                  ? 'border-red-300 bg-red-50 text-red-800'
+                  : 'border-yellow-300 bg-yellow-50 text-yellow-800'
+              }`}
+            >
+              {t('dashboard.serverUsageWarning', { percent: serverStorageUsagePercent })}
+            </div>
+          )}
+
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {statsData.map((stat, index) => {
@@ -581,20 +641,20 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <div className="space-y-6">
               {/* Folder Import Section */}
               <div className="bg-white rounded-lg shadow-md p-6">
-                <FolderImport onImportComplete={loadProperties} />
-                <div className="mt-6 flex items-center justify-center">
-                  <div className="flex-1 border-t border-gray-300"></div>
-                  <span className="px-4 text-sm text-gray-500">or</span>
-                  <div className="flex-1 border-t border-gray-300"></div>
-                </div>
+                <FolderImport onImportComplete={handleFolderImportComplete} />
                 <div className="mt-4">
-                  <button
-                    onClick={handleAddProperty}
-                    className="w-full btn-primary flex items-center justify-center space-x-2"
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    <span>{t('properties.addProperty')}</span>
-                  </button>
+                  <div className="mx-auto flex w-fit flex-col items-center">
+                    <button
+                      onClick={handleAddProperty}
+                      className="inline-flex items-center justify-center space-x-2 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      <span>{t('properties.addProperty')}</span>
+                    </button>
+                    <span className="mt-1 text-[11px] text-gray-400">
+                      Optional manual fallback
+                    </span>
+                  </div>
                 </div>
               </div>
               

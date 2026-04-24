@@ -372,8 +372,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               {...register('listingMarket')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
             >
-              <option value="PRIMARY">Primary (off-plan / from developer)</option>
-              <option value="SECONDARY">Secondary (resale)</option>
+              <option value="PRIMARY">Primary</option>
+              <option value="SECONDARY">Secondary</option>
             </select>
           </div>
 

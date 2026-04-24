@@ -50,6 +50,7 @@ interface Property {
   paymentPlan: string
   occupancyStatus: string
   developer: string
+  developerSlug?: string
   developerLogo: string
   isFeatured: boolean
   coordinates: { lat: number; lng: number }
@@ -408,6 +409,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       paymentPlan: apiProperty.paymentPlan || '',
       occupancyStatus: apiProperty.occupancyStatus || '',
       developer: apiProperty.developer?.name || '',
+      developerSlug: apiProperty.developer?.slug || '',
       developerLogo: normalizeUploadUrl(apiProperty.developer?.logo) || '',
       isFeatured: apiProperty.isFeatured || false,
       coordinates: apiProperty.coordinates || { lat: 0, lng: 0 },
