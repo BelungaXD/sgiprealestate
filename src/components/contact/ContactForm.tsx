@@ -121,7 +121,7 @@ export default function ContactForm() {
             checked={Boolean(formData.consent)}
             onChange={handleInputChange}
             required
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-champagne focus:ring-champagne"
+            className="mt-1 h-4 w-4 rounded-sm border-gray-300 text-champagne focus:ring-champagne"
           />
           <label htmlFor="consent" className="text-sm text-gray-600">
             {t('form.consent')}

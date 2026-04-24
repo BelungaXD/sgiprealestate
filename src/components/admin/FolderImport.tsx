@@ -774,7 +774,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                       <button
                         type="button"
                         onClick={() => setBrowseOpen(false)}
-                        className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite"
+                        className="rounded-sm p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite"
                       >
                         <XMarkIcon className="h-5 w-5" />
                       </button>
@@ -787,7 +787,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         <button
                           type="button"
                           onClick={() => loadBrowse(browseParentPath)}
-                          className="inline-flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                          className="inline-flex items-center gap-1 rounded-sm border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
                         >
                           <ChevronUpIcon className="h-4 w-4" />
                           Up
@@ -797,7 +797,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         <button
                           type="button"
                           onClick={() => selectBrowseFolder(browseCurrentPath)}
-                          className="rounded bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90"
+                          className="rounded-sm bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90"
                         >
                           Select this folder
                         </button>
@@ -809,15 +809,15 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                     {browseLoading ? (
                       <p className="py-4 text-center text-sm text-gray-500">Loading…</p>
                     ) : (
-                      <ul className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
+                      <ul className="max-h-64 space-y-1 overflow-y-auto rounded-sm border border-gray-200 p-2">
                         {browseRoots.map((r) => (
                           <li key={r.path}>
                             <button
                               type="button"
                               onClick={() => loadBrowse(r.path)}
-                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100"
+                              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-gray-100"
                             >
-                              <FolderOpenIcon className="h-5 w-5 flex-shrink-0 text-champagne" />
+                              <FolderOpenIcon className="h-5 w-5 shrink-0 text-champagne" />
                               {r.name}
                             </button>
                           </li>
@@ -827,9 +827,9 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                             <button
                               type="button"
                               onClick={() => loadBrowse(f.path)}
-                              className="flex w-full min-w-0 items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100"
+                              className="flex w-full min-w-0 items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-gray-100"
                             >
-                              <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />
+                              <FolderIcon className="h-5 w-5 shrink-0 text-gray-500" />
                               <span className="truncate">{f.name}</span>
                             </button>
                           </li>

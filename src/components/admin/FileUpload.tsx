@@ -136,7 +136,7 @@ export default function FileUpload({
               key={fileItem.id}
               className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200"
             >
-              <div className="flex-shrink-0 mt-1">
+              <div className="shrink-0 mt-1">
                 <DocumentIcon className="h-8 w-8 text-gray-400" />
               </div>
               
@@ -150,7 +150,7 @@ export default function FileUpload({
                     value={fileItem.label}
                     onChange={(e) => updateLabel(fileItem.id, e.target.value)}
                     placeholder="Enter file label..."
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
                   />
                 </div>
                 
@@ -168,7 +168,7 @@ export default function FileUpload({
               <button
                 type="button"
                 onClick={() => removeFile(fileItem.id)}
-                className="flex-shrink-0 p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                className="shrink-0 p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
                 title="Remove file"
               >
                 <XMarkIcon className="h-5 w-5" />

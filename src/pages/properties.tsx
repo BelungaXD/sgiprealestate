@@ -308,7 +308,7 @@ export default function Properties() {
       <Layout>
         <div className="bg-white">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-graphite to-gray-800 text-white">
+          <div className="bg-linear-to-r from-graphite to-gray-800 text-white">
             <div className="container-custom py-16">
               <div className="max-w-3xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -362,10 +362,10 @@ export default function Properties() {
                       <div key={i} className="card animate-pulse">
                         <div className="h-64 bg-gray-200 rounded-t-lg"></div>
                         <div className="p-6">
-                          <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                          <div className="h-4 bg-gray-200 rounded mb-4 w-3/4"></div>
-                          <div className="h-6 bg-gray-200 rounded mb-4 w-1/2"></div>
-                          <div className="h-10 bg-gray-200 rounded"></div>
+                          <div className="h-4 bg-gray-200 rounded-sm mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded-sm mb-4 w-3/4"></div>
+                          <div className="h-6 bg-gray-200 rounded-sm mb-4 w-1/2"></div>
+                          <div className="h-10 bg-gray-200 rounded-sm"></div>
                         </div>
                       </div>
                     ))}

@@ -36,7 +36,7 @@ export default function ServiceProcess({ services }: ServiceProcessProps) {
             <div className="space-y-4">
               {service.process.map((step, index) => (
                 <div key={index} className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-champagne/20 rounded-full flex items-center justify-center text-xs font-bold text-champagne flex-shrink-0">
+                  <div className="w-6 h-6 bg-champagne/20 rounded-full flex items-center justify-center text-xs font-bold text-champagne shrink-0">
                     {index + 1}
                   </div>
                   <span className="text-gray-600 text-sm">{step}</span>

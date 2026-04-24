@@ -68,12 +68,12 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
       <Layout>
         <div className="bg-white">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-graphite to-gray-800 text-white">
+          <div className="bg-linear-to-r from-graphite to-gray-800 text-white">
             <div className="container-custom py-16">
               <div className="max-w-4xl">
                 <div className="flex items-start space-x-6 mb-6">
                   {normalizedLogo && !logoError ? (
-                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center flex-shrink-0 relative overflow-hidden shadow-md">
+                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center shrink-0 relative overflow-hidden shadow-md">
                       <img
                         src={normalizedLogo}
                         alt={displayName}
@@ -85,7 +85,7 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                       />
                     </div>
                   ) : (
-                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+                    <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center shrink-0 shadow-md">
                       <BuildingOfficeIcon className="h-12 w-12 text-gray-400" />
                     </div>
                   )}
@@ -131,7 +131,7 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {developer.address && (
                       <div className="flex items-start space-x-3">
-                        <MapPinIcon className="h-5 w-5 text-champagne mt-1 flex-shrink-0" />
+                        <MapPinIcon className="h-5 w-5 text-champagne mt-1 shrink-0" />
                         <div>
                           <div className="font-medium text-graphite">{t('address') || 'Address'}</div>
                           <div className="text-gray-600">{developer.address}</div>
@@ -140,7 +140,7 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                     )}
                     {developer.phone && (
                       <div className="flex items-start space-x-3">
-                        <PhoneIcon className="h-5 w-5 text-champagne mt-1 flex-shrink-0" />
+                        <PhoneIcon className="h-5 w-5 text-champagne mt-1 shrink-0" />
                         <div>
                           <div className="font-medium text-graphite">{t('phone') || 'Phone'}</div>
                           <a href={`tel:${developer.phone}`} className="text-champagne hover:underline">
@@ -151,7 +151,7 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                     )}
                     {developer.email && (
                       <div className="flex items-start space-x-3">
-                        <EnvelopeIcon className="h-5 w-5 text-champagne mt-1 flex-shrink-0" />
+                        <EnvelopeIcon className="h-5 w-5 text-champagne mt-1 shrink-0" />
                         <div>
                           <div className="font-medium text-graphite">{t('email') || 'Email'}</div>
                           <a href={`mailto:${developer.email}`} className="text-champagne hover:underline">
@@ -162,7 +162,7 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                     )}
                     {developer.website && (
                       <div className="flex items-start space-x-3">
-                        <GlobeAltIcon className="h-5 w-5 text-champagne mt-1 flex-shrink-0" />
+                        <GlobeAltIcon className="h-5 w-5 text-champagne mt-1 shrink-0" />
                         <div>
                           <div className="font-medium text-graphite">{t('website') || 'Website'}</div>
                           <a

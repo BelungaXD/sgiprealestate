@@ -23,7 +23,7 @@ export default function PartnersPage() {
           <h1 className="text-3xl font-bold text-graphite mb-8">{t('footer.services')} - Partners</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {partners.map((p) => (
-              <a key={p.name} href={p.website} target="_blank" rel="noopener noreferrer" className="group border rounded-xl p-6 bg-white hover:shadow transition">
+              <a key={p.name} href={p.website} target="_blank" rel="noopener noreferrer" className="group border rounded-xl p-6 bg-white hover:shadow-sm transition">
                 <div className="h-16 flex items-center justify-center mb-4">
                   <img src={p.logo} alt={p.name} className="max-h-16 object-contain" />
                 </div>

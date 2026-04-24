@@ -81,8 +81,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {/* Bedrooms */}
-          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
-            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
+            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
               <HomeIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
@@ -92,8 +92,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           </div>
 
           {/* Bathrooms */}
-          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
-            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
+            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
               <WrenchScrewdriverIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
@@ -103,8 +103,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           </div>
 
           {/* Area */}
-          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
-            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
+            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
               <Square3Stack3DIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
@@ -114,8 +114,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           </div>
 
           {/* Year Built */}
-          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
-            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
+            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
               <CalendarIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
@@ -125,8 +125,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           </div>
 
           {/* Parking */}
-          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
-            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+          <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer">
+            <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
               <MapPinIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
@@ -138,16 +138,16 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           {!isSecondary && property.developer && (
             <Link
               href={property.developerSlug ? `/developers#developer-${property.developerSlug}` : '/developers'}
-              className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer"
+              className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer"
             >
               {property.developerLogo ? (
                 <img
                   src={property.developerLogo}
                   alt=""
-                  className="w-12 h-12 object-contain flex-shrink-0"
+                  className="w-12 h-12 object-contain shrink-0"
                 />
               ) : (
-                <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
+                <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
                   <span className="text-xl font-bold text-champagne transition-colors duration-300 group-hover:text-white">
                     {property.developer.charAt(0)}
                   </span>
@@ -161,7 +161,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           )}
 
           {isSecondary && property.occupancyStatus && (
-            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex items-center space-x-4">
+            <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4">
               <div>
                 <div className="text-xs text-gray-600 font-medium mb-1">
                   {tProps('occupancy', 'Status')}
@@ -178,7 +178,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
       </div>
 
       {!isSecondary && property.paymentPlan && (
-        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xs">
           <h3 className="text-2xl font-bold text-graphite mb-3">
             {tProps('paymentPlan', 'Payment plan')}
           </h3>
@@ -191,14 +191,14 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Features */}
           {property.features && property.features.length > 0 && (
-            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xs transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
               <h3 className="text-2xl font-bold text-graphite mb-5">
                 {t('features')}
               </h3>
               <div className="space-y-3">
                 {property.features.map((feature, index) => (
                   <div key={index} className="flex items-start space-x-3 group transition-all duration-200 hover:translate-x-1">
-                    <div className="mt-0.5 flex-shrink-0">
+                    <div className="mt-0.5 shrink-0">
                       <CheckIcon className="h-5 w-5 text-champagne group-hover:scale-110 transition-transform" />
                     </div>
                     <span className="text-gray-700 group-hover:text-graphite transition-colors">{feature}</span>
@@ -210,14 +210,14 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
 
           {/* Amenities */}
           {property.amenities && property.amenities.length > 0 && (
-            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xs transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
               <h3 className="text-2xl font-bold text-graphite mb-5">
                 {t('amenities')}
               </h3>
               <div className="space-y-3">
                 {property.amenities.map((amenity, index) => (
                   <div key={index} className="flex items-start space-x-3 group transition-all duration-200 hover:translate-x-1">
-                    <div className="mt-0.5 flex-shrink-0">
+                    <div className="mt-0.5 shrink-0">
                       <CheckIcon className="h-5 w-5 text-champagne group-hover:scale-110 transition-transform" />
                     </div>
                     <span className="text-gray-700 group-hover:text-graphite transition-colors">{amenity}</span>
@@ -230,7 +230,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
       ) : null}
 
       {/* Location & Map */}
-      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xs transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
         <h3 className="text-2xl font-bold text-graphite mb-4">
           {t('location')}
         </h3>

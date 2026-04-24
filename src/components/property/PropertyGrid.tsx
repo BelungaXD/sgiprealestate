@@ -96,7 +96,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
                 </div>
               )}
 
-              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-graphite px-3 py-1 rounded-full text-sm font-semibold">
+              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
                 {formatPrice(property.price, property.currency)}
               </div>
 
@@ -122,7 +122,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
               </p>
 
               <div className="flex items-center text-gray-600 mb-4">
-                <MapPinIcon className="h-4 w-4 mr-1 flex-shrink-0" />
+                <MapPinIcon className="h-4 w-4 mr-1 shrink-0" />
                 <span className="text-sm truncate">{property.location}</span>
               </div>
 
@@ -141,7 +141,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-4 min-h-[2rem]">
+              <div className="flex items-center justify-between text-xs text-gray-500 mb-4 min-h-8">
                 {isSecondary ? (
                   <>
                     <div className="flex items-center gap-1">

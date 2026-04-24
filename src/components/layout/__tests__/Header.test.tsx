@@ -74,6 +74,6 @@ describe('Header Component', () => {
     
     const header = container.querySelector('header')
     expect(header).toBeInTheDocument()
-    expect(header).toHaveClass('bg-white', 'shadow-sm', 'sticky', 'top-0', 'z-40')
+    expect(header).toHaveClass('bg-white', 'shadow-xs', 'sticky', 'top-0', 'z-40')
   })
 })

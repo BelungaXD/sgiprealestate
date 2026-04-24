@@ -71,7 +71,7 @@ export default function PropertyFiles({ files }: PropertyFilesProps) {
               download
               className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-champagne hover:bg-champagne/5 transition-all group"
             >
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <div className="w-12 h-12 bg-champagne/10 rounded-lg flex items-center justify-center group-hover:bg-champagne/20 transition-colors">
                   <FileIcon className="h-6 w-6 text-champagne" />
                 </div>
@@ -100,7 +100,7 @@ export default function PropertyFiles({ files }: PropertyFilesProps) {
                 </div>
               </div>
               
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <ArrowDownTrayIcon className="h-5 w-5 text-gray-400 group-hover:text-champagne transition-colors" />
               </div>
             </a>

@@ -78,7 +78,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-8 px-4 shadow-sm sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
@@ -101,7 +101,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
                   required
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-champagne focus:border-champagne sm:text-sm"
+                  className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-hidden focus:ring-champagne focus:border-champagne sm:text-sm"
                   placeholder={t('login.usernamePlaceholder')}
                 />
               </div>
@@ -122,7 +122,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-champagne focus:border-champagne sm:text-sm"
+                  className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-hidden focus:ring-champagne focus:border-champagne sm:text-sm"
                   placeholder={t('login.passwordPlaceholder')}
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">

@@ -59,7 +59,7 @@ export default function Footer() {
                     </p>
                   </div>
                 ) : (
-                  <div className="relative h-16 w-16 flex-shrink-0">
+                  <div className="relative h-16 w-16 shrink-0">
                     <Image
                       src={logoSrc}
                       alt="SGIP Real Estate"

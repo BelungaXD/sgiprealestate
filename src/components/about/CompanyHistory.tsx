@@ -100,7 +100,7 @@ export default function CompanyHistory() {
                   <ul className="space-y-2">
                     {milestone.achievements.map((achievement, achievementIndex) => (
                       <li key={achievementIndex} className="flex items-start space-x-2">
-                        <CheckIcon className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
+                        <CheckIcon className="h-4 w-4 text-green-500 mt-1 shrink-0" />
                         <span className="text-sm text-gray-600">{achievement}</span>
                       </li>
                     ))}

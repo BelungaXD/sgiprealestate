@@ -198,7 +198,7 @@ export default function DevelopersAdminPanel() {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
         {loading ? (
           <p className="p-6 text-gray-500">Loading…</p>
         ) : rows.length === 0 ? (

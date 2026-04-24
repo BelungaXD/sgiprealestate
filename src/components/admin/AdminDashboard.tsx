@@ -550,11 +550,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow">
+      <div className="bg-white shadow-sm">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="relative h-16 w-16 flex-shrink-0">
+              <div className="relative h-16 w-16 shrink-0">
                 <Image
                   src="/images/sgip_logo.png"
                   alt="SGIP"
@@ -582,7 +582,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       <div className="flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-sm min-h-screen">
+        <div className="w-64 bg-white shadow-xs min-h-screen">
           <nav className="mt-8">
             {tabs.map((tab) => {
               const IconComponent = tab.icon
@@ -621,7 +621,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             {statsData.map((stat, index) => {
               const IconComponent = stat.icon
               return (
-                <div key={index} className="bg-white rounded-lg shadow p-6">
+                <div key={index} className="bg-white rounded-lg shadow-sm p-6">
                   <div className="flex items-center">
                     <div className={`p-3 rounded-lg bg-gray-50 ${stat.color}`}>
                       <IconComponent className="h-6 w-6" />
@@ -658,7 +658,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 </div>
               </div>
               
-            <div className="bg-white rounded-lg shadow">
+            <div className="bg-white rounded-lg shadow-sm">
               <div className="px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-graphite">{t('properties.title')}</h2>
@@ -781,14 +781,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           )}
 
           {activeTab === 'pages' && (
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-graphite mb-4">{t('pages.title')}</h2>
               <p className="text-gray-600">{t('pages.comingSoon')}</p>
             </div>
           )}
 
           {activeTab === 'inquiries' && (
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-graphite mb-4">{t('inquiries.title')}</h2>
               <p className="text-gray-600">{t('inquiries.comingSoon')}</p>
             </div>
@@ -796,12 +796,12 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
           {activeTab === 'settings' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-lg font-semibold text-graphite mb-4">{t('settings.title')}</h2>
                 <p className="text-gray-600">{t('settings.description')}</p>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <UserPlusIcon className="h-5 w-5 text-champagne" />
                   <h3 className="text-base font-semibold text-graphite">{t('settings.addPeople')}</h3>
@@ -851,7 +851,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 </form>
               </div>
 
-              <div className="bg-white rounded-lg shadow">
+              <div className="bg-white rounded-lg shadow-sm">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h3 className="text-base font-semibold text-graphite">{t('settings.peopleList')}</h3>
                 </div>
@@ -966,7 +966,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       {/* Browse folders modal (for import-into-property) */}
       <Transition appear show={browseOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-[60]" onClose={() => setBrowseOpen(false)}>
+        <Dialog as="div" className="relative z-60" onClose={() => setBrowseOpen(false)}>
           <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
             <div className="fixed inset-0 bg-black/30" />
           </Transition.Child>
@@ -993,18 +993,18 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   {browseLoading ? (
                     <p className="py-4 text-center text-sm text-gray-500">Loading…</p>
                   ) : (
-                    <ul className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
+                    <ul className="max-h-64 space-y-1 overflow-y-auto rounded-sm border border-gray-200 p-2">
                       {browseRoots.map((r) => (
                         <li key={r.path}>
                           <button type="button" onClick={() => loadBrowse(r.path)} className="btn-ghost btn-sm flex w-full items-center gap-2 text-left">
-                            <FolderOpenIcon className="h-5 w-5 flex-shrink-0 text-champagne" />{r.name}
+                            <FolderOpenIcon className="h-5 w-5 shrink-0 text-champagne" />{r.name}
                           </button>
                         </li>
                       ))}
                       {browseFolders.map((f) => (
                         <li key={f.path}>
                           <button type="button" onClick={() => loadBrowse(f.path)} className="btn-ghost btn-sm flex w-full items-center gap-2 text-left">
-                            <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />{f.name}
+                            <FolderIcon className="h-5 w-5 shrink-0 text-gray-500" />{f.name}
                           </button>
                         </li>
                       ))}

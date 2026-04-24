@@ -59,7 +59,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
 
   if (isSubmitted) {
     return (
-      <div className="text-center py-12 bg-gradient-to-br from-green-50 to-white rounded-xl p-12 border border-green-100">
+      <div className="text-center py-12 bg-linear-to-br from-green-50 to-white rounded-xl p-12 border border-green-100">
         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
           <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -163,7 +163,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
                   name="scheduleViewing"
                   checked={formData.scheduleViewing}
                   onChange={handleInputChange}
-                  className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                  className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded-sm"
                 />
                 <label className="ml-2 text-sm text-gray-700">
                   {t('contactForm.scheduleViewing')}
@@ -175,7 +175,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
                   name="requestInfo"
                   checked={formData.requestInfo}
                   onChange={handleInputChange}
-                  className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                  className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded-sm"
                 />
                 <label className="ml-2 text-sm text-gray-700">
                   {t('contactForm.requestInfo')}
@@ -267,9 +267,9 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
           </div>
 
           {/* Response Time Card */}
-          <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border border-green-100 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
+          <div className="bg-linear-to-br from-green-50 to-white rounded-2xl p-6 border border-green-100 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-green-200 group-hover:scale-110">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-green-200 group-hover:scale-110">
                 <svg className="w-6 h-6 text-green-600 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>

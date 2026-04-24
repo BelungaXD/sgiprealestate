@@ -348,12 +348,12 @@ export default function ImageUpload({
                 <XMarkIcon className="h-4 w-4" />
               </button>
               {index === 0 && (
-                <span className="absolute bottom-2 left-2 bg-champagne text-white text-xs px-2 py-1 rounded">
+                <span className="absolute bottom-2 left-2 bg-champagne text-white text-xs px-2 py-1 rounded-sm">
                   Main
                 </span>
               )}
                 {isVideo && (
-                  <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                  <span className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-sm">
                     Video
                   </span>
                 )}

@@ -60,7 +60,7 @@ export default function AreaHero({ area }: AreaHeroProps) {
       />
       
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
       
       {/* Content */}
       <div className="absolute inset-0 flex items-end">
@@ -87,7 +87,7 @@ export default function AreaHero({ area }: AreaHeroProps) {
             
             {/* Key Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
                 <div className="flex items-center space-x-2 text-white mb-2">
                   <HomeIcon className="h-5 w-5" />
                   <span className="text-sm font-medium">{t('properties')}</span>
@@ -97,7 +97,7 @@ export default function AreaHero({ area }: AreaHeroProps) {
                 </div>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
                 <div className="flex items-center space-x-2 text-white mb-2">
                   <CurrencyDollarIcon className="h-5 w-5" />
                   <span className="text-sm font-medium">{t('averagePrice')}</span>
@@ -107,7 +107,7 @@ export default function AreaHero({ area }: AreaHeroProps) {
                 </div>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
                 <div className="flex items-center space-x-2 text-white mb-2">
                   <StarIcon className="h-5 w-5" />
                   <span className="text-sm font-medium">{t('investmentRating')}</span>
@@ -117,7 +117,7 @@ export default function AreaHero({ area }: AreaHeroProps) {
                 </div>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
                 <div className="flex items-center space-x-2 text-white mb-2">
                   <MapPinIcon className="h-5 w-5" />
                   <span className="text-sm font-medium">{t('city')}</span>

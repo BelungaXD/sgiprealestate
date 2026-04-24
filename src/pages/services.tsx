@@ -192,7 +192,7 @@ export default function Services() {
       <Layout>
         <div className="bg-white">
           {/* Hero Section */}
-          <div className="bg-gradient-to-r from-graphite to-gray-800 text-white">
+          <div className="bg-linear-to-r from-graphite to-gray-800 text-white">
             <div className="container-custom py-16">
               <div className="max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6">

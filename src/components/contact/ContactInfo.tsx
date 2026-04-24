@@ -75,7 +75,7 @@ export default function ContactInfo() {
       <div className="space-y-6">
         {contactMethods.map((method, index) => (
           <div key={index} className="flex items-start space-x-4">
-            <div className="w-12 h-12 bg-champagne/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 bg-champagne/10 rounded-lg flex items-center justify-center shrink-0">
               <method.icon className="h-6 w-6 text-champagne" />
             </div>
             <div className="flex-1">
@@ -255,7 +255,7 @@ export default function ContactInfo() {
         <h3 className="text-lg font-semibold text-graphite mb-4">
           {t('info.map.title')}
         </h3>
-        <div className="w-full h-96 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+        <div className="w-full h-96 rounded-lg overflow-hidden border border-gray-200 shadow-xs">
           <iframe
             className="w-full h-full"
             loading="lazy"

@@ -40,7 +40,7 @@ export default function AreaMap({ areaName, coordinates, properties = [] }: Area
       <div className="relative mb-6">
         <div className="w-full h-64 md:h-96 bg-gray-200 rounded-lg overflow-hidden">
           {/* Placeholder for map - replace with actual map implementation */}
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-green-100">
+          <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-blue-100 to-green-100">
             <div className="text-center">
               <MapPinIcon className="h-16 w-16 text-champagne mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-graphite mb-2">

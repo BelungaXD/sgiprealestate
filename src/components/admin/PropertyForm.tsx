@@ -374,7 +374,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </label>
             <select
               {...register('listingMarket')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             >
               <option value="PRIMARY">Primary</option>
               <option value="SECONDARY">Secondary</option>
@@ -388,7 +388,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <input
               type="text"
               {...register('title')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
             {errors.title && (
               <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
@@ -402,7 +402,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <textarea
               {...register('description')}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
             {errors.description && (
               <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
@@ -416,7 +416,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               </label>
               <select
                 {...register('status')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               >
                 {PROPERTY_STATUSES.map((status) => (
                   <option key={status.value} value={status.value}>
@@ -436,7 +436,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 type="number"
                 step="0.01"
                 {...register('price', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
               {errors.price && (
                 <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>
@@ -449,7 +449,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="text"
                 {...register('currency')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
           </div>
@@ -464,7 +464,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </label>
             <select
               {...register('type')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             >
               {PROPERTY_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -483,7 +483,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 type="number"
                 step="0.01"
                 {...register('areaSqm', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
             <div>
@@ -492,7 +492,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               </label>
               <select
                 {...register('bedrooms', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               >
                 {BEDROOM_OPTIONS.map((b) => (
                   <option key={b.value} value={b.value}>
@@ -508,7 +508,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="number"
                 {...register('bathrooms', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
             <div>
@@ -518,7 +518,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="number"
                 {...register('parking', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
           </div>
@@ -531,7 +531,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="number"
                 {...register('floor', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
             <div>
@@ -541,7 +541,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="number"
                 {...register('totalFloors', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
             <div>
@@ -551,7 +551,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="number"
                 {...register('yearBuilt', { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
             {listingMarket === 'PRIMARY' && (
@@ -562,7 +562,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 <input
                   type="date"
                   {...register('completionDate')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
                 />
               </div>
             )}
@@ -576,7 +576,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <textarea
                 {...register('paymentPlan')}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
                 placeholder="Payment schedule, post-handover plan…"
               />
             </div>
@@ -589,7 +589,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               </label>
               <select
                 {...register('occupancyStatus')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               >
                 <option value="">—</option>
                 <option value="VACANT">Vacant</option>
@@ -609,7 +609,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <input
               type="text"
               {...register('address')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
           </div>
 
@@ -621,7 +621,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <input
                 type="text"
                 {...register('city')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
             <div>
@@ -632,7 +632,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 type="text"
                 {...register('district')}
                 autoComplete="off"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
             </div>
           </div>
@@ -647,7 +647,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               autoComplete="off"
               {...register('googleMapsUrl')}
               placeholder="https://maps.app.goo.gl/… or Share → Copy link"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
             {errors.googleMapsUrl && (
               <p className="mt-1 text-sm text-red-600">{errors.googleMapsUrl.message as string}</p>
@@ -678,7 +678,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                     const a = areas.find((x) => x.id === v)
                     if (a) setValue('district', areaLabel(a))
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
                 >
                   <option value="">Not set</option>
                   {areas.map((a) => (
@@ -705,7 +705,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 ) : (
                   <select
                     {...register('developerId')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
                   >
                     <option value="">Not set</option>
                     {developers.map((developer) => (
@@ -754,7 +754,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 onChange={(e) => setNewFeature(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
                 placeholder="Add feature"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
               <button type="button" onClick={addFeature} className="btn-filled btn-sm">
                 Add
@@ -789,7 +789,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 onChange={(e) => setNewAmenity(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
                 placeholder="Add amenity"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
               />
               <button type="button" onClick={addAmenity} className="btn-filled btn-sm">
                 Add
@@ -827,7 +827,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <input
               type="text"
               {...register('slug')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
           </div>
           <div>
@@ -837,7 +837,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <input
               type="text"
               {...register('metaTitle')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
           </div>
           <div>
@@ -847,7 +847,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <textarea
               {...register('metaDescription')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-champagne focus:border-champagne"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
           </div>
         </div>

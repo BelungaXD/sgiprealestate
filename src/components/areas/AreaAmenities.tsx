@@ -123,7 +123,7 @@ export default function AreaAmenities({ amenities, highlights }: AreaAmenitiesPr
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {highlights.map((highlight, index) => (
               <div key={index} className="flex items-center space-x-3 p-3 bg-champagne/5 rounded-lg">
-                <StarIcon className="h-5 w-5 text-champagne flex-shrink-0" />
+                <StarIcon className="h-5 w-5 text-champagne shrink-0" />
                 <span className="text-gray-700 font-medium">{highlight}</span>
               </div>
             ))}

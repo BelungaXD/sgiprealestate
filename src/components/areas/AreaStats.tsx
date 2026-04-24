@@ -134,7 +134,7 @@ export default function AreaStats({ areas }: AreaStatsProps) {
             .sort((a, b) => b.propertiesCount - a.propertiesCount)
             .slice(0, 6)
             .map((area, index) => (
-              <div key={area.id} className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div key={area.id} className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-xs hover:shadow-md transition-shadow">
                 <div className="w-10 h-10 bg-champagne/10 rounded-full flex items-center justify-center">
                   <span className="text-champagne font-bold text-lg">
                     {index + 1}
