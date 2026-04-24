@@ -28,16 +28,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Recompile every sharp tree (root + next's nested copy) for baseline x86-64 CPUs
+# Recompile sharp once at the app root for baseline x86-64 CPUs.
+# Rebuilding inside nested package trees is brittle and can fail depending on npm layout.
 ENV CXXFLAGS=-march=x86-64
 ENV CFLAGS=-march=x86-64
-RUN set -e; \
-  for d in node_modules/sharp node_modules/next/node_modules/sharp; do \
-    if [ -d "$d" ]; then \
-      echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp in $d"; \
-      (cd "$d" && npm rebuild --build-from-source); \
-    fi; \
-  done
+RUN echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp start" \
+  && npm rebuild sharp --build-from-source --foreground-scripts \
+  && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp done"
 
 # Next.js 16 + webpack + TypeScript needs a larger V8 heap than 768MB; a low cap
 # causes extreme GC churn so "Running TypeScript ..." looks hung for many minutes.
