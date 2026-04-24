@@ -72,7 +72,7 @@ export default async function handler(
             _count: { select: { properties: true } },
           },
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (!hasMissingAreaIsActiveColumn(error)) {
             throw error
           }
@@ -156,7 +156,7 @@ export default async function handler(
             isActive: parsed.isActive ?? true,
           },
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (!hasMissingAreaIsActiveColumn(error)) {
             throw error
           }

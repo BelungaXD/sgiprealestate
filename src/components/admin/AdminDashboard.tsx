@@ -737,11 +737,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                               </button>
                               <button
                                 onClick={() => openImportFolderModal(property)}
-                                className="text-blue-600 hover:text-blue-900 inline-flex items-center gap-1"
+                                className="text-blue-600 hover:text-blue-900"
                                 title="Import folder into this property"
                               >
                                 <FolderOpenIcon className="h-4 w-4" />
-                                Import folder
                               </button>
                               <button
                                 onClick={() => handleDeleteProperty(property.id)}

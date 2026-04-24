@@ -29,28 +29,9 @@ type UploadUiState =
 
 type UploadEntry = { file: File; relPath: string }
 
-type FileSystemEntryLike = {
-  isFile: boolean
-  isDirectory: boolean
-  name: string
-  fullPath?: string
-}
-
-type FileSystemFileEntryLike = FileSystemEntryLike & {
-  file: (callback: (file: File) => void, errorCallback?: (error: DOMException) => void) => void
-}
-
-type FileSystemDirectoryEntryLike = FileSystemEntryLike & {
-  createReader: () => {
-    readEntries: (
-      successCallback: (entries: FileSystemEntryLike[]) => void,
-      errorCallback?: (error: DOMException) => void
-    ) => void
-  }
-}
-
+/** Drag/drop entry source (Chromium); `webkitGetAsEntry` is not on the default `DataTransferItem` typedef in all TS configs. */
 type DataTransferItemWithEntry = DataTransferItem & {
-  webkitGetAsEntry?: () => FileSystemEntryLike | null
+  webkitGetAsEntry?: () => FileSystemEntry | null
 }
 
 const UPLOAD_CONCURRENCY = 6
@@ -156,16 +137,16 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     return message
   }
 
-  const readFileEntry = (entry: FileSystemFileEntryLike): Promise<File> =>
+  const readFileEntry = (entry: FileSystemFileEntry): Promise<File> =>
     new Promise((resolveFile, rejectFile) => {
       entry.file(resolveFile, rejectFile)
     })
 
-  const readAllDirectoryEntries = async (dirEntry: FileSystemDirectoryEntryLike): Promise<FileSystemEntryLike[]> => {
+  const readAllDirectoryEntries = async (dirEntry: FileSystemDirectoryEntry): Promise<FileSystemEntry[]> => {
     const reader = dirEntry.createReader()
-    const entries: FileSystemEntryLike[] = []
+    const entries: FileSystemEntry[] = []
     while (true) {
-      const chunk = await new Promise<FileSystemEntryLike[]>((resolveChunk, rejectChunk) => {
+      const chunk = await new Promise<FileSystemEntry[]>((resolveChunk, rejectChunk) => {
         reader.readEntries(resolveChunk, rejectChunk)
       })
       if (chunk.length === 0) break
@@ -177,14 +158,14 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const collectEntriesFromDrop = useCallback(async (dataTransfer: DataTransfer): Promise<UploadEntry[]> => {
     const results: UploadEntry[] = []
 
-    const walk = async (entry: FileSystemEntryLike, prefix: string) => {
+    const walk = async (entry: FileSystemEntry, prefix: string) => {
       if (entry.isFile) {
-        const file = await readFileEntry(entry as FileSystemFileEntryLike)
+        const file = await readFileEntry(entry as FileSystemFileEntry)
         results.push({ file, relPath: `${prefix}${entry.name}` })
         return
       }
       if (!entry.isDirectory) return
-      const dir = entry as FileSystemDirectoryEntryLike
+      const dir = entry as FileSystemDirectoryEntry
       const children = await readAllDirectoryEntries(dir)
       const nextPrefix = `${prefix}${entry.name}/`
       await Promise.all(children.map((child) => walk(child, nextPrefix)))
@@ -192,8 +173,8 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
 
     const items = Array.from(dataTransfer.items || [])
     const entries = items
-      .map((item) => (item as DataTransferItemWithEntry).webkitGetAsEntry?.() || null)
-      .filter((entry): entry is FileSystemEntryLike => Boolean(entry))
+      .map((item) => (item as DataTransferItemWithEntry).webkitGetAsEntry?.() ?? null)
+      .filter((entry): entry is FileSystemEntry => entry !== null)
 
     if (entries.length > 0) {
       await Promise.all(entries.map((entry) => walk(entry, '')))

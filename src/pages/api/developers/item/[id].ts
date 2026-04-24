@@ -108,7 +108,7 @@ export default async function handler(
             ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
           },
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (
             !(
               parsed.isActive !== undefined &&
