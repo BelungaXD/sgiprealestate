@@ -9,7 +9,7 @@ import {
 } from '@/lib/adminSession'
 
 const createUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().trim().min(1).max(120).optional(),
   password: z.string().min(8).max(128),
 })
@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(201).json({ ok: true, user })
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ ok: false, error: 'invalid_payload', issues: error.errors })
+        return res.status(400).json({ ok: false, error: 'invalid_payload', issues: error.issues })
       }
       if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2002') {
         return res.status(409).json({ ok: false, error: 'email_already_exists' })

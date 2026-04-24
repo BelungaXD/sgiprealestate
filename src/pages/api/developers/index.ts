@@ -257,7 +257,7 @@ export default async function handler(
       return res.status(201).json({ success: true, developer })
     } catch (error: any) {
       if (error.name === 'ZodError') {
-        return res.status(400).json({ success: false, errors: error.errors })
+        return res.status(400).json({ success: false, errors: error.issues })
       }
       console.error('Error creating developer:', error)
       return res.status(500).json({ message: error.message || 'Internal server error' })

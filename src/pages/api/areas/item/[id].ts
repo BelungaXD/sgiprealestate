@@ -123,7 +123,7 @@ export default async function handler(
       return res.status(200).json({ success: true, area })
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ success: false, errors: error.errors })
+        return res.status(400).json({ success: false, errors: error.issues })
       }
       console.error('Error updating area:', error)
       return res.status(500).json({
