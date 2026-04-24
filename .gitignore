@@ -58,6 +58,9 @@ logs
 *.db
 *.sqlite
 
+# Prisma generated client (Prisma 7 prisma-client provider)
+prisma/generated/
+
 # Temporary files
 tmp/
 temp/
