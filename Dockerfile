@@ -33,7 +33,11 @@ ENV CFLAGS=-march=x86-64
 # Force prebuilt binaries where available (not source builds), then ensure
 # node-addon-api is available for native modules that still require it.
 RUN npm install --prefer-offline --no-audit --legacy-peer-deps --no-build-from-source --include=optional \
-    && npm install --no-save node-addon-api
+    && npm install --no-save node-addon-api \
+    && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] pin sharp baseline-compatible start" \
+    && npm install --no-save --include=optional --os=linux --cpu=x64 sharp@0.33.5 \
+    && node -e "const v=require('sharp/package.json').version; console.log('['+new Date().toISOString()+'] sharp version in image deps:', v)" \
+    && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] pin sharp baseline-compatible done"
 
 # Rebuild the source code only when needed
 FROM base AS builder

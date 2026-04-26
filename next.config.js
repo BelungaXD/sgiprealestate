@@ -33,6 +33,7 @@ const nextConfig = {
     localeDetection: false,
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',

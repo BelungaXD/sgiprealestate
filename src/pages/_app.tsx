@@ -2,29 +2,8 @@ import type { AppProps } from 'next/app'
 import { appWithTranslation } from 'next-i18next/pages'
 import Head from 'next/head'
 import { useEffect } from 'react'
-import { Manrope, Inter } from 'next/font/google'
 import '../styles/globals.css'
 import GTM from '../components/analytics/GTM'
-
-// Optimize Google Fonts with Next.js font optimization
-// This self-hosts fonts and enables proper cache headers
-const manrope = Manrope({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-manrope',
-  preload: true,
-  fallback: ['system-ui', 'sans-serif'],
-})
-
-const inter = Inter({
-  subsets: ['latin', 'cyrillic'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-inter',
-  preload: true,
-  fallback: ['system-ui', 'sans-serif'],
-})
 
 const CHUNK_RELOAD_KEY = 'chunk-reload-attempted'
 const CHUNK_RELOAD_MAX = 2
@@ -33,8 +12,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     // Remove loading class from body when component mounts
     document.body.classList.remove('loading')
-    // Apply font variables to html element for global access
-    document.documentElement.classList.add(manrope.variable, inter.variable)
   }, [])
 
   useEffect(() => {
@@ -88,7 +65,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      <div className={`${manrope.variable} ${inter.variable} font-sans`}>
+      <div className="font-sans">
         <GTM id={process.env.NEXT_PUBLIC_GTM_ID} />
         <Component {...pageProps} />
       </div>

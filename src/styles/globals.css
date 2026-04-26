@@ -376,14 +376,14 @@
 }
 
 @layer utilities {
-  /* Google Fonts - optimized via next/font in _app.tsx */
-
   /* Custom CSS Variables */
   :root {
     --color-graphite: #1e1f24;
     --color-champagne: #c9a86a;
     --color-champagne-dark: #8b6f3f;
     --color-white: #f7f7f8;
+    --font-manrope: 'Manrope';
+    --font-inter: 'Inter';
   }
 
   /* Base Styles */
