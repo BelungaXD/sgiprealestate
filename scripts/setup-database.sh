@@ -178,6 +178,34 @@ create_tables() {
     fi
 }
 
+# Function to sync schema changes when tables already exist
+sync_schema_changes() {
+    # Prefer host npx when available
+    if command -v npx >/dev/null 2>&1; then
+        if npx prisma db push --accept-data-loss --skip-generate; then
+            return 0
+        fi
+    fi
+
+    # Fallback to an existing running app container
+    for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
+        if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
+            if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --skip-generate; then
+                return 0
+            fi
+        fi
+    done
+
+    # Final fallback: temporary Node container on nginx network
+    docker run --rm \
+        --network nginx-network \
+        -v "$PROJECT_ROOT:/app" \
+        -w /app \
+        -e DATABASE_URL="$DATABASE_URL" \
+        node:20-slim \
+        sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --skip-generate"
+}
+
 # Main execution
 main() {
     # Step 1: Check database connection
@@ -210,7 +238,7 @@ main() {
     if [ $tables_result -eq 0 ]; then
         echo -e "${GREEN}✅ Database tables already exist${NC}"
         echo -e "${BLUE}ℹ️  Syncing schema changes (columns/enums/indexes) with Prisma...${NC}"
-        if npx prisma db push --accept-data-loss --skip-generate; then
+        if sync_schema_changes; then
             echo -e "${GREEN}✅ Database schema is up to date${NC}"
             echo -e "${GREEN}✅ Database is ready. Proceeding with deployment...${NC}"
             echo ""
