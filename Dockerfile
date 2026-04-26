@@ -4,24 +4,46 @@ FROM --platform=linux/amd64 node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# libvips-dev + toolchain: compile sharp from source for hosts without x86-64-v2 (prebuilt sharp aborts)
-RUN apt-get update && apt-get install -y libc6 openssl libvips-dev build-essential python3 pkg-config && rm -rf /var/lib/apt/lists/*
+# Build/runtime libs frequently needed by native Node modules on node:20-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libc6 \
+    libc6-dev \
+    openssl \
+    ca-certificates \
+    build-essential \
+    python3 \
+    pkg-config \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
 ENV npm_config_update_notifier=false
 ENV npm_config_cache=/tmp/.npm
+ENV npm_config_build_from_source=false
+ENV npm_config_include=optional
+ENV npm_config_platform=linux
+ENV npm_config_arch=x64
 ENV CXXFLAGS=-march=x86-64
 ENV CFLAGS=-march=x86-64
 # Use npm install with legacy-peer-deps to handle peer dependency conflicts
 # --legacy-peer-deps handles peer dependency conflicts (e.g., eslint versions)
 # --prefer-offline uses cache when available, --no-audit skips security audit
-RUN npm install --prefer-offline --no-audit --legacy-peer-deps
+# Force prebuilt binaries where available (not source builds), then ensure
+# node-addon-api is available for native modules that still require it.
+RUN npm install --prefer-offline --no-audit --legacy-peer-deps --no-build-from-source --include=optional \
+    && npm install --no-save node-addon-api
 
 # Rebuild the source code only when needed
 FROM base AS builder
-RUN apt-get update && apt-get install -y openssl libvips-dev build-essential python3 pkg-config && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openssl \
+    ca-certificates \
+    build-essential \
+    python3 \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -31,6 +53,10 @@ COPY . .
 # Override on tiny build hosts: docker build --build-arg NEXT_BUILD_MAX_OLD_SPACE=1024 .
 ARG NEXT_BUILD_MAX_OLD_SPACE=2048
 ENV NODE_OPTIONS=--max-old-space-size=${NEXT_BUILD_MAX_OLD_SPACE}
+
+# Placeholder DB URL for prisma generate during image build
+ARG DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Generate Prisma Client
 RUN echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] prisma generate start" && npx prisma generate && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] prisma generate done"
