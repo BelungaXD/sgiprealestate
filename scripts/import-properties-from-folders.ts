@@ -2,8 +2,10 @@ import { readdir, stat, copyFile, mkdir } from 'fs/promises'
 import { join, extname, basename, dirname } from 'path'
 import { existsSync } from 'fs'
 import { createPrisma } from './_prisma'
+import { createScopedLogger } from '../src/lib/logger'
 
 const prisma = createPrisma()
+const log = createScopedLogger('scripts/import-properties-from-folders')
 
 // Language detection patterns
 const LANGUAGE_PATTERNS: Record<string, string> = {
@@ -128,7 +130,7 @@ async function processPropertyFolder(
   propertyName: string,
   areaId: string
 ): Promise<void> {
-  console.log(`\nProcessing property: ${propertyName}`)
+  log.info('Processing property', { propertyName })
 
   const images: Array<{ url: string; alt?: string; order: number; isMain: boolean }> = []
   const videos: Array<{ url: string; title: string; order: number }> = []
@@ -202,7 +204,7 @@ async function processPropertyFolder(
     })
 
     if (existingProperty) {
-      console.log(`  Property ${propertyName} already exists, skipping...`)
+      log.info('Property already exists, skipping', { propertyName, slug })
       return
     }
 
@@ -237,7 +239,7 @@ async function processPropertyFolder(
       },
     })
 
-    console.log(`  ✓ Created property: ${property.id}`)
+    log.info('Created property', { propertyName, propertyId: property.id })
 
     // Add images
     if (images.length > 0) {
@@ -250,7 +252,7 @@ async function processPropertyFolder(
           isMain: img.isMain,
         })),
       })
-      console.log(`  ✓ Added ${images.length} images`)
+      log.info('Added property images', { propertyId: property.id, count: images.length })
     }
 
     // Add videos (as floor plans or files)
@@ -267,7 +269,7 @@ async function processPropertyFolder(
           order: videos.indexOf(video),
         })),
       })
-      console.log(`  ✓ Added ${videos.length} videos`)
+      log.info('Added property videos', { propertyId: property.id, count: videos.length })
     }
 
     // Add files
@@ -283,12 +285,12 @@ async function processPropertyFolder(
           order: file.order,
         })),
       })
-      console.log(`  ✓ Added ${files.length} files`)
+      log.info('Added property files', { propertyId: property.id, count: files.length })
     }
 
-    console.log(`  ✓ Property ${propertyName} imported successfully`)
+    log.info('Property imported successfully', { propertyName, propertyId: property.id })
   } catch (error: any) {
-    console.error(`  ✗ Error creating property ${propertyName}:`, error.message)
+    log.errorWithException('Error creating property', error, { propertyName })
   }
 }
 
@@ -312,23 +314,23 @@ async function main() {
           slug: 'downtown-dubai',
         },
       })
-      console.log('Created Downtown Dubai area')
+      log.info('Created Downtown Dubai area')
     }
 
     // Read property folders
     const entries = await readdir(dataFolder, { withFileTypes: true })
     const propertyFolders = entries.filter(entry => entry.isDirectory())
 
-    console.log(`Found ${propertyFolders.length} property folders`)
+    log.info('Found property folders', { count: propertyFolders.length, dataFolder })
 
     for (const folder of propertyFolders) {
       const folderPath = join(dataFolder, folder.name)
       await processPropertyFolder(folderPath, folder.name, area.id)
     }
 
-    console.log('\n✓ Import completed!')
+    log.info('Import completed')
   } catch (error: any) {
-    console.error('Error:', error)
+    log.errorWithException('Import from folders failed', error)
   } finally {
     await prisma.$disconnect()
   }

@@ -1,22 +1,24 @@
 import { createPrisma } from './_prisma'
+import { createScopedLogger } from '../src/lib/logger'
 
 const prisma = createPrisma({
   log: ['query', 'error', 'warn'],
 })
+const log = createScopedLogger('scripts/test-db-connection')
 
 async function test() {
   try {
-    console.log('Testing database connection...')
+    log.info('Testing database connection')
     await prisma.$connect()
-    console.log('✅ Connected to database')
+    log.info('Connected to database')
     
     const count = await prisma.developer.count()
-    console.log(`✅ Developers count: ${count}`)
+    log.info('Developers count', { count })
     
     const areasCount = await prisma.area.count()
-    console.log(`✅ Areas count: ${areasCount}`)
+    log.info('Areas count', { count: areasCount })
   } catch (e: any) {
-    console.error('❌ Error:', e.message)
+    log.errorWithException('Database connection test failed', e)
   } finally {
     await prisma.$disconnect()
   }

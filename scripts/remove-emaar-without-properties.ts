@@ -5,11 +5,13 @@
  */
 
 import { createPrisma } from './_prisma'
+import { createScopedLogger } from '../src/lib/logger'
 
 const prisma = createPrisma()
+const log = createScopedLogger('scripts/remove-emaar-without-properties')
 
 async function main() {
-  console.log('Removing "Emaar" (without Properties) from database...')
+  log.info('Removing "Emaar" (without Properties) from database')
 
   // Find all developers with "Emaar" but not "Emaar Properties"
   const emaarWithoutProperties = await prisma.developer.findMany({
@@ -34,11 +36,16 @@ async function main() {
   })
 
   if (emaarWithoutProperties.length === 0) {
-    console.log('✅ No "Emaar" (without Properties) found in database')
+    log.info('No "Emaar" (without Properties) found in database')
   } else {
-    console.log(`Found ${emaarWithoutProperties.length} "Emaar" (without Properties) developer(s):`)
-    emaarWithoutProperties.forEach((dev) => {
-      console.log(`  - ${dev.name} (${dev.nameEn || 'N/A'}) [${dev.slug}] (id: ${dev.id})`)
+    log.info('Found "Emaar" (without Properties) developers', {
+      count: emaarWithoutProperties.length,
+      developers: emaarWithoutProperties.map((dev) => ({
+        name: dev.name,
+        nameEn: dev.nameEn,
+        slug: dev.slug,
+        id: dev.id,
+      })),
     })
 
     // Delete these developers
@@ -50,7 +57,7 @@ async function main() {
       },
     })
 
-    console.log(`\n✅ Deleted ${deleted.count} "Emaar" (without Properties) developer(s)`)
+    log.info('Deleted "Emaar" (without Properties) developers', { deletedCount: deleted.count })
   }
 
   // Verify that only "Emaar Properties" exists
@@ -64,21 +71,25 @@ async function main() {
     },
   })
 
-  console.log('\nRemaining Emaar-related developers:')
+  log.info('Remaining Emaar-related developers check')
   if (allEmaar.length === 0) {
-    console.log('  None')
+    log.info('Remaining Emaar-related developers', { developers: [] })
   } else {
-    allEmaar.forEach((dev) => {
-      console.log(`  - ${dev.name} (${dev.nameEn || 'N/A'}) [${dev.slug}]`)
+    log.info('Remaining Emaar-related developers', {
+      developers: allEmaar.map((dev) => ({
+        name: dev.name,
+        nameEn: dev.nameEn,
+        slug: dev.slug,
+      })),
     })
   }
 
-  console.log('\n✅ Done!')
+  log.info('Done')
 }
 
 main()
   .catch((e) => {
-    console.error('Error:', e)
+    log.errorWithException('remove-emaar-without-properties failed', e)
     process.exit(1)
   })
   .finally(async () => {

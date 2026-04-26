@@ -2,12 +2,14 @@
 // Database Check Script for SGIP Real Estate
 // Checks database connectivity and verifies tables exist
 // This script is used by setup-database.sh
+import { createScopedLogger } from '../src/lib/logger'
 
 let createPrisma: typeof import('./_prisma').createPrisma
+const log = createScopedLogger('scripts/check-database')
 try {
   createPrisma = require('./_prisma').createPrisma
 } catch (error) {
-  console.error('❌ Prisma Client not found. Please run: npm run db:generate')
+  log.error('Prisma Client not found. Please run: npm run db:generate')
   process.exit(1)
 }
 
@@ -17,12 +19,12 @@ async function checkDatabase() {
   try {
     // Test connection
     await prisma.$connect()
-    console.log('✅ Database connection successful')
+    log.info('Database connection successful')
 
     // Check if properties table exists by trying to query it
     try {
       const count = await prisma.property.count()
-      console.log(`✅ Database tables exist (properties table accessible, count: ${count})`)
+      log.info('Database tables exist', { propertiesCount: count })
       await prisma.$disconnect()
       process.exit(0)
     } catch (error: any) {
@@ -31,7 +33,7 @@ async function checkDatabase() {
         error.message.includes('does not exist') ||
         error.message.includes('relation') && error.message.includes('properties')
       )) {
-        console.log('⚠️  Database tables do not exist')
+        log.warn('Database tables do not exist')
         await prisma.$disconnect()
         process.exit(1)
       } else {
@@ -39,7 +41,7 @@ async function checkDatabase() {
       }
     }
   } catch (error: any) {
-    console.error('❌ Database check failed:', error.message)
+    log.errorWithException('Database check failed', error)
     try {
       await prisma.$disconnect()
     } catch {

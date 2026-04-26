@@ -1,22 +1,23 @@
 import { createPrisma } from './_prisma'
+import { createScopedLogger } from '../src/lib/logger'
 const prisma = createPrisma()
+const log = createScopedLogger('scripts/check-emaar-oasis')
 
 async function check() {
   try {
-    console.log('Checking developers...')
+    log.info('Checking developers')
     const allDevelopers = await prisma.developer.findMany()
-    console.log(`Total developers: ${allDevelopers.length}`)
+    log.info('Developers total', { total: allDevelopers.length })
     const emaar = allDevelopers.filter(d => d.name?.includes('Emaar') || d.nameEn?.includes('Emaar'))
-    console.log('Emaar:', emaar.length > 0 ? JSON.stringify(emaar[0], null, 2) : 'NOT FOUND')
+    log.info('Emaar check', { found: emaar.length > 0, sample: emaar.length > 0 ? emaar[0] : null })
     
-    console.log('\nChecking areas...')
+    log.info('Checking areas')
     const allAreas = await prisma.area.findMany()
-    console.log(`Total areas: ${allAreas.length}`)
+    log.info('Areas total', { total: allAreas.length })
     const oasis = allAreas.filter(a => a.name?.includes('Oasis') || a.nameEn?.includes('Oasis'))
-    console.log('The Oasis:', oasis.length > 0 ? JSON.stringify(oasis[0], null, 2) : 'NOT FOUND')
+    log.info('The Oasis check', { found: oasis.length > 0, sample: oasis.length > 0 ? oasis[0] : null })
   } catch (e: any) {
-    console.error('Error:', e.message)
-    console.error('Stack:', e.stack)
+    log.errorWithException('Check Emaar/Oasis failed', e)
   } finally {
     await prisma.$disconnect()
   }

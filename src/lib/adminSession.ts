@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import type { NextApiRequest } from 'next'
 import { prisma } from '@/lib/prisma'
+import { createScopedLogger } from '@/lib/logger'
 
 export const ADMIN_SESSION_COOKIE = 'sgip_admin_session'
 const MAX_AGE_SEC = 60 * 60 * 24 * 7
@@ -28,6 +29,7 @@ export function useSecureAdminSessionCookie(req: NextApiRequest): boolean {
 const PASSWORD_HASH_PREFIX = 'pbkdf2'
 const PASSWORD_HASH_ITERATIONS = 120000
 const PASSWORD_HASH_LENGTH = 64
+const log = createScopedLogger('lib/adminSession')
 
 /** Stable HMAC key when ADMIN_SESSION_SECRET is unset (avoids 503 if only ADMIN_PASSWORD is configured). */
 function sessionSecretFromAdminPassword(): string {
@@ -178,7 +180,7 @@ export async function verifyAdminCredentials(username: string, password: string)
 
     return true
   } catch (error) {
-    console.error(`[${new Date().toISOString()}] Admin DB auth error:`, error)
+    log.errorWithException('Admin DB auth error', error, { username: normalizedUsername })
     return false
   }
 }

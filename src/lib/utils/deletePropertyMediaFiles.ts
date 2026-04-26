@@ -1,11 +1,9 @@
 import { unlink } from 'fs/promises'
 import { basename, dirname, join, relative, resolve, sep } from 'path'
+import { createScopedLogger } from '@/lib/logger'
 
 const LOG_SCOPE = 'delete-property-media'
-
-function ts(): string {
-  return new Date().toISOString()
-}
+const log = createScopedLogger(`lib/utils/${LOG_SCOPE}`)
 
 function propertiesUploadBase(): string {
   return join(process.cwd(), 'public', 'uploads', 'properties')
@@ -65,11 +63,11 @@ function isMainPropertyImagePath(absPath: string): boolean {
 async function unlinkOne(path: string): Promise<void> {
   try {
     await unlink(path)
-    console.info(`[${ts()}] [${LOG_SCOPE}] removed`, { path })
+    log.info('removed', { path })
   } catch (e: unknown) {
     const code = typeof e === 'object' && e !== null && 'code' in e ? (e as NodeJS.ErrnoException).code : undefined
     if (code !== 'ENOENT') {
-      console.warn(`[${ts()}] [${LOG_SCOPE}] unlink failed`, { path, error: e })
+      log.warn('unlink failed', { path, error: e })
     }
   }
 }
