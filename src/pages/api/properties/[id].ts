@@ -4,6 +4,9 @@ import { propertySchema } from '@/lib/validations/property'
 import { resolveUpdatePropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/properties/[id]')
 
 export const config = {
   api: {
@@ -83,7 +86,7 @@ export default async function handler(
 
       return res.status(200).json({ property: normalizedProperty })
     } catch (error) {
-      console.error('Error fetching property:', error)
+      log.errorWithException('Error fetching property', error)
       return res.status(500).json({ message: 'Internal server error' })
     }
   }
@@ -137,9 +140,7 @@ export default async function handler(
                 }
               })()
       if (bodyBytes > 400_000) {
-        console.warn(
-          `[${new Date().toISOString()}] PUT property ${id} body ~${bodyBytes} bytes (images/files omitted in log)`
-        )
+        log.warn('PUT property body is large', { id, bodyBytes })
       }
 
       const parsed = propertySchema.safeParse(body)
@@ -147,10 +148,7 @@ export default async function handler(
         const message = parsed.error.issues
           .map((e) => `${e.path.length ? e.path.join('.') : 'field'}: ${e.message}`)
           .join('; ')
-        console.warn(
-          `[${new Date().toISOString()}] Property PUT validation failed for ${id}:`,
-          message
-        )
+        log.warn('Property PUT validation failed', { id, message })
         return res.status(400).json({
           success: false,
           message: message || 'Validation error',
@@ -189,11 +187,11 @@ export default async function handler(
         try {
           const areaExists = await prisma.area.findUnique({ where: { id: areaId } })
           if (!areaExists) {
-            console.warn(`Area with ID ${areaId} not found, setting areaId to null`)
+            log.warn('Area not found, setting areaId to null', { id, areaId })
             areaId = null
           }
         } catch (dbError: any) {
-          console.error('Database query failed for area check:', dbError.message)
+          log.errorWithException('Database query failed for area check', dbError, { id, areaId })
           // If database query fails, set to null to avoid foreign key constraint violation
           areaId = null
         }
@@ -214,12 +212,13 @@ export default async function handler(
           })
           developerId = developerRecord?.id ?? null
           if (!developerRecord) {
-            console.warn(
-              `Developer with ID/slug ${developerLookup} not found, setting developerId to null`
-            )
+            log.warn('Developer not found, setting developerId to null', { id, developerLookup })
           }
         } catch (dbError: any) {
-          console.error('Database query failed for developer check:', dbError.message)
+          log.errorWithException('Database query failed for developer check', dbError, {
+            id,
+            developerLookup,
+          })
           developerId = null
         }
       }
@@ -377,7 +376,7 @@ export default async function handler(
         property: normalizedProperty || propertyWithImages,
       })
     } catch (error: any) {
-      console.error('Error updating property:', error)
+      log.errorWithException('Error updating property', error, { id })
       
       if (error.name === 'ZodError') {
         return res.status(400).json({
@@ -439,7 +438,7 @@ export default async function handler(
       })
 
       void deletePropertyMediaFiles(mediaUrls).catch((err) => {
-        console.error(`[${new Date().toISOString()}] Property ${id} media cleanup failed:`, err)
+        log.errorWithException('Property media cleanup failed', err, { id })
       })
 
       return res.status(200).json({
@@ -447,7 +446,7 @@ export default async function handler(
         message: 'Property deleted successfully',
       })
     } catch (error: unknown) {
-      console.error('Error deleting property:', error)
+      log.errorWithException('Error deleting property', error, { id })
       const code =
         typeof error === 'object' && error !== null && 'code' in error
           ? String((error as { code: unknown }).code)

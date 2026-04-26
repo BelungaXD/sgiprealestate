@@ -5,12 +5,14 @@ import { join, extname, basename, dirname } from 'path'
 import { existsSync } from 'fs'
 import sharp from 'sharp'
 import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
+import { createScopedLogger } from '@/lib/logger'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import formidable, { File } from 'formidable'
 import fs from 'fs'
 
 const execAsync = promisify(exec)
+const log = createScopedLogger('api/properties/import-folder-files')
 
 export const config = {
   api: {
@@ -64,7 +66,7 @@ async function isVideo16x9(videoPath: string): Promise<boolean> {
     try {
       await execAsync('which ffprobe')
     } catch {
-      console.warn('ffprobe not found, accepting all videos')
+      log.warn('ffprobe not found, accepting all videos')
       return true
     }
     
@@ -77,7 +79,7 @@ async function isVideo16x9(videoPath: string): Promise<boolean> {
     const ratio = width / height
     return Math.abs(ratio - 16/9) < 0.1
   } catch (error) {
-    console.error('Error checking video aspect ratio:', error)
+    log.errorWithException('Error checking video aspect ratio', error)
     return true
   }
 }
@@ -243,7 +245,7 @@ async function processPropertyFiles(
     if (!finalDistrict) {
       finalDistrict = 'Downtown' // Дефолтный район
       finalPropertyName = folderName
-      console.warn(`District not found for folder ${folderName}, using default: Downtown`)
+      log.warn('District not found for folder, using default Downtown', { folderName })
     }
   }
 
@@ -520,8 +522,7 @@ export default async function handler(
         await processPropertyFiles(folderFiles, folderName)
         results.success.push(folderName)
       } catch (error: any) {
-        console.error(`[IMPORT] ✗ Error processing folder ${folderName}:`, error)
-        console.error(`[IMPORT] Error stack:`, error.stack)
+        log.errorWithException('Error processing folder', error, { folderName })
         results.errors.push(`${folderName}: ${error.message}`)
         // Продолжаем обработку других папок даже при ошибке
       }
@@ -535,11 +536,11 @@ export default async function handler(
       failed: results.errors.length,
     })
   } catch (error: any) {
-    console.error('[IMPORT] Error importing properties:', error)
-    console.error('[IMPORT] Error stack:', error.stack)
-    console.error('[IMPORT] Error code:', error.code)
-    console.error('[IMPORT] Error statusCode:', error.statusCode)
-    console.error('[IMPORT] Error message:', error.message)
+    log.errorWithException('Error importing properties', error, {
+      code: error.code,
+      statusCode: error.statusCode,
+      message: error.message,
+    })
     
     // Проверяем, не является ли это ошибкой 413 (Payload Too Large)
     if (error.statusCode === 413 || 

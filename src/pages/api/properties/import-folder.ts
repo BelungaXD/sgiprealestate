@@ -4,6 +4,7 @@ import { readdir, stat, copyFile, mkdir, rm, readFile, writeFile } from 'fs/prom
 import { join, extname, basename, resolve, relative, sep } from 'path'
 import { existsSync } from 'fs'
 import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
+import { createScopedLogger } from '@/lib/logger'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 
@@ -11,6 +12,7 @@ const execAsync = promisify(exec)
 const LOG_SCOPE = 'import-folder'
 const FFPROBE_TIMEOUT_MS = 15000
 const PROPERTY_LINK_FILE = '.sgip-property-link.json'
+const baseLog = createScopedLogger(`api/properties/${LOG_SCOPE}`)
 
 /** Avoid `which ffprobe` on every video (was slowing batch imports). */
 let ffprobeResolved: string | false | undefined
@@ -22,18 +24,13 @@ async function resolveFfprobePath(): Promise<string | false> {
     ffprobeResolved = p || false
   } catch {
     ffprobeResolved = false
-    console.warn(`[${new Date().toISOString()}] [${LOG_SCOPE}] ffprobe not found; video aspect ratio checks skipped`)
+    baseLog.warn('ffprobe not found; video aspect ratio checks skipped')
   }
   return ffprobeResolved
 }
 
 function log(message: string, details?: Record<string, unknown>) {
-  const ts = new Date().toISOString()
-  if (details) {
-    console.info(`[${ts}] [${LOG_SCOPE}] ${message}`, details)
-    return
-  }
-  console.info(`[${ts}] [${LOG_SCOPE}] ${message}`)
+  baseLog.info(message, details)
 }
 
 function errorMessage(error: unknown): string {
@@ -79,7 +76,7 @@ async function saveFolderPropertyLink(folderPath: string, propertyId: string): P
       )
     )
   } catch (e) {
-    console.warn(`[${new Date().toISOString()}] [${LOG_SCOPE}] failed to write folder-property link`, {
+    baseLog.warn('failed to write folder-property link', {
       folderPath,
       propertyId,
       error: e,
@@ -105,7 +102,7 @@ async function removeIncomingStagingDirIfApplicable(folderPath: string): Promise
     await rm(resolve(folderPath), { recursive: true, force: true })
     log('incoming staging removed', { folderPath: resolve(folderPath) })
   } catch (e) {
-    console.warn(`[${new Date().toISOString()}] [${LOG_SCOPE}] incoming staging remove failed`, {
+    baseLog.warn('incoming staging remove failed', {
       folderPath,
       error: e,
     })
@@ -121,7 +118,9 @@ async function getSharp(): Promise<typeof import('sharp') | null> {
     sharpModule = (await import('sharp')).default
     return sharpModule
   } catch (err) {
-    console.warn('[import-folder] sharp failed to load:', err)
+    baseLog.warn('sharp failed to load', {
+      error: err instanceof Error ? err.message : String(err),
+    })
     sharpModule = false
     return null
   }
@@ -234,7 +233,7 @@ async function isVideo16x9(videoPath: string): Promise<boolean> {
     })
     return isValid
   } catch (error) {
-    console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] Error checking video aspect ratio:`, {
+    baseLog.error('Error checking video aspect ratio', {
       file: videoPath,
       error,
     })
@@ -253,7 +252,10 @@ async function convertToWebP(sourcePath: string, destPath: string): Promise<stri
         .toFile(destPath)
       return destPath
     } catch (err) {
-      console.warn('[import-folder] sharp error, copying image as-is:', err)
+      baseLog.warn('sharp error, copying image as-is', {
+        error: err instanceof Error ? err.message : String(err),
+        sourcePath,
+      })
     }
   }
   const fallbackPath = destPath.replace(/\.webp$/i, extname(sourcePath))
@@ -405,7 +407,10 @@ async function processPropertyFolder(folderPath: string): Promise<{ id: string; 
             const imagePath = resolvePublicAssetPath(fileInfo.url)
             await writePropertyListingThumbnail(imagePath, thumbnailPath)
           } catch (thumbErr) {
-            console.warn('[import-folder] thumbnail creation failed:', thumbErr)
+            baseLog.warn('thumbnail creation failed', {
+              error: thumbErr instanceof Error ? thumbErr.message : String(thumbErr),
+              imagePath,
+            })
           }
           
           images.push({
@@ -607,7 +612,10 @@ async function processFolderIntoProperty(propertyId: string, folderPath: string)
             const imagePath = resolvePublicAssetPath(fileInfo.url)
             await writePropertyListingThumbnail(imagePath, thumbnailPath)
           } catch (thumbErr) {
-            console.warn('[import-folder] thumbnail creation failed:', thumbErr)
+            baseLog.warn('thumbnail creation failed', {
+              error: thumbErr instanceof Error ? thumbErr.message : String(thumbErr),
+              imagePath,
+            })
           }
           images.push({
             url: fileInfo.url,
@@ -818,7 +826,7 @@ export default async function handler(
         })
       } catch (error: unknown) {
         const message = errorMessage(error)
-        console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] folder processing failed`, {
+        baseLog.error('folder processing failed', {
           folderName,
           propertyFolderPath,
           error: message,
@@ -847,7 +855,7 @@ export default async function handler(
     })
   } catch (error: unknown) {
     const message = errorMessage(error)
-    console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] Error importing properties:`, error)
+    baseLog.error('Error importing properties', { error: message })
     return res.status(500).json({
       message: 'Error importing properties',
       error: message,
