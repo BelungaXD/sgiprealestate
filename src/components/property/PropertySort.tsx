@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 
 interface PropertySortProps {
@@ -23,7 +23,7 @@ export default function PropertySort({ sortBy, onSortChange }: PropertySortProps
       <select
         value={sortBy}
         onChange={(e) => onSortChange(e.target.value)}
-        className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-champagne focus:outline-none focus:ring-2 focus:ring-champagne/50 focus:border-champagne"
+        className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 hover:border-champagne focus:outline-hidden focus:ring-2 focus:ring-champagne/50 focus:border-champagne"
       >
         {sortOptions.map((option) => (
           <option key={option.value} value={option.value}>

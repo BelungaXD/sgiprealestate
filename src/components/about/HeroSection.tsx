@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { useState, useEffect } from 'react'
 import AnimatedNumber from '@/components/ui/AnimatedNumber'
 
@@ -29,7 +29,7 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <div className="bg-gradient-to-r from-graphite to-gray-800 text-white">
+    <div className="bg-linear-to-r from-graphite to-gray-800 text-white">
       <div className="container-custom py-16">
         <div className="max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">

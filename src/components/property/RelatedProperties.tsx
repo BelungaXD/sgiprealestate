@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
 import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
@@ -69,7 +69,7 @@ export default function RelatedProperties({ currentPropertyId, district, type }:
                 </div>
               )}
               
-              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-graphite px-3 py-1 rounded-full text-sm font-semibold">
+              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
                 {formatPrice(property.price, property.currency)}
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react'
 
@@ -163,7 +163,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
 
       {/* Desktop Filter Sidebar */}
       <div className="hidden lg:block">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-graphite">{t('filters') || 'Filters'}</h2>
             {hasActiveFilters && (
@@ -195,7 +195,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
                     type="checkbox"
                     checked={isChecked}
                     onChange={() => handleDeveloperToggle(developer)}
-                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded-sm"
                   />
                   <span className="ml-2 text-sm text-gray-700">{developer}</span>
                 </label>
@@ -229,7 +229,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
                     type="checkbox"
                     checked={isChecked}
                     onChange={() => handleLocationToggle(direction.value)}
-                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded-sm"
                   />
                   <span className="ml-2 text-sm text-gray-700">{label}</span>
                 </label>
@@ -244,7 +244,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
             <select
               value={filters.city}
               onChange={(e) => handleFilterChange('city', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
             >
               <option value="">{t('allSelected') || 'All Selected'}</option>
               {cities.map(city => (

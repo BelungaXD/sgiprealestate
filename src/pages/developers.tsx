@@ -1,6 +1,6 @@
 import { GetStaticProps } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'next-i18next/pages'
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Layout from '@/components/layout/Layout'
@@ -203,7 +203,7 @@ export default function Developers() {
       <Layout>
         <div className="bg-white">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-graphite to-gray-800 text-white">
+          <div className="bg-linear-to-r from-graphite to-gray-800 text-white">
             <div className="container-custom py-16">
               <div className="max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -235,8 +235,8 @@ export default function Developers() {
                   <div key={i} className="card animate-pulse">
                     <div className="h-64 bg-gray-200 rounded-t-lg"></div>
                     <div className="p-6">
-                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                      <div className="h-4 bg-gray-200 rounded mb-4 w-3/4"></div>
+                      <div className="h-4 bg-gray-200 rounded-sm mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded-sm mb-4 w-3/4"></div>
                     </div>
                   </div>
                 ))}

@@ -97,7 +97,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
     <>
       <div className="relative">
         {/* Main Image/Video - large preview container with fixed aspect ratio */}
-        <div className="relative w-full max-w-5xl mx-auto aspect-[16/9] overflow-hidden bg-gray-900 flex items-center justify-center">
+        <div className="relative w-full max-w-5xl mx-auto aspect-16/9 overflow-hidden bg-gray-900 flex items-center justify-center">
           <div className="relative w-full h-full flex items-center justify-center">
             {isCurrentVideo ? (
               <video
@@ -159,7 +159,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
 
         {/* Thumbnail Strip - horizontal scroll */}
         {images.length > 1 && (
-          <div className="px-4 py-4 bg-white border-t border-gray-200 shadow-sm relative">
+          <div className="px-4 py-4 bg-white border-t border-gray-200 shadow-xs relative">
             {/* Left Arrow */}
             <button
               onClick={() => scrollThumbnails('left')}
@@ -189,7 +189,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-200 relative bg-gray-100 flex items-center justify-center ${
+                    className={`shrink-0 rounded-lg overflow-hidden border-2 transition-all duration-200 relative bg-gray-100 flex items-center justify-center ${
                       index === currentIndex
                         ? 'border-champagne ring-2 ring-champagne/50 shadow-lg scale-105'
                         : 'border-gray-200 hover:border-gray-400 hover:shadow-md'
@@ -251,7 +251,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
       {/* Lightbox Modal - improved design with smooth transitions */}
       {isLightboxOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center animate-fade-in"
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xs flex items-center justify-center animate-fade-in"
           onClick={closeLightbox}
           role="dialog"
           aria-modal="true"
@@ -328,7 +328,7 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                 </button>
                 
                 {/* Image Counter in Lightbox - improved design */}
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 bg-black/70 backdrop-blur-sm text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-lg">
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 bg-black/70 backdrop-blur-xs text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-lg">
                   {currentIndex + 1} / {images.length}
                 </div>
               </>

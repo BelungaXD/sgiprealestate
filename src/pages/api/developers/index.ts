@@ -36,6 +36,27 @@ const createDeveloperSchema = z.object({
   isActive: z.boolean().optional().default(true),
 })
 
+/** Row shape from `developer.findMany` with the selects used in this handler (incl. fallback without `isActive`). */
+type DeveloperListRow = {
+  id: string
+  name: string
+  nameEn: string | null
+  slug: string
+  logo: string | null
+  description: string | null
+  descriptionEn: string | null
+  city: string | null
+  website: string | null
+  isActive?: boolean
+  _count: { properties: number }
+}
+
+type PropertyGroupByRow = {
+  developerId: string | null
+  _count: { _all: number }
+  _avg: { price: unknown }
+}
+
 const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
   if (!error || typeof error !== 'object') return false
 
@@ -85,7 +106,7 @@ export default async function handler(
             }
 
       let includesIsActive = true
-      const developers = await prisma.developer
+      const developers = (await prisma.developer
         .findMany({
           where: {
             AND: admin
@@ -115,7 +136,7 @@ export default async function handler(
           },
           orderBy,
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (!hasMissingDeveloperIsActiveColumn(error)) {
             throw error
           }
@@ -145,11 +166,11 @@ export default async function handler(
             },
             orderBy,
           })
-        })
+        })) as DeveloperListRow[]
 
       const developerIds = developers.map((dev) => dev.id)
       const propertyWhere = admin ? {} : { isPublished: true }
-      const propertyStats = developerIds.length
+      const propertyStats: PropertyGroupByRow[] = developerIds.length
         ? await prisma.property.groupBy({
             by: ['developerId'],
             where: {
@@ -160,18 +181,23 @@ export default async function handler(
             _avg: { price: true },
           })
         : []
-      const statsByDeveloperId = new Map(
-        propertyStats.map((row) => [
-          row.developerId,
-          {
-            count: row._count._all,
-            avgPrice: row._avg.price ? Number(row._avg.price) : 0,
-          },
-        ])
+      const statsByDeveloperId = new Map<string, { count: number; avgPrice: number }>(
+        propertyStats
+          .filter((row): row is PropertyGroupByRow & { developerId: string } => row.developerId != null)
+          .map((row) => [
+            row.developerId,
+            {
+              count: row._count._all,
+              avgPrice: row._avg.price ? Number(row._avg.price) : 0,
+            },
+          ])
       )
-      const totalProperties = propertyStats.reduce((sum, row) => sum + row._count._all, 0)
+      const totalProperties = propertyStats.reduce(
+        (sum: number, row: PropertyGroupByRow) => sum + row._count._all,
+        0
+      )
 
-      let list = developers.map((dev: (typeof developers)[number]) => ({
+      let list = developers.map((dev: DeveloperListRow) => ({
         ...dev,
         isActive: includesIsActive
           ? (dev as { isActive?: boolean }).isActive ?? true
@@ -190,18 +216,23 @@ export default async function handler(
       }
 
       return res.status(200).json({ developers: list })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching developers:', error)
+      const message = error instanceof Error ? error.message : ''
+      const code =
+        typeof error === 'object' && error !== null && 'code' in error
+          ? String((error as { code?: unknown }).code)
+          : undefined
       if (
-        error.code === 'P1001' ||
-        error.message?.includes('DATABASE_URL') ||
-        error.message?.includes('Can\'t reach database')
+        code === 'P1001' ||
+        message.includes('DATABASE_URL') ||
+        message.includes('Can\'t reach database')
       ) {
         return res.status(200).json({ developers: [] })
       }
       return res.status(500).json({
         message: 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        error: process.env.NODE_ENV === 'development' ? message || undefined : undefined,
       })
     }
   }
@@ -237,7 +268,7 @@ export default async function handler(
             slug,
           },
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (!hasMissingDeveloperIsActiveColumn(error)) {
             throw error
           }
@@ -255,12 +286,14 @@ export default async function handler(
         })
 
       return res.status(201).json({ success: true, developer })
-    } catch (error: any) {
-      if (error.name === 'ZodError') {
-        return res.status(400).json({ success: false, errors: error.errors })
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ success: false, errors: error.issues })
       }
       console.error('Error creating developer:', error)
-      return res.status(500).json({ message: error.message || 'Internal server error' })
+      return res.status(500).json({
+        message: error instanceof Error ? error.message : 'Internal server error',
+      })
     }
   }
 

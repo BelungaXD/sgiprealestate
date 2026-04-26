@@ -4,9 +4,9 @@
  * Run with: npx ts-node scripts/remove-emaar-without-properties.ts
  */
 
-import { PrismaClient } from '@prisma/client'
+import { createPrisma } from './_prisma'
 
-const prisma = new PrismaClient()
+const prisma = createPrisma()
 
 async function main() {
   console.log('Removing "Emaar" (without Properties) from database...')

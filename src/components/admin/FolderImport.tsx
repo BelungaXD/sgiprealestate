@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, type InputHTMLAttributes } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -29,28 +29,9 @@ type UploadUiState =
 
 type UploadEntry = { file: File; relPath: string }
 
-type FileSystemEntryLike = {
-  isFile: boolean
-  isDirectory: boolean
-  name: string
-  fullPath?: string
-}
-
-type FileSystemFileEntryLike = FileSystemEntryLike & {
-  file: (callback: (file: File) => void, errorCallback?: (error: DOMException) => void) => void
-}
-
-type FileSystemDirectoryEntryLike = FileSystemEntryLike & {
-  createReader: () => {
-    readEntries: (
-      successCallback: (entries: FileSystemEntryLike[]) => void,
-      errorCallback?: (error: DOMException) => void
-    ) => void
-  }
-}
-
+/** Drag/drop entry source (Chromium); `webkitGetAsEntry` is not on the default `DataTransferItem` typedef in all TS configs. */
 type DataTransferItemWithEntry = DataTransferItem & {
-  webkitGetAsEntry?: () => FileSystemEntryLike | null
+  webkitGetAsEntry?: () => FileSystemEntry | null
 }
 
 const UPLOAD_CONCURRENCY = 6
@@ -156,16 +137,16 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
     return message
   }
 
-  const readFileEntry = (entry: FileSystemFileEntryLike): Promise<File> =>
+  const readFileEntry = (entry: FileSystemFileEntry): Promise<File> =>
     new Promise((resolveFile, rejectFile) => {
       entry.file(resolveFile, rejectFile)
     })
 
-  const readAllDirectoryEntries = async (dirEntry: FileSystemDirectoryEntryLike): Promise<FileSystemEntryLike[]> => {
+  const readAllDirectoryEntries = async (dirEntry: FileSystemDirectoryEntry): Promise<FileSystemEntry[]> => {
     const reader = dirEntry.createReader()
-    const entries: FileSystemEntryLike[] = []
+    const entries: FileSystemEntry[] = []
     while (true) {
-      const chunk = await new Promise<FileSystemEntryLike[]>((resolveChunk, rejectChunk) => {
+      const chunk = await new Promise<FileSystemEntry[]>((resolveChunk, rejectChunk) => {
         reader.readEntries(resolveChunk, rejectChunk)
       })
       if (chunk.length === 0) break
@@ -177,14 +158,14 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
   const collectEntriesFromDrop = useCallback(async (dataTransfer: DataTransfer): Promise<UploadEntry[]> => {
     const results: UploadEntry[] = []
 
-    const walk = async (entry: FileSystemEntryLike, prefix: string) => {
+    const walk = async (entry: FileSystemEntry, prefix: string) => {
       if (entry.isFile) {
-        const file = await readFileEntry(entry as FileSystemFileEntryLike)
+        const file = await readFileEntry(entry as FileSystemFileEntry)
         results.push({ file, relPath: `${prefix}${entry.name}` })
         return
       }
       if (!entry.isDirectory) return
-      const dir = entry as FileSystemDirectoryEntryLike
+      const dir = entry as FileSystemDirectoryEntry
       const children = await readAllDirectoryEntries(dir)
       const nextPrefix = `${prefix}${entry.name}/`
       await Promise.all(children.map((child) => walk(child, nextPrefix)))
@@ -192,8 +173,8 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
 
     const items = Array.from(dataTransfer.items || [])
     const entries = items
-      .map((item) => (item as DataTransferItemWithEntry).webkitGetAsEntry?.() || null)
-      .filter((entry): entry is FileSystemEntryLike => Boolean(entry))
+      .map((item) => (item as DataTransferItemWithEntry).webkitGetAsEntry?.() ?? null)
+      .filter((entry): entry is FileSystemEntry => entry !== null)
 
     if (entries.length > 0) {
       await Promise.all(entries.map((entry) => walk(entry, '')))
@@ -774,7 +755,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                       <button
                         type="button"
                         onClick={() => setBrowseOpen(false)}
-                        className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite"
+                        className="rounded-sm p-1 text-gray-400 hover:bg-gray-100 hover:text-graphite"
                       >
                         <XMarkIcon className="h-5 w-5" />
                       </button>
@@ -787,7 +768,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         <button
                           type="button"
                           onClick={() => loadBrowse(browseParentPath)}
-                          className="inline-flex items-center gap-1 rounded border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                          className="inline-flex items-center gap-1 rounded-sm border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
                         >
                           <ChevronUpIcon className="h-4 w-4" />
                           Up
@@ -797,7 +778,7 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                         <button
                           type="button"
                           onClick={() => selectBrowseFolder(browseCurrentPath)}
-                          className="rounded bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90"
+                          className="rounded-sm bg-champagne px-3 py-1 text-sm font-medium text-white hover:bg-champagne/90"
                         >
                           Select this folder
                         </button>
@@ -809,15 +790,15 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                     {browseLoading ? (
                       <p className="py-4 text-center text-sm text-gray-500">Loading…</p>
                     ) : (
-                      <ul className="max-h-64 space-y-1 overflow-y-auto rounded border border-gray-200 p-2">
+                      <ul className="max-h-64 space-y-1 overflow-y-auto rounded-sm border border-gray-200 p-2">
                         {browseRoots.map((r) => (
                           <li key={r.path}>
                             <button
                               type="button"
                               onClick={() => loadBrowse(r.path)}
-                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100"
+                              className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-gray-100"
                             >
-                              <FolderOpenIcon className="h-5 w-5 flex-shrink-0 text-champagne" />
+                              <FolderOpenIcon className="h-5 w-5 shrink-0 text-champagne" />
                               {r.name}
                             </button>
                           </li>
@@ -827,9 +808,9 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                             <button
                               type="button"
                               onClick={() => loadBrowse(f.path)}
-                              className="flex w-full min-w-0 items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-gray-100"
+                              className="flex w-full min-w-0 items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm hover:bg-gray-100"
                             >
-                              <FolderIcon className="h-5 w-5 flex-shrink-0 text-gray-500" />
+                              <FolderIcon className="h-5 w-5 shrink-0 text-gray-500" />
                               <span className="truncate">{f.name}</span>
                             </button>
                           </li>

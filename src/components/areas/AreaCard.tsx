@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Area {
@@ -61,7 +61,7 @@ export default function AreaCard({ area }: AreaCardProps) {
         </div>
         
         {/* Properties Count */}
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-graphite px-3 py-1 rounded-full text-sm font-semibold">
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
           {area.propertiesCount} {t('properties')}
         </div>
         

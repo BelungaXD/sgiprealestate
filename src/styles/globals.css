@@ -1,237 +1,429 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
 
-/* Google Fonts - optimized via next/font in _app.tsx */
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/aspect-ratio';
 
-/* Custom CSS Variables */
-:root {
-  --color-graphite: #1E1F24;
-  --color-champagne: #C9A86A;
-  --color-champagne-dark: #8B6F3F;
-  --color-white: #F7F7F8;
-}
+@theme {
+  --color-graphite: #1e1f24;
+  --color-champagne: #c9a86a;
+  --color-champagne-dark: #8b6f3f;
+  --color-white: #f7f7f8;
 
-/* Base Styles */
-html {
-  scroll-behavior: smooth;
-}
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
 
-body {
-  @apply font-sans;
-  background-color: var(--color-white);
-  color: var(--color-graphite);
-  line-height: 1.6;
-}
+  --font-sans: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
+  --animate-fade-in: fadeIn 0.5s ease-in-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+  --animate-slide-down: slideDown 0.5s ease-out;
+  --animate-shimmer: shimmer 1.5s infinite;
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-champagne);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #b8965a;
-}
-
-/* Custom Components */
-@layer components {
-  /* Base button styles - unified for all buttons */
-  button {
-    @apply focus:outline-none;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out, transform 0.5s ease-in-out, opacity 0.5s ease-in-out !important;
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
-  
+  @keyframes slideUp {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility btn-primary {
   /* Primary button - main action button */
-  .btn-primary {
-    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
-  }
-  
-  .btn-primary:hover {
+  @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border-color 0.5s ease-in-out,
+    box-shadow 0.5s ease-in-out !important;
+
+  &:hover {
     @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
   }
-  
-  .btn-primary svg,
-  .btn-primary .arrow-icon {
+
+  & svg {
     @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .btn-primary:hover svg,
-  .btn-primary:hover .arrow-icon,
-  .btn-primary.group:hover svg {
-    @apply translate-x-1;
-  }
-  
-  /* Secondary button - alternative action */
-  .btn-secondary {
-    @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
-  }
-  
-  .btn-secondary:hover {
-    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
-  }
-  
-  .btn-secondary svg,
-  .btn-secondary .arrow-icon {
+
+  & .arrow-icon {
     @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .btn-secondary:hover svg,
-  .btn-secondary:hover .arrow-icon,
-  .btn-secondary.group:hover svg {
+
+  &:hover svg {
     @apply translate-x-1;
   }
-  
-  /* Filled button - solid background */
-  .btn-filled {
-    @apply bg-champagne text-white border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
+
+  &:hover .arrow-icon {
+    @apply translate-x-1;
   }
-  
-  .btn-filled:hover {
-    @apply bg-champagne-dark border-champagne-dark shadow-lg;
+
+  &.group:hover svg {
+    @apply translate-x-1;
   }
-  
-  .btn-filled svg,
-  .btn-filled .arrow-icon {
+}
+@utility arrow-icon {
+  .btn-primary & {
     @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .btn-filled:hover svg,
-  .btn-filled:hover .arrow-icon,
-  .btn-filled.group:hover svg {
+
+  .btn-primary:hover & {
     @apply translate-x-1;
   }
-  
-  /* Outline button - transparent with border */
-  .btn-outline {
-    @apply bg-transparent border-2 border-champagne text-champagne px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
-  }
-  
-  .btn-outline:hover {
-    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
-  }
-  
-  .btn-outline svg,
-  .btn-outline .arrow-icon {
+
+  .btn-secondary & {
     @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .btn-outline:hover svg,
-  .btn-outline:hover .arrow-icon,
-  .btn-outline.group:hover svg {
+
+  .btn-secondary:hover & {
     @apply translate-x-1;
   }
-  
-  /* Ghost button - minimal style for secondary actions */
-  .btn-ghost {
-    @apply bg-transparent border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-gray-300/50 disabled:opacity-50 disabled:cursor-not-allowed;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out !important;
+
+  .btn-filled & {
+    @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .btn-ghost:hover {
-    @apply bg-gray-50 border-gray-400;
+
+  .btn-filled:hover & {
+    @apply translate-x-1;
   }
-  
-  /* Icon button - for icon-only buttons */
-  .btn-icon {
-    @apply bg-white/95 text-gray-800 p-3 rounded-full shadow-2xl focus:outline-none focus:ring-2 focus:ring-champagne-dark/50;
-    transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
+
+  .btn-outline & {
+    @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .btn-icon:hover {
-    @apply bg-white scale-110;
+
+  .btn-outline:hover & {
+    @apply translate-x-1;
   }
-  
-  /* Close button - minimal style for close/X buttons */
-  .btn-close {
-    @apply rounded p-1 text-gray-400 focus:outline-none;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out !important;
+
+  .group:hover & {
+    @apply translate-x-1;
   }
-  
-  .btn-close:hover {
-    @apply bg-gray-100 text-graphite;
+
+  .group & {
+    @apply transition-transform duration-500 ease-in-out;
   }
-  
-  /* Danger button - for destructive actions */
-  .btn-danger {
-    @apply bg-red-600 text-white border-2 border-red-600 px-6 py-3 rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-red-600/50 disabled:opacity-50 disabled:cursor-not-allowed;
-    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
+}
+@utility group {
+  & .btn-primary:hover svg {
+    @apply translate-x-1;
   }
-  
-  .btn-danger:hover {
-    @apply bg-red-700 border-red-700 shadow-lg;
+
+  & .btn-secondary:hover svg {
+    @apply translate-x-1;
   }
-  
-  /* Small button variant */
-  .btn-sm {
-    @apply px-4 py-2 text-sm;
+
+  & .btn-filled:hover svg {
+    @apply translate-x-1;
   }
-  
-  /* Large button variant */
-  .btn-lg {
-    @apply px-8 py-4 text-lg;
+
+  & .btn-outline:hover svg {
+    @apply translate-x-1;
   }
-  
+
   /* Animation for all buttons/links with group class and ArrowRightIcon */
   /* This applies to any element with group class that contains SVG icons */
-  .group:hover svg,
-  .group:hover .arrow-icon {
+  &:hover svg {
     @apply translate-x-1;
   }
-  
+  &:hover .arrow-icon {
+    @apply translate-x-1;
+  }
+
   /* Ensure all svg icons in group elements have transition */
-  .group svg,
-  .group .arrow-icon {
+  & svg {
     @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
+  & .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .card-hover {
-    @apply card transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+@utility btn-secondary {
+  /* Secondary button - alternative action */
+  @apply bg-white text-champagne border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border-color 0.5s ease-in-out,
+    box-shadow 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
   }
-  
-  .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none transition-all duration-500 ease-in-out;
+
+  & svg {
+    @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .section-padding {
-    @apply py-16 md:py-24;
+
+  & .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
   }
-  
-  .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+
+  &:hover svg {
+    @apply translate-x-1;
   }
-  
-  .hero-bg {
-    background: linear-gradient(135deg, var(--color-graphite) 0%, #2a2b30 100%);
+
+  &:hover .arrow-icon {
+    @apply translate-x-1;
   }
+
+  &.group:hover svg {
+    @apply translate-x-1;
+  }
+}
+@utility btn-filled {
+  /* Filled button - solid background */
+  @apply bg-champagne text-white border-2 border-champagne px-6 py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border-color 0.5s ease-in-out,
+    box-shadow 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-champagne-dark border-champagne-dark shadow-lg;
+  }
+
+  & svg {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+
+  & .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+
+  &:hover svg {
+    @apply translate-x-1;
+  }
+
+  &:hover .arrow-icon {
+    @apply translate-x-1;
+  }
+
+  &.group:hover svg {
+    @apply translate-x-1;
+  }
+}
+@utility btn-outline {
+  /* Outline button - transparent with border */
+  @apply bg-transparent border-2 border-champagne text-champagne px-6 py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-champagne-dark/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border-color 0.5s ease-in-out,
+    box-shadow 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-champagne-dark text-white border-champagne-dark shadow-lg;
+  }
+
+  & svg {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+
+  & .arrow-icon {
+    @apply transition-transform duration-500 ease-in-out;
+  }
+
+  &:hover svg {
+    @apply translate-x-1;
+  }
+
+  &:hover .arrow-icon {
+    @apply translate-x-1;
+  }
+
+  &.group:hover svg {
+    @apply translate-x-1;
+  }
+}
+@utility btn-ghost {
+  /* Ghost button - minimal style for secondary actions */
+  @apply bg-transparent border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-gray-300/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border-color 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-gray-50 border-gray-400;
+  }
+}
+@utility btn-icon {
+  /* Icon button - for icon-only buttons */
+  @apply bg-white/95 text-gray-800 p-3 rounded-full shadow-2xl focus:outline-hidden focus:ring-2 focus:ring-champagne-dark/50;
+  transition:
+    background-color 0.5s ease-in-out,
+    transform 0.5s ease-in-out,
+    box-shadow 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-white scale-110;
+  }
+}
+@utility btn-close {
+  /* Close button - minimal style for close/X buttons */
+  @apply rounded-sm p-1 text-gray-400 focus:outline-hidden;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-gray-100 text-graphite;
+  }
+}
+@utility btn-danger {
+  /* Danger button - for destructive actions */
+  @apply bg-red-600 text-white border-2 border-red-600 px-6 py-3 rounded-lg font-medium focus:outline-hidden focus:ring-2 focus:ring-red-600/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  transition:
+    background-color 0.5s ease-in-out,
+    color 0.5s ease-in-out,
+    border-color 0.5s ease-in-out,
+    box-shadow 0.5s ease-in-out !important;
+
+  &:hover {
+    @apply bg-red-700 border-red-700 shadow-lg;
+  }
+}
+@utility btn-sm {
+  /* Small button variant */
+  @apply px-4 py-2 text-sm;
+}
+@utility btn-lg {
+  /* Large button variant */
+  @apply px-8 py-4 text-lg;
+}
+@utility card {
+  @apply bg-white rounded-xl shadow-xs border border-gray-100 overflow-hidden;
+}
+@utility card-hover {
+  @apply card transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+@utility input-field {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden transition-all duration-500 ease-in-out;
+}
+@utility section-padding {
+  @apply py-16 md:py-24;
+}
+@utility container-custom {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+@utility hero-bg {
+  background: linear-gradient(135deg, var(--color-graphite) 0%, #2a2b30 100%);
 }
 
 /* Animations */
+@utility animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+@utility animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
 @layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
+  /* Google Fonts - optimized via next/font in _app.tsx */
+
+  /* Custom CSS Variables */
+  :root {
+    --color-graphite: #1e1f24;
+    --color-champagne: #c9a86a;
+    --color-champagne-dark: #8b6f3f;
+    --color-white: #f7f7f8;
   }
-  
-  .animate-slide-up {
-    animation: slideUp 0.6s ease-out;
+
+  /* Base Styles */
+  html {
+    scroll-behavior: smooth;
   }
-  
+
+  body {
+    @apply font-sans;
+    background-color: var(--color-white);
+    color: var(--color-graphite);
+    line-height: 1.6;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-champagne);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #b8965a;
+  }
+
+  /* Custom Components */
+}
+@layer components {
+  /* Base button styles - unified for all buttons */
+  button {
+    @apply focus:outline-hidden;
+    transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out, transform 0.5s ease-in-out, opacity 0.5s ease-in-out !important;
+  }
 }
 
 

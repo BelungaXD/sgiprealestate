@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import Footer from '../Footer'
 
 // Mock next-i18next
-jest.mock('next-i18next', () => ({
+jest.mock('next-i18next/pages', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {

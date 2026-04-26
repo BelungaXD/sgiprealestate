@@ -72,7 +72,7 @@ export default async function handler(
             _count: { select: { properties: true } },
           },
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (!hasMissingAreaIsActiveColumn(error)) {
             throw error
           }
@@ -156,7 +156,7 @@ export default async function handler(
             isActive: parsed.isActive ?? true,
           },
         })
-        .catch(async (error) => {
+        .catch(async (error: unknown) => {
           if (!hasMissingAreaIsActiveColumn(error)) {
             throw error
           }
@@ -169,7 +169,7 @@ export default async function handler(
       return res.status(201).json({ success: true, area })
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ success: false, errors: error.errors })
+        return res.status(400).json({ success: false, errors: error.issues })
       }
       console.error('Error creating area:', error)
       return res.status(500).json({

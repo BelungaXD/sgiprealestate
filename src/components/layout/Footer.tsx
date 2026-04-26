@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { GlobeAltIcon } from '@heroicons/react/24/outline'
 import defaultFooterLogo from '../../../public/images/sgip_logo.png'
 
@@ -59,7 +59,7 @@ export default function Footer() {
                     </p>
                   </div>
                 ) : (
-                  <div className="relative h-16 w-16 flex-shrink-0">
+                  <div className="relative h-16 w-16 shrink-0">
                     <Image
                       src={logoSrc}
                       alt="SGIP Real Estate"

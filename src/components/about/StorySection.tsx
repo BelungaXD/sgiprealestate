@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 
 export default function StorySection() {
   const { t } = useTranslation('about-us')

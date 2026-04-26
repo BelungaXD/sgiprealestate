@@ -21,7 +21,7 @@ jest.mock('@/components/ui/LanguageSwitcher', () => {
 })
 
 // Mock next-i18next with proper translations
-jest.mock('next-i18next', () => ({
+jest.mock('next-i18next/pages', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
@@ -74,6 +74,6 @@ describe('Header Component', () => {
     
     const header = container.querySelector('header')
     expect(header).toBeInTheDocument()
-    expect(header).toHaveClass('bg-white', 'shadow-sm', 'sticky', 'top-0', 'z-40')
+    expect(header).toHaveClass('bg-white', 'shadow-xs', 'sticky', 'top-0', 'z-40')
   })
 })

@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react'
 
@@ -269,7 +269,7 @@ export default function PropertyFilter({
       )}
 
       <div className="hidden lg:block">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-graphite">{t('filters')}</h2>
             {hasActiveFilters && (
@@ -381,7 +381,7 @@ export default function PropertyFilter({
                     type="checkbox"
                     checked={!!isChecked}
                     onChange={() => handleAreaToggle(area.id)}
-                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                    className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded-sm"
                   />
                   <span className="ml-2 text-sm text-gray-700">{area.label}</span>
                 </label>
@@ -402,7 +402,7 @@ export default function PropertyFilter({
                       type="checkbox"
                       checked={!!isChecked}
                       onChange={() => handleDeveloperToggle(developer.slug)}
-                      className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded"
+                      className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300 rounded-sm"
                     />
                     <span className="ml-2 text-sm text-gray-700">{developer.label}</span>
                   </label>
@@ -421,7 +421,7 @@ export default function PropertyFilter({
                 value={filters.minPrice}
                 onChange={(e) => handleFilterChange('minPrice', e.target.value)}
                 placeholder="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
               />
             </div>
             <div>
@@ -431,7 +431,7 @@ export default function PropertyFilter({
                 value={filters.maxPrice}
                 onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
                 placeholder={maxPrice.toLocaleString()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
               />
             </div>
           </div>
@@ -482,7 +482,7 @@ export default function PropertyFilter({
                   if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                 }}
                 placeholder="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
               />
             </div>
             <div>
@@ -496,7 +496,7 @@ export default function PropertyFilter({
                   if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                 }}
                 placeholder={maxArea.toLocaleString()}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
               />
             </div>
           </div>
@@ -511,7 +511,7 @@ export default function PropertyFilter({
               <select
                 value={filters.minYearBuilt}
                 onChange={(e) => handleFilterChange('minYearBuilt', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
               >
                 <option value="">{t('anyYear')}</option>
                 {Array.from({ length: maxYear - minYear + 1 }, (_, i) => {
@@ -533,7 +533,7 @@ export default function PropertyFilter({
               <select
                 value={filters.maxYearBuilt}
                 onChange={(e) => handleFilterChange('maxYearBuilt', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-champagne/50 focus:border-champagne outline-hidden"
               >
                 <option value="">{t('anyYear')}</option>
                 {Array.from({ length: maxYear - minYear + 1 }, (_, i) => {

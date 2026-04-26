@@ -113,10 +113,7 @@ export const propertySchema = z
     floor: optionalNonNegInt,
     totalFloors: optionalPositiveInt,
     yearBuilt: optionalYear,
-    completionDate: z
-      .string()
-      .optional()
-      .transform((val) => (val ? new Date(val) : undefined)),
+    completionDate: z.string().optional(),
     paymentPlan: z.string().max(20000).optional().nullable(),
     occupancyStatus: z
       .union([OccupancyStatusEnum, z.literal('')])
@@ -178,4 +175,5 @@ export function pickPropertyApiPayload(payload: Record<string, unknown>): Record
   return out
 }
 
-export type PropertyFormData = z.infer<typeof propertySchema>
+export type PropertyFormInput = z.input<typeof propertySchema>
+export type PropertyFormData = z.output<typeof propertySchema>

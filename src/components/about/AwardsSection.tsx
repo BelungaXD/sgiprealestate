@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { TrophyIcon, StarIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
 export default function AwardsSection() {
@@ -78,7 +78,7 @@ export default function AwardsSection() {
           return (
             <div key={index} className="bg-white rounded-lg shadow-lg p-6 group will-change-transform">
               <div className="flex items-start space-x-4">
-                <div className={`w-12 h-12 ${award.bgColor} rounded-lg flex items-center justify-center flex-shrink-0 will-change-transform`}>
+                <div className={`w-12 h-12 ${award.bgColor} rounded-lg flex items-center justify-center shrink-0 will-change-transform`}>
                   <IconComponent className={`h-6 w-6 ${award.color}`} />
                 </div>
                 <div className="flex-1">

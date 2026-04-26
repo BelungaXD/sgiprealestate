@@ -30,8 +30,7 @@ jest.mock('next/router', () => ({
   },
 }))
 
-// Mock next-i18next
-jest.mock('next-i18next', () => ({
+const i18nMock = {
   useTranslation: () => ({
     t: (key) => key,
     i18n: {
@@ -41,6 +40,12 @@ jest.mock('next-i18next', () => ({
   }),
   Trans: ({ children }) => children,
   serverSideTranslations: jest.fn(() => Promise.resolve({})),
+  appWithTranslation: (Component) => Component,
+}
+
+jest.mock('next-i18next/pages', () => i18nMock)
+jest.mock('next-i18next/pages/serverSideTranslations', () => ({
+  serverSideTranslations: i18nMock.serverSideTranslations,
 }))
 
 // Mock next/image

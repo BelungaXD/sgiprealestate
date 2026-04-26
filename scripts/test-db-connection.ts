@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { createPrisma } from './_prisma'
 
-const prisma = new PrismaClient({
+const prisma = createPrisma({
   log: ['query', 'error', 'warn'],
 })
 

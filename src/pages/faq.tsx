@@ -1,6 +1,6 @@
 import { GetStaticProps } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'next-i18next/pages'
+import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useMemo } from 'react'
@@ -103,7 +103,7 @@ export default function FAQ() {
 
             <div className="space-y-6">
               {faqCategories.map((categoryData) => (
-                <div key={categoryData.key} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div key={categoryData.key} className="bg-white rounded-lg shadow-xs border border-gray-200 overflow-hidden">
                   <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                     <h2 className="text-xl font-semibold text-graphite">{categoryData.title}</h2>
                   </div>
@@ -117,9 +117,9 @@ export default function FAQ() {
                                   {item.question}
                                 </span>
                                 {open ? (
-                                  <ChevronUpIcon className="h-5 w-5 text-champagne flex-shrink-0" />
+                                  <ChevronUpIcon className="h-5 w-5 text-champagne shrink-0" />
                                 ) : (
-                                  <ChevronDownIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                                  <ChevronDownIcon className="h-5 w-5 text-gray-400 shrink-0" />
                                 )}
                               </Disclosure.Button>
                               <Disclosure.Panel className="px-6 py-4 text-gray-600 bg-gray-50">

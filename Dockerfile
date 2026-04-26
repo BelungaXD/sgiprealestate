@@ -26,14 +26,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Recompile sharp once at the app root for baseline x86-64 CPUs.
-# Rebuilding inside nested package trees is brittle and can fail depending on npm layout.
-ENV CXXFLAGS=-march=x86-64
-ENV CFLAGS=-march=x86-64
-RUN echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp start" \
-  && npm rebuild sharp --build-from-source --foreground-scripts \
-  && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp done"
-
 # Next.js 16 + webpack + TypeScript needs a larger V8 heap than 768MB; a low cap
 # causes extreme GC churn so "Running TypeScript ..." looks hung for many minutes.
 # Override on tiny build hosts: docker build --build-arg NEXT_BUILD_MAX_OLD_SPACE=1024 .
@@ -64,10 +56,10 @@ RUN useradd --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/node_modules/sharp ./node_modules/sharp
 COPY --from=builder /app/node_modules/@img ./node_modules/@img
+COPY --from=builder /app/node_modules/pg ./node_modules/pg
 COPY --from=builder /app/prisma ./prisma
 
 # Set correct permissions

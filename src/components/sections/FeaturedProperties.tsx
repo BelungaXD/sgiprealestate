@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { ArrowRightIcon, MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline'
@@ -80,7 +80,7 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
                     {property.type}
                   </span>
                 </div>
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-graphite px-3 py-1 rounded-full text-sm font-semibold">
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
                   {formatPrice(property.price, property.currency)}
                 </div>
               </div>

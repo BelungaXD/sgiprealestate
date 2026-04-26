@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { 
   MapPinIcon, 
   HomeIcon, 
@@ -56,7 +56,7 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
             }
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-6 left-6 text-white">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             {isRussian ? area.name : area.nameEn}
@@ -120,7 +120,7 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {area.highlights.map((highlight, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <MapPinIcon className="h-5 w-5 text-champagne flex-shrink-0" />
+                <MapPinIcon className="h-5 w-5 text-champagne shrink-0" />
                 <span className="text-gray-700">{highlight}</span>
               </div>
             ))}

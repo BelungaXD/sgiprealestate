@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client'
 import { readdir, stat, copyFile, mkdir } from 'fs/promises'
 import { join, extname, basename, dirname } from 'path'
 import { existsSync } from 'fs'
+import { createPrisma } from './_prisma'
 
-const prisma = new PrismaClient()
+const prisma = createPrisma()
 
 // Language detection patterns
 const LANGUAGE_PATTERNS: Record<string, string> = {

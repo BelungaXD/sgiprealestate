@@ -144,7 +144,7 @@ export default async function handler(
 
       const parsed = propertySchema.safeParse(body)
       if (!parsed.success) {
-        const message = parsed.error.errors
+        const message = parsed.error.issues
           .map((e) => `${e.path.length ? e.path.join('.') : 'field'}: ${e.message}`)
           .join('; ')
         console.warn(
@@ -154,7 +154,7 @@ export default async function handler(
         return res.status(400).json({
           success: false,
           message: message || 'Validation error',
-          errors: parsed.error.errors,
+          errors: parsed.error.issues,
         })
       }
       const validatedData = parsed.data
@@ -245,9 +245,7 @@ export default async function handler(
         totalFloors: validatedData.totalFloors,
         yearBuilt: validatedData.yearBuilt,
         completionDate: validatedData.completionDate
-          ? validatedData.completionDate instanceof Date
-            ? validatedData.completionDate
-            : new Date(validatedData.completionDate as unknown as string)
+          ? new Date(validatedData.completionDate)
           : null,
         paymentPlan:
           listingMarket === 'PRIMARY'
@@ -385,7 +383,7 @@ export default async function handler(
         return res.status(400).json({
           success: false,
           message: 'Validation error',
-          errors: error.errors,
+          errors: error.issues,
         })
       }
 

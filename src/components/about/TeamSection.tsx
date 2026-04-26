@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import Image from 'next/image'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
@@ -85,10 +85,10 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}
       >
-        <div className="relative w-full h-[400px] bg-gray-200 overflow-hidden flex-shrink-0">
+        <div className="relative w-full h-[400px] bg-gray-200 overflow-hidden shrink-0">
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 z-10">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-gray-200 via-gray-300 to-gray-200 z-10">
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
             </div>
           )}
 
@@ -116,7 +116,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
             </div>
           ) : null}
         </div>
-      <div className="p-6 flex flex-col flex-grow">
+      <div className="p-6 flex flex-col grow">
         <h3 className="text-2xl font-bold text-graphite mb-2">
           {member.name}
         </h3>
@@ -124,7 +124,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
           {member.position}
         </p>
         {member.description && (
-          <p className="text-sm text-gray-600 leading-relaxed flex-grow">
+          <p className="text-sm text-gray-600 leading-relaxed grow">
             {member.description}
           </p>
         )}

@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
@@ -53,7 +53,7 @@ export default function Partners() {
                   href={partner.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 w-full h-full"
+                  className="flex items-center justify-center p-4 bg-white rounded-lg shadow-xs hover:shadow-md transition-all duration-300 hover:scale-105 w-full h-full"
                 >
                   <div className="w-full h-20 flex items-center justify-center">
                     <Image
@@ -67,7 +67,7 @@ export default function Partners() {
                   </div>
                 </a>
               ) : (
-                <div className="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 w-full h-full">
+                <div className="flex items-center justify-center p-4 bg-white rounded-lg shadow-xs hover:shadow-md transition-all duration-300 hover:scale-105 w-full h-full">
                   <div className="w-full h-20 flex items-center justify-center">
                     <Image
                       src={partner.logo}

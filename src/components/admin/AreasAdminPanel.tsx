@@ -217,7 +217,7 @@ export default function AreasAdminPanel() {
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
         {loading ? (
           <p className="p-6 text-gray-500">Loading…</p>
         ) : rows.length === 0 ? (
@@ -391,7 +391,7 @@ export default function AreasAdminPanel() {
                   </label>
                   <input type="file" accept="image/*" onChange={handleImageFile} />
                   {form.image && (
-                    <img src={form.image} alt="" className="mt-2 h-24 w-full object-cover rounded" />
+                    <img src={form.image} alt="" className="mt-2 h-24 w-full object-cover rounded-sm" />
                   )}
                 </div>
                 <label className="flex items-center gap-2 text-sm">

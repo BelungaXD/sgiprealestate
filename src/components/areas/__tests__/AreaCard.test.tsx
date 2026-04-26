@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import AreaCard from '../AreaCard'
 
 // Mock next-i18next
-jest.mock('next-i18next', () => ({
+jest.mock('next-i18next/pages', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
     i18n: {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 import defaultHeaderLogo from '../../../public/images/sgip_logo.png'
@@ -43,7 +43,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-40 transition-shadow duration-300">
+    <header className="bg-white shadow-xs sticky top-0 z-40 transition-shadow duration-300">
       <div className="container-custom">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -58,7 +58,7 @@ export default function Header() {
                 </p>
               </div>
             ) : (
-              <div className="relative h-16 w-16 flex-shrink-0">
+              <div className="relative h-16 w-16 shrink-0">
                 <Image
                   src={logoSrc}
                   alt="SGIP Real Estate"

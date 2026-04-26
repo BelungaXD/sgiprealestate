@@ -1,4 +1,4 @@
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next/pages'
 import type { LucideIcon } from 'lucide-react'
 import { Briefcase, Building2, Home, Tag } from 'lucide-react'
 import { ArrowRightIcon, CheckIcon } from '@heroicons/react/24/outline'
@@ -31,7 +31,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
       {/* Header */}
-      <div className="bg-gradient-to-r from-champagne to-yellow-500 p-6 text-white">
+      <div className="bg-linear-to-r from-champagne to-yellow-500 p-6 text-white">
         <div className="flex items-start gap-4">
           <HeaderIcon
             className="h-10 w-10 shrink-0 text-white/95"
@@ -57,7 +57,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         <ul className="space-y-2 mb-6">
           {service.features.map((feature, index) => (
             <li key={index} className="flex items-start space-x-2">
-              <CheckIcon className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <CheckIcon className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
               <span className="text-gray-600 text-sm">{feature}</span>
             </li>
           ))}

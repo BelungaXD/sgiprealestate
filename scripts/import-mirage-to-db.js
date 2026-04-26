@@ -1,8 +1,8 @@
-const { PrismaClient } = require('@prisma/client');
+const { createPrisma } = require('./_prisma');
 const fs = require('fs');
 const path = require('path');
 
-const prisma = new PrismaClient();
+const prisma = createPrisma();
 
 async function waitForDatabase(maxAttempts = 30) {
   for (let i = 0; i < maxAttempts; i++) {

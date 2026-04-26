@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import { createPrisma } from './_prisma'
+const prisma = createPrisma()
 
 async function check() {
   try {

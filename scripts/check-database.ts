@@ -3,17 +3,15 @@
 // Checks database connectivity and verifies tables exist
 // This script is used by setup-database.sh
 
-let PrismaClient: any
+let createPrisma: typeof import('./_prisma').createPrisma
 try {
-  PrismaClient = require('@prisma/client').PrismaClient
+  createPrisma = require('./_prisma').createPrisma
 } catch (error) {
   console.error('❌ Prisma Client not found. Please run: npm run db:generate')
   process.exit(1)
 }
 
-const prisma = new PrismaClient({
-  log: ['error'],
-})
+const prisma = createPrisma({ log: ['error'] })
 
 async function checkDatabase() {
   try {
