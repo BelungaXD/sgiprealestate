@@ -26,31 +26,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Optional sharp source rebuild for baseline x86-64 CPUs.
-# Default is off because forcing source builds is brittle across Docker hosts/toolchains.
-# Enable only when needed: --build-arg SHARP_REBUILD_FROM_SOURCE=true
-ARG SHARP_REBUILD_FROM_SOURCE=false
-ENV CXXFLAGS=-march=x86-64
-ENV CFLAGS=-march=x86-64
-RUN if [ "$SHARP_REBUILD_FROM_SOURCE" = "true" ]; then \
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp start"; \
-    npm rebuild sharp --build-from-source --foreground-scripts --loglevel verbose || { \
-      code=$?; \
-      echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp failed with exit code ${code}"; \
-      echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] dumping /root/.npm/_logs"; \
-      ls -lah /root/.npm/_logs || true; \
-      for f in /root/.npm/_logs/*-debug-0.log; do \
-        [ -f "$f" ] || continue; \
-        echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] ===== ${f} ====="; \
-        sed -n '1,220p' "$f"; \
-      done; \
-      exit "$code"; \
-    }; \
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] npm rebuild sharp done"; \
-  else \
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] skipping optional npm rebuild sharp"; \
-  fi
-
 # Next.js 16 + webpack + TypeScript needs a larger V8 heap than 768MB; a low cap
 # causes extreme GC churn so "Running TypeScript ..." looks hung for many minutes.
 # Override on tiny build hosts: docker build --build-arg NEXT_BUILD_MAX_OLD_SPACE=1024 .
