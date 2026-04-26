@@ -85,6 +85,7 @@ RUN useradd --system --uid 1001 nextjs
 
 # Copy necessary files
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/next-i18next.config.js ./next-i18next.config.js
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma

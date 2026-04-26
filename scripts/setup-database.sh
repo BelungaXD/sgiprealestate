@@ -209,9 +209,16 @@ main() {
     
     if [ $tables_result -eq 0 ]; then
         echo -e "${GREEN}✅ Database tables already exist${NC}"
-        echo -e "${GREEN}✅ Database is ready. Proceeding with deployment...${NC}"
-        echo ""
-        return 0
+        echo -e "${BLUE}ℹ️  Syncing schema changes (columns/enums/indexes) with Prisma...${NC}"
+        if npx prisma db push --accept-data-loss --skip-generate; then
+            echo -e "${GREEN}✅ Database schema is up to date${NC}"
+            echo -e "${GREEN}✅ Database is ready. Proceeding with deployment...${NC}"
+            echo ""
+            return 0
+        else
+            echo -e "${RED}❌ Prisma schema sync failed${NC}"
+            exit 1
+        fi
     else
         echo -e "${YELLOW}⚠️  Database tables not found${NC}"
     fi
