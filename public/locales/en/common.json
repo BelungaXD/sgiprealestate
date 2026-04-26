@@ -48,5 +48,10 @@
   },
   "telegram": {
     "openChat": "Open Telegram"
+  },
+  "serverError": "We are sorry, something went wrong",
+  "serverErrorDescription": "Our team has been notified. Please refresh the page or return to the homepage.",
+  "refresh": "Try Again",
+  "goHome": "Back to Home"
   }
 }

@@ -18,6 +18,25 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+timestamp_utc() {
+    date -u '+%Y-%m-%dT%H:%M:%SZ'
+}
+
+url_encode() {
+    python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"
+}
+
+normalize_database_url_for_prisma() {
+    if [ -n "${DB_USER:-}" ] && [ -n "${DB_PASSWORD:-}" ] && [ -n "${DB_HOST:-}" ] && [ -n "${DB_PORT:-}" ] && [ -n "${DB_NAME:-}" ]; then
+        local encoded_password
+        encoded_password="$(url_encode "$DB_PASSWORD")"
+        local db_schema="${DB_SCHEMA:-public}"
+        DATABASE_URL="postgresql://${DB_USER}:${encoded_password}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=${db_schema}"
+        export DATABASE_URL
+        echo "[$(timestamp_utc)] Normalized DATABASE_URL for Prisma using URL-encoded credentials"
+    fi
+}
+
 echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║       Database Setup - SGIP Real Estate                    ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
@@ -40,6 +59,8 @@ if [ -z "$DATABASE_URL" ]; then
     echo -e "${RED}❌ Error: DATABASE_URL not found in .env file${NC}"
     exit 1
 fi
+
+normalize_database_url_for_prisma
 
 echo -e "${BLUE}ℹ️  Checking database connectivity...${NC}"
 
@@ -123,7 +144,7 @@ create_tables() {
     if [ -f "/.dockerenv" ] || [ -n "$DOCKER_CONTAINER" ]; then
         # We're inside a container, use npx directly
         echo -e "${BLUE}ℹ️  Running Prisma DB Push from container...${NC}"
-        if npx prisma db push --accept-data-loss --skip-generate; then
+        if npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
             echo -e "${GREEN}✅ Database schema created successfully${NC}"
             return 0
         else
@@ -136,7 +157,7 @@ create_tables() {
         if [ -d "$PROJECT_ROOT/node_modules" ] && [ -f "$PROJECT_ROOT/node_modules/.bin/prisma" ]; then
             echo -e "${BLUE}ℹ️  Running Prisma DB Push from host...${NC}"
             cd "$PROJECT_ROOT"
-            if npx prisma db push --accept-data-loss --skip-generate; then
+            if npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
                 echo -e "${GREEN}✅ Database schema created successfully${NC}"
                 return 0
             else
@@ -151,7 +172,7 @@ create_tables() {
             for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
                 if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
                     echo -e "${BLUE}ℹ️  Using existing container: ${container_name}${NC}"
-                    if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --skip-generate; then
+                    if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
                         echo -e "${GREEN}✅ Database schema created successfully${NC}"
                         return 0
                     else
@@ -167,7 +188,7 @@ create_tables() {
                 -w /app \
                 -e DATABASE_URL="$DATABASE_URL" \
                 node:20-slim \
-                sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --skip-generate"; then
+                sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
                 echo -e "${GREEN}✅ Database schema created successfully${NC}"
                 return 0
             else
@@ -180,30 +201,43 @@ create_tables() {
 
 # Function to sync schema changes when tables already exist
 sync_schema_changes() {
+    echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt started"
     # Prefer host npx when available
     if command -v npx >/dev/null 2>&1; then
-        if npx prisma db push --accept-data-loss --skip-generate; then
+        if npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+            echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt succeeded"
             return 0
         fi
+        echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt failed"
     fi
 
     # Fallback to an existing running app container
     for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
         if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
-            if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --skip-generate; then
+            echo "[$(timestamp_utc)] Prisma schema sync: container attempt started (${container_name})"
+            if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+                echo "[$(timestamp_utc)] Prisma schema sync: container attempt succeeded (${container_name})"
                 return 0
             fi
+            echo "[$(timestamp_utc)] Prisma schema sync: container attempt failed (${container_name})"
         fi
     done
 
     # Final fallback: temporary Node container on nginx network
-    docker run --rm \
+    echo "[$(timestamp_utc)] Prisma schema sync: temporary container attempt started"
+    if docker run --rm \
         --network nginx-network \
         -v "$PROJECT_ROOT:/app" \
         -w /app \
         -e DATABASE_URL="$DATABASE_URL" \
         node:20-slim \
-        sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --skip-generate"
+        sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
+        echo "[$(timestamp_utc)] Prisma schema sync: temporary container attempt succeeded"
+        return 0
+    fi
+
+    echo "[$(timestamp_utc)] Prisma schema sync: temporary container attempt failed"
+    return 1
 }
 
 # Main execution
