@@ -1,6 +1,7 @@
 # Multi-stage build for Next.js
-# Force linux/amd64 so sharp binaries match production (avoids darwin/arm64 when building on Mac)
-FROM --platform=linux/amd64 node:20-slim AS base
+# BuildKit supplies TARGETPLATFORM at build time; default to linux/amd64.
+ARG TARGETPLATFORM=linux/amd64
+FROM --platform=${TARGETPLATFORM} node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -35,7 +36,7 @@ ENV CFLAGS=-march=x86-64
 RUN npm install --prefer-offline --no-audit --legacy-peer-deps --no-build-from-source --include=optional \
     && npm install --no-save node-addon-api \
     && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] pin sharp baseline-compatible start" \
-    && npm install --no-save --include=optional --os=linux --cpu=x64 sharp@0.33.5 \
+    && npm install --no-save --include=optional --os=linux --cpu=x64 sharp@0.34.5 \
     && node -e "const v=require('sharp/package.json').version; console.log('['+new Date().toISOString()+'] sharp version in image deps:', v)" \
     && echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] pin sharp baseline-compatible done"
 

@@ -12,6 +12,7 @@
 # calls the deploy-smart.sh script to perform the deployment.
 
 set -e
+set -o pipefail
 
 # Get script directory and project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -300,7 +301,6 @@ nice -n 19 "$DEPLOY_SCRIPT" "$SERVICE_NAME" 2>&1 | {
             health_check_started=2
         fi
     done
-    exit ${PIPESTATUS[0]}
 }
 
 DEPLOY_EXIT_CODE=$?
