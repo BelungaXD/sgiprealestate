@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
+import { createScopedLogger } from '@/lib/logger'
 import { lstat, mkdir, readdir, rename, rm, stat, readFile } from 'fs/promises'
 import { basename, dirname, join, resolve, sep } from 'path'
 import { existsSync } from 'fs'
@@ -13,6 +14,7 @@ const allowedBases = [
 ]
 
 const VALID_DISTRICTS = ['Beachfront', 'Downtown', 'Dubai Hills', 'Marina Shores', 'The Oasis']
+const log = createScopedLogger('api/properties/browse-folders')
 
 function ts(): string {
   return new Date().toISOString()
@@ -214,7 +216,7 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
       return res.status(409).json({ message: 'Folder already exists' })
     }
     await mkdir(target, { recursive: false })
-    console.info(`[${ts()}] [browse-folders] create_folder ${target}`)
+    log.info('create_folder', { target })
     return res.status(200).json({ message: 'Folder created' })
   }
 
@@ -230,7 +232,7 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
       return res.status(409).json({ message: 'Target name already exists' })
     }
     await rename(safeSource, target)
-    console.info(`[${ts()}] [browse-folders] rename ${safeSource} -> ${target}`)
+    log.info('rename', { from: safeSource, to: target })
     return res.status(200).json({ message: 'Renamed' })
   }
 
@@ -270,7 +272,8 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
     if (existsSync(safeTarget)) {
       throw new Error(`Delete verification failed: ${safeTarget} still exists`)
     }
-    console.info(`[${ts()}] [browse-folders] delete ${safeTarget}`, {
+    log.info('delete', {
+      target: safeTarget,
       linkedFound,
       linkedDeleted,
       linkedDeleteErrors: linkedDeleteErrors.length,
@@ -299,7 +302,7 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
       return res.status(409).json({ message: 'Destination already exists' })
     }
     await rename(safeSource, destination)
-    console.info(`[${ts()}] [browse-folders] move ${safeSource} -> ${destination}`)
+    log.info('move', { from: safeSource, to: destination })
     return res.status(200).json({ message: 'Moved' })
   }
 
@@ -326,7 +329,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' })
   } catch (err: unknown) {
     const e = err as NodeJS.ErrnoException
-    console.error(`[${ts()}] [browse-folders] ${e.message}`)
+    log.errorWithException('browse-folders request failed', e, { message: e.message, code: e.code })
     const status =
       e.message === 'Path not allowed' ? 400 :
       e.message === 'Folder not found' || e.code === 'ENOENT' ? 404 :

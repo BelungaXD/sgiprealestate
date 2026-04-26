@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/developers/[slug]')
 
 export default async function handler(
   req: NextApiRequest,
@@ -59,7 +62,7 @@ export default async function handler(
 
       return res.status(200).json({ developer: normalizedDeveloper })
     } catch (error: any) {
-      console.error('Error fetching developer:', error)
+      log.errorWithException('Error fetching developer', error)
       
       // If database connection error, return 404
       if (error.code === 'P1001' || error.message?.includes('DATABASE_URL') || error.message?.includes('Can\'t reach database') || error.message?.includes('Environment variable not found')) {
@@ -115,7 +118,7 @@ export default async function handler(
 
       return res.status(200).json({ developer })
     } catch (error: any) {
-      console.error('Error updating developer:', error)
+      log.errorWithException('Error updating developer', error)
       
       if (error.code === 'P2025') {
         return res.status(404).json({ message: 'Developer not found' })

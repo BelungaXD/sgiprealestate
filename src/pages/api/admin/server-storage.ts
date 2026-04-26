@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { execFileSync } from 'node:child_process'
 import { ADMIN_SESSION_COOKIE, readCookie, verifyAdminSessionToken } from '@/lib/adminSession'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/admin/server-storage')
 
 function isAuthorized(req: NextApiRequest): boolean {
   const token = readCookie(req, ADMIN_SESSION_COOKIE)
@@ -41,7 +44,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const usagePercent = readServerStoragePercent()
     return res.status(200).json({ ok: true, usagePercent })
   } catch (error) {
-    console.error(`[${new Date().toISOString()}] Failed to read server storage usage:`, error)
+    log.errorWithException('Failed to read server storage usage', error)
     return res.status(500).json({ ok: false, error: 'failed_to_read_server_storage' })
   }
 }

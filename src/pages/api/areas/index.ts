@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
+import { createScopedLogger } from '@/lib/logger'
 import { z } from 'zod'
 
 const createAreaSchema = z.object({
@@ -30,6 +31,8 @@ const hasMissingAreaIsActiveColumn = (error: unknown) => {
       prismaError.message?.includes('areas.isActive'))
   )
 }
+
+const log = createScopedLogger('api/areas')
 
 export default async function handler(
   req: NextApiRequest,
@@ -102,7 +105,7 @@ export default async function handler(
 
       return res.status(200).json({ areas: mapped })
     } catch (error: unknown) {
-      console.error('Error fetching areas:', error)
+      log.errorWithException('Error fetching areas', error)
       const message = error instanceof Error ? error.message : ''
       const code =
         typeof error === 'object' && error !== null && 'code' in error
@@ -171,7 +174,7 @@ export default async function handler(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, errors: error.issues })
       }
-      console.error('Error creating area:', error)
+      log.errorWithException('Error creating area', error)
       return res.status(500).json({
         message: error instanceof Error ? error.message : 'Internal server error',
       })

@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/properties/delete-all')
 
 export default async function handler(
   req: NextApiRequest,
@@ -38,7 +41,7 @@ export default async function handler(
       )
     }
     void deletePropertyMediaFiles(allMediaUrls).catch((err) => {
-      console.error(`[${new Date().toISOString()}] delete-all media cleanup failed:`, err)
+      log.errorWithException('delete-all media cleanup failed', err)
     })
 
     return res.status(200).json({
@@ -47,7 +50,7 @@ export default async function handler(
       count: deletedCount.count,
     })
   } catch (error: any) {
-    console.error('Error deleting properties:', error)
+    log.errorWithException('Error deleting properties', error)
     return res.status(500).json({
       success: false,
       message: error.message || 'Internal server error',

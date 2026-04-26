@@ -1,5 +1,8 @@
 // Prisma 7 client with PostgreSQL driver adapter.
 // Lazy-initialised so the app can boot in demo mode without DATABASE_URL.
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('lib/prisma')
 
 let PrismaClientCtor: any = null
 let PrismaPgCtor: any = null
@@ -8,11 +11,9 @@ try {
   PrismaClientCtor = require('../../prisma/generated/client').PrismaClient
 } catch (error: any) {
   if (error.code === 'MODULE_NOT_FOUND') {
-    console.warn(
-      `[${new Date().toISOString()}] Prisma Client not generated. Run "npm run db:generate".`
-    )
+    log.warn('Prisma Client not generated. Run "npm run db:generate".')
   } else {
-    console.error(`[${new Date().toISOString()}] Error loading Prisma Client:`, error)
+    log.errorWithException('Error loading Prisma Client', error)
   }
 }
 
@@ -20,11 +21,9 @@ try {
   PrismaPgCtor = require('@prisma/adapter-pg').PrismaPg
 } catch (error: any) {
   if (error.code === 'MODULE_NOT_FOUND') {
-    console.warn(
-      `[${new Date().toISOString()}] @prisma/adapter-pg not installed. Run "npm install".`
-    )
+    log.warn('@prisma/adapter-pg not installed. Run "npm install".')
   } else {
-    console.error(`[${new Date().toISOString()}] Error loading PrismaPg adapter:`, error)
+    log.errorWithException('Error loading PrismaPg adapter', error)
   }
 }
 
@@ -60,10 +59,9 @@ function initializePrisma(): any {
     process.env.DATABASE_URL = databaseUrl
 
     if (process.env.NODE_ENV !== 'production') {
-      console.log(
-        `[${new Date().toISOString()}] [Prisma] Initializing with DATABASE_URL:`,
-        databaseUrl.replace(/:[^:@]+@/, ':****@')
-      )
+      log.info('Initializing Prisma with DATABASE_URL', {
+        databaseUrl: databaseUrl.replace(/:[^:@]+@/, ':****@'),
+      })
     }
 
     const adapter = new PrismaPgCtor({ connectionString: databaseUrl })
@@ -81,7 +79,7 @@ function initializePrisma(): any {
 
     return prismaInstance
   } catch (error: any) {
-    console.error(`[${new Date().toISOString()}] Failed to initialize Prisma Client:`, error)
+    log.errorWithException('Failed to initialize Prisma Client', error)
     return null
   }
 }

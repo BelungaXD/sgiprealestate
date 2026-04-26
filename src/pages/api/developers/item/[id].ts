@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { createScopedLogger } from '@/lib/logger'
 import { z } from 'zod'
 
 const updateDeveloperSchema = z.object({
@@ -27,6 +28,8 @@ const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
       prismaError.message?.includes('developers.isActive'))
   )
 }
+
+const log = createScopedLogger('api/developers/item/[id]')
 
 export default async function handler(
   req: NextApiRequest,
@@ -129,7 +132,7 @@ export default async function handler(
       if (error.name === 'ZodError') {
         return res.status(400).json({ success: false, errors: error.issues })
       }
-      console.error('Error updating developer:', error)
+      log.errorWithException('Error updating developer', error)
       return res.status(500).json({ message: error.message || 'Internal server error' })
     }
   }
@@ -158,7 +161,7 @@ export default async function handler(
       if (error.code === 'P2025') {
         return res.status(404).json({ message: 'Developer not found' })
       }
-      console.error('Error deleting developer:', error)
+      log.errorWithException('Error deleting developer', error)
       return res.status(500).json({ message: 'Internal server error' })
     }
   }

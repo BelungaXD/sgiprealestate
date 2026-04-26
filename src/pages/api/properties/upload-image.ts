@@ -3,6 +3,9 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/properties/upload-image')
 
 export const config = {
   api: {
@@ -71,7 +74,10 @@ export default async function handler(
         try {
           await writePropertyListingThumbnail(buffer, thumbnailPath)
         } catch (sharpError) {
-          console.warn('Failed to generate thumbnail:', sharpError)
+          log.warn('Failed to generate thumbnail', {
+            error: sharpError instanceof Error ? sharpError.message : String(sharpError),
+            filename: uniqueFilename,
+          })
         }
       } else {
         // For videos, just save the file
@@ -98,7 +104,7 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: any) {
-    console.error('Error uploading image/video:', error)
+    log.errorWithException('Error uploading image/video', error)
     return res.status(500).json({
       success: false,
       message: error.message || 'Internal server error',

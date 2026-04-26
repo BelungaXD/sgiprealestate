@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { readFile, stat } from 'fs/promises'
 import { join, resolve } from 'path'
 import { existsSync, createReadStream } from 'fs'
+import { createScopedLogger } from '@/lib/logger'
 
 // Cache for public directory location to avoid repeated lookups
 let cachedPublicDir: string | null = null
@@ -11,14 +12,10 @@ const imageCache = new Map<string, { buffer: Buffer; contentType: string; timest
 const MAX_CACHE_SIZE = 50 // Maximum number of cached images
 const CACHE_TTL = 3600000 // 1 hour in milliseconds
 const STREAM_DIRECT_THRESHOLD_BYTES = 4 * 1024 * 1024
+const baseLog = createScopedLogger('api/uploads')
 
 function log(message: string, details?: Record<string, unknown>) {
-  const ts = new Date().toISOString()
-  if (details) {
-    console.info(`[${ts}] [api/uploads] ${message}`, details)
-    return
-  }
-  console.info(`[${ts}] [api/uploads] ${message}`)
+  baseLog.info(message, details)
 }
 
 function getPublicDir(): string {
@@ -92,7 +89,7 @@ async function optimizeImage(
     }
   } catch (error) {
     // If sharp is not available or optimization fails, return original
-    console.warn('Image optimization failed, serving original:', error)
+    baseLog.errorWithException('Image optimization failed, serving original', error)
     const contentTypeMap: Record<string, string> = {
       png: 'image/png',
       jpg: 'image/jpeg',
@@ -111,7 +108,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  log('Request received', {
+    method: req.method,
+    path: req.query.path,
+    width: req.query.w,
+    quality: req.query.q,
+    format: req.query.f,
+  })
   if (req.method !== 'GET') {
+    baseLog.warn('Method not allowed', { method: req.method })
     return res.status(405).json({ message: 'Method not allowed' })
   }
 
@@ -119,6 +124,7 @@ export default async function handler(
     const { path } = req.query
 
     if (!path || !Array.isArray(path)) {
+      baseLog.warn('Invalid upload path query', { path })
       return res.status(400).json({ message: 'Invalid path' })
     }
 
@@ -134,6 +140,7 @@ export default async function handler(
     const cacheKey = `${decodedPath.join('/')}_${width || 'full'}_${quality}_${format || 'original'}`
     const cached = imageCache.get(cacheKey)
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      log('Cache hit', { cacheKey, decodedPath: decodedPath.join('/') })
       res.setHeader('Content-Type', cached.contentType)
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
       return res.status(200).send(cached.buffer)
@@ -145,11 +152,13 @@ export default async function handler(
 
     // Security check
     if (!filePath.startsWith(uploadsDir)) {
+      baseLog.warn('Access denied by uploads boundary check', { filePath, uploadsDir })
       return res.status(403).json({ message: 'Access denied' })
     }
 
     // Check if file exists locally, if not try to proxy from server
     if (!existsSync(filePath)) {
+      baseLog.warn('Requested file not found locally', { filePath, decodedPath: decodedPath.join('/') })
       // Try to proxy from server if NEXT_PUBLIC_SERVER_URL is set
       const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
       if (serverUrl) {
@@ -170,6 +179,7 @@ export default async function handler(
           const proxyResponse = await fetch(proxyUrl)
           
           if (proxyResponse.ok) {
+            log('Proxied missing file from remote server', { proxyUrl, decodedPath: decodedPath.join('/') })
             const contentType = proxyResponse.headers.get('content-type') || 'application/octet-stream'
             const buffer = Buffer.from(await proxyResponse.arrayBuffer())
             
@@ -178,7 +188,10 @@ export default async function handler(
             return res.status(200).send(buffer)
           }
         } catch (proxyError) {
-          console.warn('Failed to proxy from server:', proxyError)
+          baseLog.errorWithException('Failed to proxy from server', proxyError, {
+            decodedPath: decodedPath.join('/'),
+            serverUrl,
+          })
         }
       }
       
@@ -302,9 +315,7 @@ export default async function handler(
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
     return res.status(200).send(outputBuffer)
   } catch (error: any) {
-    console.error('Error serving file:', {
-      error: error.message,
-      stack: error.stack,
+    baseLog.errorWithException('Error serving file', error, {
       path: req.query.path,
       cwd: process.cwd(),
       __dirname,

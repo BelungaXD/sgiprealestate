@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { ADMIN_SESSION_COOKIE, readCookie, verifyAdminSessionToken } from '@/lib/adminSession'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/admin/users/[id]')
 
 function isAuthorized(req: NextApiRequest): boolean {
   const token = readCookie(req, ADMIN_SESSION_COOKIE)
@@ -33,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2025') {
       return res.status(404).json({ ok: false, error: 'user_not_found' })
     }
-    console.error(`[${new Date().toISOString()}] Failed to delete admin user:`, error)
+    log.errorWithException('Failed to delete admin user', error)
     return res.status(500).json({ ok: false, error: 'failed_to_delete_user' })
   }
 }

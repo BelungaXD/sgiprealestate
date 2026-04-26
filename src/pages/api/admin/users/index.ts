@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { createScopedLogger } from '@/lib/logger'
 import {
   ADMIN_SESSION_COOKIE,
   hashAdminPassword,
@@ -18,6 +19,7 @@ function isAuthorized(req: NextApiRequest): boolean {
   const token = readCookie(req, ADMIN_SESSION_COOKIE)
   return verifyAdminSessionToken(token)
 }
+const log = createScopedLogger('api/admin/users')
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!isAuthorized(req)) {
@@ -39,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({ ok: true, users })
     } catch (error) {
-      console.error(`[${new Date().toISOString()}] Failed to load admin users:`, error)
+      log.errorWithException('Failed to load admin users', error)
       return res.status(500).json({ ok: false, error: 'failed_to_load_users' })
     }
   }
@@ -71,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2002') {
         return res.status(409).json({ ok: false, error: 'email_already_exists' })
       }
-      console.error(`[${new Date().toISOString()}] Failed to create admin user:`, error)
+      log.errorWithException('Failed to create admin user', error)
       return res.status(500).json({ ok: false, error: 'failed_to_create_user' })
     }
   }

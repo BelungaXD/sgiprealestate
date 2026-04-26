@@ -2,6 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/properties/upload-file')
 
 export const config = {
   api: {
@@ -61,7 +64,7 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: any) {
-    console.error('Error uploading file:', error)
+    log.errorWithException('Error uploading file', error)
     return res.status(500).json({
       success: false,
       message: error.message || 'Internal server error',

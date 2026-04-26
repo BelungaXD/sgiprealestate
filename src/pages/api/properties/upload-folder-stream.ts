@@ -3,6 +3,7 @@ import { mkdir, unlink } from 'fs/promises'
 import { createWriteStream } from 'fs'
 import { join, dirname, normalize, resolve, relative as pathRelative } from 'path'
 import { pipeline } from 'stream/promises'
+import { createScopedLogger } from '@/lib/logger'
 
 /**
  * Stream one file per request directly to disk. No multipart, no formidable, no temp copy.
@@ -25,14 +26,10 @@ export const config = {
 const INCOMING_BASE = join(process.cwd(), 'public', 'uploads', 'incoming')
 const MAX_FILE_BYTES = 2 * 1024 * 1024 * 1024 // 2 GB per file
 const LOG_SCOPE = 'upload-folder-stream'
+const baseLog = createScopedLogger(`api/properties/${LOG_SCOPE}`)
 
 function log(msg: string, details?: Record<string, unknown>) {
-  const ts = new Date().toISOString()
-  if (details) {
-    console.info(`[${ts}] [${LOG_SCOPE}] ${msg}`, details)
-    return
-  }
-  console.info(`[${ts}] [${LOG_SCOPE}] ${msg}`)
+  baseLog.info(msg, details)
 }
 
 function sanitizeUploadId(raw: string): string | null {
@@ -121,7 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   } catch (error: unknown) {
     const err = error as { message?: string; code?: string }
-    console.error(`[${new Date().toISOString()}] [${LOG_SCOPE}] error`, {
+    baseLog.error('upload-folder-stream error', {
       uploadId,
       relPath,
       error: err.message || err,

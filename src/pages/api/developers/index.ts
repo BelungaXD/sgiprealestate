@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { createScopedLogger } from '@/lib/logger'
 import { z } from 'zod'
 
 const emaarNoiseFilter = {
@@ -72,6 +73,8 @@ const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
       prismaError.message?.includes('developers.isActive'))
   )
 }
+
+const log = createScopedLogger('api/developers')
 
 export default async function handler(
   req: NextApiRequest,
@@ -217,7 +220,7 @@ export default async function handler(
 
       return res.status(200).json({ developers: list })
     } catch (error: unknown) {
-      console.error('Error fetching developers:', error)
+      log.errorWithException('Error fetching developers', error)
       const message = error instanceof Error ? error.message : ''
       const code =
         typeof error === 'object' && error !== null && 'code' in error
@@ -290,7 +293,7 @@ export default async function handler(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, errors: error.issues })
       }
-      console.error('Error creating developer:', error)
+      log.errorWithException('Error creating developer', error)
       return res.status(500).json({
         message: error instanceof Error ? error.message : 'Internal server error',
       })

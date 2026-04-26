@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { resolveNewPropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
+import { createScopedLogger } from '@/lib/logger'
 
 export const config = {
   api: {
@@ -11,11 +12,19 @@ export const config = {
     },
   },
 }
+const log = createScopedLogger('api/properties')
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  log.info('Request received', {
+    method: req.method,
+    page: req.query.page,
+    limit: req.query.limit,
+    status: req.query.status,
+    listingMarket: req.query.listingMarket,
+  })
   // GET - List properties
   if (req.method === 'GET') {
     // If database is not configured, return empty array
@@ -128,7 +137,7 @@ export default async function handler(
         totalPages: Math.ceil(total / limit),
       })
     } catch (error: any) {
-      console.error(`[${new Date().toISOString()}] Error fetching properties:`, error)
+      log.errorWithException('Error fetching properties', error)
       
       // If database connection error or Prisma not initialized, return empty array
       if (
@@ -180,7 +189,7 @@ export default async function handler(
       try {
         await prisma.$connect()
       } catch (dbError: any) {
-        console.error('Database connection error:', dbError.message)
+        log.errorWithException('Database connection error', dbError)
         // If database is configured but not available, return error instead of demo mode
         return res.status(500).json({
           success: false,
@@ -194,7 +203,7 @@ export default async function handler(
       try {
         body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       } catch (parseError: any) {
-        console.error('Error parsing request body:', parseError)
+        log.errorWithException('Error parsing request body', parseError)
         return res.status(400).json({
           success: false,
           message: 'Invalid JSON in request body',
@@ -206,7 +215,7 @@ export default async function handler(
         const message = parsed.error.issues
           .map((e) => `${e.path.length ? e.path.join('.') : 'field'}: ${e.message}`)
           .join('; ')
-        console.warn(`[${new Date().toISOString()}] Property POST validation failed:`, message)
+        log.warn('Property POST validation failed', { message })
         return res.status(400).json({
           success: false,
           message: message || 'Validation error',
@@ -222,7 +231,7 @@ export default async function handler(
         slugExists = await prisma.property.findUnique({ where: { slug } })
       } catch (dbError: any) {
         // If database query fails, use demo mode
-        console.warn('Database query failed, using demo mode for slug check:', dbError.message)
+        log.warn('Database query failed; using demo mode for slug check', { message: dbError.message })
         slugExists = null // Continue with demo mode
       }
       if (slugExists) {
@@ -241,7 +250,7 @@ export default async function handler(
           )
         } catch (error) {
           // If slug generation fails, just use the original slug with timestamp
-          console.warn('Slug generation failed, using timestamp:', error)
+          log.errorWithException('Slug generation failed, using timestamp fallback', error)
           slug = `${slug}-${Date.now()}`
         }
       }
@@ -252,11 +261,14 @@ export default async function handler(
           const areaExists = await prisma.area.findUnique({ where: { id: validatedData.areaId } })
           if (!areaExists) {
             // If area doesn't exist, it might be a mock ID - allow it in demo mode
-            console.warn(`Area with ID ${validatedData.areaId} not found, allowing in demo mode`)
+            log.warn('Area ID not found; allowing in demo mode', { areaId: validatedData.areaId })
           }
         } catch (dbError: any) {
           // If database query failed, allow creation with mock areaId (demo mode)
-          console.warn('Database query failed for area check, allowing in demo mode:', dbError.message)
+          log.warn('Database query failed for area check; allowing in demo mode', {
+            message: dbError.message,
+            areaId: validatedData.areaId,
+          })
         }
       }
 
@@ -349,7 +361,7 @@ export default async function handler(
         }
         if (dbError.code === 'P2003') {
           // Invalid foreign key - might be mock data, allow in demo mode
-          console.warn('Invalid foreign key, using demo mode:', dbError.message)
+          log.warn('Invalid foreign key; using demo mode', { message: dbError.message })
           return res.status(200).json({
             success: true,
             message: 'Property saved (demo mode - using mock data)',
@@ -367,7 +379,7 @@ export default async function handler(
           dbError.message?.includes('did not initialize')
         ) {
           if (process.env.DATABASE_URL) {
-            console.error('Database connection error:', dbError.message)
+            log.errorWithException('Database connection error while creating property', dbError)
             return res.status(500).json({
               success: false,
               message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
@@ -375,7 +387,7 @@ export default async function handler(
             })
           }
           // Only use demo mode if DATABASE_URL is not configured
-          console.warn('Database not configured, using demo mode:', dbError.message)
+          log.warn('Database not configured; using demo mode', { message: dbError.message })
           return res.status(200).json({
             success: true,
             message: 'Property saved (demo mode - database not configured)',
@@ -394,7 +406,7 @@ export default async function handler(
           dbError.message?.includes('Database is not configured')
         ) {
           if (!process.env.DATABASE_URL) {
-            console.warn('Database not configured, using demo mode:', dbError.message)
+            log.warn('Database not configured; using demo mode', { message: dbError.message })
             return res.status(200).json({
               success: true,
               message: 'Property saved (demo mode - database not configured)',
@@ -407,7 +419,7 @@ export default async function handler(
             })
           }
           // If DATABASE_URL is configured but error occurs, return error
-          console.error('Database error:', dbError.message)
+          log.errorWithException('Database error while creating property', dbError)
           return res.status(500).json({
             success: false,
             message: 'Database error. Please check your database configuration.',
@@ -432,7 +444,7 @@ export default async function handler(
             data: imageData,
           })
         } catch (imageError: any) {
-          console.error('Error creating images:', imageError)
+          log.errorWithException('Error creating images', imageError)
           // Continue even if images fail - property is already created
         }
       }
@@ -472,7 +484,7 @@ export default async function handler(
             })
           }
         } catch (fileError: any) {
-          console.error('Error creating files:', fileError)
+          log.errorWithException('Error creating files', fileError)
           // Continue even if files fail - property is already created
         }
       }
@@ -494,7 +506,7 @@ export default async function handler(
           },
         })
       } catch (reloadError: any) {
-        console.error('Error reloading property:', reloadError)
+        log.errorWithException('Error reloading property', reloadError)
         // Return property without reload if query fails
         propertyWithImages = property
       }
@@ -504,12 +516,13 @@ export default async function handler(
         property: propertyWithImages || property,
       })
     } catch (error: any) {
-      console.error('Error creating property:', error)
-      console.error('Error details:', {
-        name: error.name,
-        code: error.code,
-        message: error.message,
-        stack: error.stack,
+      log.errorWithException('Error creating property', error, {
+        details: {
+          name: error.name,
+          code: error.code,
+          message: error.message,
+          stack: error.stack,
+        },
       })
       
       if (error.name === 'ZodError') {
@@ -528,7 +541,7 @@ export default async function handler(
       ) {
         // If DATABASE_URL is configured but connection fails, return error
         if (process.env.DATABASE_URL) {
-          console.error('Database connection error:', error.message)
+          log.errorWithException('Database connection error', error)
           return res.status(500).json({
             success: false,
             message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
@@ -536,7 +549,7 @@ export default async function handler(
           })
         }
         // Only use demo mode if DATABASE_URL is not configured
-        console.warn('Database not configured, using demo mode:', error.message)
+        log.warn('Database not configured; using demo mode', { message: error.message })
         let bodyData = {}
         try {
           bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
@@ -563,7 +576,7 @@ export default async function handler(
       ) {
         // Only use demo mode if DATABASE_URL is truly not configured
         if (!process.env.DATABASE_URL) {
-          console.warn('Database not configured, using demo mode:', error.message)
+          log.warn('Database not configured; using demo mode', { message: error.message })
           let bodyData = {}
           try {
             bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
@@ -582,7 +595,7 @@ export default async function handler(
           })
         }
         // If DATABASE_URL is configured but error occurs, return error
-        console.error('Database error:', error.message)
+        log.errorWithException('Database error', error)
         return res.status(500).json({
           success: false,
           message: 'Database error. Please check your database configuration.',
@@ -592,7 +605,7 @@ export default async function handler(
 
       // Handle other Prisma errors - return error instead of demo mode
       if (error.code?.startsWith('P')) {
-        console.error('Prisma error:', error.code, error.message)
+        log.errorWithException('Prisma error while saving property', error, { code: error.code })
         return res.status(500).json({
           success: false,
           message: 'Database error occurred while saving property.',
@@ -601,7 +614,7 @@ export default async function handler(
       }
 
       // For other errors, return error instead of demo mode
-      console.error('Unexpected error:', error.message)
+      log.errorWithException('Unexpected error while saving property', error)
       return res.status(500).json({
         success: false,
         message: 'An error occurred while saving property.',

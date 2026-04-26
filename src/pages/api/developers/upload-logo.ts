@@ -3,6 +3,9 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import sharp from 'sharp'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/developers/upload-logo')
 
 export const config = {
   api: {
@@ -53,7 +56,7 @@ export default async function handler(
           .webp({ quality: 90 })
           .toFile(filePath)
       } catch (sharpError) {
-        console.error('Error converting logo to WebP:', sharpError)
+        log.errorWithException('Error converting logo to WebP', sharpError)
         // Fallback: save original if WebP conversion fails
         await writeFile(filePath, buffer)
       }
@@ -74,7 +77,7 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: any) {
-    console.error('Error uploading logo:', error)
+    log.errorWithException('Error uploading logo', error)
     return res.status(500).json({
       success: false,
       message: error.message || 'Internal server error',

@@ -3,6 +3,9 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import sharp from 'sharp'
+import { createScopedLogger } from '@/lib/logger'
+
+const log = createScopedLogger('api/areas/upload-image')
 
 export const config = {
   api: {
@@ -43,7 +46,7 @@ export default async function handler(
       try {
         await sharp(buffer).webp({ quality: 90 }).toFile(filePath)
       } catch (sharpError) {
-        console.error('Error converting area image to WebP:', sharpError)
+        log.errorWithException('Error converting area image to WebP', sharpError)
         await writeFile(filePath, buffer)
       }
     } else {
@@ -62,7 +65,7 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: any) {
-    console.error('Error uploading area image:', error)
+    log.errorWithException('Error uploading area image', error)
     return res.status(500).json({
       success: false,
       message: error.message || 'Internal server error',

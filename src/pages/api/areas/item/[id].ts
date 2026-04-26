@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { createScopedLogger } from '@/lib/logger'
 import { z } from 'zod'
 
 const updateAreaSchema = z.object({
@@ -29,6 +30,8 @@ const hasMissingAreaIsActiveColumn = (error: unknown) => {
       prismaError.message?.includes('areas.isActive'))
   )
 }
+
+const log = createScopedLogger('api/areas/item/[id]')
 
 export default async function handler(
   req: NextApiRequest,
@@ -125,7 +128,7 @@ export default async function handler(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, errors: error.issues })
       }
-      console.error('Error updating area:', error)
+      log.errorWithException('Error updating area', error)
       return res.status(500).json({
         message: error instanceof Error ? error.message : 'Internal server error',
       })
@@ -160,7 +163,7 @@ export default async function handler(
       if (code === 'P2025') {
         return res.status(404).json({ message: 'Area not found' })
       }
-      console.error('Error deleting area:', error)
+      log.errorWithException('Error deleting area', error)
       return res.status(500).json({ message: 'Internal server error' })
     }
   }
