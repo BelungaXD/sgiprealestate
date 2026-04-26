@@ -71,7 +71,8 @@ check_database_connection() {
     local db_url="$DATABASE_URL"
     
     # Try to connect using docker exec if db-server-postgres container exists
-    if docker ps --format '{{.Names}}' | grep -q "^db-server-postgres$"; then
+    if timeout 10s docker ps --format '{{.Names}}' | grep -q "^db-server-postgres$"; then
+        echo "[$(timestamp_utc)] DB connection check: db-server-postgres container is running"
         # Extract database name from URL
         local db_name=$(echo "$db_url" | sed -n 's/.*\/\([^?]*\).*/\1/p')
         local db_user=$(echo "$db_url" | sed -n 's/.*:\/\/\([^:]*\):.*/\1/p')
@@ -81,14 +82,23 @@ check_database_connection() {
             return 1
         fi
         
-        # Test connection
-        if docker exec db-server-postgres psql -U "$db_user" -d "$db_name" -c "SELECT 1;" >/dev/null 2>&1; then
+        # Test connection with a hard timeout to avoid hanging deployment forever.
+        echo "[$(timestamp_utc)] DB connection check: probing user=${db_user} db=${db_name}"
+        if timeout 15s docker exec db-server-postgres psql -U "$db_user" -d "$db_name" -c "SELECT 1;" >/dev/null 2>&1; then
+            echo "[$(timestamp_utc)] DB connection check: probe succeeded"
             return 0
         else
+            local probe_exit=$?
+            if [ $probe_exit -eq 124 ]; then
+                echo "[$(timestamp_utc)] DB connection check: probe timed out after 15s"
+            else
+                echo "[$(timestamp_utc)] DB connection check: probe failed with exit=${probe_exit}"
+            fi
             return 1
         fi
     else
         # If container doesn't exist, try using prisma directly
+        echo "[$(timestamp_utc)] DB connection check: db-server-postgres container not found"
         echo -e "${YELLOW}⚠️  db-server-postgres container not found, will use Prisma for connection test${NC}"
         return 2
     fi
@@ -97,7 +107,7 @@ check_database_connection() {
 # Function to check if tables exist
 check_tables_exist() {
     # Use direct psql check (most reliable method)
-    if docker ps --format '{{.Names}}' | grep -q "^db-server-postgres$"; then
+    if timeout 10s docker ps --format '{{.Names}}' | grep -q "^db-server-postgres$"; then
         # Extract database name and user from DATABASE_URL
         local db_url="$DATABASE_URL"
         
@@ -119,13 +129,15 @@ check_tables_exist() {
         fi
         
         # Check if properties table exists
-        local table_count=$(docker exec db-server-postgres psql -U "$db_user" -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
+        echo "[$(timestamp_utc)] Table check: probing properties table for user=${db_user} db=${db_name}"
+        local table_count=$(timeout 15s docker exec db-server-postgres psql -U "$db_user" -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
         
         if [ "$table_count" = "1" ]; then
             return 0
         else
             # Also try with dbadmin user (fallback)
-            table_count=$(docker exec db-server-postgres psql -U dbadmin -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
+            echo "[$(timestamp_utc)] Table check: retrying with dbadmin for db=${db_name}"
+            table_count=$(timeout 15s docker exec db-server-postgres psql -U dbadmin -d "$db_name" -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'properties';" 2>/dev/null | tr -d '[:space:]')
             if [ "$table_count" = "1" ]; then
                 return 0
             fi
@@ -170,7 +182,7 @@ create_tables() {
             
             # Check if we have a running container we can use (blue/green or generic name)
             for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
-                if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
+                if timeout 10s docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
                     echo -e "${BLUE}ℹ️  Using existing container: ${container_name}${NC}"
                     if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
                         echo -e "${GREEN}✅ Database schema created successfully${NC}"
@@ -213,7 +225,7 @@ sync_schema_changes() {
 
     # Fallback to an existing running app container
     for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
-        if docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
+        if timeout 10s docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
             echo "[$(timestamp_utc)] Prisma schema sync: container attempt started (${container_name})"
             if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
                 echo "[$(timestamp_utc)] Prisma schema sync: container attempt succeeded (${container_name})"
