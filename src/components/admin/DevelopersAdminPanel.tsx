@@ -108,13 +108,27 @@ export default function DevelopersAdminPanel() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ file: dataUrl, filename: file.name }),
         })
-        const json = await res.json()
+        const rawBody = await res.text()
+        let json: { url?: string; success?: boolean; message?: string } = {}
+        try {
+          json = rawBody ? JSON.parse(rawBody) : {}
+        } catch {
+          json = {}
+        }
         // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H2',location:'src/components/admin/DevelopersAdminPanel.tsx:106',message:'Developer upload-logo response',data:{ok:res.ok,status:res.status,url:json?.url||null,success:json?.success??null},timestamp:Date.now()})}).catch(()=>{})
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration3',hypothesisId:'H12',location:'src/components/admin/DevelopersAdminPanel.tsx:113',message:'Developer upload-logo raw response',data:{ok:res.ok,status:res.status,contentType:res.headers.get('content-type')||null,url:json?.url||null,success:json?.success??null,message:json?.message||null,bodyPreview:rawBody.slice(0,200)},timestamp:Date.now()})}).catch(()=>{})
         // #endregion
-        if (res.ok && json.url) setForm((f) => ({ ...f, logo: json.url }))
+        if (res.ok && json.url) {
+          setForm((f) => ({ ...f, logo: json.url }))
+          return
+        }
+        alert(json?.message || 'Logo upload failed')
       } catch (err) {
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration3',hypothesisId:'H13',location:'src/components/admin/DevelopersAdminPanel.tsx:123',message:'Developer upload-logo request failed in catch',data:{error:err instanceof Error?err.message:'unknown'},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
         console.error(err)
+        alert('Logo upload request failed')
       } finally {
         setLogoUploading(false)
       }
