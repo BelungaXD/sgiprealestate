@@ -1,5 +1,4 @@
 import { writeFile } from 'fs/promises'
-import sharp from 'sharp'
 
 /** Property listing card thumbnails: cap file size (bytes) for fast grid loads. */
 export const MAX_PROPERTY_LISTING_THUMBNAIL_BYTES = 40 * 1024
@@ -8,8 +7,37 @@ export const MAX_PROPERTY_LISTING_THUMBNAIL_BYTES = 40 * 1024
  * Write a WebP listing thumbnail under the byte budget by stepping down size/quality.
  * Same basename as the main image, under images/thumbnails/.
  */
-function sharpSource(input: string | Buffer): sharp.Sharp {
-  return typeof input === 'string' ? sharp(input) : sharp(input)
+type SharpFactory = (input?: Buffer | string) => {
+  rotate: () => ReturnType<SharpFactory>
+  resize: (
+    width: number,
+    height: number,
+    options: { fit: 'inside'; withoutEnlargement: boolean }
+  ) => ReturnType<SharpFactory>
+  webp: (options: { quality: number; effort: number; smartSubsample: boolean }) => ReturnType<SharpFactory>
+  toBuffer: () => Promise<Buffer>
+}
+
+let sharpFactoryPromise: Promise<SharpFactory | null> | null = null
+
+async function getSharpFactory(): Promise<SharpFactory | null> {
+  if (!sharpFactoryPromise) {
+    sharpFactoryPromise = import('sharp')
+      .then((mod) => {
+        const sharpCandidate = (mod as { default?: unknown }).default ?? mod
+        return typeof sharpCandidate === 'function' ? (sharpCandidate as SharpFactory) : null
+      })
+      .catch(() => null)
+  }
+  return sharpFactoryPromise
+}
+
+async function sharpSource(input: string | Buffer): Promise<ReturnType<SharpFactory>> {
+  const sharpFactory = await getSharpFactory()
+  if (!sharpFactory) {
+    throw new Error('sharp_unavailable')
+  }
+  return sharpFactory(input)
 }
 
 async function tryEncode(
@@ -17,7 +45,8 @@ async function tryEncode(
   maxSide: number,
   quality: number
 ): Promise<Buffer> {
-  return sharpSource(input)
+  const source = await sharpSource(input)
+  return source
     .rotate()
     .resize(maxSide, maxSide, {
       fit: 'inside',
