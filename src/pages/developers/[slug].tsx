@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next/pages'
 import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import Layout from '@/components/layout/Layout'
 import {
@@ -74,9 +74,11 @@ export default function DeveloperDetail({ developer }: DeveloperDetailProps) {
                 <div className="flex items-start space-x-6 mb-6">
                   {normalizedLogo && !logoError ? (
                     <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center shrink-0 relative overflow-hidden shadow-md">
-                      <img
+                      <Image
                         src={normalizedLogo}
                         alt={displayName}
+                        fill
+                        sizes="96px"
                         className="max-w-full max-h-full object-contain p-2"
                         onError={(e) => {
                           console.error('Logo failed to load:', normalizedLogo, e)

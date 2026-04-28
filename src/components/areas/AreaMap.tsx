@@ -2,7 +2,6 @@ import { useTranslation } from 'next-i18next/pages'
 import { 
   MapPinIcon,
   HomeIcon,
-  CurrencyDollarIcon,
   StarIcon
 } from '@heroicons/react/24/outline'
 
@@ -21,9 +20,6 @@ interface AreaMapProps {
 
 export default function AreaMap({ areaName, coordinates, properties = [] }: AreaMapProps) {
   const { t } = useTranslation('areas')
-
-  // Generate Google Maps embed URL
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${coordinates.lat},${coordinates.lng}&zoom=15`
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">

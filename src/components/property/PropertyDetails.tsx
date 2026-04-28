@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next/pages'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   HomeIcon,
   WrenchScrewdriverIcon,
@@ -46,21 +47,6 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
   const { t } = useTranslation('property')
   const { t: tProps } = useTranslation('properties')
   const isSecondary = property.listingMarket === 'SECONDARY'
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 0,
-    }).format(price)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long'
-    })
-  }
 
   return (
     <div className="space-y-8">
@@ -141,11 +127,16 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
               className="bg-white rounded-xl p-5 border border-gray-200 shadow-xs flex items-center space-x-4 transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-champagne group cursor-pointer"
             >
               {property.developerLogo ? (
-                <img
-                  src={property.developerLogo}
-                  alt=""
-                  className="w-12 h-12 object-contain shrink-0"
-                />
+                <div className="relative w-12 h-12 shrink-0">
+                  <Image
+                    src={property.developerLogo}
+                    alt=""
+                    fill
+                    sizes="48px"
+                    className="object-contain"
+                    unoptimized
+                  />
+                </div>
               ) : (
                 <div className="w-12 h-12 bg-champagne/10 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-champagne group-hover:scale-110">
                   <span className="text-xl font-bold text-champagne transition-colors duration-300 group-hover:text-white">

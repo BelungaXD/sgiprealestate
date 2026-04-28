@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { useState } from 'react'
 import { Square3Stack3DIcon, HomeIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline'
 
@@ -81,10 +82,13 @@ export default function PropertyFloorPlans({ floorPlans }: PropertyFloorPlansPro
                 {selectedPlan.title}
               </h4>
               <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
-                <img
+                <Image
                   src={selectedPlan.url}
                   alt={selectedPlan.title}
+                  width={1280}
+                  height={720}
                   className="w-full h-full object-cover"
+                  unoptimized
                 />
               </div>
               <div className="mt-4 grid grid-cols-3 gap-4 text-center">

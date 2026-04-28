@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslation } from 'next-i18next/pages'
-import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import { HomeIcon, CurrencyDollarIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Area {
   id: string

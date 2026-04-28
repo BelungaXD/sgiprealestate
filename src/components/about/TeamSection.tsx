@@ -16,6 +16,17 @@ interface TeamMemberCardProps {
   index: number
 }
 
+interface TeamMember {
+  name: string
+  position: string
+  image: string
+  description?: string
+}
+
+interface TeamTranslationShape {
+  members?: TeamMember[]
+}
+
 function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -23,11 +34,7 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
   const [isVisible, setIsVisible] = useState(isAboveFold)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  if (!member || !member.image) {
-    return null
-  }
-
-  const imageUrl = normalizeImageUrl(member.image)
+  const imageUrl = member?.image ? normalizeImageUrl(member.image) : ''
 
   useEffect(() => {
     if (isAboveFold) return
@@ -49,8 +56,9 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
       }
     )
 
-    if (cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect()
+    const cardElement = cardRef.current
+    if (cardElement) {
+      const rect = cardElement.getBoundingClientRect()
       const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
 
       if (isInViewport) {
@@ -58,13 +66,13 @@ function TeamMemberCard({ member, index }: TeamMemberCardProps) {
           setIsVisible(true)
         }, 150)
       } else {
-        observer.observe(cardRef.current)
+        observer.observe(cardElement)
       }
     }
 
     return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current)
+      if (cardElement) {
+        observer.unobserve(cardElement)
       }
     }
   }, [isAboveFold])
@@ -140,7 +148,7 @@ export default function TeamSection() {
   const teamMembers = useMemo(() => {
     try {
       // Try to get members array directly
-      const members = t('team.members', { returnObjects: true }) as any
+      const members = t('team.members', { returnObjects: true }) as unknown
       
       // If members is an array, return it
       if (Array.isArray(members)) {
@@ -148,7 +156,7 @@ export default function TeamSection() {
       }
       
       // Fallback: try to get team object and extract members
-      const teamObject = t('team', { returnObjects: true }) as any
+      const teamObject = t('team', { returnObjects: true }) as TeamTranslationShape
       if (teamObject && typeof teamObject === 'object' && 'members' in teamObject) {
         return Array.isArray(teamObject.members) ? teamObject.members : []
       }
@@ -174,7 +182,7 @@ export default function TeamSection() {
 
         {teamMembers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {teamMembers.map((member: any, index: number) => (
+            {teamMembers.map((member: TeamMember, index: number) => (
               <TeamMemberCard
                 key={member.name || index}
                 member={member}

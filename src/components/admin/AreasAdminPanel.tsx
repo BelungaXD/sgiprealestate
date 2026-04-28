@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, Fragment } from 'react'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   PlusIcon,
@@ -391,7 +392,7 @@ export default function AreasAdminPanel() {
                   </label>
                   <input type="file" accept="image/*" onChange={handleImageFile} />
                   {form.image && (
-                    <img src={form.image} alt="" className="mt-2 h-24 w-full object-cover rounded-sm" />
+                    <Image src={form.image} alt="" width={480} height={96} className="mt-2 h-24 w-full object-cover rounded-sm" unoptimized />
                   )}
                 </div>
                 <label className="flex items-center gap-2 text-sm">

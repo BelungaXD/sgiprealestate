@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTranslation } from 'next-i18next/pages'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
 import {
@@ -164,10 +165,13 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
                   <>
                     <div className="flex items-center gap-2">
                       {property.developerLogo ? (
-                        <img
+                        <Image
                           src={property.developerLogo}
                           alt=""
+                          width={100}
+                          height={32}
                           className="h-8 w-auto object-contain max-w-[100px]"
+                          unoptimized
                         />
                       ) : null}
                     </div>

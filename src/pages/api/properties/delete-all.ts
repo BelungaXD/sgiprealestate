@@ -49,11 +49,12 @@ export default async function handler(
       message: `Deleted ${deletedCount.count} properties`,
       count: deletedCount.count,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error'
     log.errorWithException('Error deleting properties', error)
     return res.status(500).json({
       success: false,
-      message: error.message || 'Internal server error',
+      message,
     })
   }
 }

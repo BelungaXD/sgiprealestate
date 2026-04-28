@@ -5,7 +5,6 @@ import {
   AcademicCapIcon,
   HeartIcon,
   TruckIcon,
-  SignalIcon,
   BuildingStorefrontIcon,
   MapPinIcon,
   StarIcon

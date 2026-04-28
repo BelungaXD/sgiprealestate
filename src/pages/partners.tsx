@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import { useTranslation } from 'next-i18next/pages'
 import Head from 'next/head'
+import Image from 'next/image'
 import Layout from '@/components/layout/Layout'
 
 const partners = [
@@ -25,7 +26,7 @@ export default function PartnersPage() {
             {partners.map((p) => (
               <a key={p.name} href={p.website} target="_blank" rel="noopener noreferrer" className="group border rounded-xl p-6 bg-white hover:shadow-sm transition">
                 <div className="h-16 flex items-center justify-center mb-4">
-                  <img src={p.logo} alt={p.name} className="max-h-16 object-contain" />
+                  <Image src={p.logo} alt={p.name} width={160} height={64} className="max-h-16 object-contain" />
                 </div>
                 <div className="text-center">
                   <div className="text-lg font-semibold text-graphite group-hover:text-champagne">{p.name}</div>

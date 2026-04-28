@@ -8,69 +8,62 @@ import { Disclosure } from '@headlessui/react'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import Layout from '@/components/layout/Layout'
 
+const FAQ_CATEGORIES = ['buying', 'selling', 'renting', 'ownership', 'general'] as const
+type FaqQuestion = { question: string; answer: string }
+type FaqCategory = { key: string; title: string; questions: FaqQuestion[] }
+type RawFaqCategory = { title?: unknown; questions?: unknown }
+type RawFaqCategories = Partial<Record<(typeof FAQ_CATEGORIES)[number], RawFaqCategory>>
+
 export default function FAQ() {
   const { t } = useTranslation('faq')
-
-  const categories = ['buying', 'selling', 'renting', 'ownership', 'general'] as const
 
   // Load all categories data with proper error handling
   const faqCategories = useMemo(() => {
     try {
       // Try to get all categories at once
-      const allCategories = t('categories', { returnObjects: true }) as any
+      const allCategories = t('categories', { returnObjects: true }) as unknown
 
       if (allCategories && typeof allCategories === 'object' && !Array.isArray(allCategories)) {
-        return categories
+        return FAQ_CATEGORIES
           .map((category) => {
-            const categoryData = allCategories[category]
+            const categoryData = (allCategories as RawFaqCategories)[category]
             if (
               categoryData &&
               typeof categoryData === 'object' &&
               !Array.isArray(categoryData) &&
-              'title' in categoryData &&
-              'questions' in categoryData &&
+              typeof categoryData.title === 'string' &&
               Array.isArray(categoryData.questions) &&
               categoryData.questions.length > 0
             ) {
               return {
                 key: category,
-                ...categoryData,
-              } as {
-                key: string
-                title: string
-                questions: Array<{ question: string; answer: string }>
+                title: categoryData.title,
+                questions: categoryData.questions as FaqQuestion[],
               }
             }
             return null
           })
-          .filter((cat) => cat !== null) as Array<{
-            key: string
-            title: string
-            questions: Array<{ question: string; answer: string }>
-          }>
+          .filter((cat): cat is FaqCategory => cat !== null)
       }
 
       // Fallback: try to get each category individually
-      return categories
+      return FAQ_CATEGORIES
         .map((category) => {
           try {
-            const categoryData = t(`categories.${category}`, { returnObjects: true }) as any
+            const categoryData = t(`categories.${category}`, { returnObjects: true }) as unknown
             if (
               categoryData &&
               typeof categoryData === 'object' &&
               !Array.isArray(categoryData) &&
-              'title' in categoryData &&
-              'questions' in categoryData &&
-              Array.isArray(categoryData.questions) &&
-              categoryData.questions.length > 0
+              typeof (categoryData as RawFaqCategory).title === 'string' &&
+              Array.isArray((categoryData as RawFaqCategory).questions) &&
+              ((categoryData as RawFaqCategory).questions as unknown[]).length > 0
             ) {
+              const typed = categoryData as RawFaqCategory
               return {
                 key: category,
-                ...categoryData,
-              } as {
-                key: string
-                title: string
-                questions: Array<{ question: string; answer: string }>
+                title: typed.title as string,
+                questions: typed.questions as FaqQuestion[],
               }
             }
           } catch (error) {
@@ -78,11 +71,7 @@ export default function FAQ() {
           }
           return null
         })
-        .filter((cat) => cat !== null) as Array<{
-          key: string
-          title: string
-          questions: Array<{ question: string; answer: string }>
-        }>
+        .filter((cat): cat is FaqCategory => cat !== null)
     } catch (error) {
       console.error('Error loading FAQ categories:', error)
       return []

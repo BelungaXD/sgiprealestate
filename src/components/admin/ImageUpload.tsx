@@ -1,11 +1,7 @@
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
-
-interface ImageData {
-  full: string // Full size image (base64 or URL)
-  thumbnail?: string // Thumbnail for preview (base64)
-}
 
 interface ImageUploadProps {
   images: string[]
@@ -56,76 +52,6 @@ const convertToWebP = async (file: File, quality: number = 0.85, maxSize: number
           (blob) => {
             if (!blob) {
               reject(new Error('Failed to convert to WebP'))
-              return
-            }
-            
-            // Convert blob to base64
-            const reader = new FileReader()
-            reader.onload = () => {
-              resolve(reader.result as string)
-            }
-            reader.onerror = reject
-            reader.readAsDataURL(blob)
-          },
-          'image/webp',
-          quality
-        )
-      }
-      
-      img.onerror = reject
-      img.src = e.target?.result as string
-    }
-    
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
-
-// Function to generate thumbnail (small preview)
-const generateThumbnail = async (file: File, size: number = 200, quality: number = 0.7): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    
-    reader.onload = (e) => {
-      const img = new Image()
-      
-      img.onload = () => {
-        // Create canvas for thumbnail
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-        
-        if (!ctx) {
-          reject(new Error('Could not get canvas context'))
-          return
-        }
-        
-        // Calculate thumbnail dimensions maintaining aspect ratio
-        let width = img.width
-        let height = img.height
-        
-        if (width > height) {
-          if (width > size) {
-            height = (height / width) * size
-            width = size
-          }
-        } else {
-          if (height > size) {
-            width = (width / height) * size
-            height = size
-          }
-        }
-        
-        canvas.width = width
-        canvas.height = height
-        
-        // Draw image on canvas
-        ctx.drawImage(img, 0, 0, width, height)
-        
-        // Convert to WebP
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              reject(new Error('Failed to convert thumbnail to WebP'))
               return
             }
             
@@ -332,12 +258,15 @@ export default function ImageUpload({
                     preload="metadata"
                   />
                 ) : (
-              <img
+              <Image
                 src={displaySrc}
                 alt={`Upload ${index + 1}`}
+                width={256}
+                height={128}
                 className="w-full h-32 object-cover rounded-lg"
-                    loading="lazy"
-                    style={{ maxWidth: '100%', height: '128px', objectFit: 'cover' }}
+                loading="lazy"
+                style={{ maxWidth: '100%', height: '128px', objectFit: 'cover' }}
+                unoptimized
               />
                 )}
               <button

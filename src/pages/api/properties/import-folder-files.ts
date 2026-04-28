@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
-import { writeFile, mkdir } from 'fs/promises'
-import { join, extname, basename, dirname } from 'path'
+import { mkdir } from 'fs/promises'
+import { join, extname, basename } from 'path'
 import { existsSync } from 'fs'
 import sharp from 'sharp'
 import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
@@ -13,6 +13,13 @@ import fs from 'fs'
 
 const execAsync = promisify(exec)
 const log = createScopedLogger('api/properties/import-folder-files')
+type ErrorLike = {
+  message?: string
+  code?: string
+  statusCode?: number
+}
+const asErrorLike = (error: unknown): ErrorLike =>
+  typeof error === 'object' && error !== null ? (error as ErrorLike) : {}
 
 export const config = {
   api: {
@@ -309,7 +316,7 @@ async function processPropertyFiles(
         order: filesList.length,
       })
       }
-    } catch (fileError: any) {
+    } catch {
       // Продолжаем обработку других файлов
     }
   }
@@ -441,7 +448,7 @@ export default async function handler(
       minFileSize: 0,
     })
 
-    const [fields, files] = await form.parse(req)
+    const [, files] = await form.parse(req)
     
     // Обрабатываем файлы - может быть массив или один файл
     let fileArray: File[] = []
@@ -513,17 +520,14 @@ export default async function handler(
     }
 
     // Обработать каждую папку объекта
-    let processedFolders = 0
-    const totalFolders = filesByFolder.size
-    
     for (const [folderName, folderFiles] of Array.from(filesByFolder.entries())) {
-      processedFolders++
       try {
         await processPropertyFiles(folderFiles, folderName)
         results.success.push(folderName)
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const err = asErrorLike(error)
         log.errorWithException('Error processing folder', error, { folderName })
-        results.errors.push(`${folderName}: ${error.message}`)
+        results.errors.push(`${folderName}: ${err.message || 'Unknown error'}`)
         // Продолжаем обработку других папок даже при ошибке
       }
     }
@@ -535,43 +539,44 @@ export default async function handler(
       successful: results.success.length,
       failed: results.errors.length,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = asErrorLike(error)
     log.errorWithException('Error importing properties', error, {
-      code: error.code,
-      statusCode: error.statusCode,
-      message: error.message,
+      code: err.code,
+      statusCode: err.statusCode,
+      message: err.message,
     })
     
     // Проверяем, не является ли это ошибкой 413 (Payload Too Large)
-    if (error.statusCode === 413 || 
-        error.code === 'LIMIT_FILE_SIZE' ||
-        error.code === 'LIMIT_FIELD_VALUE' ||
-        error.message?.includes('413') || 
-        error.message?.includes('Payload Too Large') || 
-        error.message?.includes('Request Entity Too Large') ||
-        error.message?.includes('maxTotalFileSize') ||
-        error.message?.includes('maxFileSize')) {
+    if (err.statusCode === 413 || 
+        err.code === 'LIMIT_FILE_SIZE' ||
+        err.code === 'LIMIT_FIELD_VALUE' ||
+        err.message?.includes('413') || 
+        err.message?.includes('Payload Too Large') || 
+        err.message?.includes('Request Entity Too Large') ||
+        err.message?.includes('maxTotalFileSize') ||
+        err.message?.includes('maxFileSize')) {
       return res.status(413).json({
         message: 'File size exceeds server limit',
         error: 'The uploaded files are too large. Maximum size: 10GB total. Please try uploading folders separately or reduce file sizes.',
         code: 'PAYLOAD_TOO_LARGE',
         suggestion: 'Try uploading folders separately or reduce file sizes before uploading.',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        details: process.env.NODE_ENV === 'development' ? err.message : undefined,
       })
     }
     
     // Более детальное сообщение об ошибке
-    let errorMessage = error.message || 'Unknown error'
-    if (error.message?.includes('maxTotalFileSize')) {
+    let errorMessage = err.message || 'Unknown error'
+    if (err.message?.includes('maxTotalFileSize')) {
       errorMessage = 'Размер файлов слишком большой. Попробуйте загрузить папки по отдельности или уменьшите размер файлов.'
-    } else if (error.message?.includes('maxFileSize')) {
+    } else if (err.message?.includes('maxFileSize')) {
       errorMessage = 'Один из файлов слишком большой. Максимальный размер файла: 2GB.'
     }
     
     return res.status(500).json({
       message: 'Error importing properties',
       error: errorMessage,
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined,
     })
   }
 }

@@ -1,5 +1,4 @@
 import { useTranslation } from 'next-i18next/pages'
-import { CheckIcon } from '@heroicons/react/24/outline'
 
 interface Service {
   id: string

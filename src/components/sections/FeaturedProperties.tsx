@@ -1,29 +1,33 @@
 import { useTranslation } from 'next-i18next/pages'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
 import { ArrowRightIcon, MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
 
+interface FeaturedProperty {
+  id: string
+  slug?: string
+  image: string
+  title: string
+  listingMarket?: string
+  type: string
+  price: number
+  currency: string
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+}
+
 interface FeaturedPropertiesProps {
-  initialProperties?: any[]
+  initialProperties?: FeaturedProperty[]
 }
 
 export default function FeaturedProperties({ initialProperties = [] }: FeaturedPropertiesProps) {
   const { t } = useTranslation('home')
   const { t: tProps } = useTranslation('properties')
-  const [properties, setProperties] = useState<any[]>(initialProperties)
-  const [loading, setLoading] = useState(initialProperties.length === 0)
-
-  // Use initial properties if provided, otherwise show empty
-  useEffect(() => {
-    if (initialProperties.length > 0) {
-      setProperties(initialProperties)
-      setLoading(false)
-    } else {
-      setLoading(false)
-    }
-  }, [initialProperties])
+  const properties = initialProperties
+  const loading = false
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {

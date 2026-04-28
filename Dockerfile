@@ -1,7 +1,6 @@
 # Multi-stage build for Next.js
-# BuildKit supplies TARGETPLATFORM at build time; default to linux/amd64.
-ARG TARGETPLATFORM=linux/amd64
-FROM --platform=${TARGETPLATFORM} node:20-slim AS base
+FROM node:20-slim AS base
+ENV npm_config_update_notifier=false
 
 # Install dependencies only when needed
 FROM base AS deps

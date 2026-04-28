@@ -23,7 +23,7 @@ export default async function handler(
   }
 
   try {
-    const { file, filename, mimeType } = req.body
+    const { file, filename } = req.body
 
     if (!file || !filename) {
       return res.status(400).json({ message: 'File and filename are required' })
@@ -63,11 +63,12 @@ export default async function handler(
       url,
       filename: uniqueFilename,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error'
     log.errorWithException('Error uploading file', error)
     return res.status(500).json({
       success: false,
-      message: error.message || 'Internal server error',
+      message,
     })
   }
 }

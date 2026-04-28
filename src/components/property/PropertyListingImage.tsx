@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { propertyListingImageUrl, normalizeUploadUrl } from '@/lib/utils/imageUrl'
 
@@ -26,11 +27,14 @@ export default function PropertyListingImage({
   }, [imageUrl])
 
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
+      width={1200}
+      height={800}
       className={className}
       loading={loading}
+      unoptimized
       onError={() => {
         if (src !== full) {
           setSrc(full)

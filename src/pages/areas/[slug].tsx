@@ -57,13 +57,11 @@ interface AreaDetailProps {
 }
 
 export default function AreaDetail({ area }: AreaDetailProps) {
-  const { t, i18n } = useTranslation('areas')
+  const { i18n } = useTranslation('areas')
   const isRussian = i18n.language === 'ru'
 
   const displayName = isRussian ? area.name : area.nameEn
   const displayDescription = isRussian ? area.description : area.descriptionEn
-  const displayDetailedDescription = isRussian ? area.detailedDescription : area.detailedDescriptionEn
-
   return (
     <>
       <Head>
@@ -167,7 +165,7 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   }
 }
 
-export const getStaticProps: GetStaticProps = async ({ params, locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   // Fetch from API - no mock data
   // Return empty area for now - should be fetched from API
   const mockArea: Area | null = null

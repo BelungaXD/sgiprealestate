@@ -18,13 +18,7 @@ interface Property {
   isFeatured: boolean
 }
 
-interface RelatedPropertiesProps {
-  currentPropertyId: string
-  district: string
-  type: string
-}
-
-export default function RelatedProperties({ currentPropertyId, district, type }: RelatedPropertiesProps) {
+export default function RelatedProperties() {
   const { t } = useTranslation('property')
 
   // Load related properties from API - no mock data

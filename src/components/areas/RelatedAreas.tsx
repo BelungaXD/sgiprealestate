@@ -1,5 +1,4 @@
 import { useTranslation } from 'next-i18next/pages'
-import Link from 'next/link'
 import AreaCard from './AreaCard'
 
 interface Area {
@@ -25,8 +24,7 @@ interface RelatedAreasProps {
 }
 
 export default function RelatedAreas({ currentAreaId, city }: RelatedAreasProps) {
-  const { t, i18n } = useTranslation('areas')
-  const currentLocale = i18n.language || 'en'
+  const { t } = useTranslation('areas')
 
   // Load areas from API - no mock data
   const allAreas: Area[] = []

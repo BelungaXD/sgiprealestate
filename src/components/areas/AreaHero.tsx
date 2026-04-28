@@ -1,5 +1,8 @@
 import { useTranslation } from 'next-i18next/pages'
 import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
 
 interface Area {
   id: string
@@ -34,6 +37,7 @@ export default function AreaHero({ area }: AreaHeroProps) {
 
   const displayName = isRussian ? area.name : area.nameEn
   const displayDescription = isRussian ? area.description : area.descriptionEn
+  const [imageSrc, setImageSrc] = useState(area.image || '/images/hero.jpg')
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -43,18 +47,19 @@ export default function AreaHero({ area }: AreaHeroProps) {
     }).format(price)
   }
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const target = e.target as HTMLImageElement
-    if (target.src !== '/images/hero.jpg') {
-      target.src = '/images/hero.jpg'
+  const handleImageError = () => {
+    if (imageSrc !== '/images/hero.jpg') {
+      setImageSrc('/images/hero.jpg')
     }
   }
 
   return (
     <div className="relative h-96 md:h-[500px] overflow-hidden">
-      <img
-        src={area.image || '/images/hero.jpg'}
+      <Image
+        src={imageSrc}
         alt={displayName}
+        fill
+        sizes="100vw"
         className="w-full h-full object-cover"
         onError={handleImageError}
       />
@@ -68,9 +73,9 @@ export default function AreaHero({ area }: AreaHeroProps) {
           <div className="max-w-4xl">
             {/* Breadcrumb */}
             <nav className="flex items-center space-x-2 text-white/80 text-sm mb-4">
-              <a href="/" className="hover:text-white transition-colors">Home</a>
+              <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <span>/</span>
-              <a href="/areas" className="hover:text-white transition-colors">{t('areas')}</a>
+              <Link href="/areas" className="hover:text-white transition-colors">{t('areas')}</Link>
               <span>/</span>
               <span className="text-white">{displayName}</span>
             </nav>

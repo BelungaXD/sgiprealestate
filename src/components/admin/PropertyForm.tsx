@@ -13,7 +13,7 @@ import FileUpload, { type FileWithLabel } from './FileUpload'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
 interface PropertyFormProps {
-  property?: any
+  property?: EditableProperty
   onSave: (data: PropertyFormData & { images: string[]; files: FileWithLabel[] }) => Promise<void>
   onCancel: () => void
 }
@@ -48,11 +48,57 @@ const BEDROOM_OPTIONS = [
 ]
 
 type AreaOpt = { id: string; name: string; nameEn: string | null; slug: string }
+type DeveloperOpt = { id: string; name: string; nameEn?: string | null }
+type EditablePropertyImage = string | { url?: string }
+type EditablePropertyFile = {
+  id?: string
+  label?: string
+  url?: string
+  filename?: string
+  size?: number
+  mimeType?: string
+}
+type EditableProperty = {
+  id?: string
+  title?: string
+  description?: string
+  type?: string
+  listingMarket?: 'PRIMARY' | 'SECONDARY'
+  price?: number
+  currency?: string
+  status?: string
+  areaSqm?: number
+  area?: number
+  bedrooms?: number
+  bathrooms?: number
+  parking?: number
+  floor?: number
+  totalFloors?: number
+  yearBuilt?: number
+  completionDate?: string | Date
+  paymentPlan?: string
+  occupancyStatus?: string
+  address?: string
+  city?: string
+  district?: string
+  areaId?: string
+  developerId?: string
+  googleMapsUrl?: string
+  features?: string[]
+  amenities?: string[]
+  slug?: string
+  metaTitle?: string
+  metaDescription?: string
+  isPublished?: boolean
+  isFeatured?: boolean
+  images?: EditablePropertyImage[]
+  files?: EditablePropertyFile[]
+}
 
 export default function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) {
   const [images, setImages] = useState<string[]>([])
   const [files, setFiles] = useState<FileWithLabel[]>([])
-  const [developers, setDevelopers] = useState<any[]>([])
+  const [developers, setDevelopers] = useState<DeveloperOpt[]>([])
   const [areas, setAreas] = useState<AreaOpt[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
@@ -183,7 +229,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         )
         setAreas([])
       }
-    } catch (e) {
+    } catch (e: unknown) {
       console.error(`[${new Date().toISOString()}] Unexpected lookup error`, e)
       setDevelopers([])
       setAreas([])
@@ -200,8 +246,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     if (property) {
       if (property.images && Array.isArray(property.images) && property.images.length > 0) {
         setImages(
-          property.images.map((img: any) =>
-            typeof img === 'string' ? img : img.url || img
+          property.images.map((img: EditablePropertyImage) =>
+            typeof img === 'string' ? img : img.url || ''
           )
         )
       } else {
@@ -211,7 +257,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       setAmenities(property.amenities || [])
       if (property.files && Array.isArray(property.files) && property.files.length > 0) {
         setFiles(
-          property.files.map((file: any) => ({
+          property.files.map((file: EditablePropertyFile) => ({
             id: file.id,
             label: file.label || '',
             file: null,
@@ -235,9 +281,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const onSubmit = async (data: PropertyFormData) => {
     setLoading(true)
     try {
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H2',location:'src/components/admin/PropertyForm.tsx:onSubmit:start',message:'Property save started with media payload',data:{imagesCount:images.length,filesCount:files.length,dataUrlImages:images.filter((i)=>typeof i==='string'&&i.startsWith('data:')).length},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
       const uploadedImages = await Promise.all(
         images.map(async (image) => {
           if (image.startsWith('/uploads/') || image.startsWith('http')) {
@@ -264,20 +307,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               credentials: 'same-origin',
               body: JSON.stringify({ file: image, filename, mimeType }),
             })
-            // #region agent log
-            fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'7f0f55'},body:JSON.stringify({sessionId:'7f0f55',runId:'initial',hypothesisId:'H1',location:'src/components/admin/PropertyForm.tsx:onSubmit:upload-image-response',message:'Upload image API responded',data:{status:uploadResponse.status,ok:uploadResponse.ok,contentType:uploadResponse.headers.get('content-type')||'',imageMimeType:mimeType,isVideo},timestamp:Date.now()})}).catch(()=>{})
-            // #endregion
-            // #region agent log
-            fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H1',location:'src/components/admin/PropertyForm.tsx:onSubmit:upload-image-response',message:'Upload image API responded',data:{status:uploadResponse.status,ok:uploadResponse.ok,contentType:uploadResponse.headers.get('content-type')||'',imageMimeType:mimeType,isVideo},timestamp:Date.now()})}).catch(()=>{})
-            // #endregion
             if (!uploadResponse.ok) {
               const errText = await uploadResponse.text().catch(() => '')
-              // #region agent log
-              fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'7f0f55'},body:JSON.stringify({sessionId:'7f0f55',runId:'initial',hypothesisId:'H1',location:'src/components/admin/PropertyForm.tsx:onSubmit:upload-image-error',message:'Upload image API returned non-OK',data:{status:uploadResponse.status,bodyPreview:errText.slice(0,200)},timestamp:Date.now()})}).catch(()=>{})
-              // #endregion
-              // #region agent log
-              fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H1',location:'src/components/admin/PropertyForm.tsx:onSubmit:upload-image-error',message:'Upload image API returned non-OK',data:{status:uploadResponse.status,bodyPreview:errText.slice(0,200)},timestamp:Date.now()})}).catch(()=>{})
-              // #endregion
               throw new Error(
                 `Image/video upload failed (${uploadResponse.status}). ${errText.slice(0, 200)}`
               )

@@ -4,6 +4,9 @@ import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/developers/[slug]')
+type ErrorLike = { code?: string; message?: string }
+const asErrorLike = (error: unknown): ErrorLike =>
+  typeof error === 'object' && error !== null ? (error as ErrorLike) : {}
 
 export default async function handler(
   req: NextApiRequest,
@@ -61,11 +64,12 @@ export default async function handler(
       }
 
       return res.status(200).json({ developer: normalizedDeveloper })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = asErrorLike(error)
       log.errorWithException('Error fetching developer', error)
       
       // If database connection error, return 404
-      if (error.code === 'P1001' || error.message?.includes('DATABASE_URL') || error.message?.includes('Can\'t reach database') || error.message?.includes('Environment variable not found')) {
+      if (err.code === 'P1001' || err.message?.includes('DATABASE_URL') || err.message?.includes('Can\'t reach database') || err.message?.includes('Environment variable not found')) {
         return res.status(404).json({ message: 'Developer not found' })
       }
       
@@ -78,7 +82,7 @@ export default async function handler(
     try {
       const body = req.body
       
-      const updateData: any = {}
+      const updateData: Record<string, unknown> = {}
       
       if (body.logo !== undefined) {
         updateData.logo = body.logo
@@ -117,10 +121,11 @@ export default async function handler(
       })
 
       return res.status(200).json({ developer })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = asErrorLike(error)
       log.errorWithException('Error updating developer', error)
       
-      if (error.code === 'P2025') {
+      if (err.code === 'P2025') {
         return res.status(404).json({ message: 'Developer not found' })
       }
       

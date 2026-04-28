@@ -8,7 +8,7 @@ import { FileWithLabel } from './FileUpload'
 interface PropertyModalProps {
   isOpen: boolean
   onClose: () => void
-  property?: any
+  property?: Record<string, unknown> | null
   onSave: (data: PropertyFormData & { images: string[]; files: FileWithLabel[] }) => Promise<void>
 }
 

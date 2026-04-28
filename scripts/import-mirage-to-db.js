@@ -10,7 +10,7 @@ async function waitForDatabase(maxAttempts = 30) {
       await prisma.$queryRaw`SELECT 1`;
       console.log('✓ База данных доступна');
       return true;
-    } catch (error) {
+    } catch {
       if (i === 0) {
         console.log('⏳ Ожидание доступности базы данных...');
       }

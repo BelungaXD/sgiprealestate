@@ -8,6 +8,20 @@ import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/properties/[id]')
 
+type ErrorWithMessage = { message?: string; code?: string; name?: string }
+type ImageInput = string | { url?: string; alt?: string }
+type FileInput = {
+  label?: string
+  url?: string
+  file?: unknown
+  filename?: string
+  size?: number
+  mimeType?: string
+}
+
+const asErrorWithMessage = (error: unknown): ErrorWithMessage =>
+  typeof error === 'object' && error !== null ? (error as ErrorWithMessage) : {}
+
 export const config = {
   api: {
     bodyParser: {
@@ -74,11 +88,11 @@ export default async function handler(
       // Normalize image/file URLs for standalone mode (/api/uploads/...)
       const normalizedProperty = {
         ...property,
-        images: (property.images || []).map((img: any) => ({
+        images: (property.images || []).map((img: { url: string }) => ({
           ...img,
           url: normalizeUploadUrl(img.url),
         })),
-        files: (property.files || []).map((f: any) => ({
+        files: (property.files || []).map((f: { url: string }) => ({
           ...f,
           url: normalizeUploadUrl(f.url),
         })),
@@ -190,7 +204,7 @@ export default async function handler(
             log.warn('Area not found, setting areaId to null', { id, areaId })
             areaId = null
           }
-        } catch (dbError: any) {
+        } catch (dbError: unknown) {
           log.errorWithException('Database query failed for area check', dbError, { id, areaId })
           // If database query fails, set to null to avoid foreign key constraint violation
           areaId = null
@@ -214,7 +228,7 @@ export default async function handler(
           if (!developerRecord) {
             log.warn('Developer not found, setting developerId to null', { id, developerLookup })
           }
-        } catch (dbError: any) {
+        } catch (dbError: unknown) {
           log.errorWithException('Database query failed for developer check', dbError, {
             id,
             developerLookup,
@@ -231,11 +245,11 @@ export default async function handler(
       const updateData: Record<string, unknown> = {
         title: validatedData.title,
         description: validatedData.description ?? null,
-        type: (validatedData.type || 'APARTMENT') as any,
-        listingMarket: listingMarket as any,
+        type: validatedData.type || 'APARTMENT',
+        listingMarket: listingMarket,
         price: validatedData.price,
         currency: validatedData.currency,
-        status: validatedData.status as any,
+        status: validatedData.status,
         areaSqm: validatedData.areaSqm,
         bedrooms: validatedData.bedrooms,
         bathrooms: validatedData.bathrooms,
@@ -252,7 +266,7 @@ export default async function handler(
             : null,
         occupancyStatus:
           listingMarket === 'SECONDARY'
-            ? (validatedData.occupancyStatus as any) || null
+            ? validatedData.occupancyStatus || null
             : null,
         address: validatedData.address,
         city: validatedData.city,
@@ -274,9 +288,9 @@ export default async function handler(
       }
 
       // Update property
-      const property = await prisma.property.update({
+      await prisma.property.update({
         where: { id },
-        data: updateData as any,
+        data: updateData,
         include: {
           area: true,
           developer: true,
@@ -295,16 +309,16 @@ export default async function handler(
 
         // Create new images
         if (body.images.length > 0) {
-          const imageData = body.images
-            .filter((img: any) => img && (typeof img === 'string' ? img.trim() !== '' : img.url))
-            .map((img: any, index: number) => ({
+          const imageData = (body.images as ImageInput[])
+            .filter((img) => img && (typeof img === 'string' ? img.trim() !== '' : img.url))
+            .map((img, index: number) => ({
               propertyId: id,
               url: typeof img === 'string' ? img.trim() : (img.url || '').trim(),
               alt: typeof img === 'object' ? img.alt : null,
               order: index,
               isMain: index === 0,
             }))
-            .filter((img: any) => img.url !== '')
+            .filter((img) => img.url !== '')
 
           if (imageData.length > 0) {
             await prisma.propertyImage.createMany({
@@ -323,9 +337,9 @@ export default async function handler(
 
         // Create new files
         if (body.files.length > 0) {
-          const fileData = body.files
-            .filter((file: any) => file.label && (file.url || file.file))
-            .map((file: any, index: number) => ({
+          const fileData = (body.files as FileInput[])
+            .filter((file) => file.label && (file.url || file.file))
+            .map((file, index: number) => ({
               propertyId: id,
               url: file.url || '',
               label: file.label,
@@ -361,11 +375,11 @@ export default async function handler(
       // Normalize image/file URLs for standalone mode
       const normalizedProperty = propertyWithImages ? {
         ...propertyWithImages,
-        images: (propertyWithImages.images || []).map((img: any) => ({
+        images: (propertyWithImages.images || []).map((img: { url: string }) => ({
           ...img,
           url: normalizeUploadUrl(img.url),
         })),
-        files: (propertyWithImages.files || []).map((f: any) => ({
+        files: (propertyWithImages.files || []).map((f: { url: string }) => ({
           ...f,
           url: normalizeUploadUrl(f.url),
         })),
@@ -375,20 +389,24 @@ export default async function handler(
         success: true,
         property: normalizedProperty || propertyWithImages,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = asErrorWithMessage(error)
       log.errorWithException('Error updating property', error, { id })
       
-      if (error.name === 'ZodError') {
+      if (err.name === 'ZodError') {
         return res.status(400).json({
           success: false,
           message: 'Validation error',
-          errors: error.issues,
+          errors:
+            typeof error === 'object' && error !== null && 'issues' in error
+              ? (error as { issues?: unknown }).issues
+              : undefined,
         })
       }
 
       // Handle Prisma foreign key constraint violations
-      if (error.code === 'P2003' || error.message?.includes('Foreign key constraint')) {
-        const constraintMatch = error.message?.match(/`(\w+)`/i)
+      if (err.code === 'P2003' || err.message?.includes('Foreign key constraint')) {
+        const constraintMatch = err.message?.match(/`(\w+)`/i)
         const constraintName = constraintMatch ? constraintMatch[1] : 'foreign key'
         return res.status(400).json({
           success: false,
@@ -397,7 +415,7 @@ export default async function handler(
       }
 
       // Handle Prisma connection errors
-      if (error.code === 'P1001' || error.message?.includes('DATABASE_URL') || error.message?.includes('Can\'t reach database')) {
+      if (err.code === 'P1001' || err.message?.includes('DATABASE_URL') || err.message?.includes('Can\'t reach database')) {
         return res.status(503).json({
           success: false,
           message: 'Database connection error. Please configure DATABASE_URL in your .env file.',
@@ -406,7 +424,7 @@ export default async function handler(
 
       return res.status(500).json({
         success: false,
-        message: error.message || 'Internal server error',
+        message: err.message || 'Internal server error',
       })
     }
   }

@@ -286,6 +286,29 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params, locale }) => {
+  type ApiImage = { url: string }
+  type ApiFloorPlan = {
+    id: string
+    title?: string | null
+    area?: number | null
+    bedrooms?: number | null
+    bathrooms?: number | null
+    url: string
+  }
+  type ApiFile = {
+    id: string
+    label?: string | null
+    url: string
+    filename: string
+    size?: number | null
+    mimeType?: string | null
+  }
+  type ErrorLike = { message?: string }
+  const getErrorMessage = (error: unknown) =>
+    (typeof error === 'object' && error !== null && 'message' in error
+      ? (error as ErrorLike).message
+      : '') || 'Unknown error'
+
   try {
     const id = params?.id as string
 
@@ -322,8 +345,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
           },
         },
       })
-    } catch (error: any) {
-      console.error('[getServerSideProps] Error querying by ID:', error.message)
+    } catch (error: unknown) {
+      console.error('[getServerSideProps] Error querying by ID:', getErrorMessage(error))
       apiProperty = null
     }
 
@@ -346,8 +369,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
             },
           },
         })
-      } catch (error: any) {
-        console.error('[getServerSideProps] Error querying by slug:', error.message)
+      } catch (error: unknown) {
+        console.error('[getServerSideProps] Error querying by slug:', getErrorMessage(error))
         apiProperty = null
       }
     }
@@ -393,8 +416,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
         ? `${apiProperty.address}, ${apiProperty.city}`
         : `${apiProperty.city}, ${apiProperty.district}`,
       district: apiProperty.district,
-      images: apiProperty.images?.map((img: any) => normalizeUploadUrl(img.url)) || [],
-      floorPlans: apiProperty.floorPlans?.map((fp: any) => ({
+      images: apiProperty.images?.map((img: ApiImage) => normalizeUploadUrl(img.url)) || [],
+      floorPlans: apiProperty.floorPlans?.map((fp: ApiFloorPlan) => ({
         id: fp.id,
         title: fp.title || 'Floor Plan',
         area: fp.area || 0,
@@ -416,13 +439,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       googleMapsUrl: apiProperty.googleMapsUrl || null,
       infrastructure: [], // Can be added later if needed
       files: apiProperty.files
-        ?.filter((file: any) => {
+        ?.filter((file: ApiFile) => {
           // Filter out videos and .DS_Store files, only show downloadable documents
           const isVideo = file.mimeType?.startsWith('video/')
           const isDSStore = file.filename?.includes('.DS_Store') || file.url?.includes('.DS_Store')
           return !isVideo && !isDSStore && file.label && file.label.trim() !== ''
         })
-        .map((file: any) => ({
+        .map((file: ApiFile) => ({
           id: file.id,
           label: file.label,
           url: normalizeUploadUrl(file.url),

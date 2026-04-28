@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next/pages'
 import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import DeveloperCard from '@/components/developers/DeveloperCard'
 
@@ -28,57 +29,71 @@ interface Developer {
   countries: string[]
 }
 
+interface ApiDeveloper {
+  id: string
+  name: string
+  nameEn?: string
+  description?: string
+  descriptionEn?: string
+  logo?: string
+  city?: string
+  propertiesCount?: number
+  averagePrice?: number
+  slug: string
+  website?: string
+  marketShare?: number
+}
+
+const HARDCODED_DEVELOPERS: Developer[] = [
+  {
+    id: 'emaar-properties',
+    name: 'Emaar Properties',
+    nameEn: 'Emaar Properties',
+    description: 'Ведущий застройщик недвижимости в ОАЭ, известный созданием знаковых проектов мирового класса.',
+    descriptionEn: 'Leading real estate developer in UAE, known for creating world-class iconic projects.',
+    logo: '/uploads/developers/emaar_logo.png',
+    founded: 1997,
+    headquarters: 'Dubai, UAE',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'emaar-properties',
+    website: 'https://www.emaar.com',
+    specialties: ['Luxury Residences', 'Commercial Developments', 'Master Communities'],
+    notableProjects: ['Burj Khalifa', 'Dubai Mall', 'Downtown Dubai'],
+    awards: [],
+    rating: 5,
+    marketShare: 0,
+    countries: ['UAE'],
+  },
+  {
+    id: 'sobha',
+    name: 'Sobha',
+    nameEn: 'Sobha',
+    description: 'Премиальный застройщик, специализирующийся на элитной недвижимости и качественных проектах.',
+    descriptionEn: 'Premium developer specializing in luxury real estate and quality projects.',
+    logo: '/uploads/developers/sobha_logo.png',
+    founded: 1995,
+    headquarters: 'Dubai, UAE',
+    propertiesCount: 0,
+    averagePrice: 0,
+    currency: 'AED',
+    slug: 'sobha',
+    website: 'https://www.sobha.com',
+    specialties: ['Luxury Villas', 'Premium Apartments', 'Quality Construction'],
+    notableProjects: ['Sobha Hartland', 'Sobha Creek Vistas'],
+    awards: [],
+    rating: 5,
+    marketShare: 0,
+    countries: ['UAE'],
+  },
+]
+
 export default function Developers() {
   const { t, i18n } = useTranslation('developers')
   const currentLocale = i18n.language || 'en'
   const [developers, setDevelopers] = useState<Developer[]>([])
   const [loading, setLoading] = useState(true)
-
-  // Hardcoded developers
-  const HARDCODED_DEVELOPERS: Developer[] = [
-    {
-      id: 'emaar-properties',
-      name: 'Emaar Properties',
-      nameEn: 'Emaar Properties',
-      description: 'Ведущий застройщик недвижимости в ОАЭ, известный созданием знаковых проектов мирового класса.',
-      descriptionEn: 'Leading real estate developer in UAE, known for creating world-class iconic projects.',
-      logo: '/uploads/developers/emaar_logo.png',
-      founded: 1997,
-      headquarters: 'Dubai, UAE',
-      propertiesCount: 0,
-      averagePrice: 0,
-      currency: 'AED',
-      slug: 'emaar-properties',
-      website: 'https://www.emaar.com',
-      specialties: ['Luxury Residences', 'Commercial Developments', 'Master Communities'],
-      notableProjects: ['Burj Khalifa', 'Dubai Mall', 'Downtown Dubai'],
-      awards: [],
-      rating: 5,
-      marketShare: 0,
-      countries: ['UAE'],
-    },
-    {
-      id: 'sobha',
-      name: 'Sobha',
-      nameEn: 'Sobha',
-      description: 'Премиальный застройщик, специализирующийся на элитной недвижимости и качественных проектах.',
-      descriptionEn: 'Premium developer specializing in luxury real estate and quality projects.',
-      logo: '/uploads/developers/sobha_logo.png',
-      founded: 1995,
-      headquarters: 'Dubai, UAE',
-      propertiesCount: 0,
-      averagePrice: 0,
-      currency: 'AED',
-      slug: 'sobha',
-      website: 'https://www.sobha.com',
-      specialties: ['Luxury Villas', 'Premium Apartments', 'Quality Construction'],
-      notableProjects: ['Sobha Hartland', 'Sobha Creek Vistas'],
-      awards: [],
-      rating: 5,
-      marketShare: 0,
-      countries: ['UAE'],
-    },
-  ]
 
   // Load developers from API
   useEffect(() => {
@@ -90,8 +105,8 @@ export default function Developers() {
         
         // Transform API data to match Developer interface
         // Filter out "Emaar" (without Properties) - only allow "Emaar Properties"
-        const transformedDevelopers: Developer[] = (data.developers || [])
-          .filter((dev: any) => {
+        const transformedDevelopers: Developer[] = ((data.developers || []) as ApiDeveloper[])
+          .filter((dev) => {
             const name = (dev.nameEn || dev.name || '').toLowerCase()
             const slug = (dev.slug || '').toLowerCase()
             // Exclude "Emaar" without "Properties"
@@ -100,7 +115,7 @@ export default function Developers() {
             }
             return true
           })
-          .map((dev: any) => ({
+          .map((dev) => ({
             id: dev.id,
             name: dev.name,
             nameEn: dev.nameEn || dev.name,
@@ -155,14 +170,6 @@ export default function Developers() {
 
     fetchDevelopers()
   }, [currentLocale])
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 0,
-    }).format(price)
-  }
 
   return (
     <>
@@ -270,18 +277,18 @@ export default function Developers() {
                 {t('cta.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
+                <Link
                   href="/properties"
                   className="bg-white text-champagne px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
                   {t('cta.viewProperties')}
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/contact"
                   className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-champagne transition-colors"
                 >
                   {t('cta.contactUs')}
-                </a>
+                </Link>
               </div>
             </div>
           </div>

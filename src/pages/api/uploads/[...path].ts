@@ -314,7 +314,7 @@ export default async function handler(
     res.setHeader('Content-Type', contentType)
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
     return res.status(200).send(outputBuffer)
-  } catch (error: any) {
+  } catch (error: unknown) {
     baseLog.errorWithException('Error serving file', error, {
       path: req.query.path,
       cwd: process.cwd(),

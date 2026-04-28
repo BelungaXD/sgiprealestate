@@ -30,6 +30,9 @@ const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
 }
 
 const log = createScopedLogger('api/developers/item/[id]')
+type ErrorLike = { code?: string; message?: string; name?: string; issues?: unknown }
+const asErrorLike = (error: unknown): ErrorLike =>
+  typeof error === 'object' && error !== null ? (error as ErrorLike) : {}
 
 export default async function handler(
   req: NextApiRequest,
@@ -128,12 +131,13 @@ export default async function handler(
         })
 
       return res.status(200).json({ success: true, developer })
-    } catch (error: any) {
-      if (error.name === 'ZodError') {
-        return res.status(400).json({ success: false, errors: error.issues })
+    } catch (error: unknown) {
+      const err = asErrorLike(error)
+      if (err.name === 'ZodError') {
+        return res.status(400).json({ success: false, errors: err.issues })
       }
       log.errorWithException('Error updating developer', error)
-      return res.status(500).json({ message: error.message || 'Internal server error' })
+      return res.status(500).json({ message: err.message || 'Internal server error' })
     }
   }
 
@@ -157,8 +161,9 @@ export default async function handler(
       }
       await prisma.developer.delete({ where: { id } })
       return res.status(200).json({ success: true })
-    } catch (error: any) {
-      if (error.code === 'P2025') {
+    } catch (error: unknown) {
+      const err = asErrorLike(error)
+      if (err.code === 'P2025') {
         return res.status(404).json({ message: 'Developer not found' })
       }
       log.errorWithException('Error deleting developer', error)

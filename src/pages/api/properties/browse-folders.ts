@@ -16,10 +16,6 @@ const allowedBases = [
 const VALID_DISTRICTS = ['Beachfront', 'Downtown', 'Dubai Hills', 'Marina Shores', 'The Oasis']
 const log = createScopedLogger('api/properties/browse-folders')
 
-function ts(): string {
-  return new Date().toISOString()
-}
-
 function getRoots(): { name: string; path: string }[] {
   const roots: { name: string; path: string }[] = []
   if (existsSync('/uploads')) {

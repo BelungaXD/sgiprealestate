@@ -11,7 +11,7 @@ const MAX_AGE_SEC = 60 * 60 * 24 * 7
  * `x-forwarded-proto`). Using `NODE_ENV === 'production'` alone breaks `next start`
  * on http://localhost — the browser drops the cookie and login appears broken.
  */
-export function useSecureAdminSessionCookie(req: NextApiRequest): boolean {
+export function shouldUseSecureAdminSessionCookie(req: NextApiRequest): boolean {
   const socket = req.socket as { encrypted?: boolean } | undefined
   if (socket?.encrypted) return true
   const forwarded = req.headers['x-forwarded-proto']

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, Fragment } from 'react'
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   PlusIcon,
@@ -332,7 +333,7 @@ export default function DevelopersAdminPanel() {
                   </label>
                   <input type="file" accept="image/*" onChange={handleLogoFile} />
                   {form.logo && (
-                    <img src={form.logo} alt="" className="mt-2 h-16 object-contain" />
+                    <Image src={form.logo} alt="" width={160} height={64} className="mt-2 h-16 object-contain" unoptimized />
                   )}
                 </div>
                 <label className="flex items-center gap-2 text-sm">

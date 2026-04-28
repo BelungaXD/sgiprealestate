@@ -33,7 +33,7 @@ export default function FileUpload({
   label = 'Files for Download',
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
+  const [uploading] = useState(false)
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files
@@ -143,7 +143,7 @@ export default function FileUpload({
               <div className="flex-1 space-y-2">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
-                    File Label (e.g., "Floor Plan", "Brochure", "Price List")
+                    File Label (e.g., &quot;Floor Plan&quot;, &quot;Brochure&quot;, &quot;Price List&quot;)
                   </label>
                   <input
                     type="text"

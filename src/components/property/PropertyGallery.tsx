@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { propertyGalleryThumbSrcCandidates } from '@/lib/utils/imageUrl'
@@ -17,7 +18,6 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
   const images = imagesProp ?? []
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
-  const [thumbnailScrollPosition, setThumbnailScrollPosition] = useState(0)
   const thumbnailScrollRef = useRef<HTMLDivElement>(null)
   // Per-URL: try alternate path once on error; then mark failed and show placeholder
   const [urlFallback, setUrlFallback] = useState<Record<string, string>>({})
@@ -110,13 +110,16 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                 loop
               />
             ) : mainDisplayUrl ? (
-              <img
+              <Image
                 key={currentIndex}
                 src={mainDisplayUrl}
                 alt={`Property image ${currentIndex + 1}`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 80vw"
                 className="w-full h-full object-cover cursor-pointer transition-opacity duration-300"
                 onClick={() => openLightbox(currentIndex)}
                 onError={() => handleImageError(currentMedia)}
+                unoptimized
               />
             ) : (
               <div className="flex flex-col items-center justify-center text-gray-400 gap-2 p-8">
@@ -207,15 +210,17 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                       const displayUrl = resolveUrl(image) || image
                       const candidates = propertyGalleryThumbSrcCandidates(displayUrl)
                       return candidates.length > 0 ? (
-                        <img
+                        <Image
                           src={candidates[0]}
                           alt={`Thumbnail ${index + 1}`}
+                          width={110}
+                          height={110}
                           className="w-full h-full object-cover"
                           loading={index < 6 ? 'eager' : 'lazy'}
-                          decoding="async"
                           data-fallback="0"
+                          unoptimized
                           onError={(e) => {
-                            const target = e.currentTarget
+                            const target = e.currentTarget as HTMLImageElement
                             const step = Number(target.dataset.fallback || '0') + 1
                             if (step < candidates.length) {
                               target.dataset.fallback = String(step)
@@ -285,13 +290,16 @@ export default function PropertyGallery({ images: imagesProp }: PropertyGalleryP
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : mainDisplayUrl ? (
-                <img
+                <Image
                   key={currentIndex}
                   src={mainDisplayUrl}
                   alt={`Property image ${currentIndex + 1}`}
+                  width={1920}
+                  height={1080}
                   className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl transition-opacity duration-300"
                   onClick={(e) => e.stopPropagation()}
                   onError={() => handleImageError(currentMedia)}
+                  unoptimized
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center text-gray-400 gap-2 p-8">

@@ -3,7 +3,7 @@ import {
   ADMIN_SESSION_COOKIE,
   adminSessionConfigured,
   createAdminSessionToken,
-  useSecureAdminSessionCookie,
+  shouldUseSecureAdminSessionCookie,
   verifyAdminCredentials,
 } from '@/lib/adminSession'
 import { createScopedLogger } from '@/lib/logger'
@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const maxAge = 60 * 60 * 24 * 7
-    const secure = useSecureAdminSessionCookie(req) ? '; Secure' : ''
+    const secure = shouldUseSecureAdminSessionCookie(req) ? '; Secure' : ''
     res.setHeader(
       'Set-Cookie',
       `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure}`

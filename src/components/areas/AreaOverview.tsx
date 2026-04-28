@@ -1,11 +1,12 @@
+import Image from 'next/image'
 import { useTranslation } from 'next-i18next/pages'
+import { useState } from 'react'
 import { 
   MapPinIcon, 
   HomeIcon, 
   CurrencyDollarIcon, 
   StarIcon,
-  BuildingOfficeIcon,
-  ClockIcon
+  BuildingOfficeIcon
 } from '@heroicons/react/24/outline'
 
 interface Area {
@@ -32,6 +33,7 @@ interface AreaOverviewProps {
 export default function AreaOverview({ area }: AreaOverviewProps) {
   const { t, i18n } = useTranslation('areas')
   const isRussian = i18n.language === 'ru'
+  const [imageSrc, setImageSrc] = useState(area.image || '/images/hero.jpg')
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -45,14 +47,15 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Hero Image */}
       <div className="relative h-64 md:h-80">
-        <img
-          src={area.image || '/images/hero.jpg'}
+        <Image
+          src={imageSrc}
           alt={isRussian ? area.name : area.nameEn}
+          fill
+          sizes="100vw"
           className="w-full h-full object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement
-            if (target.src !== '/images/hero.jpg') {
-              target.src = '/images/hero.jpg'
+          onError={() => {
+            if (imageSrc !== '/images/hero.jpg') {
+              setImageSrc('/images/hero.jpg')
             }
           }}
         />

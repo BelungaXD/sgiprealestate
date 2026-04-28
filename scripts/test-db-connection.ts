@@ -17,8 +17,8 @@ async function test() {
     
     const areasCount = await prisma.area.count()
     log.info('Areas count', { count: areasCount })
-  } catch (e: any) {
-    log.errorWithException('Database connection test failed', e)
+  } catch (error: unknown) {
+    log.errorWithException('Database connection test failed', error)
   } finally {
     await prisma.$disconnect()
   }

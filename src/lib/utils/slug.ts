@@ -18,7 +18,7 @@ export function generateSlug(text: string): string {
   }
 
   // Transliterate Cyrillic characters
-  let transliterated = text
+  const transliterated = text
     .split('')
     .map(char => transliterationMap[char] || char)
     .join('')

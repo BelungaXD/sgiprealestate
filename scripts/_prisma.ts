@@ -5,5 +5,5 @@ type ClientOptions = Omit<NonNullable<ConstructorParameters<typeof PrismaClient>
 
 export function createPrisma(options: Partial<ClientOptions> = {}) {
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
-  return new PrismaClient({ adapter, ...options } as any)
+  return new PrismaClient({ adapter, ...options })
 }

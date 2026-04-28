@@ -124,7 +124,7 @@ function mergeContent(target, source) {
 }
 
 // Function to update components with new content
-function updateComponents(contentType, content) {
+function updateComponents(contentType) {
   const componentMap = {
     'home': {
       'HeroSection': ['hero.title', 'hero.subtitle', 'hero.cta'],

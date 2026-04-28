@@ -43,6 +43,32 @@ interface Property {
   developerLogo: string
   occupancyStatus: string
 }
+type PropertiesApiDeveloper = { name?: string; nameEn?: string; slug?: string; logo?: string }
+type PropertiesApiProperty = {
+  id: string
+  slug?: string
+  title: string
+  description?: string
+  price: number
+  currency: string
+  type: string
+  listingMarket?: 'PRIMARY' | 'SECONDARY'
+  areaSqm: number
+  bedrooms: number
+  bathrooms: number
+  parking?: number
+  city: string
+  district: string
+  areaId?: string
+  images?: Array<{ url: string }>
+  isFeatured: boolean
+  yearBuilt?: number
+  completionDate?: string
+  createdAt?: string
+  developer?: PropertiesApiDeveloper
+  occupancyStatus?: string
+  isPublished?: boolean
+}
 
 export default function Properties() {
   const { t, i18n } = useTranslation('properties')
@@ -115,9 +141,9 @@ export default function Properties() {
             : []
 
         // Transform API data to match Property interface
-        const transformedProperties: Property[] = apiProperties
-          .filter((p: any) => p.isPublished)
-          .map((p: any) => ({
+        const transformedProperties: Property[] = (apiProperties as PropertiesApiProperty[])
+          .filter((p) => p.isPublished)
+          .map((p) => ({
             id: p.id,
             slug: p.slug || p.id,
             title: p.title,

@@ -8,7 +8,7 @@ if (process.env.ANALYZE === 'true') {
     withBundleAnalyzer = require('@next/bundle-analyzer')({
       enabled: true,
     });
-  } catch (e) {
+  } catch {
     // Bundle analyzer not installed, skip it
     console.warn('@next/bundle-analyzer not found, skipping bundle analysis');
   }
@@ -68,7 +68,7 @@ const nextConfig = {
                 protocol: url.protocol.replace(':', '') || 'https',
                 hostname: url.hostname,
               }]
-            } catch (e) {
+            } catch {
               console.warn('Invalid NEXT_PUBLIC_SERVER_URL:', process.env.NEXT_PUBLIC_SERVER_URL)
               return []
             }

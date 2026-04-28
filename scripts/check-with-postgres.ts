@@ -10,8 +10,8 @@ async function check() {
     
     const areas = await prisma.area.findMany()
     log.info('Areas loaded', { count: areas.length, areas: areas.map(a => ({ name: a.name, slug: a.slug })) })
-  } catch (e: any) {
-    log.errorWithException('Check with postgres failed', e)
+  } catch (error: unknown) {
+    log.errorWithException('Check with postgres failed', error)
   } finally {
     await prisma.$disconnect()
   }

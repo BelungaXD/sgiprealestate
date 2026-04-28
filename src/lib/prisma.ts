@@ -4,13 +4,28 @@ import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('lib/prisma')
 
-let PrismaClientCtor: any = null
-let PrismaPgCtor: any = null
+type PrismaClientLike = {
+  $connect: () => Promise<unknown>
+  $disconnect: () => Promise<unknown>
+  [key: string]: unknown
+}
+type PrismaClientCtorLike = new (options?: {
+  adapter?: unknown
+  log?: string[]
+}) => PrismaClientLike
+type PrismaPgCtorLike = new (options: {
+  connectionString: string
+}) => unknown
+type ErrorLike = { code?: string }
+
+let PrismaClientCtor: PrismaClientCtorLike | null = null
+let PrismaPgCtor: PrismaPgCtorLike | null = null
 
 try {
   PrismaClientCtor = require('../../prisma/generated/client').PrismaClient
-} catch (error: any) {
-  if (error.code === 'MODULE_NOT_FOUND') {
+} catch (error: unknown) {
+  const err = (error || {}) as ErrorLike
+  if (err.code === 'MODULE_NOT_FOUND') {
     log.warn('Prisma Client not generated. Run "npm run db:generate".')
   } else {
     log.errorWithException('Error loading Prisma Client', error)
@@ -19,17 +34,18 @@ try {
 
 try {
   PrismaPgCtor = require('@prisma/adapter-pg').PrismaPg
-} catch (error: any) {
-  if (error.code === 'MODULE_NOT_FOUND') {
+} catch (error: unknown) {
+  const err = (error || {}) as ErrorLike
+  if (err.code === 'MODULE_NOT_FOUND') {
     log.warn('@prisma/adapter-pg not installed. Run "npm install".')
   } else {
     log.errorWithException('Error loading PrismaPg adapter', error)
   }
 }
 
-const globalForPrisma = globalThis as unknown as { prisma: any }
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClientLike | null }
 
-let prismaInstance: any = null
+let prismaInstance: PrismaClientLike | null = null
 
 function normalizeDatabaseUrl(rawUrl: string): string {
   let url = rawUrl
@@ -49,7 +65,7 @@ function normalizeDatabaseUrl(rawUrl: string): string {
   return url
 }
 
-function initializePrisma(): any {
+function initializePrisma(): PrismaClientLike | null {
   if (!PrismaClientCtor || !PrismaPgCtor) return null
   if (!process.env.DATABASE_URL) return null
   if (prismaInstance) return prismaInstance
@@ -78,13 +94,13 @@ function initializePrisma(): any {
     }
 
     return prismaInstance
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.errorWithException('Failed to initialize Prisma Client', error)
     return null
   }
 }
 
-export const prisma = new Proxy({} as any, {
+export const prisma = new Proxy({} as PrismaClientLike, {
   get(_target, prop) {
     if (prop === '$connect') {
       return async () => {

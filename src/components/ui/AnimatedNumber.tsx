@@ -33,7 +33,6 @@ export default function AnimatedNumber({
     }
 
     if (value === 0) {
-      setDisplayValue(0)
       previousValueRef.current = 0
       hasAnimatedRef.current = false
       return
@@ -95,7 +94,7 @@ export default function AnimatedNumber({
 
   return (
     <span className={className}>
-      {prefix}{formatValue(displayValue)}{suffix}
+      {prefix}{formatValue(value === 0 ? 0 : displayValue)}{suffix}
     </span>
   )
 }

@@ -29,9 +29,10 @@ interface AreaFilterProps {
     location: string[]
     city: string
   }
-  onFiltersChange: (filters: any) => void
+  onFiltersChange: (filters: AreaFilterProps['filters']) => void
   areas: Area[]
 }
+type DeveloperApiItem = { name?: string; nameEn?: string; slug?: string }
 
 export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilterProps) {
   const { t, i18n } = useTranslation('areas')
@@ -44,8 +45,8 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
       try {
         const response = await fetch('/api/developers')
         const data = await response.json()
-        const developersFromAPI = (data.developers || [])
-          .filter((d: any) => {
+        const developersFromAPI = ((data.developers || []) as DeveloperApiItem[])
+          .filter((d) => {
             // Exclude "Emaar" (without Properties) - only allow "Emaar Properties"
             const name = ((d.nameEn || d.name || '').toLowerCase())
             const slug = ((d.slug || '').toLowerCase())
@@ -54,7 +55,7 @@ export default function AreaFilter({ filters, onFiltersChange, areas }: AreaFilt
             }
             return true
           })
-          .map((d: any) => d.nameEn || d.name)
+          .map((d) => d.nameEn || d.name)
           .filter((name: string) => name && name.trim() !== '')
         setDevelopersList(developersFromAPI)
       } catch (error) {

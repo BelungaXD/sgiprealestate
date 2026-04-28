@@ -156,7 +156,7 @@ create_tables() {
     if [ -f "/.dockerenv" ] || [ -n "$DOCKER_CONTAINER" ]; then
         # We're inside a container, use npx directly
         echo -e "${BLUE}ℹ️  Running Prisma DB Push from container...${NC}"
-        if npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+        if [ -x "$PROJECT_ROOT/node_modules/.bin/prisma" ] && "$PROJECT_ROOT/node_modules/.bin/prisma" db push --accept-data-loss --url "$DATABASE_URL"; then
             echo -e "${GREEN}✅ Database schema created successfully${NC}"
             return 0
         else
@@ -169,7 +169,7 @@ create_tables() {
         if [ -d "$PROJECT_ROOT/node_modules" ] && [ -f "$PROJECT_ROOT/node_modules/.bin/prisma" ]; then
             echo -e "${BLUE}ℹ️  Running Prisma DB Push from host...${NC}"
             cd "$PROJECT_ROOT"
-            if npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+            if "$PROJECT_ROOT/node_modules/.bin/prisma" db push --accept-data-loss --url "$DATABASE_URL"; then
                 echo -e "${GREEN}✅ Database schema created successfully${NC}"
                 return 0
             else
@@ -184,7 +184,7 @@ create_tables() {
             for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
                 if timeout 10s docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
                     echo -e "${BLUE}ℹ️  Using existing container: ${container_name}${NC}"
-                    if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+                    if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" sh -lc '[ -x /app/node_modules/.bin/prisma ] && /app/node_modules/.bin/prisma db push --accept-data-loss --url "$DATABASE_URL"'; then
                         echo -e "${GREEN}✅ Database schema created successfully${NC}"
                         return 0
                     else
@@ -200,7 +200,7 @@ create_tables() {
                 -w /app \
                 -e DATABASE_URL="$DATABASE_URL" \
                 node:20-slim \
-                sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
+                sh -c "export npm_config_update_notifier=false npm_config_audit=false; apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && ./node_modules/.bin/prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
                 echo -e "${GREEN}✅ Database schema created successfully${NC}"
                 return 0
             else
@@ -215,8 +215,8 @@ create_tables() {
 sync_schema_changes() {
     echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt started"
     # Prefer host npx when available
-    if command -v npx >/dev/null 2>&1; then
-        if npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+    if [ -x "$PROJECT_ROOT/node_modules/.bin/prisma" ]; then
+        if "$PROJECT_ROOT/node_modules/.bin/prisma" db push --accept-data-loss --url "$DATABASE_URL"; then
             echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt succeeded"
             return 0
         fi
@@ -227,7 +227,7 @@ sync_schema_changes() {
     for container_name in sgiprealestate-service-blue sgiprealestate-service-green sgiprealestate-service; do
         if timeout 10s docker ps --format '{{.Names}}' | grep -q "^${container_name}$"; then
             echo "[$(timestamp_utc)] Prisma schema sync: container attempt started (${container_name})"
-            if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" npx prisma db push --accept-data-loss --url "$DATABASE_URL"; then
+            if docker exec -e DATABASE_URL="$DATABASE_URL" "$container_name" sh -lc '[ -x /app/node_modules/.bin/prisma ] && /app/node_modules/.bin/prisma db push --accept-data-loss --url "$DATABASE_URL"'; then
                 echo "[$(timestamp_utc)] Prisma schema sync: container attempt succeeded (${container_name})"
                 return 0
             fi
@@ -243,7 +243,7 @@ sync_schema_changes() {
         -w /app \
         -e DATABASE_URL="$DATABASE_URL" \
         node:20-slim \
-        sh -c "apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && npx prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
+        sh -c "export npm_config_update_notifier=false npm_config_audit=false; apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && ./node_modules/.bin/prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
         echo "[$(timestamp_utc)] Prisma schema sync: temporary container attempt succeeded"
         return 0
     fi

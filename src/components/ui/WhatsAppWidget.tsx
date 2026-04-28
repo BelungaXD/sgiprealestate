@@ -1,14 +1,10 @@
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'next-i18next/pages'
 import { ChatBubbleLeftRightIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false)
-  const [whatsappHref, setWhatsappHref] = useState('/contact')
-  const [telegramHref, setTelegramHref] = useState('/contact')
   const { t } = useTranslation('common')
-  const router = useRouter()
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '971505807871'
   const telegramUsername = process.env.NEXT_PUBLIC_TELEGRAM_USERNAME
@@ -17,18 +13,11 @@ export default function WhatsAppWidget() {
   const displayPhone =
     whatsappNumber.replace(/^971/, '0') || '0505807871'
 
-  useEffect(() => {
+  const whatsappHref = useMemo(() => {
     const message = encodeURIComponent(t('whatsapp.message'))
-
-    setWhatsappHref(
-      `https://wa.me/${whatsappNumber}?text=${message}`
-    )
-    setTelegramHref(
-      telegramUsername
-        ? `https://t.me/${telegramUsername}`
-        : telegramUrl
-    )
-  }, [whatsappNumber, telegramUsername, telegramUrl, t, router.locale])
+    return `https://wa.me/${whatsappNumber}?text=${message}`
+  }, [whatsappNumber, t])
+  const telegramHref = telegramUsername ? `https://t.me/${telegramUsername}` : telegramUrl
 
   return (
     <>

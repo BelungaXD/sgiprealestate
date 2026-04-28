@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next'
 import { useTranslation } from 'next-i18next/pages'
 import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
+import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import ServiceCard from '@/components/services/ServiceCard'
 import ServiceBenefits from '@/components/services/ServiceBenefits'
@@ -251,18 +252,18 @@ export default function Services() {
                 {t('cta.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
+                <Link
                   href="/contact"
                   className="bg-white text-champagne border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-champagne-dark hover:text-white hover:border-champagne-dark transition-all duration-500 ease-in-out"
                 >
                   {t('cta.contactUs')}
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/properties"
                   className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-champagne-dark transition-all duration-500 ease-in-out"
                 >
                   {t('cta.viewProperties')}
-                </a>
+                </Link>
               </div>
             </div>
           </div>

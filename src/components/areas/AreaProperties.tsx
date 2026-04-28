@@ -2,7 +2,6 @@ import { useTranslation } from 'next-i18next/pages'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
 import { 
   HomeIcon, 
-  CurrencyDollarIcon, 
   MapPinIcon,
   StarIcon,
   EyeIcon

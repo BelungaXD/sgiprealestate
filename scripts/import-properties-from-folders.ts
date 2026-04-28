@@ -1,5 +1,5 @@
 import { readdir, stat, copyFile, mkdir } from 'fs/promises'
-import { join, extname, basename, dirname } from 'path'
+import { join, extname, basename } from 'path'
 import { existsSync } from 'fs'
 import { createPrisma } from './_prisma'
 import { createScopedLogger } from '../src/lib/logger'
@@ -27,6 +27,7 @@ const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.avi', '.webm', '.mkv']
 
 // Property documents allowed under uploads/properties/files
 const PROPERTY_FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx']
+type PropertyType = 'APARTMENT' | 'VILLA' | 'TOWNHOUSE' | 'PENTHOUSE' | 'STUDIO' | 'OFFICE'
 
 // Get language from filename
 function getLanguageFromFilename(filename: string): string | null {
@@ -136,10 +137,6 @@ async function processPropertyFolder(
   const videos: Array<{ url: string; title: string; order: number }> = []
   const files: Array<{ url: string; label: string; filename: string; size: number; mimeType: string; order: number }> = []
 
-  // Get folder name to determine category
-  const folderName = basename(propertyFolderPath)
-  const parentFolder = basename(dirname(propertyFolderPath))
-
   async function processDirectory(dirPath: string, categoryLabel: string = '') {
     const entries = await readdir(dirPath, { withFileTypes: true })
 
@@ -209,7 +206,7 @@ async function processPropertyFolder(
     }
 
     // Extract property type from name (default to APARTMENT)
-    let propertyType = 'APARTMENT'
+    let propertyType: PropertyType = 'APARTMENT'
     const nameUpper = propertyName.toUpperCase()
     if (nameUpper.includes('VILLA')) propertyType = 'VILLA'
     else if (nameUpper.includes('TOWNHOUSE')) propertyType = 'TOWNHOUSE'
@@ -222,7 +219,7 @@ async function processPropertyFolder(
       data: {
         title: propertyName,
         description: `Luxury property in Downtown Dubai: ${propertyName}`,
-        type: propertyType as any,
+        type: propertyType,
         price: 0, // Will need to be updated manually
         currency: 'AED',
         status: 'AVAILABLE',
@@ -289,7 +286,7 @@ async function processPropertyFolder(
     }
 
     log.info('Property imported successfully', { propertyName, propertyId: property.id })
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.errorWithException('Error creating property', error, { propertyName })
   }
 }
@@ -329,7 +326,7 @@ async function main() {
     }
 
     log.info('Import completed')
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.errorWithException('Import from folders failed', error)
   } finally {
     await prisma.$disconnect()

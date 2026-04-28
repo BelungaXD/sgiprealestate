@@ -16,8 +16,8 @@ async function check() {
     log.info('Areas total', { total: allAreas.length })
     const oasis = allAreas.filter(a => a.name?.includes('Oasis') || a.nameEn?.includes('Oasis'))
     log.info('The Oasis check', { found: oasis.length > 0, sample: oasis.length > 0 ? oasis[0] : null })
-  } catch (e: any) {
-    log.errorWithException('Check Emaar/Oasis failed', e)
+  } catch (error: unknown) {
+    log.errorWithException('Check Emaar/Oasis failed', error)
   } finally {
     await prisma.$disconnect()
   }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'next-i18next/pages'
-import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftRightIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Property {
   id: string
@@ -66,7 +66,7 @@ export default function PropertyContactForm({ property }: PropertyContactFormPro
           </svg>
         </div>
         <h3 className="text-2xl font-bold text-graphite mb-3">Thank You!</h3>
-        <p className="text-gray-600 mb-8 text-lg">We've received your inquiry and will contact you within 24 hours.</p>
+        <p className="text-gray-600 mb-8 text-lg">We&apos;ve received your inquiry and will contact you within 24 hours.</p>
         <button
           onClick={() => setIsSubmitted(false)}
           className="btn-primary px-8 py-3 inline-flex items-center group"

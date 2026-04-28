@@ -255,6 +255,10 @@ nice -n 19 "$DEPLOY_SCRIPT" "$SERVICE_NAME" 2>&1 | {
     health_check_started=0
 
     while IFS= read -r line; do
+        plain_line="$(printf '%s' "$line" | sed -E 's/\x1B\[[0-9;]*[mK]//g')"
+        if echo "$plain_line" | grep -qE "⚠️[[:space:]]+Old (blue|green) containers are currently active - stopping them will cause brief downtime during switch"; then
+            line="${BLUE}[INFO]${NC} Active old-color containers detected and will be rotated during traffic switch."
+        fi
         echo "$line"
 
         if echo "$line" | grep -qE "Phase 0:.*Infrastructure"; then

@@ -1,4 +1,5 @@
 import { MapPinIcon, ClockIcon, TruckIcon, ShoppingBagIcon, AcademicCapIcon, BuildingOffice2Icon, CakeIcon } from '@heroicons/react/24/outline'
+import type { ComponentType, SVGProps } from 'react'
 
 interface InfrastructureItem {
   name: string
@@ -15,7 +16,7 @@ interface PropertyInfrastructureProps {
   infrastructure: InfrastructureCategory[]
 }
 
-const categoryIcons: { [key: string]: any } = {
+const categoryIcons: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   'Shopping': ShoppingBagIcon,
   'Education': AcademicCapIcon,
   'Healthcare': BuildingOffice2Icon,
@@ -39,7 +40,7 @@ export default function PropertyInfrastructure({ infrastructure }: PropertyInfra
     <div className="space-y-8">
       <div>
         <h3 className="text-2xl font-semibold text-graphite mb-4">Nearby Infrastructure</h3>
-        <p className="text-gray-600">Discover what's around this property - from shopping centers to schools and healthcare facilities.</p>
+        <p className="text-gray-600">Discover what&apos;s around this property - from shopping centers to schools and healthcare facilities.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

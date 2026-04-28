@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 const sourcePath = '/Users/danilstashok/Desktop/Projects/SGIP/SGIP data/EMAAR Properties/The Oasis/The Oasis - Mirage';
 const destBase = path.join(__dirname, '..', 'public', 'uploads', 'properties');

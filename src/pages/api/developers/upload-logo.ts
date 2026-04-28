@@ -39,7 +39,6 @@ export default async function handler(
     // Generate unique filename
     const timestamp = Date.now()
     const originalName = filename || 'logo'
-    const ext = originalName.split('.').pop()?.toLowerCase() || 'png'
     const uniqueFilename = `${originalName.replace(/\.[^/.]+$/, '')}-${timestamp}.webp`
 
     const filePath = join(uploadsDir, uniqueFilename)
@@ -76,11 +75,12 @@ export default async function handler(
       url,
       filename: uniqueFilename,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error'
     log.errorWithException('Error uploading logo', error)
     return res.status(500).json({
       success: false,
-      message: error.message || 'Internal server error',
+      message,
     })
   }
 }

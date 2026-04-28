@@ -41,12 +41,37 @@ interface AdminUser {
   updatedAt: string
 }
 
+interface DashboardPropertyFile {
+  id?: string
+  label?: string
+  url?: string
+  filename?: string
+  size?: number
+  mimeType?: string
+}
+
+interface DashboardPropertyImage {
+  url?: string
+}
+
+interface DashboardProperty {
+  id: string
+  title: string
+  price: number
+  currency: string
+  status: string
+  views?: number
+  images?: Array<string | DashboardPropertyImage>
+  files?: DashboardPropertyFile[]
+  [key: string]: unknown
+}
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const { t } = useTranslation('admin')
   const [activeTab, setActiveTab] = useState('properties')
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingProperty, setEditingProperty] = useState<any>(null)
-  const [properties, setProperties] = useState<any[]>([])
+  const [editingProperty, setEditingProperty] = useState<DashboardProperty | null>(null)
+  const [properties, setProperties] = useState<DashboardProperty[]>([])
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({
     total: 0,
@@ -56,7 +81,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   })
 
   // Import folder into existing property
-  const [importFolderProperty, setImportFolderProperty] = useState<any>(null)
+  const [importFolderProperty, setImportFolderProperty] = useState<DashboardProperty | null>(null)
   const [importFolderPath, setImportFolderPath] = useState('')
   const [importFolderLoading, setImportFolderLoading] = useState(false)
   const [browseOpen, setBrowseOpen] = useState(false)
@@ -99,7 +124,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }, [])
 
-  const openImportFolderModal = (property: any) => {
+  const openImportFolderModal = (property: DashboardProperty) => {
     setImportFolderProperty(property)
     setImportFolderPath('')
     setImportFolderLoading(false)
@@ -149,7 +174,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         setProperties(data.properties)
         setStats({
           total: data.total || 0,
-          active: data.properties.filter((p: any) => p.status === 'AVAILABLE').length,
+          active: data.properties.filter((p: DashboardProperty) => p.status === 'AVAILABLE').length,
           views: 0, // TODO: Add views tracking
           leads: 0, // TODO: Add leads tracking
         })
@@ -246,7 +271,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setIsModalOpen(true)
   }
 
-  const handleEditProperty = async (property: any) => {
+  const handleEditProperty = async (property: DashboardProperty) => {
     try {
       // Load full property data with all images and files
       const response = await fetch(`/api/properties/${property.id}`)
@@ -432,7 +457,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
       // Parse successful response
       const contentType = response.headers.get('content-type')
-      let result: any = {}
+      let result: { success?: boolean; message?: string; property?: { id?: string } } = {}
       if (contentType && contentType.includes('application/json')) {
         result = await response.json()
         // Handle both success: true/false formats

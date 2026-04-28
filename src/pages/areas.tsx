@@ -3,7 +3,8 @@ import { useTranslation } from 'next-i18next/pages'
 import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
 import Script from 'next/script'
-import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import Layout from '@/components/layout/Layout'
 import AreaFilter from '@/components/areas/AreaFilter'
@@ -31,6 +32,17 @@ interface Area {
   amenities: string[]
 }
 
+interface ApiArea {
+  id: string
+  name: string
+  nameEn?: string
+  description?: string
+  descriptionEn?: string
+  city?: string
+  image?: string
+  slug: string
+}
+
 // Hardcoded areas - empty array
 const HARDCODED_AREAS: Area[] = []
 
@@ -38,7 +50,6 @@ export default function Areas() {
   const { t, i18n } = useTranslation('areas')
   const currentLocale = i18n.language || 'en'
   const [areas, setAreas] = useState<Area[]>([])
-  const [filteredAreas, setFilteredAreas] = useState<Area[]>([])
   const [filters, setFilters] = useState({
     developer: [] as string[],
     location: [] as string[],
@@ -53,7 +64,7 @@ export default function Areas() {
         const data = await response.json()
         
         // Transform API data to match Area interface
-        const transformedAreas: Area[] = (data.areas || []).map((area: any) => ({
+        const transformedAreas: Area[] = ((data.areas || []) as ApiArea[]).map((area) => ({
           id: area.id,
           name: area.name,
           nameEn: area.nameEn || area.name,
@@ -79,20 +90,17 @@ export default function Areas() {
         ]
         
         setAreas(allAreas)
-        setFilteredAreas(allAreas)
       } catch (error) {
         console.error('Error fetching areas:', error)
         // Set empty array if API fails
         setAreas([])
-        setFilteredAreas([])
       }
     }
 
     fetchAreas()
   }, [currentLocale])
 
-  // Apply filters
-  useEffect(() => {
+  const filteredAreas = useMemo(() => {
     let filtered = [...areas]
 
     // Filter by developer (if area has developer property or we need to check properties in area)
@@ -134,16 +142,8 @@ export default function Areas() {
       filtered = filtered.filter(area => area.city === filters.city)
     }
 
-    setFilteredAreas(filtered)
+    return filtered
   }, [areas, filters])
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 0,
-    }).format(price)
-  }
 
   return (
     <>
@@ -244,18 +244,18 @@ export default function Areas() {
                 {t('cta.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
+                <Link
                   href="/properties"
                   className="bg-white text-champagne px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
                   {t('cta.viewProperties')}
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/contact"
                   className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-champagne transition-colors"
                 >
                   {t('cta.contactUs')}
-                </a>
+                </Link>
               </div>
             </div>
           </div>

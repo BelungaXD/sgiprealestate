@@ -33,7 +33,39 @@ const CTA = dynamic(() => import('@/components/sections/CTA'), {
 })
 
 interface HomeProps {
-  featuredProperties: any[]
+  featuredProperties: HomeFeaturedProperty[]
+}
+type HomeApiProperty = {
+  id: string
+  slug?: string
+  title: string
+  description?: string | null
+  price: number
+  currency: string
+  type: string
+  listingMarket?: 'PRIMARY' | 'SECONDARY'
+  areaSqm: number
+  bedrooms: number
+  bathrooms: number
+  city: string
+  district: string
+  isFeatured: boolean
+  images?: Array<{ url: string }>
+}
+type HomeFeaturedProperty = {
+  id: string
+  slug: string
+  title: string
+  description: string
+  price: number
+  currency: string
+  type: string
+  listingMarket: 'PRIMARY' | 'SECONDARY'
+  area: number
+  bedrooms: number
+  bathrooms: number
+  location: string
+  image: string
 }
 
 export default function Home({ featuredProperties }: HomeProps) {
@@ -107,7 +139,7 @@ export default function Home({ featuredProperties }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  let featuredProperties: any[] = []
+  let featuredProperties: HomeFeaturedProperty[] = []
 
   // Fetch featured properties at request time (getStaticProps runs at build when DB may be unavailable)
   if (process.env.DATABASE_URL) {
@@ -133,7 +165,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         take: 6,
       })
 
-      featuredProperties = properties.map((p: any) => ({
+      featuredProperties = (properties as HomeApiProperty[]).map((p) => ({
         id: p.id,
         slug: p.slug,
         title: p.title,

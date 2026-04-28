@@ -64,11 +64,12 @@ export default async function handler(
       url,
       filename: uniqueFilename,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal server error'
     log.errorWithException('Error uploading area image', error)
     return res.status(500).json({
       success: false,
-      message: error.message || 'Internal server error',
+      message,
     })
   }
 }
