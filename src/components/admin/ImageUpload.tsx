@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import Image from 'next/image'
+import NextImage from 'next/image'
 import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
@@ -16,7 +16,7 @@ const convertToWebP = async (file: File, quality: number = 0.85, maxSize: number
     const reader = new FileReader()
     
     reader.onload = (e) => {
-      const img = new Image()
+      const img = new window.Image()
       
       img.onload = () => {
         // Create canvas
@@ -258,7 +258,7 @@ export default function ImageUpload({
                     preload="metadata"
                   />
                 ) : (
-              <Image
+              <NextImage
                 src={displaySrc}
                 alt={`Upload ${index + 1}`}
                 width={256}

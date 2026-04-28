@@ -102,6 +102,9 @@ export default function Developers() {
       try {
         const response = await fetch('/api/developers')
         const data = await response.json()
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b06bc3'},body:JSON.stringify({sessionId:'b06bc3',runId:'initial',hypothesisId:'H1',location:'src/pages/developers.tsx:105',message:'Fetched developers payload sample logos',data:{count:Array.isArray(data?.developers)?data.developers.length:0,sample:(Array.isArray(data?.developers)?data.developers:[]).slice(0,5).map((d: ApiDeveloper)=>({slug:d?.slug||'',logo:d?.logo||''}))},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         
         // Transform API data to match Developer interface
         // Filter out "Emaar" (without Properties) - only allow "Emaar Properties"
@@ -136,6 +139,9 @@ export default function Developers() {
             marketShare: dev.marketShare || 0,
             countries: ['UAE'],
           }))
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b06bc3'},body:JSON.stringify({sessionId:'b06bc3',runId:'initial',hypothesisId:'H2',location:'src/pages/developers.tsx:139',message:'Transformed developers logos by slug',data:{sample:transformedDevelopers.slice(0,5).map((d)=>({slug:d.slug,logo:d.logo}))},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
 
         // Keep curated content from hardcoded cards, but always hydrate dynamic stats from API.
         const apiBySlug = new Map(transformedDevelopers.map((dev) => [dev.slug, dev]))
@@ -145,6 +151,7 @@ export default function Developers() {
             ? {
                 ...hardcodedDev,
                 id: apiDev.id || hardcodedDev.id,
+                logo: apiDev.logo || hardcodedDev.logo,
                 propertiesCount: apiDev.propertiesCount,
                 averagePrice: apiDev.averagePrice,
                 marketShare: apiDev.marketShare,
@@ -157,6 +164,9 @@ export default function Developers() {
             !HARDCODED_DEVELOPERS.some((hc) => hc.slug === dev.slug)
           ),
         ]
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b06bc3'},body:JSON.stringify({sessionId:'b06bc3',runId:'initial',hypothesisId:'H3',location:'src/pages/developers.tsx:160',message:'Merged developers logos by slug',data:{sample:allDevelopers.slice(0,5).map((d)=>({slug:d.slug,logo:d.logo,fromHardcoded:HARDCODED_DEVELOPERS.some((hc)=>hc.slug===d.slug)}))},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         
         setDevelopers(allDevelopers)
       } catch (error) {

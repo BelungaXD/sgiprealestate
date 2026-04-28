@@ -158,6 +158,9 @@ export default async function handler(
 
     // Check if file exists locally, if not try to proxy from server
     if (!existsSync(filePath)) {
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b06bc3'},body:JSON.stringify({sessionId:'b06bc3',runId:'initial',hypothesisId:'H5',location:'src/pages/api/uploads/[...path].ts:161',message:'Upload file missing locally',data:{decodedPath:decodedPath.join('/'),filePath},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       baseLog.warn('Requested file not found locally', { filePath, decodedPath: decodedPath.join('/') })
       // Try to proxy from server if NEXT_PUBLIC_SERVER_URL is set
       const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL
