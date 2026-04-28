@@ -57,6 +57,9 @@ export default async function handler(
 
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const parsed = updateDeveloperSchema.parse(body)
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H10',location:'src/pages/api/developers/item/[id].ts:61',message:'PUT developer parsed body logo',data:{id,logoProvided:parsed.logo!==undefined,logo:parsed.logo??null,nameEnProvided:parsed.nameEn!==undefined},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
 
       let nameEn = existing.nameEn || existing.name
       let name = existing.name

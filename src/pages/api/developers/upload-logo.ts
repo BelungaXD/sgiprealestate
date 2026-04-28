@@ -82,6 +82,9 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: unknown) {
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H11',location:'src/pages/api/developers/upload-logo.ts:85',message:'Upload-logo handler error catch',data:{message:error instanceof Error?error.message:'unknown'},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
     const message = error instanceof Error ? error.message : 'Internal server error'
     log.errorWithException('Error uploading logo', error)
     return res.status(500).json({
