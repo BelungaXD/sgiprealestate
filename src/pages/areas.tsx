@@ -60,7 +60,7 @@ export default function Areas() {
           description: area.description || '',
           descriptionEn: area.descriptionEn || area.description || '',
           city: area.city || 'Dubai',
-          image: '/images/hero.jpg',
+          image: area.image || '/images/hero.jpg',
           propertiesCount: 0,
           averagePrice: 0,
           currency: 'AED',

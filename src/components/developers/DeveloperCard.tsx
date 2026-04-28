@@ -60,14 +60,14 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
         {/* Logo and Basic Info */}
         <div className="flex items-start space-x-4 mb-6">
           {normalizedLogo ? (
-            <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shrink-0 border border-gray-200 p-2">
+            <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex items-center justify-center shrink-0">
               <Image
                 src={normalizedLogo}
                 alt={displayName}
                 width={64}
                 height={64}
                 sizes="64px"
-                className="max-w-full max-h-full object-contain"
+                className="block w-full h-full object-contain rounded-md"
               />
             </div>
           ) : (

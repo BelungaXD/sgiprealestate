@@ -6,6 +6,12 @@ import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
 import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/properties/upload-image')
+// #region agent log
+fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H5',location:'src/pages/api/properties/upload-image.ts:module:init',message:'upload-image module initialized',data:{nodeEnv:process.env.NODE_ENV||''},timestamp:Date.now()})}).catch(()=>{})
+// #endregion
+// #region agent log
+fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'7f0f55'},body:JSON.stringify({sessionId:'7f0f55',runId:'initial',hypothesisId:'H2',location:'src/pages/api/properties/upload-image.ts:module:init',message:'upload-image module initialized',data:{nodeEnv:process.env.NODE_ENV||''},timestamp:Date.now()})}).catch(()=>{})
+// #endregion
 
 export const config = {
   api: {
@@ -19,6 +25,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // #region agent log
+  fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H1',location:'src/pages/api/properties/upload-image.ts:handler:start',message:'upload-image handler entered',data:{method:req.method,hasBody:Boolean(req.body)},timestamp:Date.now()})}).catch(()=>{})
+  // #endregion
+  // #region agent log
+  fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'7f0f55'},body:JSON.stringify({sessionId:'7f0f55',runId:'initial',hypothesisId:'H3',location:'src/pages/api/properties/upload-image.ts:handler:start',message:'upload-image handler entered',data:{method:req.method,hasBody:Boolean(req.body),contentType:req.headers['content-type']||'',contentLength:req.headers['content-length']||''},timestamp:Date.now()})}).catch(()=>{})
+  // #endregion
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
   }
@@ -54,6 +66,9 @@ export default async function handler(
 
     // Handle base64 file
     if (file.startsWith('data:')) {
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H3',location:'src/pages/api/properties/upload-image.ts:handler:base64-branch',message:'upload-image processing base64 payload',data:{filename,mimeType,isVideo,isImage,filePrefix:String(file).slice(0,30)},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
       // Extract base64 data
       const base64Data = file.split(',')[1]
       const buffer = Buffer.from(base64Data, 'base64')
@@ -104,6 +119,12 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: any) {
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'1f6a57'},body:JSON.stringify({sessionId:'1f6a57',runId:'initial',hypothesisId:'H4',location:'src/pages/api/properties/upload-image.ts:handler:catch',message:'upload-image handler threw',data:{name:error?.name||'',message:error?.message||'',code:error?.code||''},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'7f0f55'},body:JSON.stringify({sessionId:'7f0f55',runId:'initial',hypothesisId:'H5',location:'src/pages/api/properties/upload-image.ts:handler:catch',message:'upload-image handler threw',data:{name:error?.name||'',message:error?.message||'',code:error?.code||''},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
     log.errorWithException('Error uploading image/video', error)
     return res.status(500).json({
       success: false,
