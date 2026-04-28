@@ -11,7 +11,7 @@ interface ImageUploadProps {
 }
 
 // Function to convert image to WebP format
-const convertToWebP = async (file: File, quality: number = 0.85, maxSize: number = 1600): Promise<string> => {
+export const convertToWebP = async (file: File, quality: number = 0.85, maxSize: number = 1600): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
     

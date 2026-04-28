@@ -8,6 +8,7 @@ import {
   MagnifyingGlassIcon,
   ArrowsUpDownIcon,
 } from '@heroicons/react/24/outline'
+import { convertToWebP } from './ImageUpload'
 
 type DeveloperRow = {
   id: string
@@ -97,17 +98,24 @@ export default function DevelopersAdminPanel() {
     // #endregion
     const reader = new FileReader()
     reader.onload = async () => {
-      const dataUrl = reader.result as string
       setLogoUploading(true)
       // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H6',location:'src/components/admin/DevelopersAdminPanel.tsx:97',message:'Developer logo upload started',data:{filename:file.name,dataUrlLength:dataUrl?.length||0},timestamp:Date.now()})}).catch(()=>{})
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H6',location:'src/components/admin/DevelopersAdminPanel.tsx:97',message:'Developer logo upload started',data:{filename:file.name},timestamp:Date.now()})}).catch(()=>{})
       // #endregion
       try {
+        let uploadData = reader.result as string
+        let uploadFilename = file.name
+        try {
+          uploadData = await convertToWebP(file)
+          uploadFilename = `${file.name.replace(/\.[^/.]+$/, '')}.webp`
+        } catch (conversionError) {
+          console.error('Developer logo conversion failed, fallback to original', conversionError)
+        }
         const res = await fetch('/api/developers/upload-logo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'same-origin',
-          body: JSON.stringify({ file: dataUrl, filename: file.name }),
+          body: JSON.stringify({ file: uploadData, filename: uploadFilename }),
         })
         const rawBody = await res.text()
         let json: { url?: string; success?: boolean; message?: string } = {}

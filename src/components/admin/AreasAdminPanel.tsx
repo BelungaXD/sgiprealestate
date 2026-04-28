@@ -8,6 +8,7 @@ import {
   MagnifyingGlassIcon,
   ArrowsUpDownIcon,
 } from '@heroicons/react/24/outline'
+import { convertToWebP } from './ImageUpload'
 
 type AreaRow = {
   id: string
@@ -95,14 +96,21 @@ export default function AreasAdminPanel() {
     if (!file) return
     const reader = new FileReader()
     reader.onload = async () => {
-      const dataUrl = reader.result as string
       setImageUploading(true)
       try {
+        let uploadData = reader.result as string
+        let uploadFilename = file.name
+        try {
+          uploadData = await convertToWebP(file)
+          uploadFilename = `${file.name.replace(/\.[^/.]+$/, '')}.webp`
+        } catch (conversionError) {
+          console.error('Area image conversion failed, fallback to original', conversionError)
+        }
         const res = await fetch('/api/areas/upload-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'same-origin',
-          body: JSON.stringify({ file: dataUrl, filename: file.name }),
+          body: JSON.stringify({ file: uploadData, filename: uploadFilename }),
         })
         const json = await res.json().catch(() => ({}))
         if (res.ok && json.url) {
