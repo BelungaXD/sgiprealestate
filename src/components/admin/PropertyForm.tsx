@@ -289,9 +289,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           if (image.startsWith('data:')) {
             const isVideo = image.startsWith('data:video/')
             const mimeType = image.split(';')[0].split(':')[1]
-            // #region agent log
-            fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3b4373'},body:JSON.stringify({sessionId:'3b4373',runId:'initial',hypothesisId:'H1',location:'src/components/admin/PropertyForm.tsx:onSubmit-before-upload-image',message:'Preparing image/video upload request',data:{isVideo,mimeType,dataUrlLength:image.length,dataUrlPrefix:image.slice(0,64)},timestamp:Date.now()})}).catch(()=>{});
-            // #endregion
             const extension = isVideo
               ? mimeType.includes('mp4')
                 ? '.mp4'
@@ -310,14 +307,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               credentials: 'same-origin',
               body: JSON.stringify({ file: image, filename, mimeType }),
             })
-            // #region agent log
-            fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3b4373'},body:JSON.stringify({sessionId:'3b4373',runId:'initial',hypothesisId:'H2',location:'src/components/admin/PropertyForm.tsx:onSubmit-after-upload-image-response',message:'Upload API responded',data:{status:uploadResponse.status,ok:uploadResponse.ok,contentType:uploadResponse.headers.get('content-type'),redirected:uploadResponse.redirected,responseUrl:uploadResponse.url},timestamp:Date.now()})}).catch(()=>{});
-            // #endregion
             if (!uploadResponse.ok) {
               const errText = await uploadResponse.text().catch(() => '')
-              // #region agent log
-              fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3b4373'},body:JSON.stringify({sessionId:'3b4373',runId:'initial',hypothesisId:'H3',location:'src/components/admin/PropertyForm.tsx:onSubmit-upload-image-error-body',message:'Upload API returned non-OK response body',data:{status:uploadResponse.status,errorPrefix:errText.slice(0,220)},timestamp:Date.now()})}).catch(()=>{});
-              // #endregion
               throw new Error(
                 `Image/video upload failed (${uploadResponse.status}). ${errText.slice(0, 200)}`
               )

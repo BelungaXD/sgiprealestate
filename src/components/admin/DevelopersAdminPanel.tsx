@@ -85,6 +85,9 @@ export default function DevelopersAdminPanel() {
   const handleLogoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H1',location:'src/components/admin/DevelopersAdminPanel.tsx:88',message:'Developer logo file selected',data:{name:file.name,size:file.size,type:file.type},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
     const reader = new FileReader()
     reader.onload = async () => {
       const dataUrl = reader.result as string
@@ -95,6 +98,9 @@ export default function DevelopersAdminPanel() {
           body: JSON.stringify({ file: dataUrl, filename: file.name }),
         })
         const json = await res.json()
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H2',location:'src/components/admin/DevelopersAdminPanel.tsx:101',message:'Developer upload-logo response',data:{ok:res.ok,status:res.status,url:json?.url||null,success:json?.success??null},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
         if (res.ok && json.url) setForm((f) => ({ ...f, logo: json.url }))
       } catch (err) {
         console.error(err)
@@ -122,6 +128,9 @@ export default function DevelopersAdminPanel() {
         ? `/api/developers/item/${editing.id}`
         : '/api/developers'
       const method = editing ? 'PUT' : 'POST'
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H3',location:'src/components/admin/DevelopersAdminPanel.tsx:131',message:'Developer save payload logo before submit',data:{editing:!!editing,method,logo:payload.logo||null},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },

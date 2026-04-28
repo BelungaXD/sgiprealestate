@@ -25,6 +25,9 @@ export default async function handler(
 
   try {
     const { file, filename } = req.body
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H4',location:'src/pages/api/developers/upload-logo.ts:29',message:'Upload-logo handler input',data:{hasFile:!!file,filename:filename||null,isDataUrl:typeof file==='string'?file.startsWith('data:'):false,fileLength:typeof file==='string'?file.length:0},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
 
     if (!file) {
       return res.status(400).json({ message: 'File is required' })
@@ -69,6 +72,9 @@ export default async function handler(
     }
 
     const url = `/uploads/developers/${uniqueFilename}`
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H4',location:'src/pages/api/developers/upload-logo.ts:76',message:'Upload-logo file write result',data:{uploadsDir,filePath,existsAfterWrite:existsSync(filePath),url},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
 
     return res.status(200).json({
       success: true,

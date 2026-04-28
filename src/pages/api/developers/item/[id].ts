@@ -94,6 +94,9 @@ export default async function handler(
             ? parsed.website.trim()
             : null
           : undefined
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H5',location:'src/pages/api/developers/item/[id].ts:98',message:'Update developer payload logo before DB update',data:{id,logoProvided:parsed.logo!==undefined,logo:parsed.logo??null},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
 
       const baseData = {
         name,
@@ -129,6 +132,9 @@ export default async function handler(
             data: baseData,
           })
         })
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H5',location:'src/pages/api/developers/item/[id].ts:137',message:'Update developer DB result logo',data:{id:developer?.id||null,logo:developer?.logo||null},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
 
       return res.status(200).json({ success: true, developer })
     } catch (error: unknown) {
