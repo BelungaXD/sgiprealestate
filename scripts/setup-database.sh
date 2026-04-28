@@ -200,7 +200,7 @@ create_tables() {
                 -w /app \
                 -e DATABASE_URL="$DATABASE_URL" \
                 node:20-slim \
-                sh -c "export npm_config_update_notifier=false npm_config_audit=false; apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && ./node_modules/.bin/prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
+                sh -c "export npm_config_update_notifier=false npm_config_audit=false; npx --yes prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
                 echo -e "${GREEN}✅ Database schema created successfully${NC}"
                 return 0
             else
@@ -213,14 +213,16 @@ create_tables() {
 
 # Function to sync schema changes when tables already exist
 sync_schema_changes() {
-    echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt started"
-    # Prefer host npx when available
-    if [ -x "$PROJECT_ROOT/node_modules/.bin/prisma" ]; then
+    # Prefer host Prisma only when both CLI and node runtime are available.
+    if [ -x "$PROJECT_ROOT/node_modules/.bin/prisma" ] && command -v node >/dev/null 2>&1; then
+        echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt started"
         if "$PROJECT_ROOT/node_modules/.bin/prisma" db push --accept-data-loss --url "$DATABASE_URL"; then
             echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt succeeded"
             return 0
         fi
         echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt failed"
+    else
+        echo "[$(timestamp_utc)] Prisma schema sync: host npx attempt skipped (missing node runtime or prisma binary)"
     fi
 
     # Fallback to an existing running app container
@@ -243,7 +245,7 @@ sync_schema_changes() {
         -w /app \
         -e DATABASE_URL="$DATABASE_URL" \
         node:20-slim \
-        sh -c "export npm_config_update_notifier=false npm_config_audit=false; apt-get update -qq && apt-get install -y -qq openssl >/dev/null 2>&1 && npm ci --silent && ./node_modules/.bin/prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
+        sh -c "export npm_config_update_notifier=false npm_config_audit=false; npx --yes prisma db push --accept-data-loss --url \"$DATABASE_URL\""; then
         echo "[$(timestamp_utc)] Prisma schema sync: temporary container attempt succeeded"
         return 0
     fi
