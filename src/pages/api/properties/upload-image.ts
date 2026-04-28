@@ -25,6 +25,9 @@ export default async function handler(
 
   try {
     const { file, filename, mimeType } = req.body
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3b4373'},body:JSON.stringify({sessionId:'3b4373',runId:'initial',hypothesisId:'H4',location:'src/pages/api/properties/upload-image.ts:handler-entry',message:'Upload API handler entered',data:{method:req.method,hasFile:Boolean(file),hasFilename:Boolean(filename),mimeType:typeof mimeType==='string'?mimeType:null,fileType:typeof file,fileLength:typeof file==='string'?file.length:null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
 
     if (!file || !filename) {
       return res.status(400).json({ message: 'File and filename are required' })
@@ -57,6 +60,9 @@ export default async function handler(
       // Extract base64 data
       const base64Data = file.split(',')[1]
       const buffer = Buffer.from(base64Data, 'base64')
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3b4373'},body:JSON.stringify({sessionId:'3b4373',runId:'initial',hypothesisId:'H5',location:'src/pages/api/properties/upload-image.ts:buffer-built',message:'Decoded base64 payload',data:{isVideo,isImage,uploadsDir,filePath,bufferBytes:buffer.byteLength},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       
       // For images, generate thumbnail and save both full and thumbnail
       if (isImage && !isVideo) {
@@ -83,6 +89,9 @@ export default async function handler(
         // For videos, just save the file
         await writeFile(filePath, buffer)
       }
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'3b4373'},body:JSON.stringify({sessionId:'3b4373',runId:'initial',hypothesisId:'H6',location:'src/pages/api/properties/upload-image.ts:file-written',message:'File write completed',data:{filePath,urlType:isVideo?'video':'image'},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
     } else {
       // If it's already a URL, return it
       return res.status(200).json({
