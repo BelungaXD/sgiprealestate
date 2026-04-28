@@ -39,6 +39,7 @@ export default function DevelopersAdminPanel() {
   const [editing, setEditing] = useState<DeveloperRow | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [logoUploading, setLogoUploading] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -91,6 +92,10 @@ export default function DevelopersAdminPanel() {
     const reader = new FileReader()
     reader.onload = async () => {
       const dataUrl = reader.result as string
+      setLogoUploading(true)
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H6',location:'src/components/admin/DevelopersAdminPanel.tsx:97',message:'Developer logo upload started',data:{filename:file.name,dataUrlLength:dataUrl?.length||0},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
       try {
         const res = await fetch('/api/developers/upload-logo', {
           method: 'POST',
@@ -99,17 +104,26 @@ export default function DevelopersAdminPanel() {
         })
         const json = await res.json()
         // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H2',location:'src/components/admin/DevelopersAdminPanel.tsx:101',message:'Developer upload-logo response',data:{ok:res.ok,status:res.status,url:json?.url||null,success:json?.success??null},timestamp:Date.now()})}).catch(()=>{})
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H2',location:'src/components/admin/DevelopersAdminPanel.tsx:106',message:'Developer upload-logo response',data:{ok:res.ok,status:res.status,url:json?.url||null,success:json?.success??null},timestamp:Date.now()})}).catch(()=>{})
         // #endregion
         if (res.ok && json.url) setForm((f) => ({ ...f, logo: json.url }))
       } catch (err) {
         console.error(err)
+      } finally {
+        setLogoUploading(false)
       }
     }
     reader.readAsDataURL(file)
   }
 
   const save = async () => {
+    if (logoUploading) {
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H6',location:'src/components/admin/DevelopersAdminPanel.tsx:120',message:'Save blocked while logo upload in progress',data:{logoUploading:true},timestamp:Date.now()})}).catch(()=>{})
+      // #endregion
+      alert('Please wait until logo upload is complete')
+      return
+    }
     if (!form.nameEn.trim()) {
       alert('Name (EN) is required')
       return
@@ -129,7 +143,7 @@ export default function DevelopersAdminPanel() {
         : '/api/developers'
       const method = editing ? 'PUT' : 'POST'
       // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H3',location:'src/components/admin/DevelopersAdminPanel.tsx:131',message:'Developer save payload logo before submit',data:{editing:!!editing,method,logo:payload.logo||null},timestamp:Date.now()})}).catch(()=>{})
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H3',location:'src/components/admin/DevelopersAdminPanel.tsx:144',message:'Developer save payload logo before submit',data:{editing:!!editing,method,logo:payload.logo||null,logoUploading},timestamp:Date.now()})}).catch(()=>{})
       // #endregion
       const res = await fetch(url, {
         method,
@@ -366,10 +380,10 @@ export default function DevelopersAdminPanel() {
                   <button
                     type="button"
                     className="btn-filled btn-sm"
-                    disabled={saving}
+                    disabled={saving || logoUploading}
                     onClick={save}
                   >
-                    {saving ? 'Saving…' : 'Save'}
+                    {logoUploading ? 'Uploading logo…' : saving ? 'Saving…' : 'Save'}
                   </button>
                 </div>
               </Dialog.Panel>
