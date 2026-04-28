@@ -106,6 +106,7 @@ export default function DevelopersAdminPanel() {
         const res = await fetch('/api/developers/upload-logo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
           body: JSON.stringify({ file: dataUrl, filename: file.name }),
         })
         const rawBody = await res.text()

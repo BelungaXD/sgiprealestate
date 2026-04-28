@@ -10,7 +10,7 @@ const log = createScopedLogger('api/developers/upload-logo')
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb', // Логотипы обычно небольшие
+      sizeLimit: '800mb',
     },
   },
 }
@@ -29,8 +29,8 @@ export default async function handler(
     fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H4',location:'src/pages/api/developers/upload-logo.ts:29',message:'Upload-logo handler input',data:{hasFile:!!file,filename:filename||null,isDataUrl:typeof file==='string'?file.startsWith('data:'):false,fileLength:typeof file==='string'?file.length:0},timestamp:Date.now()})}).catch(()=>{})
     // #endregion
 
-    if (!file) {
-      return res.status(400).json({ message: 'File is required' })
+    if (!file || !filename) {
+      return res.status(400).json({ message: 'File and filename are required' })
     }
 
     // Create uploads directory if it doesn't exist
@@ -41,7 +41,8 @@ export default async function handler(
 
     // Generate unique filename
     const timestamp = Date.now()
-    const originalName = filename || 'logo'
+    const sanitizedFilename = String(filename).replace(/[^a-zA-Z0-9.-]/g, '_')
+    const originalName = sanitizedFilename || 'logo'
     const uniqueFilename = `${originalName.replace(/\.[^/.]+$/, '')}-${timestamp}.webp`
 
     const filePath = join(uploadsDir, uniqueFilename)

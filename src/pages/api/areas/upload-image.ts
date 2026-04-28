@@ -10,7 +10,7 @@ const log = createScopedLogger('api/areas/upload-image')
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '800mb',
     },
   },
 }
@@ -26,8 +26,8 @@ export default async function handler(
   try {
     const { file, filename } = req.body
 
-    if (!file) {
-      return res.status(400).json({ message: 'File is required' })
+    if (!file || !filename) {
+      return res.status(400).json({ message: 'File and filename are required' })
     }
 
     const uploadsDir = join(process.cwd(), 'public', 'uploads', 'areas')
@@ -36,7 +36,8 @@ export default async function handler(
     }
 
     const timestamp = Date.now()
-    const originalName = filename || 'cover'
+    const sanitizedFilename = String(filename).replace(/[^a-zA-Z0-9.-]/g, '_')
+    const originalName = sanitizedFilename || 'cover'
     const uniqueFilename = `${originalName.replace(/\.[^/.]+$/, '')}-${timestamp}.webp`
     const filePath = join(uploadsDir, uniqueFilename)
 

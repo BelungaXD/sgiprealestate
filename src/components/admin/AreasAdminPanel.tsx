@@ -43,6 +43,7 @@ export default function AreasAdminPanel() {
   const [editing, setEditing] = useState<AreaRow | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [imageUploading, setImageUploading] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -95,22 +96,35 @@ export default function AreasAdminPanel() {
     const reader = new FileReader()
     reader.onload = async () => {
       const dataUrl = reader.result as string
+      setImageUploading(true)
       try {
         const res = await fetch('/api/areas/upload-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
           body: JSON.stringify({ file: dataUrl, filename: file.name }),
         })
-        const json = await res.json()
-        if (res.ok && json.url) setForm((f) => ({ ...f, image: json.url }))
+        const json = await res.json().catch(() => ({}))
+        if (res.ok && json.url) {
+          setForm((f) => ({ ...f, image: json.url }))
+          return
+        }
+        alert(json?.message || 'Image upload failed')
       } catch (err) {
         console.error(err)
+        alert('Image upload request failed')
+      } finally {
+        setImageUploading(false)
       }
     }
     reader.readAsDataURL(file)
   }
 
   const save = async () => {
+    if (imageUploading) {
+      alert('Please wait until image upload is complete')
+      return
+    }
     if (!form.nameEn.trim()) {
       alert('Name (EN) is required')
       return
@@ -416,10 +430,10 @@ export default function AreasAdminPanel() {
                   <button
                     type="button"
                     className="btn-filled btn-sm"
-                    disabled={saving}
+                    disabled={saving || imageUploading}
                     onClick={save}
                   >
-                    {saving ? 'Saving…' : 'Save'}
+                    {imageUploading ? 'Uploading image…' : saving ? 'Saving…' : 'Save'}
                   </button>
                 </div>
               </Dialog.Panel>
