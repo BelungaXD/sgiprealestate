@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslation } from 'next-i18next/pages'
-import { HomeIcon, CurrencyDollarIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
+import { HomeIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline'
 
 interface Area {
   id: string
@@ -40,48 +40,35 @@ export default function AreaCard({ area }: AreaCardProps) {
   const displayDescription = currentLocale === 'ru' || currentLocale === 'ar' ? area.description : area.descriptionEn
 
   const imageSrc = area.image || '/images/hero.jpg'
+  const areaPropertiesHref = `/properties?area=${encodeURIComponent(area.nameEn)}`
 
   return (
     <div className="card-hover group">
       <div className="relative overflow-hidden">
-        <Image
-          src={imageSrc}
-          alt={displayName}
-          width={800}
-          height={400}
-          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-        />
-        
-        {/* City Badge */}
-        <div className="absolute top-4 left-4 bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
-          {area.city}
-        </div>
-        
-        {/* Properties Count */}
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
-          {area.propertiesCount} {t('properties')}
-        </div>
-        
-        {/* Quick Actions Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <div className="flex space-x-2">
-            <Link
-              href={`/areas/${area.slug}`}
-              className="bg-white text-graphite px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-            >
-              {t('explore')}
-            </Link>
-            <Link
-              href={`/properties?area=${encodeURIComponent(area.nameEn)}`}
-              className="bg-champagne text-white px-4 py-2 rounded-lg font-medium hover:bg-champagne/90 transition-colors"
-            >
-              {t('viewProperties')}
-            </Link>
+        <Link
+          href={areaPropertiesHref}
+          className="block relative"
+          aria-label={`${displayName} ${t('viewProperties')}`}
+        >
+          <Image
+            src={imageSrc}
+            alt={displayName}
+            width={800}
+            height={400}
+            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQADAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+          />
+
+          <div className="absolute top-4 left-4 bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
+            {area.city}
           </div>
-        </div>
+
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
+            {area.propertiesCount} {t('properties')}
+          </div>
+        </Link>
       </div>
       
       <div className="p-6">
@@ -132,23 +119,6 @@ export default function AreaCard({ area }: AreaCardProps) {
           </div>
         </div>
         
-        {/* Action Buttons */}
-        <div className="flex space-x-2">
-          <Link
-            href={`/areas/${area.slug}`}
-            className="flex-1 btn-primary text-center text-sm py-2 inline-flex items-center justify-center group"
-          >
-            {t('learnMore')}
-            <ArrowRightIcon className="ml-2 h-4 w-4" />
-          </Link>
-          <Link
-            href={`/properties?area=${encodeURIComponent(area.nameEn)}`}
-            className="px-4 py-2 border border-champagne text-champagne rounded-lg hover:bg-champagne hover:text-white transition-all duration-500 ease-in-out text-sm inline-flex items-center group"
-          >
-            {t('viewProperties')}
-            <ArrowRightIcon className="ml-2 h-4 w-4" />
-          </Link>
-        </div>
       </div>
     </div>
   )

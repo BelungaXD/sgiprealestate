@@ -74,43 +74,38 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
         return (
           <div key={property.id} className="property-card group">
             <div className="relative overflow-hidden">
-              <PropertyListingImage
-                imageUrl={property.image}
-                alt={property.title}
-                className="property-image w-full h-64 object-cover"
-              />
+              <Link
+                href={`/properties/${property.slug || property.id}`}
+                className="block relative"
+                aria-label={`${property.title} ${t('viewDetails')}`}
+              >
+                <PropertyListingImage
+                  imageUrl={property.image}
+                  alt={property.title}
+                  className="property-image w-full h-64 object-cover"
+                />
 
-              <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[90%]">
-                <span className="bg-graphite/85 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                  {isSecondary
-                    ? t('secondary', 'Secondary')
-                    : t('primary', 'Primary')}
-                </span>
-                <span className="bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
-                  {unitTypeLabel(property)}
-                </span>
-              </div>
-
-              {property.isFeatured && (
-                <div className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                  {t('featured')}
+                <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[90%]">
+                  <span className="bg-graphite/85 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    {isSecondary
+                      ? t('secondary', 'Secondary')
+                      : t('primary', 'Primary')}
+                  </span>
+                  <span className="bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {unitTypeLabel(property)}
+                  </span>
                 </div>
-              )}
 
-              <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
-                {formatPrice(property.price, property.currency)}
-              </div>
+                {property.isFeatured && (
+                  <div className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                    {t('featured')}
+                  </div>
+                )}
 
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <div className="flex space-x-2">
-                  <Link
-                    href={`/properties/${property.slug || property.id}`}
-                    className="bg-white text-graphite px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-500 ease-in-out"
-                  >
-                    {t('viewDetails')}
-                  </Link>
+                <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">
+                  {formatPrice(property.price, property.currency)}
                 </div>
-              </div>
+              </Link>
             </div>
 
             <div className="p-6">
@@ -190,9 +185,6 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
                   {t('viewDetails')}
                   <ArrowRightIcon className="ml-2 h-4 w-4" />
                 </Link>
-                <button className="btn-primary btn-sm inline-flex items-center justify-center">
-                  {t('save')}
-                </button>
               </div>
             </div>
           </div>
