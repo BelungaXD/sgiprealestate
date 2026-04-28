@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import sharp from 'sharp'
 import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/areas/upload-image')
@@ -44,12 +43,7 @@ export default async function handler(
     if (file.startsWith('data:')) {
       const base64Data = file.split(',')[1]
       const buffer = Buffer.from(base64Data, 'base64')
-      try {
-        await sharp(buffer).webp({ quality: 90 }).toFile(filePath)
-      } catch (sharpError) {
-        log.errorWithException('Error converting area image to WebP', sharpError)
-        await writeFile(filePath, buffer)
-      }
+      await writeFile(filePath, buffer)
     } else {
       return res.status(200).json({
         success: true,

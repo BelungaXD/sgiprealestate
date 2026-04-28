@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import sharp from 'sharp'
 import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/developers/upload-logo')
@@ -52,17 +51,7 @@ export default async function handler(
       // Extract base64 data
       const base64Data = file.split(',')[1]
       const buffer = Buffer.from(base64Data, 'base64')
-      
-      // Convert to WebP and save
-      try {
-        await sharp(buffer)
-          .webp({ quality: 90 })
-          .toFile(filePath)
-      } catch (sharpError) {
-        log.errorWithException('Error converting logo to WebP', sharpError)
-        // Fallback: save original if WebP conversion fails
-        await writeFile(filePath, buffer)
-      }
+      await writeFile(filePath, buffer)
     } else {
       // If it's already a URL, return it
       return res.status(200).json({
