@@ -1,10 +1,13 @@
 import { useTranslation } from 'next-i18next/pages'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 
 interface Partner {
+  id: string
+  slug: string
   name: string
   logo: string
   website?: string
@@ -12,20 +15,55 @@ interface Partner {
 
 export default function Partners() {
   const { t, ready } = useTranslation('home')
+  const [partners, setPartners] = useState<Partner[]>([])
 
-  // Trusted partners - developers
-  const partners: Partner[] = [
+  const fallbackPartners: Partner[] = [
     {
+      id: 'emaar-properties',
+      slug: 'emaar-properties',
       name: 'Emaar Properties',
       logo: '/uploads/developers/emaar_logo.png',
       website: 'https://www.emaar.com',
     },
     {
+      id: 'sobha',
+      slug: 'sobha',
       name: 'Sobha',
       logo: '/uploads/developers/sobha_logo.png',
       website: 'https://www.sobha.com',
     },
   ]
+
+  useEffect(() => {
+    const loadPartners = async () => {
+      try {
+        const response = await fetch('/api/developers')
+        const data = await response.json()
+        const apiPartners: Partner[] = Array.isArray(data?.developers)
+          ? data.developers.map((developer: {
+              id: string
+              slug: string
+              name: string
+              nameEn?: string | null
+              logo?: string | null
+              website?: string | null
+            }) => ({
+              id: developer.id,
+              slug: developer.slug,
+              name: developer.nameEn || developer.name,
+              logo: developer.logo || '',
+              website: developer.website || undefined,
+            }))
+          : []
+
+        setPartners(apiPartners.length > 0 ? apiPartners : fallbackPartners)
+      } catch {
+        setPartners(fallbackPartners)
+      }
+    }
+
+    loadPartners()
+  }, [])
 
   return (
     <section className="section-padding bg-gray-50">
@@ -41,10 +79,10 @@ export default function Partners() {
           </div>
         </AnimateOnScroll>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-8 items-center justify-items-center max-w-4xl mx-auto mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-center justify-items-center max-w-6xl mx-auto mb-12">
           {partners.map((partner, index) => (
             <AnimateOnScroll
-              key={index}
+              key={partner.id}
               animation="scale-in"
               delay={index * 100}
             >

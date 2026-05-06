@@ -59,7 +59,8 @@ export const ModelName = {
   Developer: 'Developer',
   Lead: 'Lead',
   Partner: 'Partner',
-  Admin: 'Admin'
+  Admin: 'Admin',
+  CmsPage: 'CmsPage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -189,6 +190,8 @@ export const DeveloperScalarFieldEnum = {
   nameEn: 'nameEn',
   description: 'description',
   descriptionEn: 'descriptionEn',
+  specialties: 'specialties',
+  notableProjects: 'notableProjects',
   isActive: 'isActive',
   logo: 'logo',
   website: 'website',
@@ -254,6 +257,19 @@ export const AdminScalarFieldEnum = {
 } as const
 
 export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
+
+
+export const CmsPageScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  content: 'content',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CmsPageScalarFieldEnum = (typeof CmsPageScalarFieldEnum)[keyof typeof CmsPageScalarFieldEnum]
 
 
 export const SortOrder = {

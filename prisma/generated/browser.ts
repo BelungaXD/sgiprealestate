@@ -62,3 +62,8 @@ export type Partner = Prisma.PartnerModel
  * 
  */
 export type Admin = Prisma.AdminModel
+/**
+ * Model CmsPage
+ * 
+ */
+export type CmsPage = Prisma.CmsPageModel

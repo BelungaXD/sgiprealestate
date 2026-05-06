@@ -25,6 +25,7 @@
     "totalProperties": "إجمالي العقارات",
     "activeListings": "القوائم النشطة",
     "totalViews": "إجمالي المشاهدات",
+    "leads": "العملاء المحتملون",
     "serverUsageWarning": "تحذير: مساحة الخادم ممتلئة بنسبة {{percent}}٪."
   },
   "developers": {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, Fragment } from 'react'
+import { useCallback, useEffect, useRef, useState, Fragment } from 'react'
 import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
 import {
@@ -8,7 +8,8 @@ import {
   MagnifyingGlassIcon,
   ArrowsUpDownIcon,
 } from '@heroicons/react/24/outline'
-import { convertToWebP } from './ImageUpload'
+import LogoImageEditor from './LogoImageEditor'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 type DeveloperRow = {
   id: string
@@ -18,6 +19,8 @@ type DeveloperRow = {
   logo: string | null
   description: string | null
   website: string | null
+  specialties: string[]
+  notableProjects: string[]
   isActive: boolean
   propertiesCount: number
 }
@@ -27,6 +30,8 @@ const emptyForm = {
   nameRu: '',
   description: '',
   website: '',
+  specialties: '',
+  notableProjects: '',
   logo: '' as string,
   isActive: true,
 }
@@ -41,6 +46,12 @@ export default function DevelopersAdminPanel() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [logoUploading, setLogoUploading] = useState(false)
+  const [logoEditorOpen, setLogoEditorOpen] = useState(false)
+  const [logoEditorImage, setLogoEditorImage] = useState('')
+  const [logoEditorFilename, setLogoEditorFilename] = useState('logo.webp')
+  const [selectedLogoName, setSelectedLogoName] = useState('')
+  const [logoRawSource, setLogoRawSource] = useState('')
+  const logoInputRef = useRef<HTMLInputElement | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -69,6 +80,8 @@ export default function DevelopersAdminPanel() {
   const openCreate = () => {
     setEditing(null)
     setForm(emptyForm)
+    setSelectedLogoName('')
+    setLogoRawSource('')
     setModalOpen(true)
   }
 
@@ -84,65 +97,63 @@ export default function DevelopersAdminPanel() {
       nameRu: ru,
       description: d.description || '',
       website: d.website || '',
+      specialties: Array.isArray(d.specialties) ? d.specialties.join('\n') : '',
+      notableProjects: Array.isArray(d.notableProjects) ? d.notableProjects.join('\n') : '',
       logo: d.logo || '',
       isActive: d.isActive,
     })
+    setSelectedLogoName('')
+    setLogoRawSource(d.logo || '')
     setModalOpen(true)
+  }
+
+  const uploadLogo = async (uploadData: string, uploadFilename: string) => {
+    setLogoUploading(true)
+    try {
+      const res = await fetch('/api/developers/upload-logo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ file: uploadData, filename: uploadFilename }),
+      })
+      const rawBody = await res.text()
+      let json: { url?: string; success?: boolean; message?: string } = {}
+      try {
+        json = rawBody ? JSON.parse(rawBody) : {}
+      } catch {
+        json = {}
+      }
+      if (res.ok && json.url) {
+        setForm((f) => ({ ...f, logo: json.url as string }))
+        return
+      }
+      throw new Error(json?.message || 'Logo upload failed')
+    } finally {
+      setLogoUploading(false)
+    }
   }
 
   const handleLogoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    // #region agent log
-    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H1',location:'src/components/admin/DevelopersAdminPanel.tsx:88',message:'Developer logo file selected',data:{name:file.name,size:file.size,type:file.type},timestamp:Date.now()})}).catch(()=>{})
-    // #endregion
+    setSelectedLogoName(file.name)
     const reader = new FileReader()
-    reader.onload = async () => {
-      setLogoUploading(true)
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H6',location:'src/components/admin/DevelopersAdminPanel.tsx:97',message:'Developer logo upload started',data:{filename:file.name},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
-      try {
-        let uploadData = reader.result as string
-        let uploadFilename = file.name
-        try {
-          uploadData = await convertToWebP(file)
-          uploadFilename = `${file.name.replace(/\.[^/.]+$/, '')}.webp`
-        } catch (conversionError) {
-          console.error('Developer logo conversion failed, fallback to original', conversionError)
-        }
-        const res = await fetch('/api/developers/upload-logo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'same-origin',
-          body: JSON.stringify({ file: uploadData, filename: uploadFilename }),
-        })
-        const rawBody = await res.text()
-        let json: { url?: string; success?: boolean; message?: string } = {}
-        try {
-          json = rawBody ? JSON.parse(rawBody) : {}
-        } catch {
-          json = {}
-        }
-        // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration3',hypothesisId:'H12',location:'src/components/admin/DevelopersAdminPanel.tsx:113',message:'Developer upload-logo raw response',data:{ok:res.ok,status:res.status,contentType:res.headers.get('content-type')||null,url:json?.url||null,success:json?.success??null,message:json?.message||null,bodyPreview:rawBody.slice(0,200)},timestamp:Date.now()})}).catch(()=>{})
-        // #endregion
-        if (res.ok && json.url) {
-          setForm((f) => ({ ...f, logo: json.url }))
-          return
-        }
-        alert(json?.message || 'Logo upload failed')
-      } catch (err) {
-        // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration3',hypothesisId:'H13',location:'src/components/admin/DevelopersAdminPanel.tsx:123',message:'Developer upload-logo request failed in catch',data:{error:err instanceof Error?err.message:'unknown'},timestamp:Date.now()})}).catch(()=>{})
-        // #endregion
-        console.error(err)
-        alert('Logo upload request failed')
-      } finally {
-        setLogoUploading(false)
-      }
+    reader.onload = () => {
+      const rawImage = reader.result as string
+      setLogoRawSource(rawImage)
+      setLogoEditorImage(rawImage)
+      setLogoEditorFilename(file.name)
+      setLogoEditorOpen(true)
     }
     reader.readAsDataURL(file)
+  }
+
+  const openEditorForCurrentLogo = () => {
+    if (!form.logo) return
+    const normalizedLogo = normalizeImageUrl(form.logo) || form.logo
+    setLogoEditorImage(logoRawSource || normalizedLogo)
+    setLogoEditorFilename(selectedLogoName || 'logo.webp')
+    setLogoEditorOpen(true)
   }
 
   const save = async () => {
@@ -164,6 +175,14 @@ export default function DevelopersAdminPanel() {
         nameRu: form.nameRu.trim() || null,
         description: form.description.trim() || null,
         website: form.website.trim() || null,
+        specialties: form.specialties
+          .split('\n')
+          .map((v) => v.trim())
+          .filter(Boolean),
+        notableProjects: form.notableProjects
+          .split('\n')
+          .map((v) => v.trim())
+          .filter(Boolean),
         logo: form.logo || null,
         isActive: form.isActive,
       }
@@ -384,12 +403,92 @@ export default function DevelopersAdminPanel() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Specialties (one per line)
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    value={form.specialties}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, specialties: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Notable Projects (one per line)
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    value={form.notableProjects}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, notableProjects: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Logo
                   </label>
-                  <input type="file" accept="image/*" onChange={handleLogoFile} />
-                  {form.logo && (
-                    <Image src={form.logo} alt="" width={160} height={64} className="mt-2 h-16 object-contain" unoptimized />
-                  )}
+                  <div className="rounded-xl border border-gray-200 p-4 bg-white space-y-3">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoFile}
+                      className="hidden"
+                    />
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="btn-filled btn-sm"
+                          onClick={() =>
+                            form.logo ? openEditorForCurrentLogo() : logoInputRef.current?.click()
+                          }
+                        >
+                          {form.logo ? 'Edit Photo' : 'Upload Logo'}
+                        </button>
+                        {form.logo && (
+                          <button
+                            type="button"
+                            className="btn-ghost btn-sm"
+                            onClick={() => {
+                              setForm((f) => ({ ...f, logo: '' }))
+                              setSelectedLogoName('')
+                              setLogoRawSource('')
+                              if (logoInputRef.current) logoInputRef.current.value = ''
+                            }}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <span className="text-xs text-gray-500 truncate max-w-[65%] text-right">
+                        {selectedLogoName || 'PNG, JPG, WEBP'}
+                      </span>
+                    </div>
+
+                    {form.logo ? (
+                      <div className="grid grid-cols-1 gap-3 items-center">
+                        <div className="h-24 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
+                          <Image
+                            src={form.logo}
+                            alt=""
+                            width={170}
+                            height={96}
+                            className="h-full w-full object-contain"
+                            unoptimized
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="h-24 rounded-lg border border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-sm text-gray-400">
+                        No logo uploaded
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <label className="flex items-center gap-2 text-sm">
                   <input
@@ -423,6 +522,22 @@ export default function DevelopersAdminPanel() {
           </div>
         </Dialog>
       </Transition>
+      <LogoImageEditor
+        isOpen={logoEditorOpen}
+        imageSrc={logoEditorImage}
+        filename={logoEditorFilename}
+        onCancel={() => setLogoEditorOpen(false)}
+        onApply={async (editedImageDataUrl, outputFilename) => {
+          try {
+            await uploadLogo(editedImageDataUrl, outputFilename)
+            // Next edit starts from the latest saved version, not the very first raw upload.
+            setLogoRawSource(editedImageDataUrl)
+            setLogoEditorOpen(false)
+          } catch (error) {
+            alert(error instanceof Error ? error.message : 'Logo upload failed')
+          }
+        }}
+      />
     </div>
   )
 }

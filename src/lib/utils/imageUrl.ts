@@ -1,4 +1,3 @@
-const baseUrl = typeof process !== 'undefined' ? (process.env.NEXT_PUBLIC_SITE_URL || '') : ''
 const isDevelopment = typeof process !== 'undefined' ? process.env.NODE_ENV === 'development' : false
 
 /**
@@ -22,8 +21,8 @@ export function normalizeImageUrl(url: string | null | undefined): string {
       return path
     }
     
-    // In production, use baseUrl if set, otherwise relative path
-    return baseUrl ? baseUrl.replace(/\/$/, '') + path : path
+    // Keep same-origin path in production to avoid broken logos on mismatched domains.
+    return path
   }
 
   // If using direct uploads path, convert to API endpoint and encode
@@ -37,8 +36,8 @@ export function normalizeImageUrl(url: string | null | undefined): string {
       return path
     }
     
-    // In production, use baseUrl if set, otherwise relative path
-    return baseUrl ? baseUrl.replace(/\/$/, '') + path : path
+    // Keep same-origin path in production to avoid broken logos on mismatched domains.
+    return path
   }
 
   // If it's an external URL, return as is
@@ -57,10 +56,7 @@ export function normalizeImageUrl(url: string | null | undefined): string {
     return url
   }
   
-  // In production, use baseUrl if set
-  if (baseUrl && url.startsWith('/')) {
-    return baseUrl.replace(/\/$/, '') + url
-  }
+  // Keep same-origin path in production for local assets.
   return url
 }
 

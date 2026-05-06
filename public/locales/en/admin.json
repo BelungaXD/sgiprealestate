@@ -25,6 +25,7 @@
     "totalProperties": "Total Properties",
     "activeListings": "Active Listings",
     "totalViews": "Total Views",
+    "leads": "Leads",
     "serverUsageWarning": "Warning: server storage is {{percent}}% full."
   },
   "developers": {

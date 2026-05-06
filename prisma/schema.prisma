@@ -159,6 +159,8 @@ model Developer {
   nameEn      String?
   description String?
   descriptionEn String?
+  specialties String[] @default([])
+  notableProjects String[] @default([])
   isActive    Boolean @default(true)
   logo        String?
   website     String?
@@ -248,6 +250,18 @@ model Admin {
   updatedAt DateTime @updatedAt
   
   @@map("admins")
+}
+
+model CmsPage {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  content     String?
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("cms_pages")
 }
 
 enum PropertyType {

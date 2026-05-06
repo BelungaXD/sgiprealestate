@@ -42,6 +42,8 @@ interface ApiDeveloper {
   slug: string
   website?: string
   marketShare?: number
+  specialties?: string[]
+  notableProjects?: string[]
 }
 
 const HARDCODED_DEVELOPERS: Developer[] = [
@@ -132,8 +134,8 @@ export default function Developers() {
             currency: 'AED',
             slug: dev.slug,
             website: dev.website || '',
-            specialties: [],
-            notableProjects: [],
+            specialties: Array.isArray(dev.specialties) ? dev.specialties : [],
+            notableProjects: Array.isArray(dev.notableProjects) ? dev.notableProjects : [],
             awards: [],
             rating: 5,
             marketShare: dev.marketShare || 0,

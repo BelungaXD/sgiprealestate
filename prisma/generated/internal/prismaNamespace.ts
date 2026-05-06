@@ -392,7 +392,8 @@ export const ModelName = {
   Developer: 'Developer',
   Lead: 'Lead',
   Partner: 'Partner',
-  Admin: 'Admin'
+  Admin: 'Admin',
+  CmsPage: 'CmsPage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "property" | "propertyImage" | "floorPlan" | "propertyFile" | "area" | "developer" | "lead" | "partner" | "admin"
+    modelProps: "property" | "propertyImage" | "floorPlan" | "propertyFile" | "area" | "developer" | "lead" | "partner" | "admin" | "cmsPage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1078,6 +1079,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CmsPage: {
+      payload: Prisma.$CmsPagePayload<ExtArgs>
+      fields: Prisma.CmsPageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CmsPageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CmsPageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>
+        }
+        findFirst: {
+          args: Prisma.CmsPageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CmsPageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>
+        }
+        findMany: {
+          args: Prisma.CmsPageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>[]
+        }
+        create: {
+          args: Prisma.CmsPageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>
+        }
+        createMany: {
+          args: Prisma.CmsPageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CmsPageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>[]
+        }
+        delete: {
+          args: Prisma.CmsPageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>
+        }
+        update: {
+          args: Prisma.CmsPageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>
+        }
+        deleteMany: {
+          args: Prisma.CmsPageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CmsPageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CmsPageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>[]
+        }
+        upsert: {
+          args: Prisma.CmsPageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CmsPagePayload>
+        }
+        aggregate: {
+          args: Prisma.CmsPageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCmsPage>
+        }
+        groupBy: {
+          args: Prisma.CmsPageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CmsPageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CmsPageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CmsPageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1228,6 +1303,8 @@ export const DeveloperScalarFieldEnum = {
   nameEn: 'nameEn',
   description: 'description',
   descriptionEn: 'descriptionEn',
+  specialties: 'specialties',
+  notableProjects: 'notableProjects',
   isActive: 'isActive',
   logo: 'logo',
   website: 'website',
@@ -1293,6 +1370,19 @@ export const AdminScalarFieldEnum = {
 } as const
 
 export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
+
+
+export const CmsPageScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  content: 'content',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CmsPageScalarFieldEnum = (typeof CmsPageScalarFieldEnum)[keyof typeof CmsPageScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1621,6 +1711,7 @@ export type GlobalOmitConfig = {
   lead?: Prisma.LeadOmit
   partner?: Prisma.PartnerOmit
   admin?: Prisma.AdminOmit
+  cmsPage?: Prisma.CmsPageOmit
 }
 
 /* Types for Logging */

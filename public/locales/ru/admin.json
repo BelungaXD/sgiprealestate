@@ -25,6 +25,7 @@
     "totalProperties": "Всего объектов",
     "activeListings": "Активные объявления",
     "totalViews": "Всего просмотров",
+    "leads": "Лиды",
     "serverUsageWarning": "Внимание: сервер заполнен на {{percent}}%."
   },
   "developers": {

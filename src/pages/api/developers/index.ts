@@ -33,6 +33,8 @@ const createDeveloperSchema = z.object({
   nameRu: z.string().optional().nullable(),
   description: z.string().max(20000).optional().nullable(),
   website: z.string().optional().nullable(),
+  specialties: z.array(z.string()).optional().default([]),
+  notableProjects: z.array(z.string()).optional().default([]),
   logo: z.string().optional().nullable(),
   isActive: z.boolean().optional().default(true),
 })
@@ -48,6 +50,8 @@ type DeveloperListRow = {
   descriptionEn: string | null
   city: string | null
   website: string | null
+  specialties?: string[]
+  notableProjects?: string[]
   isActive?: boolean
   _count: { properties: number }
 }
@@ -71,6 +75,50 @@ const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
     prismaError.code === 'P2022' &&
     (prismaError.meta?.column === 'developers.isActive' ||
       prismaError.message?.includes('developers.isActive'))
+  )
+}
+
+type ErrorWithCause = {
+  code?: string
+  message?: string
+  cause?: unknown
+  errors?: unknown[]
+}
+
+const collectErrorSignals = (error: unknown): { codes: Set<string>; messages: Set<string> } => {
+  const codes = new Set<string>()
+  const messages = new Set<string>()
+  const queue: unknown[] = [error]
+  const visited = new Set<unknown>()
+
+  while (queue.length) {
+    const current = queue.shift()
+    if (!current || typeof current !== 'object' || visited.has(current)) {
+      continue
+    }
+    visited.add(current)
+
+    const err = current as ErrorWithCause
+    if (typeof err.code === 'string' && err.code.trim()) codes.add(err.code)
+    if (typeof err.message === 'string' && err.message.trim()) messages.add(err.message)
+    if (err.cause) queue.push(err.cause)
+    if (Array.isArray(err.errors)) queue.push(...err.errors)
+  }
+
+  return { codes, messages }
+}
+
+const isDatabaseUnavailableError = (error: unknown): boolean => {
+  const { codes, messages } = collectErrorSignals(error)
+  const allMessages = Array.from(messages).join('\n')
+
+  return (
+    codes.has('P1001') ||
+    codes.has('ECONNREFUSED') ||
+    allMessages.includes('DATABASE_URL') ||
+    allMessages.includes("Can't reach database") ||
+    allMessages.includes('Environment variable not found') ||
+    allMessages.includes('ECONNREFUSED')
   )
 }
 
@@ -126,6 +174,8 @@ export default async function handler(
             descriptionEn: true,
             city: true,
             website: true,
+            specialties: true,
+            notableProjects: true,
             isActive: true,
             _count: {
               select: {
@@ -157,6 +207,8 @@ export default async function handler(
               descriptionEn: true,
               city: true,
               website: true,
+              specialties: true,
+              notableProjects: true,
               _count: {
                 select: {
                   properties: admin
@@ -206,6 +258,8 @@ export default async function handler(
           ? (dev as { isActive?: boolean }).isActive ?? true
           : true,
         logo: normalizeImageUrl(dev.logo),
+        specialties: Array.isArray(dev.specialties) ? dev.specialties : [],
+        notableProjects: Array.isArray(dev.notableProjects) ? dev.notableProjects : [],
         propertiesCount: statsByDeveloperId.get(dev.id)?.count ?? dev._count.properties,
         averagePrice: statsByDeveloperId.get(dev.id)?.avgPrice ?? 0,
         marketShare:
@@ -220,19 +274,18 @@ export default async function handler(
 
       return res.status(200).json({ developers: list })
     } catch (error: unknown) {
+      const { codes, messages } = collectErrorSignals(error)
       log.errorWithException('Error fetching developers', error)
-      const message = error instanceof Error ? error.message : ''
-      const code =
-        typeof error === 'object' && error !== null && 'code' in error
-          ? String((error as { code?: unknown }).code)
-          : undefined
-      if (
-        code === 'P1001' ||
-        message.includes('DATABASE_URL') ||
-        message.includes('Can\'t reach database')
-      ) {
+      if (process.env.NODE_ENV !== 'production') {
+        log.warn('Developers fetch DB error signals', {
+          codes: Array.from(codes),
+          messages: Array.from(messages),
+        })
+      }
+      if (isDatabaseUnavailableError(error)) {
         return res.status(200).json({ developers: [] })
       }
+      const message = error instanceof Error ? error.message : ''
       return res.status(500).json({
         message: 'Internal server error',
         error: process.env.NODE_ENV === 'development' ? message || undefined : undefined,
@@ -248,8 +301,11 @@ export default async function handler(
       const nameRu = parsed.nameRu?.trim() || ''
       const name = nameRu || nameEn
       let slug = generateSlug(nameEn)
+      if (!slug) {
+        slug = `developer-${Date.now()}`
+      }
       slug = await generateUniqueSlug(slug, async (s) => {
-        const ex = await prisma.developer.findUnique({
+        const ex = await prisma.developer.findFirst({
           where: { slug: s },
           select: { id: true },
         })
@@ -268,6 +324,8 @@ export default async function handler(
             name,
             nameEn,
             description: parsed.description?.trim() || null,
+            specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
+            notableProjects: parsed.notableProjects.map((v) => v.trim()).filter(Boolean),
             logo: parsed.logo || null,
             website,
             isActive: parsed.isActive ?? true,
@@ -284,6 +342,8 @@ export default async function handler(
               name,
               nameEn,
               description: parsed.description?.trim() || null,
+              specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
+              notableProjects: parsed.notableProjects.map((v) => v.trim()).filter(Boolean),
               logo: parsed.logo || null,
               website,
               slug,
@@ -299,7 +359,19 @@ export default async function handler(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, errors: error.issues })
       }
+      const { codes, messages } = collectErrorSignals(error)
       log.errorWithException('Error creating developer', error)
+      if (process.env.NODE_ENV !== 'production') {
+        log.warn('Create developer DB error signals', {
+          codes: Array.from(codes),
+          messages: Array.from(messages),
+        })
+      }
+      if (isDatabaseUnavailableError(error)) {
+        return res.status(503).json({
+          message: 'Database is unavailable. Start PostgreSQL and retry.',
+        })
+      }
       return res.status(500).json({
         message: error instanceof Error ? error.message : 'Internal server error',
       })

@@ -9,6 +9,8 @@ const updateDeveloperSchema = z.object({
   nameRu: z.string().optional().nullable(),
   description: z.string().max(20000).optional().nullable(),
   website: z.string().optional().nullable(),
+  specialties: z.array(z.string()).optional(),
+  notableProjects: z.array(z.string()).optional(),
   logo: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
 })
@@ -106,6 +108,12 @@ export default async function handler(
         nameEn,
         ...(parsed.description !== undefined && {
           description: parsed.description?.trim() || null,
+        }),
+        ...(parsed.specialties !== undefined && {
+          specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
+        }),
+        ...(parsed.notableProjects !== undefined && {
+          notableProjects: parsed.notableProjects.map((v) => v.trim()).filter(Boolean),
         }),
         ...(parsed.logo !== undefined && { logo: parsed.logo || null }),
         ...(website !== undefined && { website }),

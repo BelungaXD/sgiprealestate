@@ -66,6 +66,28 @@ interface DashboardProperty {
   [key: string]: unknown
 }
 
+interface AdminInquiry {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  message: string | null
+  source: string | null
+  page: string | null
+  status: string
+  notes: string | null
+  createdAt: string
+}
+
+interface AdminPage {
+  id: string
+  slug: string
+  title: string
+  content: string | null
+  isPublished: boolean
+  updatedAt: string
+}
+
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const { t } = useTranslation('admin')
   const [activeTab, setActiveTab] = useState('properties')
@@ -101,6 +123,21 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     password: '',
   })
   const [serverStorageUsagePercent, setServerStorageUsagePercent] = useState<number | null>(null)
+  const [inquiries, setInquiries] = useState<AdminInquiry[]>([])
+  const [inquiriesLoading, setInquiriesLoading] = useState(false)
+  const [inquiriesError, setInquiriesError] = useState('')
+  const [inquirySavingId, setInquirySavingId] = useState<string | null>(null)
+  const [pages, setPages] = useState<AdminPage[]>([])
+  const [pagesLoading, setPagesLoading] = useState(false)
+  const [pagesError, setPagesError] = useState('')
+  const [pagesSaving, setPagesSaving] = useState(false)
+  const [editingPageId, setEditingPageId] = useState<string | null>(null)
+  const [pageForm, setPageForm] = useState({
+    slug: '',
+    title: '',
+    content: '',
+    isPublished: true,
+  })
 
   const loadBrowse = useCallback(async (path: string | null) => {
     setBrowseLoading(true)
@@ -225,6 +262,53 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }, [t])
 
+  const loadInquiries = useCallback(async () => {
+    setInquiriesLoading(true)
+    setInquiriesError('')
+    try {
+      const response = await fetch('/api/admin/inquiries', { credentials: 'same-origin' })
+      const data = (await response.json().catch(() => ({}))) as {
+        ok?: boolean
+        inquiries?: AdminInquiry[]
+      }
+      if (!response.ok || !data.ok) {
+        throw new Error('Failed to load inquiries')
+      }
+      setInquiries(data.inquiries || [])
+    } catch (error) {
+      console.error('Error loading inquiries:', error)
+      setInquiriesError('Failed to load inquiries')
+      setInquiries([])
+    } finally {
+      setInquiriesLoading(false)
+    }
+  }, [])
+
+  const loadPages = useCallback(async () => {
+    setPagesLoading(true)
+    setPagesError('')
+    try {
+      const response = await fetch('/api/admin/pages', { credentials: 'same-origin' })
+      const data = (await response.json().catch(() => ({}))) as {
+        ok?: boolean
+        pages?: AdminPage[]
+        error?: string
+      }
+      if (!response.ok || !data.ok) {
+        setPages([])
+        setPagesError(data.error === 'unauthorized' ? 'Session expired. Please login again.' : 'Failed to load pages')
+        return
+      }
+      setPages(data.pages || [])
+    } catch (error) {
+      console.error('Error loading pages:', error)
+      setPagesError('Failed to load pages')
+      setPages([])
+    } finally {
+      setPagesLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     loadProperties()
   }, [loadProperties])
@@ -257,7 +341,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (activeTab === 'settings') {
       loadAdminUsers()
     }
-  }, [activeTab, loadAdminUsers])
+    if (activeTab === 'inquiries') {
+      loadInquiries()
+    }
+    if (activeTab === 'pages') {
+      loadPages()
+    }
+  }, [activeTab, loadAdminUsers, loadInquiries, loadPages])
 
   const statsData = [
     { name: t('dashboard.totalProperties'), value: stats.total.toString(), icon: BuildingOfficeIcon, color: 'text-blue-600' },
@@ -563,6 +653,116 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }
 
+  const handleUpdateInquiry = async (inquiryId: string, status: string, notes: string) => {
+    setInquirySavingId(inquiryId)
+    try {
+      const response = await fetch(`/api/admin/inquiries/${inquiryId}`, {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok || !data.ok) {
+        throw new Error('Failed to update inquiry')
+      }
+      await loadInquiries()
+    } catch (error) {
+      console.error('Error updating inquiry:', error)
+      alert('Failed to update inquiry')
+    } finally {
+      setInquirySavingId(null)
+    }
+  }
+
+  const handleDeleteInquiry = async (id: string) => {
+    if (!confirm('Delete this inquiry?')) return
+    setInquirySavingId(id)
+    try {
+      const response = await fetch(`/api/admin/inquiries/${id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok || !data.ok) {
+        throw new Error('Failed to delete inquiry')
+      }
+      await loadInquiries()
+    } catch (error) {
+      console.error('Error deleting inquiry:', error)
+      alert('Failed to delete inquiry')
+    } finally {
+      setInquirySavingId(null)
+    }
+  }
+
+  const resetPageForm = () => {
+    setEditingPageId(null)
+    setPageForm({ slug: '', title: '', content: '', isPublished: true })
+  }
+
+  const handleSavePage = async (e: FormEvent) => {
+    e.preventDefault()
+    setPagesSaving(true)
+    try {
+      const url = editingPageId ? `/api/admin/pages/${editingPageId}` : '/api/admin/pages'
+      const method = editingPageId ? 'PUT' : 'POST'
+      const response = await fetch(url, {
+        method,
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug: pageForm.slug.trim(),
+          title: pageForm.title.trim(),
+          content: pageForm.content.trim() || null,
+          isPublished: pageForm.isPublished,
+        }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok || !data.ok) {
+        if (response.status === 409) {
+          throw new Error('Page slug already exists')
+        }
+        throw new Error('Failed to save page')
+      }
+      await loadPages()
+      resetPageForm()
+    } catch (error) {
+      alert(getErrorMessage(error, 'Failed to save page'))
+    } finally {
+      setPagesSaving(false)
+    }
+  }
+
+  const handleEditPage = (page: AdminPage) => {
+    setEditingPageId(page.id)
+    setPageForm({
+      slug: page.slug,
+      title: page.title,
+      content: page.content || '',
+      isPublished: page.isPublished,
+    })
+  }
+
+  const handleDeletePage = async (id: string) => {
+    if (!confirm('Delete this page?')) return
+    setPagesSaving(true)
+    try {
+      const response = await fetch(`/api/admin/pages/${id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok || !data.ok) throw new Error('Failed to delete page')
+      await loadPages()
+      if (editingPageId === id) resetPageForm()
+    } catch (error) {
+      alert(getErrorMessage(error, 'Failed to delete page'))
+    } finally {
+      setPagesSaving(false)
+    }
+  }
+
   const tabs = [
     { id: 'properties', name: t('dashboard.properties'), icon: BuildingOfficeIcon },
     { id: 'areas', name: t('dashboard.areas'), icon: MapPinIcon },
@@ -805,16 +1005,195 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           )}
 
           {activeTab === 'pages' && (
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-graphite mb-4">{t('pages.title')}</h2>
-              <p className="text-gray-600">{t('pages.comingSoon')}</p>
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-graphite mb-4">Pages</h2>
+                <form onSubmit={handleSavePage} className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      required
+                      value={pageForm.slug}
+                      onChange={(e) => setPageForm((prev) => ({ ...prev, slug: e.target.value }))}
+                      placeholder="Slug (e.g. about-us)"
+                      className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    />
+                    <input
+                      type="text"
+                      required
+                      value={pageForm.title}
+                      onChange={(e) => setPageForm((prev) => ({ ...prev, title: e.target.value }))}
+                      placeholder="Page title"
+                      className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                    />
+                  </div>
+                  <textarea
+                    rows={5}
+                    value={pageForm.content}
+                    onChange={(e) => setPageForm((prev) => ({ ...prev, content: e.target.value }))}
+                    placeholder="Page content"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  />
+                  <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={pageForm.isPublished}
+                      onChange={(e) =>
+                        setPageForm((prev) => ({ ...prev, isPublished: e.target.checked }))
+                      }
+                    />
+                    Published
+                  </label>
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={pagesSaving} className="btn-filled btn-sm">
+                      {pagesSaving ? 'Saving…' : editingPageId ? 'Update Page' : 'Create Page'}
+                    </button>
+                    {editingPageId && (
+                      <button type="button" onClick={resetPageForm} className="btn-ghost btn-sm">
+                        Cancel Edit
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-base font-semibold text-graphite">Saved Pages</h3>
+                </div>
+                {pagesError && <p className="px-6 py-3 text-sm text-red-600">{pagesError}</p>}
+                {pagesLoading ? (
+                  <p className="p-6 text-sm text-gray-500">Loading pages…</p>
+                ) : pages.length === 0 ? (
+                  <p className="p-6 text-sm text-gray-500">No pages yet</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Slug
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Title
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {pages.map((page) => (
+                          <tr key={page.id}>
+                            <td className="px-6 py-4 text-sm text-gray-700">{page.slug}</td>
+                            <td className="px-6 py-4 text-sm text-gray-700">{page.title}</td>
+                            <td className="px-6 py-4 text-sm">
+                              {page.isPublished ? 'Published' : 'Draft'}
+                            </td>
+                            <td className="px-6 py-4 text-sm">
+                              <div className="flex gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditPage(page)}
+                                  className="text-yellow-700 hover:text-yellow-900"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeletePage(page.id)}
+                                  className="text-red-600 hover:text-red-900"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           {activeTab === 'inquiries' && (
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-graphite mb-4">{t('inquiries.title')}</h2>
-              <p className="text-gray-600">{t('inquiries.comingSoon')}</p>
+            <div className="bg-white rounded-lg shadow-sm">
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-graphite">Inquiries</h2>
+                <button onClick={loadInquiries} className="btn-outline btn-sm">
+                  Refresh
+                </button>
+              </div>
+              {inquiriesError && <p className="px-6 py-3 text-sm text-red-600">{inquiriesError}</p>}
+              {inquiriesLoading ? (
+                <p className="p-6 text-sm text-gray-500">Loading inquiries…</p>
+              ) : inquiries.length === 0 ? (
+                <p className="p-6 text-sm text-gray-500">No inquiries found.</p>
+              ) : (
+                <div className="space-y-4 p-6">
+                  {inquiries.map((inquiry) => (
+                    <div key={inquiry.id} className="rounded-lg border border-gray-200 p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="text-sm font-semibold text-graphite">{inquiry.name}</h3>
+                          <p className="text-xs text-gray-500">
+                            {inquiry.email}
+                            {inquiry.phone ? ` • ${inquiry.phone}` : ''}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {new Date(inquiry.createdAt).toLocaleString()} • {inquiry.source || 'web'} •{' '}
+                            {inquiry.page || 'unknown page'}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="text-xs text-red-600 hover:text-red-900"
+                          disabled={inquirySavingId === inquiry.id}
+                          onClick={() => handleDeleteInquiry(inquiry.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                      {inquiry.message && (
+                        <p className="text-sm text-gray-700 whitespace-pre-wrap">{inquiry.message}</p>
+                      )}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <select
+                          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                          value={inquiry.status}
+                          onChange={(e) =>
+                            handleUpdateInquiry(inquiry.id, e.target.value, inquiry.notes || '')
+                          }
+                          disabled={inquirySavingId === inquiry.id}
+                        >
+                          <option value="NEW">NEW</option>
+                          <option value="CONTACTED">CONTACTED</option>
+                          <option value="QUALIFIED">QUALIFIED</option>
+                          <option value="PROPOSAL">PROPOSAL</option>
+                          <option value="NEGOTIATION">NEGOTIATION</option>
+                          <option value="CLOSED_WON">CLOSED_WON</option>
+                          <option value="CLOSED_LOST">CLOSED_LOST</option>
+                        </select>
+                        <input
+                          type="text"
+                          defaultValue={inquiry.notes || ''}
+                          placeholder="Notes"
+                          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                          onBlur={(e) =>
+                            handleUpdateInquiry(inquiry.id, inquiry.status, e.target.value)
+                          }
+                          disabled={inquirySavingId === inquiry.id}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

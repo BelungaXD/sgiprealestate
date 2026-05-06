@@ -26,7 +26,7 @@ export default async function handler(
   // GET - Fetch developer
   if (req.method === 'GET') {
     try {
-      const developer = await prisma.developer.findUnique({
+      const developer = await prisma.developer.findFirst({
         where: { slug },
         select: {
           id: true,
@@ -115,10 +115,19 @@ export default async function handler(
         updateData.city = body.city
       }
 
-      const developer = await prisma.developer.update({
+      const updated = await prisma.developer.updateMany({
         where: { slug },
         data: updateData,
       })
+      if (updated.count === 0) {
+        return res.status(404).json({ message: 'Developer not found' })
+      }
+      const developer = await prisma.developer.findFirst({
+        where: { slug },
+      })
+      if (!developer) {
+        return res.status(404).json({ message: 'Developer not found' })
+      }
 
       return res.status(200).json({ developer })
     } catch (error: unknown) {
