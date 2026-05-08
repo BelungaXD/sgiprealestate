@@ -158,6 +158,11 @@ export default async function handler(
 
     // Check if file exists locally, if not try to proxy from server
     if (!existsSync(filePath)) {
+      if (decodedPath[0] === 'developers') {
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H4',location:'src/pages/api/uploads/[...path].ts:162',message:'Developers logo missing in uploads API',data:{decodedPath:decodedPath.join('/'),filePath},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
+      }
       // #region agent log
       fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b06bc3'},body:JSON.stringify({sessionId:'b06bc3',runId:'initial',hypothesisId:'H5',location:'src/pages/api/uploads/[...path].ts:161',message:'Upload file missing locally',data:{decodedPath:decodedPath.join('/'),filePath},timestamp:Date.now()})}).catch(()=>{});
       // #endregion
@@ -206,6 +211,11 @@ export default async function handler(
     const ext = decodedPath[decodedPath.length - 1].split('.').pop()?.toLowerCase()
     const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext || '')
     const isVideo = ['mp4', 'mov', 'avi', 'webm', 'mkv', 'm4v', 'mpg', 'mpeg', '3gp', 'wmv'].includes(ext || '')
+    if (decodedPath[0] === 'developers') {
+      // #region agent log
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H5',location:'src/pages/api/uploads/[...path].ts:211',message:'Developers logo found in uploads API',data:{decodedPath:decodedPath.join('/'),ext:fileSize?ext||'':ext||'',fileSize},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    }
 
     let outputBuffer: Buffer
     let contentType: string

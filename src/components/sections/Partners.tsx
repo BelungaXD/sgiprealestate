@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
+import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 
 interface Partner {
   id: string
@@ -33,12 +34,19 @@ export default function Partners() {
       website: 'https://www.sobha.com',
     },
   ]
+  const normalizedFallbackPartners = fallbackPartners.map((partner) => ({
+    ...partner,
+    logo: normalizeImageUrl(partner.logo),
+  }))
 
   useEffect(() => {
     const loadPartners = async () => {
       try {
         const response = await fetch('/api/developers')
         const data = await response.json()
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H1',location:'src/components/sections/Partners.tsx:46',message:'Home partners API payload logos',data:{count:Array.isArray(data?.developers)?data.developers.length:0,sample:(Array.isArray(data?.developers)?data.developers:[]).slice(0,8).map((d:{slug?:string;logo?:string|null})=>({slug:d?.slug||'',logo:d?.logo||''}))},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         const apiPartners: Partner[] = Array.isArray(data?.developers)
           ? data.developers.map((developer: {
               id: string
@@ -51,14 +59,17 @@ export default function Partners() {
               id: developer.id,
               slug: developer.slug,
               name: developer.nameEn || developer.name,
-              logo: developer.logo || '',
+              logo: normalizeImageUrl(developer.logo || ''),
               website: developer.website || undefined,
             }))
           : []
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H2',location:'src/components/sections/Partners.tsx:63',message:'Home partners normalized logo URLs',data:{count:apiPartners.length,sample:apiPartners.slice(0,8).map((p)=>({slug:p.slug,logo:p.logo}))},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
 
-        setPartners(apiPartners.length > 0 ? apiPartners : fallbackPartners)
+        setPartners(apiPartners.length > 0 ? apiPartners : normalizedFallbackPartners)
       } catch {
-        setPartners(fallbackPartners)
+        setPartners(normalizedFallbackPartners)
       }
     }
 
@@ -94,27 +105,41 @@ export default function Partners() {
                   className="flex items-center justify-center p-4 bg-white rounded-lg shadow-xs hover:shadow-md transition-all duration-300 hover:scale-105 w-full h-full"
                 >
                   <div className="w-full h-20 flex items-center justify-center">
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={120}
-                      height={80}
-                      sizes="(max-width: 768px) 45vw, 120px"
-                      className="max-w-full max-h-full object-contain"
-                    />
+                    {partner.logo ? (
+                      <Image
+                        src={partner.logo}
+                        alt={partner.name}
+                        width={120}
+                        height={80}
+                        sizes="(max-width: 768px) 45vw, 120px"
+                        className="max-w-full max-h-full object-contain"
+                        onError={() => {
+                          // #region agent log
+                          fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H3',location:'src/components/sections/Partners.tsx:111',message:'Home partner logo failed to load',data:{slug:partner.slug,name:partner.name,logo:partner.logo},timestamp:Date.now()})}).catch(()=>{});
+                          // #endregion
+                        }}
+                      />
+                    ) : null}
                   </div>
                 </a>
               ) : (
                 <div className="flex items-center justify-center p-4 bg-white rounded-lg shadow-xs hover:shadow-md transition-all duration-300 hover:scale-105 w-full h-full">
                   <div className="w-full h-20 flex items-center justify-center">
-                    <Image
-                      src={partner.logo}
-                      alt={partner.name}
-                      width={120}
-                      height={80}
-                      sizes="(max-width: 768px) 45vw, 120px"
-                      className="max-w-full max-h-full object-contain"
-                    />
+                    {partner.logo ? (
+                      <Image
+                        src={partner.logo}
+                        alt={partner.name}
+                        width={120}
+                        height={80}
+                        sizes="(max-width: 768px) 45vw, 120px"
+                        className="max-w-full max-h-full object-contain"
+                        onError={() => {
+                          // #region agent log
+                          fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H3',location:'src/components/sections/Partners.tsx:132',message:'Home partner logo failed to load (no website)',data:{slug:partner.slug,name:partner.name,logo:partner.logo},timestamp:Date.now()})}).catch(()=>{});
+                          // #endregion
+                        }}
+                      />
+                    ) : null}
                   </div>
                 </div>
               )}
