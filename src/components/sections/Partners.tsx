@@ -38,6 +38,9 @@ export default function Partners() {
     ...partner,
     logo: normalizeImageUrl(partner.logo),
   }))
+  const fallbackBySlug = new Map(
+    normalizedFallbackPartners.map((partner) => [partner.slug, partner])
+  )
 
   useEffect(() => {
     const loadPartners = async () => {
@@ -59,7 +62,9 @@ export default function Partners() {
               id: developer.id,
               slug: developer.slug,
               name: developer.nameEn || developer.name,
-              logo: normalizeImageUrl(developer.logo || ''),
+              logo: normalizeImageUrl(
+                developer.logo || fallbackBySlug.get(developer.slug)?.logo || ''
+              ),
               website: developer.website || undefined,
             }))
           : []
