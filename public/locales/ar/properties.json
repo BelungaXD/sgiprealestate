@@ -51,7 +51,10 @@
     "townhouse": "تاون هاوس",
     "penthouse": "بنتهاوس",
     "studio": "استوديو",
-    "office": "مكتب"
+    "office": "مكتب",
+    "retail": "تجزئة",
+    "warehouse": "مستودع",
+    "land": "أرض"
   }
 }
 

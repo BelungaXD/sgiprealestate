@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRightIcon, MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
+import { translatePropertyType } from '@/lib/translatePropertyType'
 
 interface FeaturedProperty {
   id: string
@@ -81,7 +82,7 @@ export default function FeaturedProperties({ initialProperties = [] }: FeaturedP
                       : tProps('primary', 'Primary')}
                   </span>
                   <span className="bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {property.type}
+                    {translatePropertyType(property.type, tProps)}
                   </span>
                 </div>
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-xs text-graphite px-3 py-1 rounded-full text-sm font-semibold">

@@ -89,7 +89,7 @@ export default function Header() {
           </nav>
 
           {/* CTA and Language Switcher */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden lg:flex items-center gap-3">
             <LanguageSwitcher />
             <Link
               href="/contact"
@@ -101,7 +101,7 @@ export default function Header() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center space-x-2">
+          <div className="lg:hidden flex items-center gap-2 max-w-[55vw]">
             <LanguageSwitcher />
             <button
               type="button"

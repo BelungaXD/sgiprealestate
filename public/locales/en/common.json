@@ -10,7 +10,9 @@
     "contact": "Contact",
     "getQuote": "Get Quote",
     "companyName": "Real Estate",
-    "toggleMenu": "Toggle navigation menu"
+    "toggleMenu": "Toggle navigation menu",
+    "googleTranslateLabel": "Translate full page with Google",
+    "googleTranslateButton": "Google page translate"
   },
   "footer": {
     "description": "Your trusted partner in luxury real estate across UAE. We provide exceptional service and expertise in premium property investments.",

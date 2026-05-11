@@ -4,7 +4,9 @@ import { propertySchema } from '@/lib/validations/property'
 import { resolveUpdatePropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
+import { regenerateGridListingThumbnailForImageUrl } from '@/lib/regeneratePropertyGridThumbnail'
 import { createScopedLogger } from '@/lib/logger'
+import { generateLocalizedMetaIfMissing } from '@/lib/propertyMetaAutogen'
 
 const log = createScopedLogger('api/properties/[id]')
 
@@ -117,6 +119,8 @@ export default async function handler(
           property: {
             id,
             ...req.body,
+            isPublished: true,
+            isFeatured: false,
             updatedAt: new Date().toISOString(),
           },
         })
@@ -241,10 +245,41 @@ export default async function handler(
       if (listingMarket === 'SECONDARY') {
         developerId = null
       }
+      const generatedMeta = generateLocalizedMetaIfMissing(
+        {
+          title: validatedData.title,
+          titleRu: validatedData.titleRu,
+          titleAr: validatedData.titleAr,
+          description: validatedData.description,
+          descriptionRu: validatedData.descriptionRu,
+          descriptionAr: validatedData.descriptionAr,
+          type: validatedData.type,
+          city: validatedData.city,
+          district: validatedData.district,
+          features: validatedData.features,
+          featuresRu: validatedData.featuresRu,
+          featuresAr: validatedData.featuresAr,
+          amenities: validatedData.amenities,
+          amenitiesRu: validatedData.amenitiesRu,
+          amenitiesAr: validatedData.amenitiesAr,
+        },
+        {
+          metaTitle: validatedData.metaTitle,
+          metaTitleRu: validatedData.metaTitleRu,
+          metaTitleAr: validatedData.metaTitleAr,
+          metaDescription: validatedData.metaDescription,
+          metaDescriptionRu: validatedData.metaDescriptionRu,
+          metaDescriptionAr: validatedData.metaDescriptionAr,
+        }
+      )
 
       const updateData: Record<string, unknown> = {
         title: validatedData.title,
+        titleRu: validatedData.titleRu?.trim() || null,
+        titleAr: validatedData.titleAr?.trim() || null,
         description: validatedData.description ?? null,
+        descriptionRu: validatedData.descriptionRu?.trim() || null,
+        descriptionAr: validatedData.descriptionAr?.trim() || null,
         type: validatedData.type || 'APARTMENT',
         listingMarket: listingMarket,
         price: validatedData.price,
@@ -275,12 +310,20 @@ export default async function handler(
         developerId: developerId,
         googleMapsUrl: validatedData.googleMapsUrl,
         features: validatedData.features || [],
+        featuresRu: validatedData.featuresRu || [],
+        featuresAr: validatedData.featuresAr || [],
         amenities: validatedData.amenities || [],
+        amenitiesRu: validatedData.amenitiesRu || [],
+        amenitiesAr: validatedData.amenitiesAr || [],
         slug,
-        metaTitle: validatedData.metaTitle || null,
-        metaDescription: validatedData.metaDescription || null,
-        isPublished: validatedData.isPublished,
-        isFeatured: validatedData.isFeatured,
+        metaTitle: generatedMeta.metaTitle || null,
+        metaTitleRu: generatedMeta.metaTitleRu || null,
+        metaTitleAr: generatedMeta.metaTitleAr || null,
+        metaDescription: generatedMeta.metaDescription || null,
+        metaDescriptionRu: generatedMeta.metaDescriptionRu || null,
+        metaDescriptionAr: generatedMeta.metaDescriptionAr || null,
+        isPublished: true,
+        isFeatured: false,
       }
 
       if (Object.prototype.hasOwnProperty.call(body, 'coordinates')) {
@@ -324,6 +367,17 @@ export default async function handler(
             await prisma.propertyImage.createMany({
               data: imageData,
             })
+            const mainUrl = imageData[0]?.url
+            if (mainUrl) {
+              try {
+                await regenerateGridListingThumbnailForImageUrl(mainUrl)
+              } catch (thumbError: unknown) {
+                log.warn('Cover grid thumbnail not regenerated', {
+                  id,
+                  error: thumbError instanceof Error ? thumbError.message : String(thumbError),
+                })
+              }
+            }
           }
         }
       }

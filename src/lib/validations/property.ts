@@ -72,9 +72,21 @@ const optionalYear = z.preprocess(
 export const propertySchema = z
   .object({
     title: z.string().max(200).optional().default(''),
+    titleRu: z.string().max(200).optional().nullable(),
+    titleAr: z.string().max(200).optional().nullable(),
     description: z
       .string()
       .max(5000, 'Description is too long')
+      .optional()
+      .nullable(),
+    descriptionRu: z
+      .string()
+      .max(5000, 'Russian description is too long')
+      .optional()
+      .nullable(),
+    descriptionAr: z
+      .string()
+      .max(5000, 'Arabic description is too long')
       .optional()
       .nullable(),
     type: PropertyTypeEnum.optional(),
@@ -147,13 +159,21 @@ export const propertySchema = z
       }),
 
     features: z.array(z.string()).default([]),
+    featuresRu: z.array(z.string()).default([]),
+    featuresAr: z.array(z.string()).default([]),
     amenities: z.array(z.string()).default([]),
+    amenitiesRu: z.array(z.string()).default([]),
+    amenitiesAr: z.array(z.string()).default([]),
 
     slug: z.string().max(200).optional().default(''),
     metaTitle: z.string().max(200).optional().nullable(),
+    metaTitleRu: z.string().max(200).optional().nullable(),
+    metaTitleAr: z.string().max(200).optional().nullable(),
     metaDescription: z.string().max(2000).optional().nullable(),
+    metaDescriptionRu: z.string().max(2000).optional().nullable(),
+    metaDescriptionAr: z.string().max(2000).optional().nullable(),
 
-    isPublished: z.boolean().default(false),
+    isPublished: z.boolean().default(true),
     isFeatured: z.boolean().default(false),
   })
 

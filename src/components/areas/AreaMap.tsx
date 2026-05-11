@@ -1,4 +1,5 @@
 import { useTranslation } from 'next-i18next/pages'
+import { translatePropertyType } from '@/lib/translatePropertyType'
 import { 
   MapPinIcon,
   HomeIcon,
@@ -20,6 +21,7 @@ interface AreaMapProps {
 
 export default function AreaMap({ areaName, coordinates, properties = [] }: AreaMapProps) {
   const { t } = useTranslation('areas')
+  const { t: tProps } = useTranslation('properties')
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
@@ -115,7 +117,7 @@ export default function AreaMap({ areaName, coordinates, properties = [] }: Area
                     {property.title}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {property.type}
+                    {translatePropertyType(property.type, tProps)}
                   </div>
                 </div>
                 <div className="text-right">

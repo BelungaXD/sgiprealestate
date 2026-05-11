@@ -33,6 +33,8 @@ jest.mock('next-i18next/pages', () => ({
         'nav.aboutUs': 'About Us',
         'nav.contact': 'Contact',
         'nav.getQuote': 'Get Quote',
+        'nav.googleTranslateButton': 'Google page translate',
+        'nav.googleTranslateLabel': 'Translate full page with Google',
       }
       return translations[key] || key
     },

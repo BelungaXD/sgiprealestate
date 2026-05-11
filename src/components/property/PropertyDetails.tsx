@@ -1,6 +1,8 @@
 import { useTranslation } from 'next-i18next/pages'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
+import { resolvePropertyTagI18nKey } from '@/lib/propertyTagAliases'
 import {
   HomeIcon,
   WrenchScrewdriverIcon,
@@ -46,7 +48,21 @@ interface PropertyDetailsProps {
 export default function PropertyDetails({ property }: PropertyDetailsProps) {
   const { t } = useTranslation('property')
   const { t: tProps } = useTranslation('properties')
+  const router = useRouter()
   const isSecondary = property.listingMarket === 'SECONDARY'
+  const locale = router.locale || 'en'
+
+  const displayTag = (label: string) => {
+    const key = resolvePropertyTagI18nKey(label)
+    return key ? t(key) : label
+  }
+
+  const areaNum = Number(property.area)
+  const areaDisplay = `${(Number.isFinite(areaNum) ? areaNum : 0).toLocaleString(locale)}\u00A0${t('areaUnit')}`
+  const parkingNum = typeof property.parking === 'number' && Number.isFinite(property.parking) ? property.parking : 0
+  const parkingDisplay = `${parkingNum}\u00A0${t('parkingSuffix')}`
+  const yearDisplay =
+    property.yearBuilt != null && property.yearBuilt > 0 ? String(property.yearBuilt) : t('yearUnavailable')
 
   return (
     <div className="space-y-8">
@@ -63,7 +79,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
       {/* Key Details - Grid of 6 cards */}
       <div>
         <h3 className="text-2xl font-bold text-graphite mb-6">
-          Key Details
+          {t('keyDetails')}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {/* Bedrooms */}
@@ -72,7 +88,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
               <HomeIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
-              <div className="text-xs text-gray-600 font-medium mb-1">Bedrooms</div>
+              <div className="text-xs text-gray-600 font-medium mb-1">{t('bedrooms')}</div>
               <div className="text-lg font-bold text-graphite">{property.bedrooms}</div>
             </div>
           </div>
@@ -83,7 +99,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
               <WrenchScrewdriverIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
-              <div className="text-xs text-gray-600 font-medium mb-1">Bathrooms</div>
+              <div className="text-xs text-gray-600 font-medium mb-1">{t('bathrooms')}</div>
               <div className="text-lg font-bold text-graphite">{property.bathrooms}</div>
             </div>
           </div>
@@ -94,8 +110,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
               <Square3Stack3DIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
-              <div className="text-xs text-gray-600 font-medium mb-1">Area</div>
-              <div className="text-lg font-bold text-graphite">{property.area.toLocaleString()} m²</div>
+              <div className="text-xs text-gray-600 font-medium mb-1">{t('area')}</div>
+              <div className="text-lg font-bold text-graphite">{areaDisplay}</div>
             </div>
           </div>
 
@@ -105,8 +121,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
               <CalendarIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
-              <div className="text-xs text-gray-600 font-medium mb-1">Year Built</div>
-              <div className="text-lg font-bold text-graphite">{property.yearBuilt || 'N/A'}</div>
+              <div className="text-xs text-gray-600 font-medium mb-1">{t('yearBuilt')}</div>
+              <div className="text-lg font-bold text-graphite">{yearDisplay}</div>
             </div>
           </div>
 
@@ -116,8 +132,8 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
               <MapPinIcon className="h-6 w-6 text-champagne transition-colors duration-300 group-hover:text-white" />
             </div>
             <div>
-              <div className="text-xs text-gray-600 font-medium mb-1">Parking</div>
-              <div className="text-lg font-bold text-graphite">{property.parking} spaces</div>
+              <div className="text-xs text-gray-600 font-medium mb-1">{t('parking')}</div>
+              <div className="text-lg font-bold text-graphite">{parkingDisplay}</div>
             </div>
           </div>
 
@@ -130,7 +146,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
                 <div className="relative w-12 h-12 shrink-0">
                   <Image
                     src={property.developerLogo}
-                    alt=""
+                    alt={property.developer}
                     fill
                     sizes="48px"
                     className="object-contain"
@@ -145,7 +161,7 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
                 </div>
               )}
               <div>
-                <div className="text-xs text-gray-600 font-medium mb-1">Developer</div>
+                <div className="text-xs text-gray-600 font-medium mb-1">{t('developer')}</div>
                 <div className="text-lg font-bold text-graphite truncate">{property.developer}</div>
               </div>
             </Link>
@@ -192,7 +208,9 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
                     <div className="mt-0.5 shrink-0">
                       <CheckIcon className="h-5 w-5 text-champagne group-hover:scale-110 transition-transform" />
                     </div>
-                    <span className="text-gray-700 group-hover:text-graphite transition-colors">{feature}</span>
+                    <span className="text-gray-700 group-hover:text-graphite transition-colors">
+                      {displayTag(feature)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -211,7 +229,9 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
                     <div className="mt-0.5 shrink-0">
                       <CheckIcon className="h-5 w-5 text-champagne group-hover:scale-110 transition-transform" />
                     </div>
-                    <span className="text-gray-700 group-hover:text-graphite transition-colors">{amenity}</span>
+                    <span className="text-gray-700 group-hover:text-graphite transition-colors">
+                      {displayTag(amenity)}
+                    </span>
                   </div>
                 ))}
               </div>

@@ -14,8 +14,13 @@ datasource db {
 
 model Property {
   id          String   @id @default(cuid())
+  /// Default / English (site fallback locale)
   title       String   @default("")
   description String?
+  titleRu     String?
+  titleAr     String?
+  descriptionRu String? @db.Text
+  descriptionAr String? @db.Text
   price       Float    @default(0)
   currency    String   @default("AED")
   type        PropertyType
@@ -56,7 +61,11 @@ model Property {
   
   // Features
   features    String[]
+  featuresRu  String[] @default([])
+  featuresAr  String[] @default([])
   amenities   String[]
+  amenitiesRu String[] @default([])
+  amenitiesAr String[] @default([])
   
   // Relations
   leads       Lead[]
@@ -65,15 +74,19 @@ model Property {
   slug        String @unique
   metaTitle   String?
   metaDescription String?
-  
+  metaTitleRu       String?
+  metaTitleAr       String?
+  metaDescriptionRu String? @db.Text
+  metaDescriptionAr String? @db.Text
+
   // Timestamps
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Admin
   isPublished Boolean @default(false)
   isFeatured  Boolean @default(false)
-  
+
   @@map("properties")
 }
 

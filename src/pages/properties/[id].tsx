@@ -2,7 +2,8 @@ import { GetServerSideProps } from 'next'
 import { useTranslation } from 'next-i18next/pages'
 import { serverSideTranslations } from 'next-i18next/pages/serverSideTranslations'
 import Head from 'next/head'
-import { useState, useRef } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
+import { useRouter } from 'next/router'
 import Layout from '@/components/layout/Layout'
 import PropertyGallery from '@/components/property/PropertyGallery'
 import PropertyDetails from '@/components/property/PropertyDetails'
@@ -10,7 +11,13 @@ import PropertyContactForm from '@/components/property/PropertyContactForm'
 import PropertyFiles from '@/components/property/PropertyFiles'
 import RelatedProperties from '@/components/property/RelatedProperties'
 import { prisma } from '@/lib/prisma'
+import { translatePropertyType } from '@/lib/translatePropertyType'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
+import { PROPERTY_I18N_BUNDLES } from '@/lib/propertyI18nBundles'
+import {
+  localizedPropertyContent,
+  localizedSeoTitleDescription,
+} from '@/lib/propertyLocaleContent'
 import { 
   MapPinIcon, 
   HomeIcon, 
@@ -24,6 +31,9 @@ interface Property {
   slug: string
   title: string
   description: string
+  /** `<title>` / og tags (meta when set, else title/description) */
+  headTitle: string
+  headDescription: string
   price: number
   currency: string
   type: string
@@ -44,7 +54,11 @@ interface Property {
     url: string
   }>
   features: string[]
+  featuresRu?: string[]
+  featuresAr?: string[]
   amenities: string[]
+  amenitiesRu?: string[]
+  amenitiesAr?: string[]
   yearBuilt: number
   completionDate: string
   paymentPlan: string
@@ -78,10 +92,20 @@ interface PropertyDetailProps {
 }
 
 export default function PropertyDetail({ property }: PropertyDetailProps) {
+  const router = useRouter()
   const { t } = useTranslation('property')
   const { t: tProps } = useTranslation('properties')
+  const { i18n } = useTranslation('common')
   const [activeTab, setActiveTab] = useState('overview')
   const tabsSectionRef = useRef<HTMLDivElement>(null)
+
+  /** next-i18next may skip re-adding an existing `property` NS; a partial bundle then breaks flat/nested keys. */
+  useLayoutEffect(() => {
+    const lng = router.locale || 'en'
+    const pack =
+      lng === 'ru' || lng === 'ar' ? PROPERTY_I18N_BUNDLES[lng] : PROPERTY_I18N_BUNDLES.en
+    i18n.addResourceBundle(lng, 'property', pack as Record<string, unknown>, true, true)
+  }, [i18n, router.locale])
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
@@ -100,11 +124,11 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
   return (
     <>
       <Head>
-        <title>{property.title} | SGIP Real Estate</title>
-        <meta name="description" content={property.description} />
+        <title>{property.headTitle} | SGIP Real Estate</title>
+        <meta name="description" content={property.headDescription} />
         <link rel="canonical" href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/properties/${property.slug}`} />
-        <meta property="og:title" content={property.title} />
-        <meta property="og:description" content={property.description} />
+        <meta property="og:title" content={property.headTitle} />
+        <meta property="og:description" content={property.headDescription} />
         <meta property="og:image" content={property.images[0]} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://sgipreal.com'}/properties/${property.slug}`} />
@@ -151,7 +175,7 @@ export default function PropertyDetail({ property }: PropertyDetailProps) {
                     : tProps('primary', 'Primary')}
                 </span>
                 <span className="bg-champagne text-white px-4 py-1.5 rounded-full text-sm font-semibold">
-                  {property.type}
+                  {translatePropertyType(property.type, tProps)}
                 </span>
                 {property.isFeatured && (
                   <span className="bg-red-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold">
@@ -399,11 +423,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
       }
     }
 
+    const loc = localizedPropertyContent(apiProperty, locale)
+    const seo = localizedSeoTitleDescription(loc)
+
     const property: Property = {
       id: apiProperty.id,
       slug: apiProperty.slug,
-      title: apiProperty.title,
-      description: apiProperty.description || '',
+      title: loc.title,
+      description: loc.description,
+      headTitle: seo.pageTitle,
+      headDescription: seo.pageDescription,
       price: apiProperty.price,
       currency: apiProperty.currency,
       type: apiProperty.type,
@@ -425,8 +454,26 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
         bathrooms: fp.bathrooms || 0,
         url: normalizeUploadUrl(fp.url),
       })) || [],
-      features: apiProperty.features || [],
-      amenities: apiProperty.amenities || [],
+      features:
+        locale === 'ru'
+          ? (apiProperty.featuresRu && apiProperty.featuresRu.length > 0
+              ? apiProperty.featuresRu
+              : apiProperty.features || [])
+          : locale === 'ar'
+            ? (apiProperty.featuresAr && apiProperty.featuresAr.length > 0
+                ? apiProperty.featuresAr
+                : apiProperty.features || [])
+            : apiProperty.features || [],
+      amenities:
+        locale === 'ru'
+          ? (apiProperty.amenitiesRu && apiProperty.amenitiesRu.length > 0
+              ? apiProperty.amenitiesRu
+              : apiProperty.amenities || [])
+          : locale === 'ar'
+            ? (apiProperty.amenitiesAr && apiProperty.amenitiesAr.length > 0
+                ? apiProperty.amenitiesAr
+                : apiProperty.amenities || [])
+            : apiProperty.amenities || [],
       yearBuilt: apiProperty.yearBuilt || 0,
       completionDate: apiProperty.completionDate || '',
       paymentPlan: apiProperty.paymentPlan || '',

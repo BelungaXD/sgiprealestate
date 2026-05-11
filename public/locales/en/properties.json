@@ -43,7 +43,10 @@
     "townhouse": "Townhouse",
     "penthouse": "Penthouse",
     "studio": "Studio",
-    "office": "Office"
+    "office": "Office",
+    "retail": "Retail",
+    "warehouse": "Warehouse",
+    "land": "Land"
   },
   "listingMarket": "Listing type",
   "allListings": "All",

@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
-import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
 import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/properties/upload-image')
@@ -58,27 +57,9 @@ export default async function handler(
       const base64Data = file.split(',')[1]
       const buffer = Buffer.from(base64Data, 'base64')
       
-      // For images, generate thumbnail and save both full and thumbnail
+      // Full image only; grid listing WebP is generated once after property save (cover photo).
       if (isImage && !isVideo) {
-        // Save full image
         await writeFile(filePath, buffer)
-        
-        // Listing thumbnail: small file for grid cards (see propertyThumbnails)
-        const thumbnailDir = join(uploadsDir, 'thumbnails')
-        if (!existsSync(thumbnailDir)) {
-          await mkdir(thumbnailDir, { recursive: true })
-        }
-        
-        const thumbnailPath = join(thumbnailDir, uniqueFilename)
-        
-        try {
-          await writePropertyListingThumbnail(buffer, thumbnailPath)
-        } catch (sharpError) {
-          log.warn('Failed to generate thumbnail', {
-            error: sharpError instanceof Error ? sharpError.message : String(sharpError),
-            filename: uniqueFilename,
-          })
-        }
       } else {
         // For videos, just save the file
         await writeFile(filePath, buffer)

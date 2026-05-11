@@ -61,7 +61,11 @@ type EditablePropertyFile = {
 type EditableProperty = {
   id?: string
   title?: string
+  titleRu?: string | null
+  titleAr?: string | null
   description?: string
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   type?: string
   listingMarket?: 'PRIMARY' | 'SECONDARY'
   price?: number
@@ -85,12 +89,18 @@ type EditableProperty = {
   developerId?: string
   googleMapsUrl?: string
   features?: string[]
+  featuresRu?: string[]
+  featuresAr?: string[]
   amenities?: string[]
+  amenitiesRu?: string[]
+  amenitiesAr?: string[]
   slug?: string
   metaTitle?: string
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
   metaDescription?: string
-  isPublished?: boolean
-  isFeatured?: boolean
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   images?: EditablePropertyImage[]
   files?: EditablePropertyFile[]
 }
@@ -103,9 +113,18 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
   const [features, setFeatures] = useState<string[]>([])
+  const [featuresRu, setFeaturesRu] = useState<string[]>([])
+  const [featuresAr, setFeaturesAr] = useState<string[]>([])
   const [amenities, setAmenities] = useState<string[]>([])
+  const [amenitiesRu, setAmenitiesRu] = useState<string[]>([])
+  const [amenitiesAr, setAmenitiesAr] = useState<string[]>([])
   const [newFeature, setNewFeature] = useState('')
+  const [newFeatureRu, setNewFeatureRu] = useState('')
+  const [newFeatureAr, setNewFeatureAr] = useState('')
   const [newAmenity, setNewAmenity] = useState('')
+  const [newAmenityRu, setNewAmenityRu] = useState('')
+  const [newAmenityAr, setNewAmenityAr] = useState('')
+  const [localeEditorTab, setLocaleEditorTab] = useState<'en' | 'ru' | 'ar'>('en')
 
   const {
     register,
@@ -118,7 +137,11 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     defaultValues: property
       ? {
           title: property.title || '',
+          titleRu: property.titleRu ?? '',
+          titleAr: property.titleAr ?? '',
           description: property.description || '',
+          descriptionRu: property.descriptionRu ?? '',
+          descriptionAr: property.descriptionAr ?? '',
           type: property.type || 'APARTMENT',
           listingMarket: property.listingMarket || 'PRIMARY',
           price: property.price || 0,
@@ -145,12 +168,18 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           developerId: property.developerId || '',
           googleMapsUrl: property.googleMapsUrl || '',
           features: property.features || [],
+          featuresRu: property.featuresRu || [],
+          featuresAr: property.featuresAr || [],
           amenities: property.amenities || [],
+          amenitiesRu: property.amenitiesRu || [],
+          amenitiesAr: property.amenitiesAr || [],
           slug: property.slug || '',
           metaTitle: property.metaTitle || undefined,
+          metaTitleRu: property.metaTitleRu ?? '',
+          metaTitleAr: property.metaTitleAr ?? '',
           metaDescription: property.metaDescription || undefined,
-          isPublished: property.isPublished || false,
-          isFeatured: property.isFeatured || false,
+          metaDescriptionRu: property.metaDescriptionRu ?? '',
+          metaDescriptionAr: property.metaDescriptionAr ?? '',
         }
       : {
           currency: 'AED',
@@ -160,10 +189,20 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           bedrooms: 1,
           bathrooms: 1,
           features: [],
+          featuresRu: [],
+          featuresAr: [],
           amenities: [],
-          isPublished: false,
-          isFeatured: false,
+          amenitiesRu: [],
+          amenitiesAr: [],
           googleMapsUrl: '',
+          titleRu: '',
+          titleAr: '',
+          descriptionRu: '',
+          descriptionAr: '',
+          metaTitleRu: '',
+          metaTitleAr: '',
+          metaDescriptionRu: '',
+          metaDescriptionAr: '',
         },
   })
 
@@ -254,7 +293,11 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         setImages([])
       }
       setFeatures(property.features || [])
+      setFeaturesRu(property.featuresRu || [])
+      setFeaturesAr(property.featuresAr || [])
       setAmenities(property.amenities || [])
+      setAmenitiesRu(property.amenitiesRu || [])
+      setAmenitiesAr(property.amenitiesAr || [])
       if (property.files && Array.isArray(property.files) && property.files.length > 0) {
         setFiles(
           property.files.map((file: EditablePropertyFile) => ({
@@ -274,7 +317,11 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       setImages([])
       setFiles([])
       setFeatures([])
+      setFeaturesRu([])
+      setFeaturesAr([])
       setAmenities([])
+      setAmenitiesRu([])
+      setAmenitiesAr([])
     }
   }, [property])
 
@@ -368,6 +415,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         ...data,
         description: data.description || null,
         paymentPlan: data.paymentPlan || null,
+        isPublished: true,
+        isFeatured: false,
         images: uploadedImages,
         files: uploadedFiles,
       })
@@ -386,11 +435,37 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       setValue('features', [...features, newFeature.trim()])
     }
   }
+  const addFeatureRu = () => {
+    if (newFeatureRu.trim()) {
+      const next = [...featuresRu, newFeatureRu.trim()]
+      setFeaturesRu(next)
+      setNewFeatureRu('')
+      setValue('featuresRu', next)
+    }
+  }
+  const addFeatureAr = () => {
+    if (newFeatureAr.trim()) {
+      const next = [...featuresAr, newFeatureAr.trim()]
+      setFeaturesAr(next)
+      setNewFeatureAr('')
+      setValue('featuresAr', next)
+    }
+  }
 
   const removeFeature = (index: number) => {
     const newFeatures = features.filter((_, i) => i !== index)
     setFeatures(newFeatures)
     setValue('features', newFeatures)
+  }
+  const removeFeatureRu = (index: number) => {
+    const next = featuresRu.filter((_, i) => i !== index)
+    setFeaturesRu(next)
+    setValue('featuresRu', next)
+  }
+  const removeFeatureAr = (index: number) => {
+    const next = featuresAr.filter((_, i) => i !== index)
+    setFeaturesAr(next)
+    setValue('featuresAr', next)
   }
 
   const addAmenity = () => {
@@ -400,11 +475,37 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       setValue('amenities', [...amenities, newAmenity.trim()])
     }
   }
+  const addAmenityRu = () => {
+    if (newAmenityRu.trim()) {
+      const next = [...amenitiesRu, newAmenityRu.trim()]
+      setAmenitiesRu(next)
+      setNewAmenityRu('')
+      setValue('amenitiesRu', next)
+    }
+  }
+  const addAmenityAr = () => {
+    if (newAmenityAr.trim()) {
+      const next = [...amenitiesAr, newAmenityAr.trim()]
+      setAmenitiesAr(next)
+      setNewAmenityAr('')
+      setValue('amenitiesAr', next)
+    }
+  }
 
   const removeAmenity = (index: number) => {
     const newAmenities = amenities.filter((_, i) => i !== index)
     setAmenities(newAmenities)
     setValue('amenities', newAmenities)
+  }
+  const removeAmenityRu = (index: number) => {
+    const next = amenitiesRu.filter((_, i) => i !== index)
+    setAmenitiesRu(next)
+    setValue('amenitiesRu', next)
+  }
+  const removeAmenityAr = (index: number) => {
+    const next = amenitiesAr.filter((_, i) => i !== index)
+    setAmenitiesAr(next)
+    setValue('amenitiesAr', next)
   }
 
   const areaLabel = (a: AreaOpt) => a.nameEn || a.name
@@ -427,32 +528,147 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              {...register('title')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-            />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-            )}
-          </div>
+          <div className="rounded-lg border border-champagne/30 bg-white p-4 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <h4 className="text-sm font-semibold text-graphite">Listing text & SEO (by language)</h4>
+              <div className="flex rounded-md border border-gray-200 bg-gray-50 p-0.5 gap-0.5 flex-wrap">
+                {(
+                  [
+                    { id: 'en' as const, label: 'English' },
+                    { id: 'ru' as const, label: 'Русский' },
+                    { id: 'ar' as const, label: 'العربية' },
+                  ] as const
+                ).map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setLocaleEditorTab(tab.id)}
+                    className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                      localeEditorTab === tab.id
+                        ? 'bg-champagne text-white shadow-sm'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-xs text-gray-500">
+              English is the site default. Russian and Arabic are shown when the visitor chooses that
+              language; empty fields fall back to English.
+            </p>
+            <p className="text-xs text-gray-500">
+              If meta fields are left empty, they are generated automatically on save from title,
+              description, district, type, and key features.
+            </p>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              {...register('description')}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-            />
-            {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-            )}
+            <div className={localeEditorTab === 'en' ? 'space-y-4' : 'hidden'}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title (English)</label>
+                <input
+                  type="text"
+                  {...register('title')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description (English)</label>
+                <textarea
+                  {...register('description')}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+                {errors.description && (
+                  <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (English)</label>
+                <input
+                  type="text"
+                  {...register('metaTitle')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (English)</label>
+                <textarea
+                  {...register('metaDescription')}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+              </div>
+            </div>
+
+            <div className={localeEditorTab === 'ru' ? 'space-y-4' : 'hidden'}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title (Russian)</label>
+                <input
+                  type="text"
+                  {...register('titleRu')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+                {errors.titleRu && (
+                  <p className="mt-1 text-sm text-red-600">{errors.titleRu.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description (Russian)</label>
+                <textarea
+                  {...register('descriptionRu')}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+                {errors.descriptionRu && (
+                  <p className="mt-1 text-sm text-red-600">{errors.descriptionRu.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (Russian)</label>
+                <input type="text" {...register('metaTitleRu')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (Russian)</label>
+                <textarea {...register('metaDescriptionRu')} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne" />
+              </div>
+            </div>
+
+            <div dir="rtl" className={localeEditorTab === 'ar' ? 'space-y-4' : 'hidden'}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title (Arabic)</label>
+                <input
+                  type="text"
+                  {...register('titleAr')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
+                />
+                {errors.titleAr && (
+                  <p className="mt-1 text-sm text-red-600">{errors.titleAr.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description (Arabic)</label>
+                <textarea
+                  {...register('descriptionAr')}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
+                />
+                {errors.descriptionAr && (
+                  <p className="mt-1 text-sm text-red-600">{errors.descriptionAr.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (Arabic)</label>
+                <input type="text" {...register('metaTitleAr')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (Arabic)</label>
+                <textarea {...register('metaDescriptionAr')} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right" />
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -789,9 +1005,13 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
 
         <div className="bg-gray-50 p-6 rounded-lg space-y-4">
           <h3 className="text-lg font-semibold text-graphite">Features & Amenities</h3>
+          <p className="text-xs text-gray-500">
+            Add values per language. Property page will use language-specific lists with fallback to
+            English when the localized list is empty.
+          </p>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Features
+              Features (English)
             </label>
             <div className="flex gap-2 mb-2">
               <input
@@ -826,7 +1046,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amenities
+              Amenities (English)
             </label>
             <div className="flex gap-2 mb-2">
               <input
@@ -859,6 +1079,150 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               ))}
             </div>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Features (Russian)
+            </label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newFeatureRu}
+                onChange={(e) => setNewFeatureRu(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeatureRu())}
+                placeholder="Добавить особенность"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+              />
+              <button type="button" onClick={addFeatureRu} className="btn-filled btn-sm">
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {featuresRu.map((item, index) => (
+                <span
+                  key={`fru-${index}`}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeFeatureRu(index)}
+                    className="text-champagne hover:text-red-600"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Amenities (Russian)
+            </label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newAmenityRu}
+                onChange={(e) => setNewAmenityRu(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenityRu())}
+                placeholder="Добавить удобство"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+              />
+              <button type="button" onClick={addAmenityRu} className="btn-filled btn-sm">
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {amenitiesRu.map((item, index) => (
+                <span
+                  key={`aru-${index}`}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeAmenityRu(index)}
+                    className="text-champagne hover:text-red-600"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Features (Arabic)</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                dir="rtl"
+                value={newFeatureAr}
+                onChange={(e) => setNewFeatureAr(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeatureAr())}
+                placeholder="أضف ميزة"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
+              />
+              <button type="button" onClick={addFeatureAr} className="btn-filled btn-sm">
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {featuresAr.map((item, index) => (
+                <span
+                  key={`far-${index}`}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeFeatureAr(index)}
+                    className="text-champagne hover:text-red-600"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Amenities (Arabic)
+            </label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                dir="rtl"
+                value={newAmenityAr}
+                onChange={(e) => setNewAmenityAr(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenityAr())}
+                placeholder="أضف مرفقاً"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
+              />
+              <button type="button" onClick={addAmenityAr} className="btn-filled btn-sm">
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {amenitiesAr.map((item, index) => (
+                <span
+                  key={`aar-${index}`}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeAmenityAr(index)}
+                    className="text-champagne hover:text-red-600"
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="bg-gray-50 p-6 rounded-lg space-y-4">
@@ -875,40 +1239,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               {...register('slug')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Meta Title
-            </label>
-            <input
-              type="text"
-              {...register('metaTitle')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Meta Description
-            </label>
-            <textarea
-              {...register('metaDescription')}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-            />
-          </div>
-        </div>
-
-        <div className="bg-gray-50 p-6 rounded-lg space-y-4">
-          <h3 className="text-lg font-semibold text-graphite">Settings</h3>
-          <div className="flex items-center gap-4">
-            <label className="flex items-center">
-              <input type="checkbox" {...register('isPublished')} className="mr-2" />
-              <span className="text-sm text-gray-700">Published</span>
-            </label>
-            <label className="flex items-center">
-              <input type="checkbox" {...register('isFeatured')} className="mr-2" />
-              <span className="text-sm text-gray-700">Featured</span>
-            </label>
           </div>
         </div>
 

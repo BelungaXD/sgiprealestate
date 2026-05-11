@@ -52,6 +52,10 @@ export type PropertyMinAggregateOutputType = {
   id: string | null
   title: string | null
   description: string | null
+  titleRu: string | null
+  titleAr: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   price: number | null
   currency: string | null
   type: $Enums.PropertyType | null
@@ -76,6 +80,10 @@ export type PropertyMinAggregateOutputType = {
   slug: string | null
   metaTitle: string | null
   metaDescription: string | null
+  metaTitleRu: string | null
+  metaTitleAr: string | null
+  metaDescriptionRu: string | null
+  metaDescriptionAr: string | null
   createdAt: Date | null
   updatedAt: Date | null
   isPublished: boolean | null
@@ -86,6 +94,10 @@ export type PropertyMaxAggregateOutputType = {
   id: string | null
   title: string | null
   description: string | null
+  titleRu: string | null
+  titleAr: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   price: number | null
   currency: string | null
   type: $Enums.PropertyType | null
@@ -110,6 +122,10 @@ export type PropertyMaxAggregateOutputType = {
   slug: string | null
   metaTitle: string | null
   metaDescription: string | null
+  metaTitleRu: string | null
+  metaTitleAr: string | null
+  metaDescriptionRu: string | null
+  metaDescriptionAr: string | null
   createdAt: Date | null
   updatedAt: Date | null
   isPublished: boolean | null
@@ -120,6 +136,10 @@ export type PropertyCountAggregateOutputType = {
   id: number
   title: number
   description: number
+  titleRu: number
+  titleAr: number
+  descriptionRu: number
+  descriptionAr: number
   price: number
   currency: number
   type: number
@@ -147,6 +167,10 @@ export type PropertyCountAggregateOutputType = {
   slug: number
   metaTitle: number
   metaDescription: number
+  metaTitleRu: number
+  metaTitleAr: number
+  metaDescriptionRu: number
+  metaDescriptionAr: number
   createdAt: number
   updatedAt: number
   isPublished: number
@@ -181,6 +205,10 @@ export type PropertyMinAggregateInputType = {
   id?: true
   title?: true
   description?: true
+  titleRu?: true
+  titleAr?: true
+  descriptionRu?: true
+  descriptionAr?: true
   price?: true
   currency?: true
   type?: true
@@ -205,6 +233,10 @@ export type PropertyMinAggregateInputType = {
   slug?: true
   metaTitle?: true
   metaDescription?: true
+  metaTitleRu?: true
+  metaTitleAr?: true
+  metaDescriptionRu?: true
+  metaDescriptionAr?: true
   createdAt?: true
   updatedAt?: true
   isPublished?: true
@@ -215,6 +247,10 @@ export type PropertyMaxAggregateInputType = {
   id?: true
   title?: true
   description?: true
+  titleRu?: true
+  titleAr?: true
+  descriptionRu?: true
+  descriptionAr?: true
   price?: true
   currency?: true
   type?: true
@@ -239,6 +275,10 @@ export type PropertyMaxAggregateInputType = {
   slug?: true
   metaTitle?: true
   metaDescription?: true
+  metaTitleRu?: true
+  metaTitleAr?: true
+  metaDescriptionRu?: true
+  metaDescriptionAr?: true
   createdAt?: true
   updatedAt?: true
   isPublished?: true
@@ -249,6 +289,10 @@ export type PropertyCountAggregateInputType = {
   id?: true
   title?: true
   description?: true
+  titleRu?: true
+  titleAr?: true
+  descriptionRu?: true
+  descriptionAr?: true
   price?: true
   currency?: true
   type?: true
@@ -276,6 +320,10 @@ export type PropertyCountAggregateInputType = {
   slug?: true
   metaTitle?: true
   metaDescription?: true
+  metaTitleRu?: true
+  metaTitleAr?: true
+  metaDescriptionRu?: true
+  metaDescriptionAr?: true
   createdAt?: true
   updatedAt?: true
   isPublished?: true
@@ -373,6 +421,10 @@ export type PropertyGroupByOutputType = {
   id: string
   title: string
   description: string | null
+  titleRu: string | null
+  titleAr: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   price: number
   currency: string
   type: $Enums.PropertyType
@@ -400,6 +452,10 @@ export type PropertyGroupByOutputType = {
   slug: string
   metaTitle: string | null
   metaDescription: string | null
+  metaTitleRu: string | null
+  metaTitleAr: string | null
+  metaDescriptionRu: string | null
+  metaDescriptionAr: string | null
   createdAt: Date
   updatedAt: Date
   isPublished: boolean
@@ -433,6 +489,10 @@ export type PropertyWhereInput = {
   id?: Prisma.StringFilter<"Property"> | string
   title?: Prisma.StringFilter<"Property"> | string
   description?: Prisma.StringNullableFilter<"Property"> | string | null
+  titleRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  titleAr?: Prisma.StringNullableFilter<"Property"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Property"> | string | null
   price?: Prisma.FloatFilter<"Property"> | number
   currency?: Prisma.StringFilter<"Property"> | string
   type?: Prisma.EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
@@ -460,6 +520,10 @@ export type PropertyWhereInput = {
   slug?: Prisma.StringFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaTitleRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaTitleAr?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaDescriptionRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaDescriptionAr?: Prisma.StringNullableFilter<"Property"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   isPublished?: Prisma.BoolFilter<"Property"> | boolean
@@ -476,6 +540,10 @@ export type PropertyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  titleRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  titleAr?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   type?: Prisma.SortOrder
@@ -503,6 +571,10 @@ export type PropertyOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitleRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitleAr?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -523,6 +595,10 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PropertyWhereInput | Prisma.PropertyWhereInput[]
   title?: Prisma.StringFilter<"Property"> | string
   description?: Prisma.StringNullableFilter<"Property"> | string | null
+  titleRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  titleAr?: Prisma.StringNullableFilter<"Property"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Property"> | string | null
   price?: Prisma.FloatFilter<"Property"> | number
   currency?: Prisma.StringFilter<"Property"> | string
   type?: Prisma.EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
@@ -549,6 +625,10 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   amenities?: Prisma.StringNullableListFilter<"Property">
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaTitleRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaTitleAr?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaDescriptionRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaDescriptionAr?: Prisma.StringNullableFilter<"Property"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   isPublished?: Prisma.BoolFilter<"Property"> | boolean
@@ -565,6 +645,10 @@ export type PropertyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  titleRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  titleAr?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   type?: Prisma.SortOrder
@@ -592,6 +676,10 @@ export type PropertyOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitleRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitleAr?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -610,6 +698,10 @@ export type PropertyScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Property"> | string
   title?: Prisma.StringWithAggregatesFilter<"Property"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  titleRu?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  titleAr?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  descriptionRu?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  descriptionAr?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   price?: Prisma.FloatWithAggregatesFilter<"Property"> | number
   currency?: Prisma.StringWithAggregatesFilter<"Property"> | string
   type?: Prisma.EnumPropertyTypeWithAggregatesFilter<"Property"> | $Enums.PropertyType
@@ -637,6 +729,10 @@ export type PropertyScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  metaTitleRu?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  metaTitleAr?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  metaDescriptionRu?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  metaDescriptionAr?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Property"> | Date | string
   isPublished?: Prisma.BoolWithAggregatesFilter<"Property"> | boolean
@@ -647,6 +743,10 @@ export type PropertyCreateInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -672,6 +772,10 @@ export type PropertyCreateInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -688,6 +792,10 @@ export type PropertyUncheckedCreateInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -715,6 +823,10 @@ export type PropertyUncheckedCreateInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -729,6 +841,10 @@ export type PropertyUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -754,6 +870,10 @@ export type PropertyUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -770,6 +890,10 @@ export type PropertyUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -797,6 +921,10 @@ export type PropertyUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -811,6 +939,10 @@ export type PropertyCreateManyInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -838,6 +970,10 @@ export type PropertyCreateManyInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -848,6 +984,10 @@ export type PropertyUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -873,6 +1013,10 @@ export type PropertyUpdateManyMutationInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -883,6 +1027,10 @@ export type PropertyUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -910,6 +1058,10 @@ export type PropertyUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -928,6 +1080,10 @@ export type PropertyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  titleRu?: Prisma.SortOrder
+  titleAr?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   price?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   type?: Prisma.SortOrder
@@ -955,6 +1111,10 @@ export type PropertyCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
+  metaTitleRu?: Prisma.SortOrder
+  metaTitleAr?: Prisma.SortOrder
+  metaDescriptionRu?: Prisma.SortOrder
+  metaDescriptionAr?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -976,6 +1136,10 @@ export type PropertyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  titleRu?: Prisma.SortOrder
+  titleAr?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   price?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   type?: Prisma.SortOrder
@@ -1000,6 +1164,10 @@ export type PropertyMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
+  metaTitleRu?: Prisma.SortOrder
+  metaTitleAr?: Prisma.SortOrder
+  metaDescriptionRu?: Prisma.SortOrder
+  metaDescriptionAr?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -1010,6 +1178,10 @@ export type PropertyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  titleRu?: Prisma.SortOrder
+  titleAr?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   price?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   type?: Prisma.SortOrder
@@ -1034,6 +1206,10 @@ export type PropertyMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
+  metaTitleRu?: Prisma.SortOrder
+  metaTitleAr?: Prisma.SortOrder
+  metaDescriptionRu?: Prisma.SortOrder
+  metaDescriptionAr?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -1295,6 +1471,10 @@ export type PropertyCreateWithoutImagesInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1320,6 +1500,10 @@ export type PropertyCreateWithoutImagesInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1335,6 +1519,10 @@ export type PropertyUncheckedCreateWithoutImagesInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1362,6 +1550,10 @@ export type PropertyUncheckedCreateWithoutImagesInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1391,6 +1583,10 @@ export type PropertyUpdateWithoutImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -1416,6 +1612,10 @@ export type PropertyUpdateWithoutImagesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1431,6 +1631,10 @@ export type PropertyUncheckedUpdateWithoutImagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -1458,6 +1662,10 @@ export type PropertyUncheckedUpdateWithoutImagesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1471,6 +1679,10 @@ export type PropertyCreateWithoutFloorPlansInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1496,6 +1708,10 @@ export type PropertyCreateWithoutFloorPlansInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1511,6 +1727,10 @@ export type PropertyUncheckedCreateWithoutFloorPlansInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1538,6 +1758,10 @@ export type PropertyUncheckedCreateWithoutFloorPlansInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1567,6 +1791,10 @@ export type PropertyUpdateWithoutFloorPlansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -1592,6 +1820,10 @@ export type PropertyUpdateWithoutFloorPlansInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1607,6 +1839,10 @@ export type PropertyUncheckedUpdateWithoutFloorPlansInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -1634,6 +1870,10 @@ export type PropertyUncheckedUpdateWithoutFloorPlansInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1647,6 +1887,10 @@ export type PropertyCreateWithoutFilesInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1672,6 +1916,10 @@ export type PropertyCreateWithoutFilesInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1687,6 +1935,10 @@ export type PropertyUncheckedCreateWithoutFilesInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1714,6 +1966,10 @@ export type PropertyUncheckedCreateWithoutFilesInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1743,6 +1999,10 @@ export type PropertyUpdateWithoutFilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -1768,6 +2028,10 @@ export type PropertyUpdateWithoutFilesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1783,6 +2047,10 @@ export type PropertyUncheckedUpdateWithoutFilesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -1810,6 +2078,10 @@ export type PropertyUncheckedUpdateWithoutFilesInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1823,6 +2095,10 @@ export type PropertyCreateWithoutAreaInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1848,6 +2124,10 @@ export type PropertyCreateWithoutAreaInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1863,6 +2143,10 @@ export type PropertyUncheckedCreateWithoutAreaInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1889,6 +2173,10 @@ export type PropertyUncheckedCreateWithoutAreaInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -1932,6 +2220,10 @@ export type PropertyScalarWhereInput = {
   id?: Prisma.StringFilter<"Property"> | string
   title?: Prisma.StringFilter<"Property"> | string
   description?: Prisma.StringNullableFilter<"Property"> | string | null
+  titleRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  titleAr?: Prisma.StringNullableFilter<"Property"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Property"> | string | null
   price?: Prisma.FloatFilter<"Property"> | number
   currency?: Prisma.StringFilter<"Property"> | string
   type?: Prisma.EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType
@@ -1959,6 +2251,10 @@ export type PropertyScalarWhereInput = {
   slug?: Prisma.StringFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaTitleRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaTitleAr?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaDescriptionRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  metaDescriptionAr?: Prisma.StringNullableFilter<"Property"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Property"> | Date | string
   isPublished?: Prisma.BoolFilter<"Property"> | boolean
@@ -1969,6 +2265,10 @@ export type PropertyCreateWithoutDeveloperInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -1994,6 +2294,10 @@ export type PropertyCreateWithoutDeveloperInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -2009,6 +2313,10 @@ export type PropertyUncheckedCreateWithoutDeveloperInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -2035,6 +2343,10 @@ export type PropertyUncheckedCreateWithoutDeveloperInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -2075,6 +2387,10 @@ export type PropertyCreateWithoutLeadsInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -2100,6 +2416,10 @@ export type PropertyCreateWithoutLeadsInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -2115,6 +2435,10 @@ export type PropertyUncheckedCreateWithoutLeadsInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -2142,6 +2466,10 @@ export type PropertyUncheckedCreateWithoutLeadsInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -2171,6 +2499,10 @@ export type PropertyUpdateWithoutLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2196,6 +2528,10 @@ export type PropertyUpdateWithoutLeadsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2211,6 +2547,10 @@ export type PropertyUncheckedUpdateWithoutLeadsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2238,6 +2578,10 @@ export type PropertyUncheckedUpdateWithoutLeadsInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2251,6 +2595,10 @@ export type PropertyCreateManyAreaInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -2277,6 +2625,10 @@ export type PropertyCreateManyAreaInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -2287,6 +2639,10 @@ export type PropertyUpdateWithoutAreaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2312,6 +2668,10 @@ export type PropertyUpdateWithoutAreaInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2327,6 +2687,10 @@ export type PropertyUncheckedUpdateWithoutAreaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2353,6 +2717,10 @@ export type PropertyUncheckedUpdateWithoutAreaInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2367,6 +2735,10 @@ export type PropertyUncheckedUpdateManyWithoutAreaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2393,6 +2765,10 @@ export type PropertyUncheckedUpdateManyWithoutAreaInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2403,6 +2779,10 @@ export type PropertyCreateManyDeveloperInput = {
   id?: string
   title?: string
   description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price?: number
   currency?: string
   type: $Enums.PropertyType
@@ -2429,6 +2809,10 @@ export type PropertyCreateManyDeveloperInput = {
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   isPublished?: boolean
@@ -2439,6 +2823,10 @@ export type PropertyUpdateWithoutDeveloperInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2464,6 +2852,10 @@ export type PropertyUpdateWithoutDeveloperInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2479,6 +2871,10 @@ export type PropertyUncheckedUpdateWithoutDeveloperInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2505,6 +2901,10 @@ export type PropertyUncheckedUpdateWithoutDeveloperInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2519,6 +2919,10 @@ export type PropertyUncheckedUpdateManyWithoutDeveloperInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.FloatFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
@@ -2545,6 +2949,10 @@ export type PropertyUncheckedUpdateManyWithoutDeveloperInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2613,6 +3021,10 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   title?: boolean
   description?: boolean
+  titleRu?: boolean
+  titleAr?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   price?: boolean
   currency?: boolean
   type?: boolean
@@ -2640,6 +3052,10 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
+  metaTitleRu?: boolean
+  metaTitleAr?: boolean
+  metaDescriptionRu?: boolean
+  metaDescriptionAr?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   isPublished?: boolean
@@ -2657,6 +3073,10 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   title?: boolean
   description?: boolean
+  titleRu?: boolean
+  titleAr?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   price?: boolean
   currency?: boolean
   type?: boolean
@@ -2684,6 +3104,10 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
+  metaTitleRu?: boolean
+  metaTitleAr?: boolean
+  metaDescriptionRu?: boolean
+  metaDescriptionAr?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   isPublished?: boolean
@@ -2696,6 +3120,10 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   title?: boolean
   description?: boolean
+  titleRu?: boolean
+  titleAr?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   price?: boolean
   currency?: boolean
   type?: boolean
@@ -2723,6 +3151,10 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
+  metaTitleRu?: boolean
+  metaTitleAr?: boolean
+  metaDescriptionRu?: boolean
+  metaDescriptionAr?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   isPublished?: boolean
@@ -2735,6 +3167,10 @@ export type PropertySelectScalar = {
   id?: boolean
   title?: boolean
   description?: boolean
+  titleRu?: boolean
+  titleAr?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   price?: boolean
   currency?: boolean
   type?: boolean
@@ -2762,13 +3198,17 @@ export type PropertySelectScalar = {
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
+  metaTitleRu?: boolean
+  metaTitleAr?: boolean
+  metaDescriptionRu?: boolean
+  metaDescriptionAr?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   isPublished?: boolean
   isFeatured?: boolean
 }
 
-export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "price" | "currency" | "type" | "listingMarket" | "status" | "areaSqm" | "bedrooms" | "bathrooms" | "parking" | "floor" | "totalFloors" | "yearBuilt" | "completionDate" | "paymentPlan" | "occupancyStatus" | "address" | "city" | "district" | "coordinates" | "googleMapsUrl" | "areaId" | "developerId" | "features" | "amenities" | "slug" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt" | "isPublished" | "isFeatured", ExtArgs["result"]["property"]>
+export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "titleRu" | "titleAr" | "descriptionRu" | "descriptionAr" | "price" | "currency" | "type" | "listingMarket" | "status" | "areaSqm" | "bedrooms" | "bathrooms" | "parking" | "floor" | "totalFloors" | "yearBuilt" | "completionDate" | "paymentPlan" | "occupancyStatus" | "address" | "city" | "district" | "coordinates" | "googleMapsUrl" | "areaId" | "developerId" | "features" | "amenities" | "slug" | "metaTitle" | "metaDescription" | "metaTitleRu" | "metaTitleAr" | "metaDescriptionRu" | "metaDescriptionAr" | "createdAt" | "updatedAt" | "isPublished" | "isFeatured", ExtArgs["result"]["property"]>
 export type PropertyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
@@ -2799,8 +3239,15 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    /**
+     * Default / English (site fallback locale)
+     */
     title: string
     description: string | null
+    titleRu: string | null
+    titleAr: string | null
+    descriptionRu: string | null
+    descriptionAr: string | null
     price: number
     currency: string
     type: $Enums.PropertyType
@@ -2840,6 +3287,10 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     slug: string
     metaTitle: string | null
     metaDescription: string | null
+    metaTitleRu: string | null
+    metaTitleAr: string | null
+    metaDescriptionRu: string | null
+    metaDescriptionAr: string | null
     createdAt: Date
     updatedAt: Date
     isPublished: boolean
@@ -3276,6 +3727,10 @@ export interface PropertyFieldRefs {
   readonly id: Prisma.FieldRef<"Property", 'String'>
   readonly title: Prisma.FieldRef<"Property", 'String'>
   readonly description: Prisma.FieldRef<"Property", 'String'>
+  readonly titleRu: Prisma.FieldRef<"Property", 'String'>
+  readonly titleAr: Prisma.FieldRef<"Property", 'String'>
+  readonly descriptionRu: Prisma.FieldRef<"Property", 'String'>
+  readonly descriptionAr: Prisma.FieldRef<"Property", 'String'>
   readonly price: Prisma.FieldRef<"Property", 'Float'>
   readonly currency: Prisma.FieldRef<"Property", 'String'>
   readonly type: Prisma.FieldRef<"Property", 'PropertyType'>
@@ -3303,6 +3758,10 @@ export interface PropertyFieldRefs {
   readonly slug: Prisma.FieldRef<"Property", 'String'>
   readonly metaTitle: Prisma.FieldRef<"Property", 'String'>
   readonly metaDescription: Prisma.FieldRef<"Property", 'String'>
+  readonly metaTitleRu: Prisma.FieldRef<"Property", 'String'>
+  readonly metaTitleAr: Prisma.FieldRef<"Property", 'String'>
+  readonly metaDescriptionRu: Prisma.FieldRef<"Property", 'String'>
+  readonly metaDescriptionAr: Prisma.FieldRef<"Property", 'String'>
   readonly createdAt: Prisma.FieldRef<"Property", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Property", 'DateTime'>
   readonly isPublished: Prisma.FieldRef<"Property", 'Boolean'>

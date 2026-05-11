@@ -8,6 +8,7 @@ import Layout from '@/components/layout/Layout'
 import Hero from '@/components/sections/Hero'
 import { prisma } from '@/lib/prisma'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
+import { localizedPropertyContent } from '@/lib/propertyLocaleContent'
 
 // Lazy load components below the fold for better performance
 // Disable SSR for components that don't need it to reduce initial bundle size
@@ -39,7 +40,11 @@ type HomeApiProperty = {
   id: string
   slug?: string
   title: string
+  titleRu?: string | null
+  titleAr?: string | null
   description?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price: number
   currency: string
   type: string
@@ -139,6 +144,7 @@ export default function Home({ featuredProperties }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  const lng = locale ?? 'en'
   let featuredProperties: HomeFeaturedProperty[] = []
 
   // Fetch featured properties at request time (getStaticProps runs at build when DB may be unavailable)
@@ -147,7 +153,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
       const properties = await prisma.property.findMany({
         where: {
           isPublished: true,
-          isFeatured: true,
         },
         include: {
           images: {
@@ -165,21 +170,25 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         take: 6,
       })
 
-      featuredProperties = (properties as HomeApiProperty[]).map((p) => ({
-        id: p.id,
-        slug: p.slug,
-        title: p.title,
-        description: p.description || '',
-        price: p.price,
-        currency: p.currency,
-        type: p.type,
-        listingMarket: p.listingMarket || 'PRIMARY',
-        area: p.areaSqm,
-        bedrooms: p.bedrooms,
-        bathrooms: p.bathrooms,
-        location: `${p.city}, ${p.district}`,
-        image: p.images && p.images.length > 0 ? normalizeUploadUrl(p.images[0].url) : '/images/hero.jpg',
-      }))
+      featuredProperties = (properties as HomeApiProperty[]).map((p) => {
+        const loc = localizedPropertyContent(p, lng)
+        return {
+          id: p.id,
+          slug: p.slug,
+          title: loc.title,
+          description: loc.description,
+          price: p.price,
+          currency: p.currency,
+          type: p.type,
+          listingMarket: p.listingMarket || 'PRIMARY',
+          area: p.areaSqm,
+          bedrooms: p.bedrooms,
+          bathrooms: p.bathrooms,
+          location: `${p.city}, ${p.district}`,
+          image:
+            p.images && p.images.length > 0 ? normalizeUploadUrl(p.images[0].url) : '/images/hero.jpg',
+        }
+      })
     } catch (error) {
       console.error('Error fetching featured properties:', error)
       featuredProperties = []

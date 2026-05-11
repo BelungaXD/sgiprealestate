@@ -10,6 +10,7 @@ import Layout from '@/components/layout/Layout'
 import PropertyFilter from '@/components/property/PropertyFilter'
 import PropertySort from '@/components/property/PropertySort'
 import Pagination from '@/components/ui/Pagination'
+import { localizedPropertyContent } from '@/lib/propertyLocaleContent'
 
 // Lazy load heavy components
 const PropertyGrid = dynamic(() => import('@/components/property/PropertyGrid'), {
@@ -48,7 +49,11 @@ type PropertiesApiProperty = {
   id: string
   slug?: string
   title: string
+  titleRu?: string | null
+  titleAr?: string | null
   description?: string
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   price: number
   currency: string
   type: string
@@ -143,35 +148,38 @@ export default function Properties() {
         // Transform API data to match Property interface
         const transformedProperties: Property[] = (apiProperties as PropertiesApiProperty[])
           .filter((p) => p.isPublished)
-          .map((p) => ({
-            id: p.id,
-            slug: p.slug || p.id,
-            title: p.title,
-            description: p.description || '',
-            price: p.price,
-            currency: p.currency,
-            type: p.type,
-            listingMarket: p.listingMarket || 'PRIMARY',
-            area: p.areaSqm,
-            bedrooms: p.bedrooms,
-            bathrooms: p.bathrooms,
-            parking: p.parking || 0,
-            location: p.city,
-            district: p.district,
-            areaId: p.areaId || '',
-            image: p.images && p.images.length > 0 ? p.images[0].url : '/images/hero.jpg',
-            isFeatured: p.isFeatured,
-            yearBuilt: p.yearBuilt || 0,
-            completionDate: p.completionDate || '',
-            createdAt: p.createdAt || '',
-            developer:
-              currentLocale === 'ru'
-                ? p.developer?.name || p.developer?.nameEn || ''
-                : p.developer?.nameEn || p.developer?.name || '',
-            developerSlug: p.developer?.slug || '',
-            developerLogo: p.developer?.logo || '',
-            occupancyStatus: p.occupancyStatus || '',
-          }))
+          .map((p) => {
+            const loc = localizedPropertyContent(p, currentLocale)
+            return {
+              id: p.id,
+              slug: p.slug || p.id,
+              title: loc.title,
+              description: loc.description,
+              price: p.price,
+              currency: p.currency,
+              type: p.type,
+              listingMarket: p.listingMarket || 'PRIMARY',
+              area: p.areaSqm,
+              bedrooms: p.bedrooms,
+              bathrooms: p.bathrooms,
+              parking: p.parking || 0,
+              location: p.city,
+              district: p.district,
+              areaId: p.areaId || '',
+              image: p.images && p.images.length > 0 ? p.images[0].url : '/images/hero.jpg',
+              isFeatured: p.isFeatured,
+              yearBuilt: p.yearBuilt || 0,
+              completionDate: p.completionDate || '',
+              createdAt: p.createdAt || '',
+              developer:
+                currentLocale === 'ru'
+                  ? p.developer?.name || p.developer?.nameEn || ''
+                  : p.developer?.nameEn || p.developer?.name || '',
+              developerSlug: p.developer?.slug || '',
+              developerLogo: p.developer?.logo || '',
+              occupancyStatus: p.occupancyStatus || '',
+            }
+          })
 
         setProperties(transformedProperties)
         setFilteredProperties(transformedProperties)

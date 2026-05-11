@@ -10,7 +10,7 @@ type PropertyListingImageProps = {
 }
 
 /**
- * Pre-generated thumbnail (max 40 kB) when available; onError serves full image (legacy `thumb-` only).
+ * Pre-generated grid WebP under `thumbnails/` (cover only, after property save); onError falls back to full image.
  */
 export default function PropertyListingImage({
   imageUrl,

@@ -1,6 +1,7 @@
 import { useTranslation } from 'next-i18next/pages'
 import { XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react'
+import { translatePropertyType } from '@/lib/translatePropertyType'
 
 interface Property {
   id: string
@@ -328,43 +329,7 @@ export default function PropertyFilter({
                   className="h-4 w-4 text-champagne focus:ring-champagne border-gray-300"
                 />
                 <span className="ml-2 text-sm text-gray-700">
-                  {type === 'PENTHOUSE'
-                    ? t('types.penthouse')
-                    : type === 'VILLA'
-                      ? t('types.villa')
-                      : type === 'APARTMENT'
-                        ? t('types.apartment')
-                        : type === 'TOWNHOUSE'
-                          ? t('types.townhouse')
-                          : type === 'OFFICE'
-                            ? t('types.office')
-                            : type === 'STUDIO'
-                              ? t('types.studio')
-                              : type === 'Пентхаус'
-                                ? t('types.penthouse')
-                                : type === 'Вилла'
-                                  ? t('types.villa')
-                                  : type === 'Апартаменты'
-                                    ? t('types.apartment')
-                                    : type === 'Таунхаус'
-                                      ? t('types.townhouse')
-                                      : type === 'Офис'
-                                        ? t('types.office')
-                                        : type === 'Студия'
-                                          ? t('types.studio')
-                                          : type === 'بنتهاوس'
-                                            ? t('types.penthouse')
-                                            : type === 'فيلا'
-                                              ? t('types.villa')
-                                              : type === 'شقة'
-                                                ? t('types.apartment')
-                                                : type === 'تاون هاوس'
-                                                  ? t('types.townhouse')
-                                                  : type === 'مكتب'
-                                                    ? t('types.office')
-                                                    : type === 'استوديو'
-                                                      ? t('types.studio')
-                                                      : type}
+                  {translatePropertyType(type, t)}
                 </span>
               </label>
             ))}

@@ -3,7 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { resolveNewPropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
+import { regenerateGridListingThumbnailForImageUrl } from '@/lib/regeneratePropertyGridThumbnail'
 import { createScopedLogger } from '@/lib/logger'
+import { generateLocalizedMetaIfMissing } from '@/lib/propertyMetaAutogen'
 
 export const config = {
   api: {
@@ -195,6 +197,8 @@ export default async function handler(
           property: {
             id: `demo-${Date.now()}`,
             ...req.body,
+            isPublished: true,
+            isFeatured: false,
             createdAt: new Date().toISOString(),
           },
         })
@@ -316,6 +320,33 @@ export default async function handler(
       if (listingMarket === 'SECONDARY') {
         developerId = null
       }
+      const generatedMeta = generateLocalizedMetaIfMissing(
+        {
+          title: validatedData.title,
+          titleRu: validatedData.titleRu,
+          titleAr: validatedData.titleAr,
+          description: validatedData.description,
+          descriptionRu: validatedData.descriptionRu,
+          descriptionAr: validatedData.descriptionAr,
+          type: validatedData.type,
+          city: validatedData.city,
+          district: validatedData.district,
+          features: validatedData.features,
+          featuresRu: validatedData.featuresRu,
+          featuresAr: validatedData.featuresAr,
+          amenities: validatedData.amenities,
+          amenitiesRu: validatedData.amenitiesRu,
+          amenitiesAr: validatedData.amenitiesAr,
+        },
+        {
+          metaTitle: validatedData.metaTitle,
+          metaTitleRu: validatedData.metaTitleRu,
+          metaTitleAr: validatedData.metaTitleAr,
+          metaDescription: validatedData.metaDescription,
+          metaDescriptionRu: validatedData.metaDescriptionRu,
+          metaDescriptionAr: validatedData.metaDescriptionAr,
+        }
+      )
 
       // Create property
       let property
@@ -323,7 +354,11 @@ export default async function handler(
         property = await prisma.property.create({
           data: {
             title: validatedData.title,
+            titleRu: validatedData.titleRu?.trim() || null,
+            titleAr: validatedData.titleAr?.trim() || null,
             description: validatedData.description ?? null,
+            descriptionRu: validatedData.descriptionRu?.trim() || null,
+            descriptionAr: validatedData.descriptionAr?.trim() || null,
             type: validatedData.type || 'APARTMENT',
             listingMarket: listingMarket,
             price: validatedData.price,
@@ -355,12 +390,20 @@ export default async function handler(
             coordinates: validatedData.coordinates || null,
             googleMapsUrl: validatedData.googleMapsUrl,
             features: validatedData.features || [],
+            featuresRu: validatedData.featuresRu || [],
+            featuresAr: validatedData.featuresAr || [],
             amenities: validatedData.amenities || [],
+            amenitiesRu: validatedData.amenitiesRu || [],
+            amenitiesAr: validatedData.amenitiesAr || [],
             slug,
-            metaTitle: validatedData.metaTitle || null,
-            metaDescription: validatedData.metaDescription || null,
-            isPublished: validatedData.isPublished,
-            isFeatured: validatedData.isFeatured,
+            metaTitle: generatedMeta.metaTitle || null,
+            metaTitleRu: generatedMeta.metaTitleRu || null,
+            metaTitleAr: generatedMeta.metaTitleAr || null,
+            metaDescription: generatedMeta.metaDescription || null,
+            metaDescriptionRu: generatedMeta.metaDescriptionRu || null,
+            metaDescriptionAr: generatedMeta.metaDescriptionAr || null,
+            isPublished: true,
+            isFeatured: false,
           },
           include: {
             area: true,
@@ -387,6 +430,8 @@ export default async function handler(
             property: {
               id: `demo-${Date.now()}`,
               ...validatedData,
+              isPublished: true,
+              isFeatured: false,
               slug,
               createdAt: new Date().toISOString(),
             },
@@ -432,6 +477,8 @@ export default async function handler(
               property: {
                 id: `demo-${Date.now()}`,
                 ...validatedData,
+                isPublished: true,
+                isFeatured: false,
                 slug,
                 createdAt: new Date().toISOString(),
               },
@@ -462,6 +509,19 @@ export default async function handler(
           await prisma.propertyImage.createMany({
             data: imageData,
           })
+
+          const first = (body.images as ImageInput[])[0]
+          const mainUrl =
+            typeof first === 'string' ? first : typeof first === 'object' && first ? first.url || '' : ''
+          if (mainUrl) {
+            try {
+              await regenerateGridListingThumbnailForImageUrl(mainUrl)
+            } catch (thumbError: unknown) {
+              log.warn('Cover grid thumbnail not generated', {
+                error: thumbError instanceof Error ? thumbError.message : String(thumbError),
+              })
+            }
+          }
         } catch (imageError: unknown) {
           log.errorWithException('Error creating images', imageError)
           // Continue even if images fail - property is already created
@@ -586,6 +646,8 @@ export default async function handler(
           property: {
             id: `demo-${Date.now()}`,
             ...bodyData,
+            isPublished: true,
+            isFeatured: false,
             createdAt: new Date().toISOString(),
           },
         })
@@ -613,6 +675,8 @@ export default async function handler(
             property: {
               id: `demo-${Date.now()}`,
               ...bodyData,
+              isPublished: true,
+              isFeatured: false,
               createdAt: new Date().toISOString(),
             },
           })

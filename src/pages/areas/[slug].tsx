@@ -212,7 +212,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       area: mockArea,
-      ...(await serverSideTranslations(locale ?? 'en', ['common', 'areas', 'downtown', 'the-oasis'])),
+      ...(await serverSideTranslations(locale ?? 'en', ['common', 'areas', 'downtown', 'the-oasis', 'properties'])),
     },
     notFound: mockArea === null, // Return 404 if no data
   }

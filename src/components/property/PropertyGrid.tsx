@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslation } from 'next-i18next/pages'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
+import { translatePropertyType } from '@/lib/translatePropertyType'
 import {
   MapPinIcon,
   HomeIcon,
@@ -50,23 +51,6 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
     }).format(price)
   }
 
-  const unitTypeLabel = (property: Property) => {
-    const ty = property.type
-    return ty === 'PENTHOUSE'
-      ? t('types.penthouse')
-      : ty === 'VILLA'
-        ? t('types.villa')
-        : ty === 'APARTMENT'
-          ? t('types.apartment')
-          : ty === 'TOWNHOUSE'
-            ? t('types.townhouse')
-            : ty === 'OFFICE'
-              ? t('types.office')
-              : ty === 'STUDIO'
-                ? t('types.studio')
-                : ty
-  }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {properties.map((property) => {
@@ -92,7 +76,7 @@ export default function PropertyGrid({ properties }: PropertyGridProps) {
                       : t('primary', 'Primary')}
                   </span>
                   <span className="bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {unitTypeLabel(property)}
+                    {translatePropertyType(property.type, t)}
                   </span>
                 </div>
 

@@ -10,7 +10,9 @@
     "contact": "اتصل بنا",
     "getQuote": "احصل على عرض",
     "companyName": "العقارات",
-    "toggleMenu": "تبديل قائمة التنقل"
+    "toggleMenu": "تبديل قائمة التنقل",
+    "googleTranslateLabel": "ترجمة الصفحة عبر Google",
+    "googleTranslateButton": "ترجمة Google"
   },
   "footer": {
     "description": "شريكك الموثوق في العقارات الفاخرة داخل الإمارات العربية المتحدة. نقدم خدمة متميزة وخبرة في استثمارات العقارات الفاخرة.",

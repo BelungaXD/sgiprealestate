@@ -1,7 +1,10 @@
 import { writeFile } from 'fs/promises'
 
-/** Property listing card thumbnails: cap file size (bytes) for fast grid loads. */
+/** Legacy micro thumbs (imports / old flows): very small byte cap. */
 export const MAX_PROPERTY_LISTING_THUMBNAIL_BYTES = 40 * 1024
+
+/** Grid card preview (~full column × h-64): one WebP per cover image after property save. */
+export const MAX_PROPERTY_GRID_LISTING_BYTES = 320 * 1024
 
 /**
  * Write a WebP listing thumbnail under the byte budget by stepping down size/quality.
@@ -86,4 +89,40 @@ export async function writePropertyListingThumbnail(
 
   const last = await tryEncode(input, 16, 5)
   await writeFile(outPath, last)
+}
+
+/**
+ * Listing grid / card hero: sharp WebP sized for ~256px height at retina, without micro-blur.
+ * Same path convention as {@link writePropertyListingThumbnail} (`images/thumbnails/<basename>`).
+ */
+export async function writePropertyGridListingThumbnail(
+  input: string | Buffer,
+  outPath: string,
+  maxBytes: number = MAX_PROPERTY_GRID_LISTING_BYTES
+): Promise<void> {
+  const maxSides = [960, 800, 672, 560, 480]
+
+  for (const maxSide of maxSides) {
+    let lo = 40
+    let hi = 92
+    let best: Buffer | null = null
+    for (let i = 0; i < 10; i++) {
+      if (lo > hi) break
+      const q = (lo + hi) >> 1
+      const buf = await tryEncode(input, maxSide, q)
+      if (buf.length <= maxBytes) {
+        best = buf
+        lo = q + 1
+      } else {
+        hi = q - 1
+      }
+    }
+    if (best) {
+      await writeFile(outPath, best)
+      return
+    }
+  }
+
+  const fallback = await tryEncode(input, 480, 72)
+  await writeFile(outPath, fallback)
 }

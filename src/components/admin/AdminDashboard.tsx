@@ -12,7 +12,6 @@ import {
   BuildingOfficeIcon,
   UsersIcon,
   UserPlusIcon,
-  ChartBarIcon,
   FolderOpenIcon,
   FolderIcon,
   ChevronUpIcon,
@@ -77,15 +76,6 @@ interface AdminInquiry {
   status: string
   notes: string | null
   createdAt: string
-}
-
-interface AdminPage {
-  id: string
-  slug: string
-  title: string
-  content: string | null
-  isPublished: boolean
-  updatedAt: string
 }
 
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
@@ -284,31 +274,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }, [])
 
-  const loadPages = useCallback(async () => {
-    setPagesLoading(true)
-    setPagesError('')
-    try {
-      const response = await fetch('/api/admin/pages', { credentials: 'same-origin' })
-      const data = (await response.json().catch(() => ({}))) as {
-        ok?: boolean
-        pages?: AdminPage[]
-        error?: string
-      }
-      if (!response.ok || !data.ok) {
-        setPages([])
-        setPagesError(data.error === 'unauthorized' ? 'Session expired. Please login again.' : 'Failed to load pages')
-        return
-      }
-      setPages(data.pages || [])
-    } catch (error) {
-      console.error('Error loading pages:', error)
-      setPagesError('Failed to load pages')
-      setPages([])
-    } finally {
-      setPagesLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
     loadProperties()
   }, [loadProperties])
@@ -344,10 +309,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     if (activeTab === 'inquiries') {
       loadInquiries()
     }
-    if (activeTab === 'pages') {
-      loadPages()
-    }
-  }, [activeTab, loadAdminUsers, loadInquiries, loadPages])
+  }, [activeTab, loadAdminUsers, loadInquiries])
 
   const statsData = [
     { name: t('dashboard.totalProperties'), value: stats.total.toString(), icon: BuildingOfficeIcon, color: 'text-blue-600' },
@@ -696,78 +658,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   }
 
-  const resetPageForm = () => {
-    setEditingPageId(null)
-    setPageForm({ slug: '', title: '', content: '', isPublished: true })
-  }
-
-  const handleSavePage = async (e: FormEvent) => {
-    e.preventDefault()
-    setPagesSaving(true)
-    try {
-      const url = editingPageId ? `/api/admin/pages/${editingPageId}` : '/api/admin/pages'
-      const method = editingPageId ? 'PUT' : 'POST'
-      const response = await fetch(url, {
-        method,
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slug: pageForm.slug.trim(),
-          title: pageForm.title.trim(),
-          content: pageForm.content.trim() || null,
-          isPublished: pageForm.isPublished,
-        }),
-      })
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok || !data.ok) {
-        if (response.status === 409) {
-          throw new Error('Page slug already exists')
-        }
-        throw new Error('Failed to save page')
-      }
-      await loadPages()
-      resetPageForm()
-    } catch (error) {
-      alert(getErrorMessage(error, 'Failed to save page'))
-    } finally {
-      setPagesSaving(false)
-    }
-  }
-
-  const handleEditPage = (page: AdminPage) => {
-    setEditingPageId(page.id)
-    setPageForm({
-      slug: page.slug,
-      title: page.title,
-      content: page.content || '',
-      isPublished: page.isPublished,
-    })
-  }
-
-  const handleDeletePage = async (id: string) => {
-    if (!confirm('Delete this page?')) return
-    setPagesSaving(true)
-    try {
-      const response = await fetch(`/api/admin/pages/${id}`, {
-        method: 'DELETE',
-        credentials: 'same-origin',
-      })
-      const data = await response.json().catch(() => ({}))
-      if (!response.ok || !data.ok) throw new Error('Failed to delete page')
-      await loadPages()
-      if (editingPageId === id) resetPageForm()
-    } catch (error) {
-      alert(getErrorMessage(error, 'Failed to delete page'))
-    } finally {
-      setPagesSaving(false)
-    }
-  }
-
   const tabs = [
     { id: 'properties', name: t('dashboard.properties'), icon: BuildingOfficeIcon },
     { id: 'areas', name: t('dashboard.areas'), icon: MapPinIcon },
     { id: 'developers', name: t('dashboard.developers'), icon: BuildingLibraryIcon },
-    { id: 'pages', name: t('dashboard.pages'), icon: ChartBarIcon },
     { id: 'inquiries', name: t('dashboard.inquiries'), icon: UsersIcon },
     { id: 'settings', name: t('dashboard.settings'), icon: FolderIcon },
   ]
@@ -1001,123 +895,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 {t('areas.title')}
               </h2>
               <AreasAdminPanel />
-            </div>
-          )}
-
-          {activeTab === 'pages' && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-graphite mb-4">Pages</h2>
-                <form onSubmit={handleSavePage} className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      required
-                      value={pageForm.slug}
-                      onChange={(e) => setPageForm((prev) => ({ ...prev, slug: e.target.value }))}
-                      placeholder="Slug (e.g. about-us)"
-                      className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                    />
-                    <input
-                      type="text"
-                      required
-                      value={pageForm.title}
-                      onChange={(e) => setPageForm((prev) => ({ ...prev, title: e.target.value }))}
-                      placeholder="Page title"
-                      className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                    />
-                  </div>
-                  <textarea
-                    rows={5}
-                    value={pageForm.content}
-                    onChange={(e) => setPageForm((prev) => ({ ...prev, content: e.target.value }))}
-                    placeholder="Page content"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
-                  />
-                  <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={pageForm.isPublished}
-                      onChange={(e) =>
-                        setPageForm((prev) => ({ ...prev, isPublished: e.target.checked }))
-                      }
-                    />
-                    Published
-                  </label>
-                  <div className="flex gap-2">
-                    <button type="submit" disabled={pagesSaving} className="btn-filled btn-sm">
-                      {pagesSaving ? 'Saving…' : editingPageId ? 'Update Page' : 'Create Page'}
-                    </button>
-                    {editingPageId && (
-                      <button type="button" onClick={resetPageForm} className="btn-ghost btn-sm">
-                        Cancel Edit
-                      </button>
-                    )}
-                  </div>
-                </form>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-sm">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h3 className="text-base font-semibold text-graphite">Saved Pages</h3>
-                </div>
-                {pagesError && <p className="px-6 py-3 text-sm text-red-600">{pagesError}</p>}
-                {pagesLoading ? (
-                  <p className="p-6 text-sm text-gray-500">Loading pages…</p>
-                ) : pages.length === 0 ? (
-                  <p className="p-6 text-sm text-gray-500">No pages yet</p>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Slug
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Title
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {pages.map((page) => (
-                          <tr key={page.id}>
-                            <td className="px-6 py-4 text-sm text-gray-700">{page.slug}</td>
-                            <td className="px-6 py-4 text-sm text-gray-700">{page.title}</td>
-                            <td className="px-6 py-4 text-sm">
-                              {page.isPublished ? 'Published' : 'Draft'}
-                            </td>
-                            <td className="px-6 py-4 text-sm">
-                              <div className="flex gap-3">
-                                <button
-                                  type="button"
-                                  onClick={() => handleEditPage(page)}
-                                  className="text-yellow-700 hover:text-yellow-900"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeletePage(page.id)}
-                                  className="text-red-600 hover:text-red-900"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
             </div>
           )}
 

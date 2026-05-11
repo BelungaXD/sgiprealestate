@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useTranslation } from 'next-i18next/pages'
 import PropertyListingImage from '@/components/property/PropertyListingImage'
+import { translatePropertyType } from '@/lib/translatePropertyType'
 import { MapPinIcon, HomeIcon, WrenchScrewdriverIcon, Square3Stack3DIcon, ArrowRightIcon } from '@heroicons/react/24/outline'
 
 interface Property {
@@ -20,6 +21,7 @@ interface Property {
 
 export default function RelatedProperties() {
   const { t } = useTranslation('property')
+  const { t: tProps } = useTranslation('properties')
 
   // Load related properties from API - no mock data
   const relatedProperties: Property[] = []
@@ -54,7 +56,7 @@ export default function RelatedProperties() {
               />
               
               <div className="absolute top-4 left-4 bg-champagne text-white px-3 py-1 rounded-full text-sm font-medium">
-                {property.type}
+                {translatePropertyType(property.type, tProps)}
               </div>
               
               {property.isFeatured && (
