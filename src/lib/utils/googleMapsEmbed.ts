@@ -107,8 +107,12 @@ export function googleMapsEmbedSrcFromUserUrl(
   } catch {
     return null
   }
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null
-  if (!isAllowedHost(url.hostname)) return null
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return null
+  }
+  if (!isAllowedHost(url.hostname)) {
+    return null
+  }
 
   const path = url.pathname.toLowerCase()
   if (path.includes('/maps/embed')) {
@@ -127,12 +131,16 @@ export function googleMapsEmbedSrcFromUserUrl(
 
   if (isShortLinkHost(url.hostname)) {
     const addr = fallbackAddress?.trim()
-    if (addr) return legacyEmbedFromQuery(addr, 15)
+    if (addr) {
+      return legacyEmbedFromQuery(addr, 15)
+    }
     return null
   }
 
   const addr = fallbackAddress?.trim()
-  if (addr) return legacyEmbedFromQuery(addr, 15)
+  if (addr) {
+    return legacyEmbedFromQuery(addr, 15)
+  }
 
   return null
 }

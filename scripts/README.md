@@ -185,6 +185,29 @@ export DB_SERVER_ADMIN_USER=dbadmin  # Database admin user
 - Check database user has CREATE TABLE permissions
 - Verify Prisma schema is valid
 
+### `prisma migrate deploy` fails with P3005 (schema is not empty)
+
+The database was created outside Prisma Migrate (e.g. `create-tables.sql` or `db push`), so there is no compatible `_prisma_migrations` history for the first folder migrations.
+
+**Option A — same as deploy script (recommended for this repo):** sync schema without migration history:
+
+```bash
+npx prisma db push
+```
+
+`scripts/setup-database.sh` already runs `prisma db push` when tables exist.
+
+**Option B — keep using `migrate deploy` later:** apply the SQL in `prisma/migrations/*/migration.sql` if anything is missing, then mark migrations as applied (no-op in DB if columns already exist thanks to `IF NOT EXISTS`):
+
+```bash
+npx prisma migrate resolve --applied "20260511190000_property_locale_columns"
+npx prisma migrate resolve --applied "20260512120000_property_market_maps"
+```
+
+Then `npx prisma migrate deploy` should report nothing pending. Official baselining: [Prisma baselining](https://www.prisma.io/docs/orm/prisma-migrate/workflows/baselining).
+
+**Option C — empty dev database only:** `npx prisma migrate reset` (drops data), then `migrate deploy`.
+
 ### Script fails in Docker
 
 - Ensure container has access to DATABASE_URL

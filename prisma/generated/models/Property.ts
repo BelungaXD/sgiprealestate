@@ -163,7 +163,11 @@ export type PropertyCountAggregateOutputType = {
   areaId: number
   developerId: number
   features: number
+  featuresRu: number
+  featuresAr: number
   amenities: number
+  amenitiesRu: number
+  amenitiesAr: number
   slug: number
   metaTitle: number
   metaDescription: number
@@ -316,7 +320,11 @@ export type PropertyCountAggregateInputType = {
   areaId?: true
   developerId?: true
   features?: true
+  featuresRu?: true
+  featuresAr?: true
   amenities?: true
+  amenitiesRu?: true
+  amenitiesAr?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -448,7 +456,11 @@ export type PropertyGroupByOutputType = {
   areaId: string | null
   developerId: string | null
   features: string[]
+  featuresRu: string[]
+  featuresAr: string[]
   amenities: string[]
+  amenitiesRu: string[]
+  amenitiesAr: string[]
   slug: string
   metaTitle: string | null
   metaDescription: string | null
@@ -516,7 +528,11 @@ export type PropertyWhereInput = {
   areaId?: Prisma.StringNullableFilter<"Property"> | string | null
   developerId?: Prisma.StringNullableFilter<"Property"> | string | null
   features?: Prisma.StringNullableListFilter<"Property">
+  featuresRu?: Prisma.StringNullableListFilter<"Property">
+  featuresAr?: Prisma.StringNullableListFilter<"Property">
   amenities?: Prisma.StringNullableListFilter<"Property">
+  amenitiesRu?: Prisma.StringNullableListFilter<"Property">
+  amenitiesAr?: Prisma.StringNullableListFilter<"Property">
   slug?: Prisma.StringFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
@@ -567,7 +583,11 @@ export type PropertyOrderByWithRelationInput = {
   areaId?: Prisma.SortOrderInput | Prisma.SortOrder
   developerId?: Prisma.SortOrderInput | Prisma.SortOrder
   features?: Prisma.SortOrder
+  featuresRu?: Prisma.SortOrder
+  featuresAr?: Prisma.SortOrder
   amenities?: Prisma.SortOrder
+  amenitiesRu?: Prisma.SortOrder
+  amenitiesAr?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -622,7 +642,11 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   areaId?: Prisma.StringNullableFilter<"Property"> | string | null
   developerId?: Prisma.StringNullableFilter<"Property"> | string | null
   features?: Prisma.StringNullableListFilter<"Property">
+  featuresRu?: Prisma.StringNullableListFilter<"Property">
+  featuresAr?: Prisma.StringNullableListFilter<"Property">
   amenities?: Prisma.StringNullableListFilter<"Property">
+  amenitiesRu?: Prisma.StringNullableListFilter<"Property">
+  amenitiesAr?: Prisma.StringNullableListFilter<"Property">
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
   metaTitleRu?: Prisma.StringNullableFilter<"Property"> | string | null
@@ -672,7 +696,11 @@ export type PropertyOrderByWithAggregationInput = {
   areaId?: Prisma.SortOrderInput | Prisma.SortOrder
   developerId?: Prisma.SortOrderInput | Prisma.SortOrder
   features?: Prisma.SortOrder
+  featuresRu?: Prisma.SortOrder
+  featuresAr?: Prisma.SortOrder
   amenities?: Prisma.SortOrder
+  amenitiesRu?: Prisma.SortOrder
+  amenitiesAr?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -725,7 +753,11 @@ export type PropertyScalarWhereWithAggregatesInput = {
   areaId?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   developerId?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   features?: Prisma.StringNullableListFilter<"Property">
+  featuresRu?: Prisma.StringNullableListFilter<"Property">
+  featuresAr?: Prisma.StringNullableListFilter<"Property">
   amenities?: Prisma.StringNullableListFilter<"Property">
+  amenitiesRu?: Prisma.StringNullableListFilter<"Property">
+  amenitiesAr?: Prisma.StringNullableListFilter<"Property">
   slug?: Prisma.StringWithAggregatesFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
@@ -768,7 +800,11 @@ export type PropertyCreateInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -819,7 +855,11 @@ export type PropertyUncheckedCreateInput = {
   areaId?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -866,7 +906,11 @@ export type PropertyUpdateInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -917,7 +961,11 @@ export type PropertyUncheckedUpdateInput = {
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -966,7 +1014,11 @@ export type PropertyCreateManyInput = {
   areaId?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1009,7 +1061,11 @@ export type PropertyUpdateManyMutationInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1054,7 +1110,11 @@ export type PropertyUncheckedUpdateManyInput = {
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1107,7 +1167,11 @@ export type PropertyCountOrderByAggregateInput = {
   areaId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
   features?: Prisma.SortOrder
+  featuresRu?: Prisma.SortOrder
+  featuresAr?: Prisma.SortOrder
   amenities?: Prisma.SortOrder
+  amenitiesRu?: Prisma.SortOrder
+  amenitiesAr?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -1251,7 +1315,23 @@ export type PropertyCreatefeaturesInput = {
   set: string[]
 }
 
+export type PropertyCreatefeaturesRuInput = {
+  set: string[]
+}
+
+export type PropertyCreatefeaturesArInput = {
+  set: string[]
+}
+
 export type PropertyCreateamenitiesInput = {
+  set: string[]
+}
+
+export type PropertyCreateamenitiesRuInput = {
+  set: string[]
+}
+
+export type PropertyCreateamenitiesArInput = {
   set: string[]
 }
 
@@ -1312,7 +1392,27 @@ export type PropertyUpdatefeaturesInput = {
   push?: string | string[]
 }
 
+export type PropertyUpdatefeaturesRuInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type PropertyUpdatefeaturesArInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type PropertyUpdateamenitiesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type PropertyUpdateamenitiesRuInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type PropertyUpdateamenitiesArInput = {
   set?: string[]
   push?: string | string[]
 }
@@ -1496,7 +1596,11 @@ export type PropertyCreateWithoutImagesInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1546,7 +1650,11 @@ export type PropertyUncheckedCreateWithoutImagesInput = {
   areaId?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1608,7 +1716,11 @@ export type PropertyUpdateWithoutImagesInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1658,7 +1770,11 @@ export type PropertyUncheckedUpdateWithoutImagesInput = {
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1704,7 +1820,11 @@ export type PropertyCreateWithoutFloorPlansInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1754,7 +1874,11 @@ export type PropertyUncheckedCreateWithoutFloorPlansInput = {
   areaId?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1816,7 +1940,11 @@ export type PropertyUpdateWithoutFloorPlansInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1866,7 +1994,11 @@ export type PropertyUncheckedUpdateWithoutFloorPlansInput = {
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1912,7 +2044,11 @@ export type PropertyCreateWithoutFilesInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1962,7 +2098,11 @@ export type PropertyUncheckedCreateWithoutFilesInput = {
   areaId?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2024,7 +2164,11 @@ export type PropertyUpdateWithoutFilesInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2074,7 +2218,11 @@ export type PropertyUncheckedUpdateWithoutFilesInput = {
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2120,7 +2268,11 @@ export type PropertyCreateWithoutAreaInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2169,7 +2321,11 @@ export type PropertyUncheckedCreateWithoutAreaInput = {
   googleMapsUrl?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2247,7 +2403,11 @@ export type PropertyScalarWhereInput = {
   areaId?: Prisma.StringNullableFilter<"Property"> | string | null
   developerId?: Prisma.StringNullableFilter<"Property"> | string | null
   features?: Prisma.StringNullableListFilter<"Property">
+  featuresRu?: Prisma.StringNullableListFilter<"Property">
+  featuresAr?: Prisma.StringNullableListFilter<"Property">
   amenities?: Prisma.StringNullableListFilter<"Property">
+  amenitiesRu?: Prisma.StringNullableListFilter<"Property">
+  amenitiesAr?: Prisma.StringNullableListFilter<"Property">
   slug?: Prisma.StringFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
@@ -2290,7 +2450,11 @@ export type PropertyCreateWithoutDeveloperInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2339,7 +2503,11 @@ export type PropertyUncheckedCreateWithoutDeveloperInput = {
   googleMapsUrl?: string | null
   areaId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2412,7 +2580,11 @@ export type PropertyCreateWithoutLeadsInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2462,7 +2634,11 @@ export type PropertyUncheckedCreateWithoutLeadsInput = {
   areaId?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2524,7 +2700,11 @@ export type PropertyUpdateWithoutLeadsInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2574,7 +2754,11 @@ export type PropertyUncheckedUpdateWithoutLeadsInput = {
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2621,7 +2805,11 @@ export type PropertyCreateManyAreaInput = {
   googleMapsUrl?: string | null
   developerId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2664,7 +2852,11 @@ export type PropertyUpdateWithoutAreaInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2713,7 +2905,11 @@ export type PropertyUncheckedUpdateWithoutAreaInput = {
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2761,7 +2957,11 @@ export type PropertyUncheckedUpdateManyWithoutAreaInput = {
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2805,7 +3005,11 @@ export type PropertyCreateManyDeveloperInput = {
   googleMapsUrl?: string | null
   areaId?: string | null
   features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2848,7 +3052,11 @@ export type PropertyUpdateWithoutDeveloperInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2897,7 +3105,11 @@ export type PropertyUncheckedUpdateWithoutDeveloperInput = {
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2945,7 +3157,11 @@ export type PropertyUncheckedUpdateManyWithoutDeveloperInput = {
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3048,7 +3264,11 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   areaId?: boolean
   developerId?: boolean
   features?: boolean
+  featuresRu?: boolean
+  featuresAr?: boolean
   amenities?: boolean
+  amenitiesRu?: boolean
+  amenitiesAr?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3100,7 +3320,11 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   areaId?: boolean
   developerId?: boolean
   features?: boolean
+  featuresRu?: boolean
+  featuresAr?: boolean
   amenities?: boolean
+  amenitiesRu?: boolean
+  amenitiesAr?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3147,7 +3371,11 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   areaId?: boolean
   developerId?: boolean
   features?: boolean
+  featuresRu?: boolean
+  featuresAr?: boolean
   amenities?: boolean
+  amenitiesRu?: boolean
+  amenitiesAr?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3194,7 +3422,11 @@ export type PropertySelectScalar = {
   areaId?: boolean
   developerId?: boolean
   features?: boolean
+  featuresRu?: boolean
+  featuresAr?: boolean
   amenities?: boolean
+  amenitiesRu?: boolean
+  amenitiesAr?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3208,7 +3440,7 @@ export type PropertySelectScalar = {
   isFeatured?: boolean
 }
 
-export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "titleRu" | "titleAr" | "descriptionRu" | "descriptionAr" | "price" | "currency" | "type" | "listingMarket" | "status" | "areaSqm" | "bedrooms" | "bathrooms" | "parking" | "floor" | "totalFloors" | "yearBuilt" | "completionDate" | "paymentPlan" | "occupancyStatus" | "address" | "city" | "district" | "coordinates" | "googleMapsUrl" | "areaId" | "developerId" | "features" | "amenities" | "slug" | "metaTitle" | "metaDescription" | "metaTitleRu" | "metaTitleAr" | "metaDescriptionRu" | "metaDescriptionAr" | "createdAt" | "updatedAt" | "isPublished" | "isFeatured", ExtArgs["result"]["property"]>
+export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "titleRu" | "titleAr" | "descriptionRu" | "descriptionAr" | "price" | "currency" | "type" | "listingMarket" | "status" | "areaSqm" | "bedrooms" | "bathrooms" | "parking" | "floor" | "totalFloors" | "yearBuilt" | "completionDate" | "paymentPlan" | "occupancyStatus" | "address" | "city" | "district" | "coordinates" | "googleMapsUrl" | "areaId" | "developerId" | "features" | "featuresRu" | "featuresAr" | "amenities" | "amenitiesRu" | "amenitiesAr" | "slug" | "metaTitle" | "metaDescription" | "metaTitleRu" | "metaTitleAr" | "metaDescriptionRu" | "metaDescriptionAr" | "createdAt" | "updatedAt" | "isPublished" | "isFeatured", ExtArgs["result"]["property"]>
 export type PropertyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
@@ -3283,7 +3515,11 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     areaId: string | null
     developerId: string | null
     features: string[]
+    featuresRu: string[]
+    featuresAr: string[]
     amenities: string[]
+    amenitiesRu: string[]
+    amenitiesAr: string[]
     slug: string
     metaTitle: string | null
     metaDescription: string | null
@@ -3754,7 +3990,11 @@ export interface PropertyFieldRefs {
   readonly areaId: Prisma.FieldRef<"Property", 'String'>
   readonly developerId: Prisma.FieldRef<"Property", 'String'>
   readonly features: Prisma.FieldRef<"Property", 'String[]'>
+  readonly featuresRu: Prisma.FieldRef<"Property", 'String[]'>
+  readonly featuresAr: Prisma.FieldRef<"Property", 'String[]'>
   readonly amenities: Prisma.FieldRef<"Property", 'String[]'>
+  readonly amenitiesRu: Prisma.FieldRef<"Property", 'String[]'>
+  readonly amenitiesAr: Prisma.FieldRef<"Property", 'String[]'>
   readonly slug: Prisma.FieldRef<"Property", 'String'>
   readonly metaTitle: Prisma.FieldRef<"Property", 'String'>
   readonly metaDescription: Prisma.FieldRef<"Property", 'String'>

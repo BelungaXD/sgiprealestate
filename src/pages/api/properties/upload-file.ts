@@ -3,6 +3,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 const log = createScopedLogger('api/properties/upload-file')
 
@@ -20,6 +21,10 @@ export default async function handler(
 ) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
+  }
+
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   try {

@@ -197,3 +197,8 @@ export function readCookie(req: NextApiRequest, name: string): string | undefine
   }
   return undefined
 }
+
+/** True when the request carries a valid HttpOnly admin session cookie (mutating API routes). */
+export function isAdminSessionValid(req: NextApiRequest): boolean {
+  return verifyAdminSessionToken(readCookie(req, ADMIN_SESSION_COOKIE))
+}

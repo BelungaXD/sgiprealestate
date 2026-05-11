@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 const log = createScopedLogger('api/properties/delete-all')
 
@@ -11,6 +12,10 @@ export default async function handler(
 ) {
   if (req.method !== 'DELETE') {
     return res.status(405).json({ message: 'Method not allowed' })
+  }
+
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ success: false, message: 'Unauthorized' })
   }
 
   try {

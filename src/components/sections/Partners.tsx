@@ -1,7 +1,7 @@
 import { useTranslation } from 'next-i18next/pages'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import AnimateOnScroll from '@/components/ui/AnimateOnScroll'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
@@ -14,32 +14,38 @@ interface Partner {
   website?: string
 }
 
+const PARTNER_FALLBACK: Partner[] = [
+  {
+    id: 'emaar-properties',
+    slug: 'emaar-properties',
+    name: 'Emaar Properties',
+    logo: '/uploads/developers/emaar_logo.png',
+    website: 'https://www.emaar.com',
+  },
+  {
+    id: 'sobha',
+    slug: 'sobha',
+    name: 'Sobha',
+    logo: '/uploads/developers/sobha_logo.png',
+    website: 'https://www.sobha.com',
+  },
+]
+
 export default function Partners() {
   const { t, ready } = useTranslation('home')
   const [partners, setPartners] = useState<Partner[]>([])
 
-  const fallbackPartners: Partner[] = [
-    {
-      id: 'emaar-properties',
-      slug: 'emaar-properties',
-      name: 'Emaar Properties',
-      logo: '/uploads/developers/emaar_logo.png',
-      website: 'https://www.emaar.com',
-    },
-    {
-      id: 'sobha',
-      slug: 'sobha',
-      name: 'Sobha',
-      logo: '/uploads/developers/sobha_logo.png',
-      website: 'https://www.sobha.com',
-    },
-  ]
-  const normalizedFallbackPartners = fallbackPartners.map((partner) => ({
-    ...partner,
-    logo: normalizeImageUrl(partner.logo),
-  }))
-  const fallbackBySlug = new Map(
-    normalizedFallbackPartners.map((partner) => [partner.slug, partner])
+  const normalizedFallbackPartners = useMemo(
+    () =>
+      PARTNER_FALLBACK.map((partner) => ({
+        ...partner,
+        logo: normalizeImageUrl(partner.logo),
+      })),
+    []
+  )
+  const fallbackBySlug = useMemo(
+    () => new Map(normalizedFallbackPartners.map((partner) => [partner.slug, partner])),
+    [normalizedFallbackPartners]
   )
 
   useEffect(() => {
@@ -47,9 +53,6 @@ export default function Partners() {
       try {
         const response = await fetch('/api/developers')
         const data = await response.json()
-        // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H1',location:'src/components/sections/Partners.tsx:46',message:'Home partners API payload logos',data:{count:Array.isArray(data?.developers)?data.developers.length:0,sample:(Array.isArray(data?.developers)?data.developers:[]).slice(0,8).map((d:{slug?:string;logo?:string|null})=>({slug:d?.slug||'',logo:d?.logo||''}))},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         const apiPartners: Partner[] = Array.isArray(data?.developers)
           ? data.developers.map((developer: {
               id: string
@@ -68,9 +71,6 @@ export default function Partners() {
               website: developer.website || undefined,
             }))
           : []
-        // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H2',location:'src/components/sections/Partners.tsx:63',message:'Home partners normalized logo URLs',data:{count:apiPartners.length,sample:apiPartners.slice(0,8).map((p)=>({slug:p.slug,logo:p.logo}))},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
 
         setPartners(apiPartners.length > 0 ? apiPartners : normalizedFallbackPartners)
       } catch {
@@ -79,7 +79,7 @@ export default function Partners() {
     }
 
     loadPartners()
-  }, [])
+  }, [fallbackBySlug, normalizedFallbackPartners])
 
   return (
     <section className="section-padding bg-gray-50">
@@ -118,11 +118,6 @@ export default function Partners() {
                         height={80}
                         sizes="(max-width: 768px) 45vw, 120px"
                         className="max-w-full max-h-full object-contain"
-                        onError={() => {
-                          // #region agent log
-                          fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H3',location:'src/components/sections/Partners.tsx:111',message:'Home partner logo failed to load',data:{slug:partner.slug,name:partner.name,logo:partner.logo},timestamp:Date.now()})}).catch(()=>{});
-                          // #endregion
-                        }}
                       />
                     ) : null}
                   </div>
@@ -138,11 +133,6 @@ export default function Partners() {
                         height={80}
                         sizes="(max-width: 768px) 45vw, 120px"
                         className="max-w-full max-h-full object-contain"
-                        onError={() => {
-                          // #region agent log
-                          fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'bef835'},body:JSON.stringify({sessionId:'bef835',runId:'initial',hypothesisId:'H3',location:'src/components/sections/Partners.tsx:132',message:'Home partner logo failed to load (no website)',data:{slug:partner.slug,name:partner.name,logo:partner.logo},timestamp:Date.now()})}).catch(()=>{});
-                          // #endregion
-                        }}
                       />
                     ) : null}
                   </div>

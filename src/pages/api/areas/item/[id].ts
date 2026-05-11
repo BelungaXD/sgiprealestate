@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 import { z } from 'zod'
 
 const updateAreaSchema = z.object({
@@ -44,6 +45,10 @@ export default async function handler(
 
   if (!process.env.DATABASE_URL) {
     return res.status(503).json({ message: 'Database not configured' })
+  }
+
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   if (req.method === 'PUT') {

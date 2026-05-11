@@ -181,8 +181,7 @@ function buildLocalizedMeta(
   locale: Locale,
   typeKey: string | null,
   districtKey: string | null,
-  attrs: string[],
-  fallbackTitle: string
+  attrs: string[]
 ): { title: string; description: string } {
   const typeLabel = typeKey ? toLocaleLabel(typeKey, locale) : DEFAULT_TYPE[locale]
   const districtLabel = districtKey ? toLocaleLabel(districtKey, locale) : ''
@@ -267,9 +266,9 @@ export function generateLocalizedMetaIfMissing(
   const sourceDescRu = compactSpace(input.descriptionRu) || sourceDescEn
   const sourceDescAr = compactSpace(input.descriptionAr) || sourceDescEn
 
-  const en = buildLocalizedMeta('en', typeKey, districtKey, attrs, sourceTitleEn)
-  const ru = buildLocalizedMeta('ru', typeKey, districtKey, attrs, sourceTitleRu)
-  const ar = buildLocalizedMeta('ar', typeKey, districtKey, attrs, sourceTitleAr)
+  const en = buildLocalizedMeta('en', typeKey, districtKey, attrs)
+  const ru = buildLocalizedMeta('ru', typeKey, districtKey, attrs)
+  const ar = buildLocalizedMeta('ar', typeKey, districtKey, attrs)
 
   return {
     metaTitle: fillEmpty(existing.metaTitle, finalTitle(en.title, sourceTitleEn)),

@@ -4,6 +4,7 @@ import { createWriteStream } from 'fs'
 import { join, dirname, normalize, resolve, relative as pathRelative } from 'path'
 import { pipeline } from 'stream/promises'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 /**
  * Stream one file per request directly to disk. No multipart, no formidable, no temp copy.
@@ -56,6 +57,10 @@ function sanitizeRelPath(raw: string): string | null {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
+  }
+
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   const startedAt = Date.now()

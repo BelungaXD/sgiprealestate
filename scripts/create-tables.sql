@@ -4,6 +4,16 @@
 -- Create enums
 CREATE TYPE "PropertyType" AS ENUM ('APARTMENT', 'VILLA', 'TOWNHOUSE', 'PENTHOUSE', 'STUDIO', 'OFFICE', 'RETAIL', 'WAREHOUSE', 'LAND');
 CREATE TYPE "PropertyStatus" AS ENUM ('AVAILABLE', 'SOLD', 'RENTED', 'RESERVED', 'UNAVAILABLE');
+DO $$ BEGIN
+  CREATE TYPE "ListingMarket" AS ENUM ('PRIMARY', 'SECONDARY');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE TYPE "OccupancyStatus" AS ENUM ('VACANT', 'TENANTED');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 CREATE TYPE "LeadStatus" AS ENUM ('NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST');
 CREATE TYPE "PartnerType" AS ENUM ('BANK', 'INSURANCE', 'CONSULTING', 'LEGAL', 'CONSTRUCTION', 'OTHER');
 
@@ -51,6 +61,7 @@ CREATE TABLE IF NOT EXISTS "properties" (
     "price" DOUBLE PRECISION NOT NULL,
     "currency" TEXT NOT NULL DEFAULT 'AED',
     "type" "PropertyType" NOT NULL,
+    "listingMarket" "ListingMarket" NOT NULL DEFAULT 'PRIMARY',
     "status" "PropertyStatus" NOT NULL DEFAULT 'AVAILABLE',
     "areaSqm" DOUBLE PRECISION NOT NULL,
     "bedrooms" INTEGER NOT NULL,
@@ -60,10 +71,13 @@ CREATE TABLE IF NOT EXISTS "properties" (
     "totalFloors" INTEGER,
     "yearBuilt" INTEGER,
     "completionDate" TIMESTAMP(3),
+    "paymentPlan" TEXT,
+    "occupancyStatus" "OccupancyStatus",
     "address" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "district" TEXT NOT NULL,
     "coordinates" JSONB,
+    "googleMapsUrl" TEXT,
     "areaId" TEXT,
     "developerId" TEXT,
     "features" TEXT[],
@@ -82,6 +96,11 @@ CREATE TABLE IF NOT EXISTS "properties" (
     CONSTRAINT "properties_areaId_fkey" FOREIGN KEY ("areaId") REFERENCES "areas"("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "properties_developerId_fkey" FOREIGN KEY ("developerId") REFERENCES "developers"("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "listingMarket" "ListingMarket" NOT NULL DEFAULT 'PRIMARY';
+ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "paymentPlan" TEXT;
+ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "occupancyStatus" "OccupancyStatus";
+ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "googleMapsUrl" TEXT;
 
 -- Create property_images table
 CREATE TABLE IF NOT EXISTS "property_images" (

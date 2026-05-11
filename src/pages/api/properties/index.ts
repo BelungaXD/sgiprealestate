@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import type { Prisma } from '../../../../prisma/generated/client'
 import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { resolveNewPropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
@@ -6,6 +7,12 @@ import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
 import { regenerateGridListingThumbnailForImageUrl } from '@/lib/regeneratePropertyGridThumbnail'
 import { createScopedLogger } from '@/lib/logger'
 import { generateLocalizedMetaIfMissing } from '@/lib/propertyMetaAutogen'
+import {
+  finiteLatLngOrUndefined,
+  omitUndefinedShallow,
+  parseIsoDateForPrisma,
+} from '@/lib/utils/isoDateForPrisma'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 export const config = {
   api: {
@@ -187,6 +194,9 @@ export default async function handler(
 
   // POST - Create property
   if (req.method === 'POST') {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' })
+    }
     try {
       // Check if DATABASE_URL is configured
       if (!process.env.DATABASE_URL) {
@@ -351,60 +361,59 @@ export default async function handler(
       // Create property
       let property
       try {
-        property = await prisma.property.create({
-          data: {
-            title: validatedData.title,
-            titleRu: validatedData.titleRu?.trim() || null,
-            titleAr: validatedData.titleAr?.trim() || null,
-            description: validatedData.description ?? null,
-            descriptionRu: validatedData.descriptionRu?.trim() || null,
-            descriptionAr: validatedData.descriptionAr?.trim() || null,
-            type: validatedData.type || 'APARTMENT',
-            listingMarket: listingMarket,
-            price: validatedData.price,
-            currency: validatedData.currency,
-            status: validatedData.status,
-            areaSqm: validatedData.areaSqm,
-            bedrooms: validatedData.bedrooms,
-            bathrooms: validatedData.bathrooms,
-            parking: validatedData.parking,
-            floor: validatedData.floor,
-            totalFloors: validatedData.totalFloors,
-            yearBuilt: validatedData.yearBuilt,
-            completionDate: validatedData.completionDate
-              ? new Date(validatedData.completionDate)
+        const propertyCreateData = omitUndefinedShallow({
+          title: validatedData.title ?? '',
+          titleRu: validatedData.titleRu?.trim() || null,
+          titleAr: validatedData.titleAr?.trim() || null,
+          description: validatedData.description ?? null,
+          descriptionRu: validatedData.descriptionRu?.trim() || null,
+          descriptionAr: validatedData.descriptionAr?.trim() || null,
+          type: validatedData.type || 'APARTMENT',
+          listingMarket: listingMarket,
+          price: validatedData.price,
+          currency: validatedData.currency,
+          status: validatedData.status,
+          areaSqm: validatedData.areaSqm,
+          bedrooms: validatedData.bedrooms,
+          bathrooms: validatedData.bathrooms,
+          parking: validatedData.parking ?? null,
+          floor: validatedData.floor ?? null,
+          totalFloors: validatedData.totalFloors ?? null,
+          yearBuilt: validatedData.yearBuilt ?? null,
+          completionDate: parseIsoDateForPrisma(validatedData.completionDate),
+          paymentPlan:
+            listingMarket === 'PRIMARY'
+              ? validatedData.paymentPlan?.trim() || null
               : null,
-            paymentPlan:
-              listingMarket === 'PRIMARY'
-                ? validatedData.paymentPlan?.trim() || null
-                : null,
-            occupancyStatus:
-              listingMarket === 'SECONDARY'
-                ? validatedData.occupancyStatus || null
-                : null,
-            address: validatedData.address,
-            city: validatedData.city,
-            district: validatedData.district,
-            areaId: validatedData.areaId || null,
-            developerId,
-            coordinates: validatedData.coordinates || null,
-            googleMapsUrl: validatedData.googleMapsUrl,
-            features: validatedData.features || [],
-            featuresRu: validatedData.featuresRu || [],
-            featuresAr: validatedData.featuresAr || [],
-            amenities: validatedData.amenities || [],
-            amenitiesRu: validatedData.amenitiesRu || [],
-            amenitiesAr: validatedData.amenitiesAr || [],
-            slug,
-            metaTitle: generatedMeta.metaTitle || null,
-            metaTitleRu: generatedMeta.metaTitleRu || null,
-            metaTitleAr: generatedMeta.metaTitleAr || null,
-            metaDescription: generatedMeta.metaDescription || null,
-            metaDescriptionRu: generatedMeta.metaDescriptionRu || null,
-            metaDescriptionAr: generatedMeta.metaDescriptionAr || null,
-            isPublished: true,
-            isFeatured: false,
-          },
+          occupancyStatus:
+            listingMarket === 'SECONDARY'
+              ? validatedData.occupancyStatus || null
+              : null,
+          address: validatedData.address ?? '',
+          city: validatedData.city ?? '',
+          district: validatedData.district ?? '',
+          areaId: validatedData.areaId || null,
+          developerId: developerId ?? null,
+          coordinates: finiteLatLngOrUndefined(validatedData.coordinates ?? undefined),
+          googleMapsUrl: validatedData.googleMapsUrl ?? null,
+          features: validatedData.features || [],
+          featuresRu: validatedData.featuresRu || [],
+          featuresAr: validatedData.featuresAr || [],
+          amenities: validatedData.amenities || [],
+          amenitiesRu: validatedData.amenitiesRu || [],
+          amenitiesAr: validatedData.amenitiesAr || [],
+          slug,
+          metaTitle: generatedMeta.metaTitle || null,
+          metaTitleRu: generatedMeta.metaTitleRu || null,
+          metaTitleAr: generatedMeta.metaTitleAr || null,
+          metaDescription: generatedMeta.metaDescription || null,
+          metaDescriptionRu: generatedMeta.metaDescriptionRu || null,
+          metaDescriptionAr: generatedMeta.metaDescriptionAr || null,
+          isPublished: true,
+          isFeatured: false,
+        })
+        property = await prisma.property.create({
+          data: propertyCreateData as Prisma.PropertyUncheckedCreateInput,
           include: {
             area: true,
             developer: true,
@@ -414,6 +423,19 @@ export default async function handler(
         })
       } catch (dbError: unknown) {
         const err = asErrorWithMessage(dbError)
+        if (err.name === 'PrismaClientValidationError') {
+          log.error('Prisma client validation error on property.create', {
+            message: err.message?.slice(0, 4000),
+          })
+          return res.status(400).json({
+            success: false,
+            message:
+              process.env.NODE_ENV === 'development'
+                ? err.message || 'Invalid property data'
+                : 'Invalid property data. Check numeric fields, dates, and area/developer.',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+          })
+        }
         // Handle Prisma errors
         if (err.code === 'P2002') {
           return res.status(400).json({
@@ -490,6 +512,22 @@ export default async function handler(
             success: false,
             message: 'Database error. Please check your database configuration.',
             error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+          })
+        }
+        if (typeof err.code === 'string' && err.code.startsWith('P')) {
+          log.errorWithException('Prisma engine error on property.create', dbError, { code: err.code })
+          const detail =
+            typeof err.message === 'string' ? `${err.code}: ${err.message}` : String(err.code)
+          const missingColumn =
+            err.code === 'P2022' ||
+            (typeof err.message === 'string' &&
+              (err.message.includes('does not exist') || err.message.includes('Unknown arg')))
+          return res.status(500).json({
+            success: false,
+            message: missingColumn
+              ? 'Database schema is missing columns. Apply migrations on this server (npx prisma migrate deploy).'
+              : 'Database error while saving property.',
+            error: process.env.NODE_ENV === 'development' ? detail : undefined,
           })
         }
         throw dbError
@@ -613,6 +651,18 @@ export default async function handler(
             typeof error === 'object' && error !== null && 'issues' in error
               ? (error as { issues?: unknown }).issues
               : undefined,
+        })
+      }
+
+      if (err.name === 'PrismaClientValidationError') {
+        log.errorWithException('Prisma client validation error while creating property', error)
+        return res.status(400).json({
+          success: false,
+          message:
+            process.env.NODE_ENV === 'development'
+              ? err.message || 'Invalid property data for database'
+              : 'Invalid property data (check completion/handover date and numeric fields).',
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined,
         })
       }
 

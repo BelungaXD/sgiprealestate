@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 import { z } from 'zod'
 
 const updateDeveloperSchema = z.object({
@@ -49,6 +50,10 @@ export default async function handler(
     return res.status(503).json({ message: 'Database not configured' })
   }
 
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+
   if (req.method === 'PUT') {
     try {
       const existing = await prisma.developer.findUnique({
@@ -59,9 +64,6 @@ export default async function handler(
 
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const parsed = updateDeveloperSchema.parse(body)
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H10',location:'src/pages/api/developers/item/[id].ts:61',message:'PUT developer parsed body logo',data:{id,logoProvided:parsed.logo!==undefined,logo:parsed.logo??null,nameEnProvided:parsed.nameEn!==undefined},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
 
       let nameEn = existing.nameEn || existing.name
       let name = existing.name
@@ -99,9 +101,6 @@ export default async function handler(
             ? parsed.website.trim()
             : null
           : undefined
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H5',location:'src/pages/api/developers/item/[id].ts:98',message:'Update developer payload logo before DB update',data:{id,logoProvided:parsed.logo!==undefined,logo:parsed.logo??null},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
 
       const baseData = {
         name,
@@ -143,9 +142,6 @@ export default async function handler(
             data: baseData,
           })
         })
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H5',location:'src/pages/api/developers/item/[id].ts:137',message:'Update developer DB result logo',data:{id:developer?.id||null,logo:developer?.logo||null},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
 
       return res.status(200).json({ success: true, developer })
     } catch (error: unknown) {

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 import { z } from 'zod'
 
 const emaarNoiseFilter = {
@@ -294,6 +295,9 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' })
+    }
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const parsed = createDeveloperSchema.parse(body)
@@ -314,9 +318,6 @@ export default async function handler(
 
       const website =
         parsed.website && parsed.website.trim() !== '' ? parsed.website.trim() : null
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H5',location:'src/pages/api/developers/index.ts:262',message:'Create developer payload logo before DB create',data:{nameEn,logo:parsed.logo||null,slug,hasWebsite:!!website},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
 
       const developer = await prisma.developer
         .create({
@@ -350,9 +351,6 @@ export default async function handler(
             },
           })
         })
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H5',location:'src/pages/api/developers/index.ts:294',message:'Create developer DB result logo',data:{id:developer?.id||null,logo:developer?.logo||null,slug:developer?.slug||null},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
 
       return res.status(201).json({ success: true, developer })
     } catch (error: unknown) {

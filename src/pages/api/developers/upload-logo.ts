@@ -3,6 +3,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 const log = createScopedLogger('api/developers/upload-logo')
 
@@ -22,11 +23,12 @@ export default async function handler(
     return res.status(405).json({ message: 'Method not allowed' })
   }
 
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+
   try {
     const { file, filename } = req.body
-    // #region agent log
-    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H4',location:'src/pages/api/developers/upload-logo.ts:29',message:'Upload-logo handler input',data:{hasFile:!!file,filename:filename||null,isDataUrl:typeof file==='string'?file.startsWith('data:'):false,fileLength:typeof file==='string'?file.length:0},timestamp:Date.now()})}).catch(()=>{})
-    // #endregion
 
     if (!file || !filename) {
       return res.status(400).json({ message: 'File and filename are required' })
@@ -62,9 +64,6 @@ export default async function handler(
     }
 
     const url = `/uploads/developers/${uniqueFilename}`
-    // #region agent log
-    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'initial',hypothesisId:'H4',location:'src/pages/api/developers/upload-logo.ts:76',message:'Upload-logo file write result',data:{uploadsDir,filePath,existsAfterWrite:existsSync(filePath),url},timestamp:Date.now()})}).catch(()=>{})
-    // #endregion
 
     return res.status(200).json({
       success: true,
@@ -72,9 +71,6 @@ export default async function handler(
       filename: uniqueFilename,
     })
   } catch (error: unknown) {
-    // #region agent log
-    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H11',location:'src/pages/api/developers/upload-logo.ts:85',message:'Upload-logo handler error catch',data:{message:error instanceof Error?error.message:'unknown'},timestamp:Date.now()})}).catch(()=>{})
-    // #endregion
     const message = error instanceof Error ? error.message : 'Internal server error'
     log.errorWithException('Error uploading logo', error)
     return res.status(500).json({

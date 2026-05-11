@@ -60,9 +60,6 @@ export default function DevelopersAdminPanel() {
       if (search.trim()) q.set('search', search.trim())
       const res = await fetch(`/api/developers?${q}`)
       const data = await res.json()
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H7',location:'src/components/admin/DevelopersAdminPanel.tsx:52',message:'Developers admin load response sample',data:{ok:res.ok,status:res.status,count:Array.isArray(data?.developers)?data.developers.length:0,sample:(Array.isArray(data?.developers)?data.developers:[]).slice(0,5).map((d:DeveloperRow)=>({id:d?.id||'',slug:d?.slug||'',logo:d?.logo||null}))},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
       setRows(data.developers || [])
     } catch (e) {
       console.error(e)
@@ -86,9 +83,6 @@ export default function DevelopersAdminPanel() {
   }
 
   const openEdit = (d: DeveloperRow) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H8',location:'src/components/admin/DevelopersAdminPanel.tsx:75',message:'Open edit with row logo',data:{id:d.id,slug:d.slug,logo:d.logo||null},timestamp:Date.now()})}).catch(()=>{})
-    // #endregion
     setEditing(d)
     const en = d.nameEn || d.name
     const ru = d.nameEn && d.name !== d.nameEn ? d.name : ''
@@ -158,9 +152,6 @@ export default function DevelopersAdminPanel() {
 
   const save = async () => {
     if (logoUploading) {
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H6',location:'src/components/admin/DevelopersAdminPanel.tsx:120',message:'Save blocked while logo upload in progress',data:{logoUploading:true},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
       alert('Please wait until logo upload is complete')
       return
     }
@@ -190,18 +181,12 @@ export default function DevelopersAdminPanel() {
         ? `/api/developers/item/${editing.id}`
         : '/api/developers'
       const method = editing ? 'PUT' : 'POST'
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'post-fix',hypothesisId:'H3',location:'src/components/admin/DevelopersAdminPanel.tsx:144',message:'Developer save payload logo before submit',data:{editing:!!editing,method,logo:payload.logo||null,logoUploading},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
       const responseBody = await res.json().catch(() => ({}))
-      // #region agent log
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c5e5a6'},body:JSON.stringify({sessionId:'c5e5a6',runId:'iteration2',hypothesisId:'H9',location:'src/components/admin/DevelopersAdminPanel.tsx:165',message:'Developer save response payload',data:{ok:res.ok,status:res.status,id:responseBody?.developer?.id||null,logo:responseBody?.developer?.logo||null,message:responseBody?.message||null},timestamp:Date.now()})}).catch(()=>{})
-      // #endregion
       if (!res.ok) {
         throw new Error(responseBody.message || 'Save failed')
       }

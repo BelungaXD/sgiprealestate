@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 const log = createScopedLogger('api/developers/[slug]')
 type ErrorLike = { code?: string; message?: string }
@@ -79,6 +80,9 @@ export default async function handler(
 
   // PATCH - Update developer (for logo and other fields)
   if (req.method === 'PATCH') {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ message: 'Unauthorized' })
+    }
     try {
       const body = req.body
       

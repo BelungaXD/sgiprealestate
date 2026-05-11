@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 import { lstat, mkdir, readdir, rename, rm, stat, readFile } from 'fs/promises'
 import { basename, dirname, join, resolve, sep } from 'path'
 import { existsSync } from 'fs'
@@ -311,6 +312,9 @@ async function handleManageAction(req: NextApiRequest, res: NextApiResponse) {
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ message: 'Unauthorized' })
+    }
     if (req.method === 'GET') {
       const rawPath = (req.query.path as string) || ''
       const normalized = rawPath.trim() || null

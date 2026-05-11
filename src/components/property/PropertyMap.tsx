@@ -26,6 +26,9 @@ export default function PropertyMap({
   googleMapsUrl,
 }: PropertyMapProps) {
   const pastedEmbed = googleMapsEmbedSrcFromUserUrl(googleMapsUrl, location)
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+  const hasValidCoords = coordinates && isValidCoords(coordinates)
+
   if (pastedEmbed) {
     return (
       <div className="h-64 sm:h-80 rounded-lg overflow-hidden">
@@ -42,9 +45,6 @@ export default function PropertyMap({
       </div>
     )
   }
-
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-  const hasValidCoords = coordinates && isValidCoords(coordinates)
 
   // Build embed URL: place mode with address or coordinates
   const embedQuery = hasValidCoords

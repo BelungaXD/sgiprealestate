@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 import { z } from 'zod'
 
 const createAreaSchema = z.object({
@@ -126,6 +127,9 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' })
+    }
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const parsed = createAreaSchema.parse(body)

@@ -6,6 +6,7 @@ import { existsSync } from 'fs'
 import sharp from 'sharp'
 import { writePropertyListingThumbnail } from '@/lib/propertyThumbnails'
 import { createScopedLogger } from '@/lib/logger'
+import { isAdminSessionValid } from '@/lib/adminSession'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import formidable, { File } from 'formidable'
@@ -430,6 +431,10 @@ export default async function handler(
 ) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' })
+  }
+
+  if (!isAdminSessionValid(req)) {
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   if (!process.env.DATABASE_URL) {

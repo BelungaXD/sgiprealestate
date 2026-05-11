@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { Prisma } from '../../../../prisma/generated/client'
 import { prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { resolveUpdatePropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
@@ -7,6 +8,12 @@ import { deletePropertyMediaFiles } from '@/lib/utils/deletePropertyMediaFiles'
 import { regenerateGridListingThumbnailForImageUrl } from '@/lib/regeneratePropertyGridThumbnail'
 import { createScopedLogger } from '@/lib/logger'
 import { generateLocalizedMetaIfMissing } from '@/lib/propertyMetaAutogen'
+import {
+  finiteLatLngOrUndefined,
+  omitUndefinedShallow,
+  parseIsoDateForPrisma,
+} from '@/lib/utils/isoDateForPrisma'
+import { isAdminSessionValid } from '@/lib/adminSession'
 
 const log = createScopedLogger('api/properties/[id]')
 
@@ -109,6 +116,9 @@ export default async function handler(
 
   // PUT - Update property
   if (req.method === 'PUT') {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' })
+    }
     try {
       // Check if DATABASE_URL is configured
       if (!process.env.DATABASE_URL) {
@@ -274,7 +284,7 @@ export default async function handler(
       )
 
       const updateData: Record<string, unknown> = {
-        title: validatedData.title,
+        title: validatedData.title ?? '',
         titleRu: validatedData.titleRu?.trim() || null,
         titleAr: validatedData.titleAr?.trim() || null,
         description: validatedData.description ?? null,
@@ -288,13 +298,11 @@ export default async function handler(
         areaSqm: validatedData.areaSqm,
         bedrooms: validatedData.bedrooms,
         bathrooms: validatedData.bathrooms,
-        parking: validatedData.parking,
-        floor: validatedData.floor,
-        totalFloors: validatedData.totalFloors,
-        yearBuilt: validatedData.yearBuilt,
-        completionDate: validatedData.completionDate
-          ? new Date(validatedData.completionDate)
-          : null,
+        parking: validatedData.parking ?? null,
+        floor: validatedData.floor ?? null,
+        totalFloors: validatedData.totalFloors ?? null,
+        yearBuilt: validatedData.yearBuilt ?? null,
+        completionDate: parseIsoDateForPrisma(validatedData.completionDate),
         paymentPlan:
           listingMarket === 'PRIMARY'
             ? validatedData.paymentPlan?.trim() || null
@@ -303,12 +311,12 @@ export default async function handler(
           listingMarket === 'SECONDARY'
             ? validatedData.occupancyStatus || null
             : null,
-        address: validatedData.address,
-        city: validatedData.city,
-        district: validatedData.district,
-        areaId: areaId,
-        developerId: developerId,
-        googleMapsUrl: validatedData.googleMapsUrl,
+        address: validatedData.address ?? '',
+        city: validatedData.city ?? '',
+        district: validatedData.district ?? '',
+        areaId: areaId ?? null,
+        developerId: developerId ?? null,
+        googleMapsUrl: validatedData.googleMapsUrl ?? null,
         features: validatedData.features || [],
         featuresRu: validatedData.featuresRu || [],
         featuresAr: validatedData.featuresAr || [],
@@ -327,13 +335,14 @@ export default async function handler(
       }
 
       if (Object.prototype.hasOwnProperty.call(body, 'coordinates')) {
-        updateData.coordinates = validatedData.coordinates ?? null
+        const coords = finiteLatLngOrUndefined(validatedData.coordinates ?? undefined)
+        updateData.coordinates = coords ?? Prisma.DbNull
       }
 
       // Update property
       await prisma.property.update({
         where: { id },
-        data: updateData,
+        data: omitUndefinedShallow(updateData as Record<string, unknown>) as never,
         include: {
           area: true,
           developer: true,
@@ -458,6 +467,18 @@ export default async function handler(
         })
       }
 
+      if (err.name === 'PrismaClientValidationError') {
+        log.errorWithException('Prisma client validation error while updating property', error, { id })
+        return res.status(400).json({
+          success: false,
+          message:
+            process.env.NODE_ENV === 'development'
+              ? err.message || 'Invalid property data for database'
+              : 'Invalid property data (check completion/handover date and numeric fields).',
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        })
+      }
+
       // Handle Prisma foreign key constraint violations
       if (err.code === 'P2003' || err.message?.includes('Foreign key constraint')) {
         const constraintMatch = err.message?.match(/`(\w+)`/i)
@@ -485,6 +506,9 @@ export default async function handler(
 
   // DELETE - Delete property
   if (req.method === 'DELETE') {
+    if (!isAdminSessionValid(req)) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' })
+    }
     try {
       const property = await prisma.property.findUnique({
         where: { id },

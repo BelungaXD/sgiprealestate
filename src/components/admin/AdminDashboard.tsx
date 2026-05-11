@@ -117,17 +117,6 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [inquiriesLoading, setInquiriesLoading] = useState(false)
   const [inquiriesError, setInquiriesError] = useState('')
   const [inquirySavingId, setInquirySavingId] = useState<string | null>(null)
-  const [pages, setPages] = useState<AdminPage[]>([])
-  const [pagesLoading, setPagesLoading] = useState(false)
-  const [pagesError, setPagesError] = useState('')
-  const [pagesSaving, setPagesSaving] = useState(false)
-  const [editingPageId, setEditingPageId] = useState<string | null>(null)
-  const [pageForm, setPageForm] = useState({
-    slug: '',
-    title: '',
-    content: '',
-    isPublished: true,
-  })
 
   const loadBrowse = useCallback(async (path: string | null) => {
     setBrowseLoading(true)
