@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '@/lib/prisma'
+import { isDatabaseUnavailableError, prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { createScopedLogger } from '@/lib/logger'
@@ -107,18 +107,10 @@ export default async function handler(
       return res.status(200).json({ areas: mapped })
     } catch (error: unknown) {
       log.errorWithException('Error fetching areas', error)
-      const message = error instanceof Error ? error.message : ''
-      const code =
-        typeof error === 'object' && error !== null && 'code' in error
-          ? String((error as { code?: unknown }).code)
-          : undefined
-      if (
-        code === 'P1001' ||
-        message.includes('DATABASE_URL') ||
-        message.includes('Can\'t reach database')
-      ) {
+      if (isDatabaseUnavailableError(error)) {
         return res.status(200).json({ areas: [] })
       }
+      const message = error instanceof Error ? error.message : ''
       return res.status(500).json({
         message: 'Internal server error',
         error: process.env.NODE_ENV === 'development' ? message || 'Unknown error' : undefined,

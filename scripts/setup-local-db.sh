@@ -58,6 +58,42 @@ echo ""
 # Check if database server is accessible
 echo -e "${YELLOW}Checking database connection...${NC}"
 
+BREW_PG_DATA="/usr/local/var/postgresql@16"
+BREW_PG_CTL="/usr/local/opt/postgresql@16/bin/pg_ctl"
+BREW_PG_LOG="/usr/local/var/log/postgresql@16.log"
+
+repair_brew_postgres_if_needed() {
+    if [ ! -d "$BREW_PG_DATA" ] || [ ! -x "$BREW_PG_CTL" ]; then
+        return 1
+    fi
+    if nc -z localhost 5432 2>/dev/null; then
+        return 0
+    fi
+    if [ -f "$BREW_PG_DATA/postmaster.pid" ]; then
+        stale_pid="$(head -1 "$BREW_PG_DATA/postmaster.pid" 2>/dev/null || true)"
+        if [ -n "$stale_pid" ] && ! ps -p "$stale_pid" -o comm= 2>/dev/null | grep -qi postgres; then
+            echo -e "${YELLOW}Removing stale postmaster.pid (PID $stale_pid is not postgres)${NC}"
+            rm -f "$BREW_PG_DATA/postmaster.pid"
+        fi
+    fi
+    export LC_ALL="${LC_ALL:-en_US.UTF-8}"
+    export LANG="${LANG:-en_US.UTF-8}"
+    echo -e "${YELLOW}Starting Homebrew PostgreSQL 16...${NC}"
+    if "$BREW_PG_CTL" -D "$BREW_PG_DATA" -l "$BREW_PG_LOG" start; then
+        sleep 2
+        nc -z localhost 5432 2>/dev/null
+        return $?
+    fi
+    return 1
+}
+
+if repair_brew_postgres_if_needed; then
+    echo -e "${GREEN}✅ Homebrew PostgreSQL is listening on localhost:5432${NC}"
+    echo ""
+    echo -e "${BLUE}Run schema sync if needed:${NC} npm run db:push"
+    echo ""
+fi
+
 # Try to connect
 if docker ps --format "{{.Names}}" 2>/dev/null | grep -q "^db-server-postgres$"; then
     echo -e "${GREEN}✅ Local database server (Docker) is running${NC}"

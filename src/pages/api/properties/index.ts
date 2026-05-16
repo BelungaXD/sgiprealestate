@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Prisma } from '../../../../prisma/generated/client'
-import { prisma } from '@/lib/prisma'
+import { DATABASE_UNAVAILABLE_MESSAGE, isDatabaseUnavailableError, prisma } from '@/lib/prisma'
 import { propertySchema } from '@/lib/validations/property'
 import { resolveNewPropertySlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { normalizeUploadUrl } from '@/lib/utils/imageUrl'
@@ -164,14 +164,7 @@ export default async function handler(
       log.errorWithException('Error fetching properties', error)
       
       // If database connection error or Prisma not initialized, return empty array
-      if (
-        err.code === 'P1001' || 
-        err.message?.includes('DATABASE_URL') || 
-        err.message?.includes('Can\'t reach database') || 
-        err.message?.includes('Environment variable not found') ||
-        err.message?.includes('Database is not configured') ||
-        err.message?.includes('did not initialize')
-      ) {
+      if (isDatabaseUnavailableError(error)) {
         return res.status(200).json({
           properties: [],
           total: 0,
@@ -219,11 +212,15 @@ export default async function handler(
         await prisma.$connect()
       } catch (dbError: unknown) {
         const err = asErrorWithMessage(dbError)
+        // #region agent log
+        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b58f84'},body:JSON.stringify({sessionId:'b58f84',hypothesisId:'H1',location:'api/properties/index.ts:POST:$connect',message:'property create db connect failed',data:{code:err.code,message:err.message,hasDatabaseUrl:Boolean(process.env.DATABASE_URL),dbHost:process.env.DB_HOST||null,dbPort:process.env.DB_PORT||null},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         log.errorWithException('Database connection error', dbError)
-        // If database is configured but not available, return error instead of demo mode
-        return res.status(500).json({
+        return res.status(503).json({
           success: false,
-          message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
+          message: isDatabaseUnavailableError(dbError)
+            ? DATABASE_UNAVAILABLE_MESSAGE
+            : 'Database connection error. Please check your database configuration and ensure the database server is running.',
           error: process.env.NODE_ENV === 'development' ? err.message : undefined,
         })
       }
@@ -460,15 +457,12 @@ export default async function handler(
           })
         }
         // If database connection error, return error if DATABASE_URL is configured
-        if (
-          err.code === 'P1001' || 
-          err.message?.includes('did not initialize')
-        ) {
+        if (isDatabaseUnavailableError(dbError)) {
           if (process.env.DATABASE_URL) {
             log.errorWithException('Database connection error while creating property', dbError)
-            return res.status(500).json({
+            return res.status(503).json({
               success: false,
-              message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
+              message: DATABASE_UNAVAILABLE_MESSAGE,
               error: process.env.NODE_ENV === 'development' ? err.message : undefined,
             })
           }
@@ -667,17 +661,12 @@ export default async function handler(
       }
 
       // Handle Prisma connection errors
-      if (
-        err.code === 'P1001' || 
-        err.message?.includes('Can\'t reach database') ||
-        err.message?.includes('did not initialize')
-      ) {
-        // If DATABASE_URL is configured but connection fails, return error
+      if (isDatabaseUnavailableError(error)) {
         if (process.env.DATABASE_URL) {
           log.errorWithException('Database connection error', error)
-          return res.status(500).json({
+          return res.status(503).json({
             success: false,
-            message: 'Database connection error. Please check your database configuration and ensure the database server is running.',
+            message: DATABASE_UNAVAILABLE_MESSAGE,
             error: process.env.NODE_ENV === 'development' ? err.message : undefined,
           })
         }
@@ -750,7 +739,15 @@ export default async function handler(
         })
       }
 
-      // For other errors, return error instead of demo mode
+      if (isDatabaseUnavailableError(error)) {
+        log.errorWithException('Database unavailable while saving property', error)
+        return res.status(503).json({
+          success: false,
+          message: DATABASE_UNAVAILABLE_MESSAGE,
+          error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        })
+      }
+
       log.errorWithException('Unexpected error while saving property', error)
       return res.status(500).json({
         success: false,

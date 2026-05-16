@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '@/lib/prisma'
+import { isDatabaseUnavailableError, prisma } from '@/lib/prisma'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { createScopedLogger } from '@/lib/logger'
@@ -76,50 +76,6 @@ const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
     prismaError.code === 'P2022' &&
     (prismaError.meta?.column === 'developers.isActive' ||
       prismaError.message?.includes('developers.isActive'))
-  )
-}
-
-type ErrorWithCause = {
-  code?: string
-  message?: string
-  cause?: unknown
-  errors?: unknown[]
-}
-
-const collectErrorSignals = (error: unknown): { codes: Set<string>; messages: Set<string> } => {
-  const codes = new Set<string>()
-  const messages = new Set<string>()
-  const queue: unknown[] = [error]
-  const visited = new Set<unknown>()
-
-  while (queue.length) {
-    const current = queue.shift()
-    if (!current || typeof current !== 'object' || visited.has(current)) {
-      continue
-    }
-    visited.add(current)
-
-    const err = current as ErrorWithCause
-    if (typeof err.code === 'string' && err.code.trim()) codes.add(err.code)
-    if (typeof err.message === 'string' && err.message.trim()) messages.add(err.message)
-    if (err.cause) queue.push(err.cause)
-    if (Array.isArray(err.errors)) queue.push(...err.errors)
-  }
-
-  return { codes, messages }
-}
-
-const isDatabaseUnavailableError = (error: unknown): boolean => {
-  const { codes, messages } = collectErrorSignals(error)
-  const allMessages = Array.from(messages).join('\n')
-
-  return (
-    codes.has('P1001') ||
-    codes.has('ECONNREFUSED') ||
-    allMessages.includes('DATABASE_URL') ||
-    allMessages.includes("Can't reach database") ||
-    allMessages.includes('Environment variable not found') ||
-    allMessages.includes('ECONNREFUSED')
   )
 }
 

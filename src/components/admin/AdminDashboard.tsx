@@ -486,6 +486,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 .join('; ')
             } else {
               errorMessage = error.message || errorMessage
+              if (
+                process.env.NODE_ENV === 'development' &&
+                typeof error.error === 'string' &&
+                error.error.trim()
+              ) {
+                errorMessage = `${errorMessage} (${error.error})`
+              }
             }
           } else {
             errorMessage = `Server error: ${response.status} ${response.statusText}`

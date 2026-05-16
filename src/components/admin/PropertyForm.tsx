@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -8,9 +8,123 @@ import {
 } from '@/lib/validations/property'
 import { getErrorMessage } from '@/lib/utils/errorMessage'
 import { generateSlug } from '@/lib/utils/slug'
+import { generateLocalizedMetaIfMissing } from '@/lib/propertyMetaAutogen'
+import type { ContentLocale } from '@/lib/geminiTranslate'
 import ImageUpload from './ImageUpload'
 import FileUpload, { type FileWithLabel } from './FileUpload'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+
+const CONTENT_LOCALES: ContentLocale[] = ['en', 'ru', 'ar']
+
+function otherLocales(source: ContentLocale): ContentLocale[] {
+  return CONTENT_LOCALES.filter((l) => l !== source)
+}
+
+const TITLE_FIELD: Record<ContentLocale, 'title' | 'titleRu' | 'titleAr'> = {
+  en: 'title',
+  ru: 'titleRu',
+  ar: 'titleAr',
+}
+
+const DESCRIPTION_FIELD: Record<ContentLocale, 'description' | 'descriptionRu' | 'descriptionAr'> = {
+  en: 'description',
+  ru: 'descriptionRu',
+  ar: 'descriptionAr',
+}
+
+type LocaleTextKind = 'title' | 'description'
+
+type LocaleTextSnapshot = { title: string; description: string }
+
+function buildLocaleSnapshots(values: {
+  title?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  description?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+}): Record<ContentLocale, LocaleTextSnapshot> {
+  return {
+    en: {
+      title: (values.title || '').trim(),
+      description: (values.description || '').trim(),
+    },
+    ru: {
+      title: (values.titleRu || '').trim(),
+      description: (values.descriptionRu || '').trim(),
+    },
+    ar: {
+      title: (values.titleAr || '').trim(),
+      description: (values.descriptionAr || '').trim(),
+    },
+  }
+}
+
+function findEditedSourceLocale(
+  current: Record<ContentLocale, LocaleTextSnapshot>,
+  previous: Record<ContentLocale, LocaleTextSnapshot>
+): ContentLocale | null {
+  const changed: ContentLocale[] = []
+  for (const locale of CONTENT_LOCALES) {
+    const prev = previous[locale]
+    const cur = current[locale]
+    if (prev.title !== cur.title || prev.description !== cur.description) {
+      changed.push(locale)
+    }
+  }
+  if (changed.length === 1) {
+    return changed[0]
+  }
+  return null
+}
+
+type TranslateApiResponse = {
+  translations?: Partial<Record<ContentLocale, string[]>>
+  message?: string
+}
+
+function alignTagLists(
+  en: string[],
+  ru: string[],
+  ar: string[]
+): Record<ContentLocale, string[]> {
+  const maxLen = Math.max(en.length, ru.length, ar.length)
+  const aligned: Record<ContentLocale, string[]> = { en: [], ru: [], ar: [] }
+  for (let i = 0; i < maxLen; i++) {
+    const enVal = (en[i] ?? '').trim()
+    const ruVal = (ru[i] ?? '').trim()
+    const arVal = (ar[i] ?? '').trim()
+    const canonical = enVal || ruVal || arVal
+    if (!canonical) continue
+    aligned.en.push(enVal || canonical)
+    aligned.ru.push(ruVal || canonical)
+    aligned.ar.push(arVal || canonical)
+  }
+  return aligned
+}
+
+async function fetchTranslations(
+  texts: string[],
+  sourceLocale: ContentLocale,
+  textKind: 'listing' | 'tag' = 'listing'
+): Promise<Partial<Record<ContentLocale, string[]>>> {
+  const res = await fetch('/api/admin/translate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({
+      sourceLocale,
+      targetLocales: otherLocales(sourceLocale),
+      texts,
+      textKind,
+    }),
+  })
+  const data = (await res.json()) as TranslateApiResponse
+  if (!res.ok) {
+    throw new Error(data.message || 'Translation failed')
+  }
+  return data.translations ?? {}
+}
 
 interface PropertyFormProps {
   property?: EditableProperty
@@ -119,12 +233,16 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const [amenitiesRu, setAmenitiesRu] = useState<string[]>([])
   const [amenitiesAr, setAmenitiesAr] = useState<string[]>([])
   const [newFeature, setNewFeature] = useState('')
-  const [newFeatureRu, setNewFeatureRu] = useState('')
-  const [newFeatureAr, setNewFeatureAr] = useState('')
   const [newAmenity, setNewAmenity] = useState('')
-  const [newAmenityRu, setNewAmenityRu] = useState('')
-  const [newAmenityAr, setNewAmenityAr] = useState('')
-  const [localeEditorTab, setLocaleEditorTab] = useState<'en' | 'ru' | 'ar'>('en')
+  const [localeEditorTab, setLocaleEditorTab] = useState<ContentLocale>('en')
+  const [translateStatus, setTranslateStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [translateError, setTranslateError] = useState('')
+  const [tagTranslateBusy, setTagTranslateBusy] = useState(false)
+  const localeSnapshotsRef = useRef<Record<ContentLocale, LocaleTextSnapshot>>(
+    buildLocaleSnapshots({})
+  )
+  const isApplyingTranslation = useRef(false)
+  const translateRequestSeq = useRef(0)
 
   const {
     register,
@@ -132,6 +250,7 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     formState: { errors },
     watch,
     setValue,
+    getValues,
   } = useForm<PropertyFormInput, unknown, PropertyFormData>({
     resolver: zodResolver(propertySchema),
     defaultValues: property
@@ -207,7 +326,188 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   })
 
   const title = watch('title')
+  const titleRu = watch('titleRu')
+  const titleAr = watch('titleAr')
   const listingMarket = watch('listingMarket')
+  const descriptionEn = watch('description')
+  const descriptionRu = watch('descriptionRu')
+  const descriptionAr = watch('descriptionAr')
+  const applyMetaPreview = useCallback(() => {
+    const values = getValues()
+    const generated = generateLocalizedMetaIfMissing(
+      {
+        title: values.title,
+        titleRu: values.titleRu,
+        titleAr: values.titleAr,
+        description: values.description,
+        descriptionRu: values.descriptionRu,
+        descriptionAr: values.descriptionAr,
+        type: values.type,
+        city: values.city,
+        district: values.district,
+        features,
+        featuresRu,
+        featuresAr,
+        amenities,
+        amenitiesRu,
+        amenitiesAr,
+      },
+      {
+        metaTitle: values.metaTitle,
+        metaTitleRu: values.metaTitleRu,
+        metaTitleAr: values.metaTitleAr,
+        metaDescription: values.metaDescription,
+        metaDescriptionRu: values.metaDescriptionRu,
+        metaDescriptionAr: values.metaDescriptionAr,
+      }
+    )
+    if (!values.metaTitle?.trim() && generated.metaTitle) {
+      setValue('metaTitle', generated.metaTitle)
+    }
+    if (!values.metaTitleRu?.trim() && generated.metaTitleRu) {
+      setValue('metaTitleRu', generated.metaTitleRu)
+    }
+    if (!values.metaTitleAr?.trim() && generated.metaTitleAr) {
+      setValue('metaTitleAr', generated.metaTitleAr)
+    }
+    if (!values.metaDescription?.trim() && generated.metaDescription) {
+      setValue('metaDescription', generated.metaDescription)
+    }
+    if (!values.metaDescriptionRu?.trim() && generated.metaDescriptionRu) {
+      setValue('metaDescriptionRu', generated.metaDescriptionRu)
+    }
+    if (!values.metaDescriptionAr?.trim() && generated.metaDescriptionAr) {
+      setValue('metaDescriptionAr', generated.metaDescriptionAr)
+    }
+  }, [
+    getValues,
+    setValue,
+    features,
+    featuresRu,
+    featuresAr,
+    amenities,
+    amenitiesRu,
+    amenitiesAr,
+  ])
+
+  const applyFeatureLists = useCallback(
+    (next: Record<ContentLocale, string[]>) => {
+      setFeatures(next.en)
+      setFeaturesRu(next.ru)
+      setFeaturesAr(next.ar)
+      setValue('features', next.en)
+      setValue('featuresRu', next.ru)
+      setValue('featuresAr', next.ar)
+    },
+    [setValue]
+  )
+
+  const applyAmenityLists = useCallback(
+    (next: Record<ContentLocale, string[]>) => {
+      setAmenities(next.en)
+      setAmenitiesRu(next.ru)
+      setAmenitiesAr(next.ar)
+      setValue('amenities', next.en)
+      setValue('amenitiesRu', next.ru)
+      setValue('amenitiesAr', next.ar)
+    },
+    [setValue]
+  )
+
+  useEffect(() => {
+    if (isApplyingTranslation.current) {
+      return
+    }
+
+    const current = buildLocaleSnapshots({
+      title,
+      titleRu,
+      titleAr,
+      description: descriptionEn,
+      descriptionRu,
+      descriptionAr,
+    })
+    const source = findEditedSourceLocale(current, localeSnapshotsRef.current)
+    if (!source) {
+      return
+    }
+
+    const { title: titleTrimmed, description: descriptionTrimmed } = current[source]
+    if (!titleTrimmed && !descriptionTrimmed) {
+      localeSnapshotsRef.current = current
+      setTranslateStatus('idle')
+      setTranslateError('')
+      return
+    }
+
+    const texts: string[] = []
+    const kinds: LocaleTextKind[] = []
+    if (titleTrimmed) {
+      texts.push(titleTrimmed)
+      kinds.push('title')
+    }
+    if (descriptionTrimmed) {
+      texts.push(descriptionTrimmed)
+      kinds.push('description')
+    }
+
+    localeSnapshotsRef.current = {
+      ...localeSnapshotsRef.current,
+      [source]: current[source],
+    }
+
+    const timer = setTimeout(() => {
+      const requestId = ++translateRequestSeq.current
+      void (async () => {
+        setTranslateStatus('loading')
+        setTranslateError('')
+        try {
+          const translations = await fetchTranslations(texts, source)
+          if (requestId !== translateRequestSeq.current) {
+            return
+          }
+          isApplyingTranslation.current = true
+          for (const locale of otherLocales(source)) {
+            const translated = translations[locale] ?? []
+            kinds.forEach((kind, index) => {
+              const value = translated[index] ?? ''
+              if (kind === 'title') {
+                setValue(TITLE_FIELD[locale], value)
+              } else {
+                setValue(DESCRIPTION_FIELD[locale], value)
+              }
+            })
+          }
+          localeSnapshotsRef.current = buildLocaleSnapshots(getValues())
+          setTranslateStatus('idle')
+          setTranslateError('')
+          applyMetaPreview()
+        } catch (err: unknown) {
+          if (requestId !== translateRequestSeq.current) {
+            return
+          }
+          setTranslateStatus('error')
+          setTranslateError(getErrorMessage(err, 'Translation failed'))
+        } finally {
+          if (requestId === translateRequestSeq.current) {
+            isApplyingTranslation.current = false
+          }
+        }
+      })()
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [
+    title,
+    titleRu,
+    titleAr,
+    descriptionEn,
+    descriptionRu,
+    descriptionAr,
+    getValues,
+    setValue,
+    applyMetaPreview,
+  ])
 
   useEffect(() => {
     if (title && !property) {
@@ -292,12 +592,18 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       } else {
         setImages([])
       }
-      setFeatures(property.features || [])
-      setFeaturesRu(property.featuresRu || [])
-      setFeaturesAr(property.featuresAr || [])
-      setAmenities(property.amenities || [])
-      setAmenitiesRu(property.amenitiesRu || [])
-      setAmenitiesAr(property.amenitiesAr || [])
+      const alignedFeatures = alignTagLists(
+        property.features || [],
+        property.featuresRu || [],
+        property.featuresAr || []
+      )
+      const alignedAmenities = alignTagLists(
+        property.amenities || [],
+        property.amenitiesRu || [],
+        property.amenitiesAr || []
+      )
+      applyFeatureLists(alignedFeatures)
+      applyAmenityLists(alignedAmenities)
       if (property.files && Array.isArray(property.files) && property.files.length > 0) {
         setFiles(
           property.files.map((file: EditablePropertyFile) => ({
@@ -313,17 +619,22 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       } else {
         setFiles([])
       }
+      localeSnapshotsRef.current = buildLocaleSnapshots({
+        title: property.title,
+        titleRu: property.titleRu,
+        titleAr: property.titleAr,
+        description: property.description,
+        descriptionRu: property.descriptionRu,
+        descriptionAr: property.descriptionAr,
+      })
     } else {
       setImages([])
       setFiles([])
-      setFeatures([])
-      setFeaturesRu([])
-      setFeaturesAr([])
-      setAmenities([])
-      setAmenitiesRu([])
-      setAmenitiesAr([])
+      applyFeatureLists({ en: [], ru: [], ar: [] })
+      applyAmenityLists({ en: [], ru: [], ar: [] })
+      localeSnapshotsRef.current = buildLocaleSnapshots({})
     }
-  }, [property])
+  }, [property, setValue, applyFeatureLists, applyAmenityLists])
 
   const onSubmit = async (data: PropertyFormData) => {
     setLoading(true)
@@ -415,6 +726,12 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         ...data,
         description: data.description || null,
         paymentPlan: data.paymentPlan || null,
+        features,
+        featuresRu,
+        featuresAr,
+        amenities,
+        amenitiesRu,
+        amenitiesAr,
         isPublished: true,
         isFeatured: false,
         images: uploadedImages,
@@ -428,84 +745,195 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     }
   }
 
+  const featureLists: Record<ContentLocale, string[]> = {
+    en: features,
+    ru: featuresRu,
+    ar: featuresAr,
+  }
+  const amenityLists: Record<ContentLocale, string[]> = {
+    en: amenities,
+    ru: amenitiesRu,
+    ar: amenitiesAr,
+  }
+
+  const appendTagWithTranslation = async (
+    kind: 'feature' | 'amenity',
+    source: ContentLocale,
+    trimmed: string
+  ) => {
+    const current =
+      kind === 'feature'
+        ? { en: features, ru: featuresRu, ar: featuresAr }
+        : { en: amenities, ru: amenitiesRu, ar: amenitiesAr }
+    const snapshot: Record<ContentLocale, string[]> = {
+      en: [...current.en],
+      ru: [...current.ru],
+      ar: [...current.ar],
+    }
+
+    setTagTranslateBusy(true)
+    setTranslateStatus('loading')
+    setTranslateError('')
+    try {
+      const translations = await fetchTranslations([trimmed], source, 'tag')
+      const next: Record<ContentLocale, string[]> = {
+        en: [...snapshot.en],
+        ru: [...snapshot.ru],
+        ar: [...snapshot.ar],
+      }
+      next[source] = [...next[source], trimmed]
+      for (const locale of otherLocales(source)) {
+        const translated = (translations[locale]?.[0] ?? '').trim()
+        if (!translated) {
+          throw new Error('Empty translation for tag')
+        }
+        next[locale] = [...next[locale], translated]
+      }
+      if (kind === 'feature') {
+        applyFeatureLists(next)
+      } else {
+        applyAmenityLists(next)
+      }
+      setTranslateStatus('idle')
+      applyMetaPreview()
+    } catch (err: unknown) {
+      setTranslateStatus('error')
+      setTranslateError(getErrorMessage(err, 'Tag translation failed'))
+    } finally {
+      setTagTranslateBusy(false)
+    }
+  }
+
   const addFeature = () => {
-    if (newFeature.trim()) {
-      setFeatures([...features, newFeature.trim()])
-      setNewFeature('')
-      setValue('features', [...features, newFeature.trim()])
-    }
-  }
-  const addFeatureRu = () => {
-    if (newFeatureRu.trim()) {
-      const next = [...featuresRu, newFeatureRu.trim()]
-      setFeaturesRu(next)
-      setNewFeatureRu('')
-      setValue('featuresRu', next)
-    }
-  }
-  const addFeatureAr = () => {
-    if (newFeatureAr.trim()) {
-      const next = [...featuresAr, newFeatureAr.trim()]
-      setFeaturesAr(next)
-      setNewFeatureAr('')
-      setValue('featuresAr', next)
-    }
+    const trimmed = newFeature.trim()
+    if (!trimmed || tagTranslateBusy) return
+    setNewFeature('')
+    void appendTagWithTranslation('feature', localeEditorTab, trimmed)
   }
 
   const removeFeature = (index: number) => {
-    const newFeatures = features.filter((_, i) => i !== index)
-    setFeatures(newFeatures)
-    setValue('features', newFeatures)
-  }
-  const removeFeatureRu = (index: number) => {
-    const next = featuresRu.filter((_, i) => i !== index)
-    setFeaturesRu(next)
-    setValue('featuresRu', next)
-  }
-  const removeFeatureAr = (index: number) => {
-    const next = featuresAr.filter((_, i) => i !== index)
-    setFeaturesAr(next)
-    setValue('featuresAr', next)
+    applyFeatureLists({
+      en: features.filter((_, i) => i !== index),
+      ru: featuresRu.filter((_, i) => i !== index),
+      ar: featuresAr.filter((_, i) => i !== index),
+    })
+    applyMetaPreview()
   }
 
   const addAmenity = () => {
-    if (newAmenity.trim()) {
-      setAmenities([...amenities, newAmenity.trim()])
-      setNewAmenity('')
-      setValue('amenities', [...amenities, newAmenity.trim()])
-    }
-  }
-  const addAmenityRu = () => {
-    if (newAmenityRu.trim()) {
-      const next = [...amenitiesRu, newAmenityRu.trim()]
-      setAmenitiesRu(next)
-      setNewAmenityRu('')
-      setValue('amenitiesRu', next)
-    }
-  }
-  const addAmenityAr = () => {
-    if (newAmenityAr.trim()) {
-      const next = [...amenitiesAr, newAmenityAr.trim()]
-      setAmenitiesAr(next)
-      setNewAmenityAr('')
-      setValue('amenitiesAr', next)
-    }
+    const trimmed = newAmenity.trim()
+    if (!trimmed || tagTranslateBusy) return
+    setNewAmenity('')
+    void appendTagWithTranslation('amenity', localeEditorTab, trimmed)
   }
 
   const removeAmenity = (index: number) => {
-    const newAmenities = amenities.filter((_, i) => i !== index)
-    setAmenities(newAmenities)
-    setValue('amenities', newAmenities)
+    applyAmenityLists({
+      en: amenities.filter((_, i) => i !== index),
+      ru: amenitiesRu.filter((_, i) => i !== index),
+      ar: amenitiesAr.filter((_, i) => i !== index),
+    })
+    applyMetaPreview()
   }
-  const removeAmenityRu = (index: number) => {
-    const next = amenitiesRu.filter((_, i) => i !== index)
-    setAmenitiesRu(next)
-    setValue('amenitiesRu', next)
-  }
-  const removeAmenityAr = (index: number) => {
-    const next = amenitiesAr.filter((_, i) => i !== index)
-    setAmenitiesAr(next)
-    setValue('amenitiesAr', next)
+
+  const renderFeaturesAmenities = (rtl?: boolean) => {
+    const activeFeatures = featureLists[localeEditorTab]
+    const activeAmenities = amenityLists[localeEditorTab]
+    const featureLabel =
+      localeEditorTab === 'en'
+        ? 'Features (English)'
+        : localeEditorTab === 'ru'
+          ? 'Features (Russian)'
+          : 'Features (Arabic)'
+    const amenityLabel =
+      localeEditorTab === 'en'
+        ? 'Amenities (English)'
+        : localeEditorTab === 'ru'
+          ? 'Amenities (Russian)'
+          : 'Amenities (Arabic)'
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{featureLabel}</label>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              dir={rtl ? 'rtl' : undefined}
+              value={newFeature}
+              onChange={(e) => setNewFeature(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
+              placeholder="Add feature"
+              className={`flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne${rtl ? ' text-right' : ''}`}
+            />
+            <button
+              type="button"
+              onClick={addFeature}
+              disabled={tagTranslateBusy}
+              className="btn-filled btn-sm"
+            >
+              Add
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {activeFeatures.map((feature, index) => (
+              <span
+                key={`f-${localeEditorTab}-${index}`}
+                className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
+              >
+                {feature}
+                <button
+                  type="button"
+                  onClick={() => removeFeature(index)}
+                  className="text-champagne hover:text-red-600"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{amenityLabel}</label>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              dir={rtl ? 'rtl' : undefined}
+              value={newAmenity}
+              onChange={(e) => setNewAmenity(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
+              placeholder="Add amenity"
+              className={`flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne${rtl ? ' text-right' : ''}`}
+            />
+            <button
+              type="button"
+              onClick={addAmenity}
+              disabled={tagTranslateBusy}
+              className="btn-filled btn-sm"
+            >
+              Add
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {activeAmenities.map((amenity, index) => (
+              <span
+                key={`a-${localeEditorTab}-${index}`}
+                className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
+              >
+                {amenity}
+                <button
+                  type="button"
+                  onClick={() => removeAmenity(index)}
+                  className="text-champagne hover:text-red-600"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const areaLabel = (a: AreaOpt) => a.nameEn || a.name
@@ -562,6 +990,17 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               If meta fields are left empty, they are generated automatically on save from title,
               description, district, type, and key features.
             </p>
+            <p className="text-xs text-gray-500">
+              Title and description auto-translate when you edit text in one language; switching tabs
+              does not re-translate. Features and amenities are added in the active tab and translated
+              to all three languages at once.
+            </p>
+            {translateStatus === 'loading' && (
+              <p className="text-xs text-champagne">Translating…</p>
+            )}
+            {translateStatus === 'error' && translateError && (
+              <p className="text-xs text-red-600">{translateError}</p>
+            )}
 
             <div className={localeEditorTab === 'en' ? 'space-y-4' : 'hidden'}>
               <div>
@@ -585,22 +1024,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 {errors.description && (
                   <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
                 )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (English)</label>
-                <input
-                  type="text"
-                  {...register('metaTitle')}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (English)</label>
-                <textarea
-                  {...register('metaDescription')}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-                />
               </div>
             </div>
 
@@ -627,14 +1050,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                   <p className="mt-1 text-sm text-red-600">{errors.descriptionRu.message}</p>
                 )}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (Russian)</label>
-                <input type="text" {...register('metaTitleRu')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (Russian)</label>
-                <textarea {...register('metaDescriptionRu')} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne" />
-              </div>
             </div>
 
             <div dir="rtl" className={localeEditorTab === 'ar' ? 'space-y-4' : 'hidden'}>
@@ -660,6 +1075,41 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                   <p className="mt-1 text-sm text-red-600">{errors.descriptionAr.message}</p>
                 )}
               </div>
+            </div>
+
+            {renderFeaturesAmenities(localeEditorTab === 'ar')}
+
+            <div className={localeEditorTab === 'en' ? 'space-y-4' : 'hidden'}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (English)</label>
+                <input
+                  type="text"
+                  {...register('metaTitle')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (English)</label>
+                <textarea
+                  {...register('metaDescription')}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                />
+              </div>
+            </div>
+
+            <div className={localeEditorTab === 'ru' ? 'space-y-4' : 'hidden'}>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (Russian)</label>
+                <input type="text" {...register('metaTitleRu')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta description (Russian)</label>
+                <textarea {...register('metaDescriptionRu')} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne" />
+              </div>
+            </div>
+
+            <div dir="rtl" className={localeEditorTab === 'ar' ? 'space-y-4' : 'hidden'}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Meta title (Arabic)</label>
                 <input type="text" {...register('metaTitleAr')} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right" />
@@ -1003,227 +1453,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           </p>
         </div>
 
-        <div className="bg-gray-50 p-6 rounded-lg space-y-4">
-          <h3 className="text-lg font-semibold text-graphite">Features & Amenities</h3>
-          <p className="text-xs text-gray-500">
-            Add values per language. Property page will use language-specific lists with fallback to
-            English when the localized list is empty.
-          </p>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Features (English)
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={newFeature}
-                onChange={(e) => setNewFeature(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-                placeholder="Add feature"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-              />
-              <button type="button" onClick={addFeature} className="btn-filled btn-sm">
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {features.map((feature, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
-                >
-                  {feature}
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="text-champagne hover:text-red-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amenities (English)
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={newAmenity}
-                onChange={(e) => setNewAmenity(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
-                placeholder="Add amenity"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-              />
-              <button type="button" onClick={addAmenity} className="btn-filled btn-sm">
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {amenities.map((amenity, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
-                >
-                  {amenity}
-                  <button
-                    type="button"
-                    onClick={() => removeAmenity(index)}
-                    className="text-champagne hover:text-red-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Features (Russian)
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={newFeatureRu}
-                onChange={(e) => setNewFeatureRu(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeatureRu())}
-                placeholder="Добавить особенность"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-              />
-              <button type="button" onClick={addFeatureRu} className="btn-filled btn-sm">
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {featuresRu.map((item, index) => (
-                <span
-                  key={`fru-${index}`}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
-                >
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeFeatureRu(index)}
-                    className="text-champagne hover:text-red-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amenities (Russian)
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={newAmenityRu}
-                onChange={(e) => setNewAmenityRu(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenityRu())}
-                placeholder="Добавить удобство"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-              />
-              <button type="button" onClick={addAmenityRu} className="btn-filled btn-sm">
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {amenitiesRu.map((item, index) => (
-                <span
-                  key={`aru-${index}`}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
-                >
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeAmenityRu(index)}
-                    className="text-champagne hover:text-red-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Features (Arabic)</label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                dir="rtl"
-                value={newFeatureAr}
-                onChange={(e) => setNewFeatureAr(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeatureAr())}
-                placeholder="أضف ميزة"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
-              />
-              <button type="button" onClick={addFeatureAr} className="btn-filled btn-sm">
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {featuresAr.map((item, index) => (
-                <span
-                  key={`far-${index}`}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
-                >
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeFeatureAr(index)}
-                    className="text-champagne hover:text-red-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amenities (Arabic)
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                dir="rtl"
-                value={newAmenityAr}
-                onChange={(e) => setNewAmenityAr(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenityAr())}
-                placeholder="أضف مرفقاً"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
-              />
-              <button type="button" onClick={addAmenityAr} className="btn-filled btn-sm">
-                Add
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {amenitiesAr.map((item, index) => (
-                <span
-                  key={`aar-${index}`}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-champagne/20 text-champagne rounded-full text-sm"
-                >
-                  {item}
-                  <button
-                    type="button"
-                    onClick={() => removeAmenityAr(index)}
-                    className="text-champagne hover:text-red-600"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
 
         <div className="bg-gray-50 p-6 rounded-lg space-y-4">
           <h3 className="text-lg font-semibold text-graphite">SEO</h3>

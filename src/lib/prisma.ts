@@ -80,6 +80,15 @@ function initializePrisma(): PrismaClientLike | null {
       })
     }
 
+    // #region agent log
+    try {
+      const parsed = new URL(databaseUrl)
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b58f84'},body:JSON.stringify({sessionId:'b58f84',hypothesisId:'H2',location:'lib/prisma.ts:initializePrisma',message:'prisma init target',data:{hostname:parsed.hostname,port:parsed.port||'5432',database:parsed.pathname.replace(/^\//,'')},timestamp:Date.now()})}).catch(()=>{});
+    } catch {
+      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b58f84'},body:JSON.stringify({sessionId:'b58f84',hypothesisId:'H2',location:'lib/prisma.ts:initializePrisma',message:'DATABASE_URL parse failed',data:{},timestamp:Date.now()})}).catch(()=>{});
+    }
+    // #endregion
+
     const adapter = new PrismaPgCtor({ connectionString: databaseUrl })
 
     prismaInstance =
@@ -99,6 +108,55 @@ function initializePrisma(): PrismaClientLike | null {
     return null
   }
 }
+
+type ErrorWithCause = {
+  code?: string
+  message?: string
+  cause?: unknown
+  errors?: unknown[]
+}
+
+const collectErrorSignals = (error: unknown): { codes: Set<string>; messages: Set<string> } => {
+  const codes = new Set<string>()
+  const messages = new Set<string>()
+  const queue: unknown[] = [error]
+  const visited = new Set<unknown>()
+
+  while (queue.length) {
+    const current = queue.shift()
+    if (!current || typeof current !== 'object' || visited.has(current)) continue
+    visited.add(current)
+
+    const err = current as ErrorWithCause
+    if (typeof err.code === 'string' && err.code.trim()) codes.add(err.code)
+    if (typeof err.message === 'string' && err.message.trim()) messages.add(err.message)
+    if (err.cause) queue.push(err.cause)
+    if (Array.isArray(err.errors)) queue.push(...err.errors)
+  }
+
+  return { codes, messages }
+}
+
+/** Prisma 7 + pg adapter may surface ECONNREFUSED instead of P1001. */
+export function isDatabaseUnavailableError(error: unknown): boolean {
+  const { codes, messages } = collectErrorSignals(error)
+  const allMessages = Array.from(messages).join('\n')
+
+  return (
+    codes.has('P1001') ||
+    codes.has('ECONNREFUSED') ||
+    codes.has('ETIMEDOUT') ||
+    codes.has('ENOTFOUND') ||
+    allMessages.includes('DATABASE_URL') ||
+    allMessages.includes("Can't reach database") ||
+    allMessages.includes('Environment variable not found') ||
+    allMessages.includes('ECONNREFUSED') ||
+    allMessages.includes('did not initialize')
+  )
+}
+
+export const DATABASE_UNAVAILABLE_MESSAGE =
+  'Database server is not reachable. Start PostgreSQL locally, run database-server (Docker), or use an SSH tunnel to production.'
 
 export const prisma = new Proxy({} as PrismaClientLike, {
   get(_target, prop) {
