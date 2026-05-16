@@ -60,6 +60,15 @@ export default function MediaDrivePanel() {
   const [assets, setAssets] = useState<MediaAssetRow[]>([])
   const [canEditFolder, setCanEditFolder] = useState(false)
   const [storage, setStorage] = useState({ percent: 0, usedLabel: '', limitLabel: '' })
+  const [serverDisk, setServerDisk] = useState<{
+    ok: boolean
+    percent: number
+    usedLabel: string
+    totalLabel: string
+    availableLabel: string
+    path: string
+    host: string
+  }>({ ok: false, percent: 0, usedLabel: '', totalLabel: '', availableLabel: '', path: '', host: '' })
   const [loading, setLoading] = useState(true)
   const [assetsLoading, setAssetsLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -73,12 +82,29 @@ export default function MediaDrivePanel() {
   const loadStorage = useCallback(async () => {
     const res = await fetch('/api/admin/media/storage', { credentials: 'same-origin' })
     const data = await res.json().catch(() => ({}))
+    // #region agent log
+    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'98da29'},body:JSON.stringify({sessionId:'98da29',runId:'pre-fix',hypothesisId:'H1-H3',location:'MediaDrivePanel.tsx:loadStorage',message:'client storage API',data:{status:res.status,libraryPercent:data.percent,serverOk:data.server?.ok,serverPercent:data.server?.usagePercent,serverPath:data.server?.path,windowHost:typeof window!=='undefined'?window.location.host:null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (res.ok && data.ok) {
       setStorage({
         percent: data.percent ?? 0,
         usedLabel: data.usedLabel ?? '',
         limitLabel: data.limitLabel ?? '',
       })
+      const srv = data.server
+      if (srv?.ok) {
+        setServerDisk({
+          ok: true,
+          percent: srv.usagePercent ?? 0,
+          usedLabel: srv.usedLabel ?? '',
+          totalLabel: srv.totalLabel ?? '',
+          availableLabel: srv.availableLabel ?? '',
+          path: srv.path ?? '',
+          host: srv.host ?? '',
+        })
+      } else {
+        setServerDisk({ ok: false, percent: 0, usedLabel: '', totalLabel: '', availableLabel: '', path: '', host: '' })
+      }
     }
   }, [])
 
@@ -241,19 +267,64 @@ export default function MediaDrivePanel() {
     }
   }
 
-  const barColor =
-    storage.percent >= 90 ? 'bg-red-500' : storage.percent >= 75 ? 'bg-amber-500' : 'bg-champagne'
+  const barClass = (percent: number) =>
+    percent >= 90 ? 'bg-red-500' : percent >= 75 ? 'bg-amber-500' : 'bg-champagne'
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-base font-semibold text-graphite mb-1">{t('media.title')}</h3>
-        <div className="mb-1 flex justify-between text-xs text-gray-600">
-          <span>{t('media.storageUsed', { used: storage.usedLabel, limit: storage.limitLabel })}</span>
-          <span>{storage.percent}%</span>
+      <div className="bg-white rounded-lg shadow-sm p-6 space-y-5">
+        <div>
+          <h3 className="text-base font-semibold text-graphite mb-1">{t('media.title')}</h3>
+          <p className="text-sm text-gray-500">{t('media.description')}</p>
         </div>
-        <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
-          <div className={`h-full ${barColor} transition-all`} style={{ width: `${storage.percent}%` }} />
+
+        <div>
+          <div className="mb-1 flex justify-between text-xs text-gray-600">
+            <span className="font-medium text-graphite">{t('media.serverDisk')}</span>
+            <span>{serverDisk.ok ? `${serverDisk.percent}%` : '—'}</span>
+          </div>
+          {serverDisk.ok ? (
+            <>
+              <p className="text-xs text-gray-500 mb-2">
+                {t('media.serverDiskUsed', {
+                  used: serverDisk.usedLabel,
+                  total: serverDisk.totalLabel,
+                  free: serverDisk.availableLabel,
+                })}
+              </p>
+              <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+                <div
+                  className={`h-full ${barClass(serverDisk.percent)} transition-all`}
+                  style={{ width: `${serverDisk.percent}%` }}
+                />
+              </div>
+              <p className="mt-1 text-[10px] text-gray-400 truncate">
+                {serverDisk.host && t('media.serverDiskHost', { host: serverDisk.host })}
+                {serverDisk.host && serverDisk.path ? ' · ' : ''}
+                {serverDisk.path && (
+                  <span title={serverDisk.path}>{t('media.serverDiskPath', { path: serverDisk.path })}</span>
+                )}
+              </p>
+            </>
+          ) : (
+            <p className="text-xs text-gray-500">{t('media.serverDiskUnavailable')}</p>
+          )}
+        </div>
+
+        <div>
+          <div className="mb-1 flex justify-between text-xs text-gray-600">
+            <span className="font-medium text-graphite">{t('media.libraryQuota')}</span>
+            <span>{storage.percent}%</span>
+          </div>
+          <p className="text-xs text-gray-500 mb-2">
+            {t('media.storageUsed', { used: storage.usedLabel, limit: storage.limitLabel })}
+          </p>
+          <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+            <div
+              className={`h-full ${barClass(storage.percent)} transition-all`}
+              style={{ width: `${storage.percent}%` }}
+            />
+          </div>
         </div>
       </div>
 

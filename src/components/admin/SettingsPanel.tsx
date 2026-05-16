@@ -35,7 +35,11 @@ export default function SettingsPanel({
     return list
   }, [showTeam, showMedia, showIntegrations, t])
 
-  const [subTab, setSubTab] = useState<SettingsSubTab>('team')
+  const [subTab, setSubTab] = useState<SettingsSubTab>(() => {
+    if (showMedia && !showTeam) return 'media'
+    if (showIntegrations && !showTeam && !showMedia) return 'integrations'
+    return 'team'
+  })
 
   useEffect(() => {
     if (tabs.length === 0) return
