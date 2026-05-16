@@ -82,9 +82,6 @@ export default function MediaDrivePanel() {
   const loadStorage = useCallback(async () => {
     const res = await fetch('/api/admin/media/storage', { credentials: 'same-origin' })
     const data = await res.json().catch(() => ({}))
-    // #region agent log
-    fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'98da29'},body:JSON.stringify({sessionId:'98da29',runId:'pre-fix',hypothesisId:'H1-H3',location:'MediaDrivePanel.tsx:loadStorage',message:'client storage API',data:{status:res.status,libraryPercent:data.percent,serverOk:data.server?.ok,serverPercent:data.server?.usagePercent,serverPath:data.server?.path,windowHost:typeof window!=='undefined'?window.location.host:null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (res.ok && data.ok) {
       setStorage({
         percent: data.percent ?? 0,

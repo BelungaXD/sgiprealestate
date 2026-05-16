@@ -35,9 +35,6 @@ export function serverDiskCheckPath(): string {
 
 export function readServerDiskUsage(path: string = serverDiskCheckPath()): ServerDiskUsage {
   const output = execFileSync('df', ['-Pk', path], { encoding: 'utf8' })
-  // #region agent log
-  fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'98da29'},body:JSON.stringify({sessionId:'98da29',runId:'post-fix',hypothesisId:'H2-H4',location:'serverDiskUsage.ts:readServerDiskUsage:df',message:'df raw output',data:{path,envPath:process.env.SERVER_DISK_CHECK_PATH??null,platform:process.platform,dfLine:output.trim().split('\n')[1]??null},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   const lines = output.trim().split('\n')
   if (lines.length < 2) {
     throw new Error('Unexpected df output: no data row')
@@ -62,7 +59,7 @@ export function readServerDiskUsage(path: string = serverDiskCheckPath()): Serve
   const usedBytes = usedK * 1024
   const availableBytes = availK * 1024
 
-  const result = {
+  return {
     path,
     host: hostname(),
     totalBytes,
@@ -73,8 +70,4 @@ export function readServerDiskUsage(path: string = serverDiskCheckPath()): Serve
     usedLabel: formatBytes(usedBytes),
     availableLabel: formatBytes(availableBytes),
   }
-  // #region agent log
-  fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'98da29'},body:JSON.stringify({sessionId:'98da29',runId:'post-fix',hypothesisId:'H2-H4',location:'serverDiskUsage.ts:readServerDiskUsage:parsed',message:'parsed disk usage',data:{path,host:result.host,usagePercent:result.usagePercent,totalK,usedK,availK,capacity},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
-  return result
 }
