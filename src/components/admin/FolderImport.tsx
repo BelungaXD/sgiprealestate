@@ -625,11 +625,6 @@ export default function FolderImport({ onImportComplete }: FolderImportProps) {
                   <p className="text-lg font-medium text-graphite mb-2">
                     {importPhase === 'upload' ? t('folderImport.phaseUpload') : t('folderImport.phaseProcess')}
                   </p>
-                  <p className="text-sm text-gray-500 max-w-md mx-auto">
-                    {importPhase === 'upload'
-                      ? t('folderImport.phaseUploadHelp')
-                      : t('folderImport.phaseProcessHelp')}
-                  </p>
                   {importPhase === 'upload' && importStats && (
                     <p className="text-xs text-champagne mt-2 font-medium">
                       {t('folderImport.filesSize', { count: importStats.files, mb: importStats.mb })}

@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Layout from '@/components/layout/Layout'
 import DeveloperCard from '@/components/developers/DeveloperCard'
+import { localizedDeveloperContent } from '@/lib/developerLocaleContent'
 
 interface Developer {
   id: string
@@ -35,6 +36,8 @@ interface ApiDeveloper {
   nameEn?: string
   description?: string
   descriptionEn?: string
+  descriptionRu?: string
+  descriptionAr?: string
   logo?: string
   city?: string
   propertiesCount?: number
@@ -43,7 +46,12 @@ interface ApiDeveloper {
   website?: string
   marketShare?: number
   specialties?: string[]
+  specialtiesRu?: string[]
+  specialtiesAr?: string[]
   notableProjects?: string[]
+  notableProjectsRu?: string[]
+  notableProjectsAr?: string[]
+  founded?: number | null
 }
 
 const HARDCODED_DEVELOPERS: Developer[] = [
@@ -103,6 +111,9 @@ export default function Developers() {
       setLoading(true)
       try {
         const response = await fetch('/api/developers')
+        if (!response.ok) {
+          throw new Error(`Developers API returned ${response.status}`)
+        }
         const data = await response.json()
 
         // Transform API data to match Developer interface
@@ -117,27 +128,39 @@ export default function Developers() {
             }
             return true
           })
-          .map((dev) => ({
+          .map((dev) => {
+            const localized = localizedDeveloperContent(dev, currentLocale)
+            const localizedName = localized.name
+            return {
             id: dev.id,
-            name: dev.name,
-            nameEn: dev.nameEn || dev.name,
+            name: localizedName,
+            nameEn: localizedName,
+            nameRu: dev.nameRu || '',
+            nameAr: dev.nameAr || '',
             description: dev.description || '',
             descriptionEn: dev.descriptionEn || dev.description || '',
+            descriptionRu: dev.descriptionRu || '',
+            descriptionAr: dev.descriptionAr || '',
             logo: dev.logo || '',
-            founded: 0,
+            founded: dev.founded ?? 0,
             headquarters: dev.city || 'Dubai, UAE',
             propertiesCount: dev.propertiesCount || 0,
             averagePrice: dev.averagePrice || 0,
             currency: 'AED',
             slug: dev.slug,
             website: dev.website || '',
-            specialties: Array.isArray(dev.specialties) ? dev.specialties : [],
-            notableProjects: Array.isArray(dev.notableProjects) ? dev.notableProjects : [],
+            specialties: localized.specialties,
+            specialtiesRu: Array.isArray(dev.specialtiesRu) ? dev.specialtiesRu : [],
+            specialtiesAr: Array.isArray(dev.specialtiesAr) ? dev.specialtiesAr : [],
+            notableProjects: localized.notableProjects,
+            notableProjectsRu: Array.isArray(dev.notableProjectsRu) ? dev.notableProjectsRu : [],
+            notableProjectsAr: Array.isArray(dev.notableProjectsAr) ? dev.notableProjectsAr : [],
             awards: [],
             rating: 5,
             marketShare: dev.marketShare || 0,
             countries: ['UAE'],
-          }))
+          }
+          })
 
         // Keep curated content from hardcoded cards, but always hydrate dynamic stats from API.
         const apiBySlug = new Map(transformedDevelopers.map((dev) => [dev.slug, dev]))
@@ -151,6 +174,13 @@ export default function Developers() {
                 propertiesCount: apiDev.propertiesCount,
                 averagePrice: apiDev.averagePrice,
                 marketShare: apiDev.marketShare,
+                founded: apiDev.founded > 0 ? apiDev.founded : hardcodedDev.founded,
+                specialties:
+                  apiDev.specialties.length > 0 ? apiDev.specialties : hardcodedDev.specialties,
+                notableProjects:
+                  apiDev.notableProjects.length > 0
+                    ? apiDev.notableProjects
+                    : hardcodedDev.notableProjects,
               }
             : hardcodedDev
         })

@@ -32,9 +32,15 @@ const DESCRIPTION_FIELD: Record<ContentLocale, 'description' | 'descriptionRu' |
   ar: 'descriptionAr',
 }
 
-type LocaleTextKind = 'title' | 'description'
+const PAYMENT_PLAN_FIELD: Record<ContentLocale, 'paymentPlan' | 'paymentPlanRu' | 'paymentPlanAr'> = {
+  en: 'paymentPlan',
+  ru: 'paymentPlanRu',
+  ar: 'paymentPlanAr',
+}
 
-type LocaleTextSnapshot = { title: string; description: string }
+type LocaleTextKind = 'title' | 'description' | 'paymentPlan'
+
+type LocaleTextSnapshot = { title: string; description: string; paymentPlan: string }
 
 function buildLocaleSnapshots(values: {
   title?: string | null
@@ -43,19 +49,25 @@ function buildLocaleSnapshots(values: {
   description?: string | null
   descriptionRu?: string | null
   descriptionAr?: string | null
+  paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
 }): Record<ContentLocale, LocaleTextSnapshot> {
   return {
     en: {
       title: (values.title || '').trim(),
       description: (values.description || '').trim(),
+      paymentPlan: (values.paymentPlan || '').trim(),
     },
     ru: {
       title: (values.titleRu || '').trim(),
       description: (values.descriptionRu || '').trim(),
+      paymentPlan: (values.paymentPlanRu || '').trim(),
     },
     ar: {
       title: (values.titleAr || '').trim(),
       description: (values.descriptionAr || '').trim(),
+      paymentPlan: (values.paymentPlanAr || '').trim(),
     },
   }
 }
@@ -68,7 +80,11 @@ function findEditedSourceLocale(
   for (const locale of CONTENT_LOCALES) {
     const prev = previous[locale]
     const cur = current[locale]
-    if (prev.title !== cur.title || prev.description !== cur.description) {
+    if (
+      prev.title !== cur.title ||
+      prev.description !== cur.description ||
+      prev.paymentPlan !== cur.paymentPlan
+    ) {
       changed.push(locale)
     }
   }
@@ -195,6 +211,8 @@ type EditableProperty = {
   yearBuilt?: number
   completionDate?: string | Date
   paymentPlan?: string
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: string
   address?: string
   city?: string
@@ -279,6 +297,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               : new Date(property.completionDate).toISOString().split('T')[0]
             : undefined,
           paymentPlan: property.paymentPlan || '',
+          paymentPlanRu: property.paymentPlanRu ?? '',
+          paymentPlanAr: property.paymentPlanAr ?? '',
           occupancyStatus: property.occupancyStatus || undefined,
           address: property.address || '',
           city: property.city || '',
@@ -322,6 +342,9 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
           metaTitleAr: '',
           metaDescriptionRu: '',
           metaDescriptionAr: '',
+          paymentPlan: '',
+          paymentPlanRu: '',
+          paymentPlanAr: '',
         },
   })
 
@@ -332,6 +355,9 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
   const descriptionEn = watch('description')
   const descriptionRu = watch('descriptionRu')
   const descriptionAr = watch('descriptionAr')
+  const paymentPlanEn = watch('paymentPlan')
+  const paymentPlanRu = watch('paymentPlanRu')
+  const paymentPlanAr = watch('paymentPlanAr')
   const applyMetaPreview = useCallback(() => {
     const values = getValues()
     const generated = generateLocalizedMetaIfMissing(
@@ -426,14 +452,21 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
       description: descriptionEn,
       descriptionRu,
       descriptionAr,
+      paymentPlan: paymentPlanEn,
+      paymentPlanRu,
+      paymentPlanAr,
     })
     const source = findEditedSourceLocale(current, localeSnapshotsRef.current)
     if (!source) {
       return
     }
 
-    const { title: titleTrimmed, description: descriptionTrimmed } = current[source]
-    if (!titleTrimmed && !descriptionTrimmed) {
+    const {
+      title: titleTrimmed,
+      description: descriptionTrimmed,
+      paymentPlan: paymentPlanTrimmed,
+    } = current[source]
+    if (!titleTrimmed && !descriptionTrimmed && !paymentPlanTrimmed) {
       localeSnapshotsRef.current = current
       setTranslateStatus('idle')
       setTranslateError('')
@@ -449,6 +482,10 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     if (descriptionTrimmed) {
       texts.push(descriptionTrimmed)
       kinds.push('description')
+    }
+    if (paymentPlanTrimmed) {
+      texts.push(paymentPlanTrimmed)
+      kinds.push('paymentPlan')
     }
 
     localeSnapshotsRef.current = {
@@ -473,8 +510,10 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               const value = translated[index] ?? ''
               if (kind === 'title') {
                 setValue(TITLE_FIELD[locale], value)
-              } else {
+              } else if (kind === 'description') {
                 setValue(DESCRIPTION_FIELD[locale], value)
+              } else {
+                setValue(PAYMENT_PLAN_FIELD[locale], value)
               }
             })
           }
@@ -504,6 +543,9 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
     descriptionEn,
     descriptionRu,
     descriptionAr,
+    paymentPlanEn,
+    paymentPlanRu,
+    paymentPlanAr,
     getValues,
     setValue,
     applyMetaPreview,
@@ -626,6 +668,9 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         description: property.description,
         descriptionRu: property.descriptionRu,
         descriptionAr: property.descriptionAr,
+        paymentPlan: property.paymentPlan,
+        paymentPlanRu: property.paymentPlanRu,
+        paymentPlanAr: property.paymentPlanAr,
       })
     } else {
       setImages([])
@@ -726,6 +771,8 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
         ...data,
         description: data.description || null,
         paymentPlan: data.paymentPlan || null,
+        paymentPlanRu: data.paymentPlanRu || null,
+        paymentPlanAr: data.paymentPlanAr || null,
         features,
         featuresRu,
         featuresAr,
@@ -982,19 +1029,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 ))}
               </div>
             </div>
-            <p className="text-xs text-gray-500">
-              English is the site default. Russian and Arabic are shown when the visitor chooses that
-              language; empty fields fall back to English.
-            </p>
-            <p className="text-xs text-gray-500">
-              If meta fields are left empty, they are generated automatically on save from title,
-              description, district, type, and key features.
-            </p>
-            <p className="text-xs text-gray-500">
-              Title and description auto-translate when you edit text in one language; switching tabs
-              does not re-translate. Features and amenities are added in the active tab and translated
-              to all three languages at once.
-            </p>
             {translateStatus === 'loading' && (
               <p className="text-xs text-champagne">Translating…</p>
             )}
@@ -1025,6 +1059,18 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                   <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
                 )}
               </div>
+              {listingMarket === 'PRIMARY' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Payment plan (English)
+                  </label>
+                  <textarea
+                    {...register('paymentPlan')}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                  />
+                </div>
+              )}
             </div>
 
             <div className={localeEditorTab === 'ru' ? 'space-y-4' : 'hidden'}>
@@ -1050,6 +1096,18 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                   <p className="mt-1 text-sm text-red-600">{errors.descriptionRu.message}</p>
                 )}
               </div>
+              {listingMarket === 'PRIMARY' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Payment plan (Russian)
+                  </label>
+                  <textarea
+                    {...register('paymentPlanRu')}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
+                  />
+                </div>
+              )}
             </div>
 
             <div dir="rtl" className={localeEditorTab === 'ar' ? 'space-y-4' : 'hidden'}>
@@ -1075,6 +1133,18 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                   <p className="mt-1 text-sm text-red-600">{errors.descriptionAr.message}</p>
                 )}
               </div>
+              {listingMarket === 'PRIMARY' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Payment plan (Arabic)
+                  </label>
+                  <textarea
+                    {...register('paymentPlanAr')}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne text-right"
+                  />
+                </div>
+              )}
             </div>
 
             {renderFeaturesAmenities(localeEditorTab === 'ar')}
@@ -1280,20 +1350,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             )}
           </div>
 
-          {listingMarket === 'PRIMARY' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Payment plan
-              </label>
-              <textarea
-                {...register('paymentPlan')}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-champagne focus:border-champagne"
-                placeholder="Payment schedule, post-handover plan…"
-              />
-            </div>
-          )}
-
           {listingMarket === 'SECONDARY' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1364,9 +1420,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             {errors.googleMapsUrl && (
               <p className="mt-1 text-sm text-red-600">{errors.googleMapsUrl.message as string}</p>
             )}
-            <p className="mt-1 text-xs text-gray-500">
-              Paste the link from Google Maps (Share). Embed links from “Embed a map” also work.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1374,9 +1427,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Area (catalog)
               </label>
-              <p className="text-xs text-gray-500 mb-1">
-                Manage areas in the sidebar: Areas.
-              </p>
               {loadingData ? (
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm">
                   Loading areas…
@@ -1407,9 +1457,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Developer (catalog)
                 </label>
-                <p className="text-xs text-gray-500 mb-1">
-                  Manage developers in the sidebar: Developers.
-                </p>
                 {loadingData ? (
                   <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 text-sm">
                     Loading developers…
@@ -1448,9 +1495,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             maxFiles={20}
             label="Files for Download"
           />
-          <p className="mt-2 text-xs text-gray-500">
-            Upload files (PDF, documents, etc.) with labels. Users will be able to download these files from the property page.
-          </p>
         </div>
 
 
@@ -1460,9 +1504,6 @@ export default function PropertyForm({ property, onSave, onCancel }: PropertyFor
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Slug
             </label>
-            <p className="text-xs text-gray-500 mb-1">
-              Leave empty to auto-generate from the title.
-            </p>
             <input
               type="text"
               {...register('slug')}

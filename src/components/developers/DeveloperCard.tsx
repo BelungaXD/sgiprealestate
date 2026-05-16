@@ -10,13 +10,16 @@ import {
   ArrowRightIcon
 } from '@heroicons/react/24/outline'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
+import { localizedDeveloperContent } from '@/lib/developerLocaleContent'
 
 interface Developer {
   id: string
   name: string
   nameEn: string
   description: string
-  descriptionEn: string
+  descriptionEn?: string
+  descriptionRu?: string
+  descriptionAr?: string
   logo: string
   founded: number
   headquarters: string
@@ -26,7 +29,11 @@ interface Developer {
   slug: string
   website: string
   specialties: string[]
+  specialtiesRu?: string[]
+  specialtiesAr?: string[]
   notableProjects: string[]
+  notableProjectsRu?: string[]
+  notableProjectsAr?: string[]
   awards: string[]
   rating: number
   marketShare: number
@@ -39,10 +46,12 @@ interface DeveloperCardProps {
 
 export default function DeveloperCard({ developer }: DeveloperCardProps) {
   const { t, i18n } = useTranslation('developers')
-  const isRussian = i18n.language === 'ru'
-
-  const displayName = isRussian ? developer.name : developer.nameEn
-  const displayDescription = isRussian ? developer.description : developer.descriptionEn
+  const locale = i18n.language === 'ru' || i18n.language === 'ar' ? i18n.language : 'en'
+  const localized = localizedDeveloperContent(developer, locale)
+  const displayName = localized.name
+  const displayDescription = localized.description
+  const displaySpecialties = localized.specialties
+  const displayProjects = localized.notableProjects
   const normalizedLogo = normalizeImageUrl(developer.logo)
 
   const formatPrice = (price: number, currency: string) => {
@@ -72,7 +81,7 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
           ) : (
             <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
               <span className="text-2xl font-bold text-champagne">
-                {developer.nameEn.charAt(0)}
+                {(localized.name || developer.nameEn || developer.name).charAt(0)}
               </span>
             </div>
           )}
@@ -84,10 +93,12 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
               <MapPinIcon className="h-4 w-4" />
               <span>{developer.headquarters}</span>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <CalendarIcon className="h-4 w-4" />
-              <span>{t('founded')} {developer.founded}</span>
-            </div>
+            {developer.founded > 0 && (
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <CalendarIcon className="h-4 w-4" />
+                <span>{t('founded')} {developer.founded}</span>
+              </div>
+            )}
           </div>
         </div>
         
@@ -126,7 +137,7 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
         <div className="mb-4">
           <div className="text-sm font-medium text-graphite mb-2">{t('specialties')}</div>
           <div className="flex flex-wrap gap-1">
-            {developer.specialties.slice(0, 3).map((specialty, index) => (
+            {displaySpecialties.slice(0, 3).map((specialty, index) => (
               <span
                 key={index}
                 className="text-xs bg-champagne/10 text-champagne px-2 py-1 rounded-full"
@@ -134,9 +145,9 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
                 {specialty}
               </span>
             ))}
-            {developer.specialties.length > 3 && (
+            {displaySpecialties.length > 3 && (
               <span className="text-xs text-gray-500">
-                +{developer.specialties.length - 3} {t('more')}
+                +{displaySpecialties.length - 3} {t('more')}
               </span>
             )}
           </div>
@@ -146,42 +157,29 @@ export default function DeveloperCard({ developer }: DeveloperCardProps) {
         <div className="mb-6">
           <div className="text-sm font-medium text-graphite mb-2">{t('notableProjects')}</div>
           <div className="space-y-1">
-            {developer.notableProjects.slice(0, 2).map((project, index) => (
+            {displayProjects.map((project, index) => (
               <div key={index} className="text-xs text-gray-600 flex items-center">
                 <TrophyIcon className="h-3 w-3 mr-1 text-champagne" />
                 {project}
               </div>
             ))}
-            {developer.notableProjects.length > 2 && (
-              <div className="text-xs text-gray-500">
-                +{developer.notableProjects.length - 2} {t('moreProjects')}
-              </div>
-            )}
           </div>
         </div>
         
         {/* Action Buttons */}
         <div className="flex flex-col space-y-2">
-        <div className="flex space-x-2">
-          <Link
-            href={`/developers/${developer.slug}`}
-            className="flex-1 btn-primary text-center text-sm py-2 inline-flex items-center justify-center group"
-          >
-            {t('learnMore')}
-            <ArrowRightIcon className="ml-2 h-4 w-4" />
-          </Link>
           {developer.website && (
             <a
               href={developer.website.startsWith('http') ? developer.website : `https://${developer.website}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 border-2 border-champagne bg-white text-champagne rounded-lg hover:bg-champagne-dark hover:text-white transition-all duration-500 ease-in-out text-sm flex items-center justify-center group"
+              className="w-full px-4 py-2 border-2 border-champagne bg-white text-champagne rounded-lg hover:bg-champagne-dark hover:text-white transition-all duration-500 ease-in-out text-sm flex items-center justify-center gap-2 group"
               title={t('visitWebsite') || 'Visit Website'}
             >
               <GlobeAltIcon className="h-4 w-4 group-hover:scale-110 transition-transform duration-500 ease-in-out" />
+              {t('visitWebsite') || 'Visit Website'}
             </a>
           )}
-          </div>
           <Link
             href={`/properties?developer=${encodeURIComponent(developer.slug)}`}
             className="w-full btn-secondary text-center text-sm py-2 inline-flex items-center justify-center group"

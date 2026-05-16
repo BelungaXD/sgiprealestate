@@ -26,14 +26,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  if (!isGeminiTranslateConfigured()) {
+  if (!(await isGeminiTranslateConfigured())) {
     return res.status(503).json({ message: 'Translation service is not configured' })
   }
 
   const startedAt = Date.now()
   const { sourceLocale, targetLocales, texts, textKind } = req.body ?? {}
   const normalizedTextKind =
-    textKind === 'tag' || textKind === 'listing' ? textKind : 'listing'
+    textKind === 'tag' ||
+    textKind === 'listing' ||
+    textKind === 'developer' ||
+    textKind === 'area'
+      ? textKind
+      : 'listing'
 
   if (!isLocale(sourceLocale)) {
     return res.status(400).json({ message: 'Invalid sourceLocale' })

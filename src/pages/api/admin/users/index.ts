@@ -1,41 +1,54 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
+import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { createScopedLogger } from '@/lib/logger'
+import { hashAdminPassword } from '@/lib/adminSession'
+import { requireAdminSession } from '@/lib/adminAuth'
 import {
-  ADMIN_SESSION_COOKIE,
-  hashAdminPassword,
-  readCookie,
-  verifyAdminSessionToken,
-} from '@/lib/adminSession'
+  buildAdminInviteUrl,
+  createInviteToken,
+  hashInviteToken,
+  inviteExpiresAt,
+} from '@/lib/adminInvite'
+import { sendAdminInviteEmail } from '@/lib/sendTransactionalEmail'
 
 const createUserSchema = z.object({
   email: z.email(),
   name: z.string().trim().min(1).max(120).optional(),
-  password: z.string().min(8).max(128),
+  role: z.enum(['SUPER_ADMIN', 'MANAGER', 'CONTENT_EDITOR']),
 })
 
-function isAuthorized(req: NextApiRequest): boolean {
-  const token = readCookie(req, ADMIN_SESSION_COOKIE)
-  return verifyAdminSessionToken(token)
-}
 const log = createScopedLogger('api/admin/users')
 
+const userSelect = {
+  id: true,
+  email: true,
+  name: true,
+  role: true,
+  isActive: true,
+  lastLoginAt: true,
+  avatarUrl: true,
+  passwordSetAt: true,
+  inviteExpiresAt: true,
+  createdAt: true,
+  updatedAt: true,
+} as const
+
+const ROLE_LABELS: Record<string, string> = {
+  SUPER_ADMIN: 'Super Admin',
+  MANAGER: 'Manager / Agent',
+  CONTENT_EDITOR: 'Content Manager',
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!isAuthorized(req)) {
-    return res.status(401).json({ ok: false, error: 'unauthorized' })
-  }
+  const session = requireAdminSession(req, res, { permission: 'manage_users' })
+  if (!session) return
 
   if (req.method === 'GET') {
     try {
       const users = await prisma.admin.findMany({
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+        select: userSelect,
         orderBy: { createdAt: 'asc' },
       })
 
@@ -52,20 +65,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const parsed = createUserSchema.parse(body)
       const email = parsed.email.trim().toLowerCase()
       const name = parsed.name?.trim() || null
-      const password = hashAdminPassword(parsed.password)
+      const inviteToken = createInviteToken()
+      const placeholderPassword = hashAdminPassword(
+        crypto.randomBytes(32).toString('base64url')
+      )
 
       const user = await prisma.admin.create({
-        data: { email, name, password },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
+        data: {
+          email,
+          name,
+          password: placeholderPassword,
+          role: parsed.role,
+          isActive: true,
+          passwordSetAt: null,
+          inviteTokenHash: hashInviteToken(inviteToken),
+          inviteExpiresAt: inviteExpiresAt(),
         },
+        select: userSelect,
       })
 
-      return res.status(201).json({ ok: true, user })
+      const inviteUrl = buildAdminInviteUrl(inviteToken)
+      const emailResult = await sendAdminInviteEmail({
+        to: email,
+        inviteUrl,
+        roleLabel: ROLE_LABELS[parsed.role] || parsed.role,
+      })
+
+      return res.status(201).json({
+        ok: true,
+        user,
+        inviteUrl,
+        emailSent: emailResult.ok,
+        emailConfigured: emailResult.ok || emailResult.reason !== 'not_configured',
+      })
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ ok: false, error: 'invalid_payload', issues: error.issues })

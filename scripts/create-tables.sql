@@ -72,6 +72,8 @@ CREATE TABLE IF NOT EXISTS "properties" (
     "yearBuilt" INTEGER,
     "completionDate" TIMESTAMP(3),
     "paymentPlan" TEXT,
+    "paymentPlanRu" TEXT,
+    "paymentPlanAr" TEXT,
     "occupancyStatus" "OccupancyStatus",
     "address" TEXT NOT NULL,
     "city" TEXT NOT NULL,
@@ -99,6 +101,8 @@ CREATE TABLE IF NOT EXISTS "properties" (
 
 ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "listingMarket" "ListingMarket" NOT NULL DEFAULT 'PRIMARY';
 ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "paymentPlan" TEXT;
+ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "paymentPlanRu" TEXT;
+ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "paymentPlanAr" TEXT;
 ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "occupancyStatus" "OccupancyStatus";
 ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "googleMapsUrl" TEXT;
 
@@ -195,3 +199,19 @@ CREATE INDEX IF NOT EXISTS "property_images_propertyId_idx" ON "property_images"
 CREATE INDEX IF NOT EXISTS "floor_plans_propertyId_idx" ON "floor_plans"("propertyId");
 CREATE INDEX IF NOT EXISTS "property_files_propertyId_idx" ON "property_files"("propertyId");
 CREATE INDEX IF NOT EXISTS "leads_propertyId_idx" ON "leads"("propertyId");
+
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "descriptionRu" TEXT;
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "descriptionAr" TEXT;
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "specialtiesRu" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "specialtiesAr" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "notableProjectsRu" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "notableProjectsAr" TEXT[] DEFAULT ARRAY[]::TEXT[];
+
+ALTER TABLE "areas" ADD COLUMN IF NOT EXISTS "descriptionRu" TEXT;
+ALTER TABLE "areas" ADD COLUMN IF NOT EXISTS "descriptionAr" TEXT;
+ALTER TABLE "areas" ADD COLUMN IF NOT EXISTS "tagsRu" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "areas" ADD COLUMN IF NOT EXISTS "tagsAr" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "nameRu" TEXT;
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "nameAr" TEXT;
+ALTER TABLE "areas" ADD COLUMN IF NOT EXISTS "nameRu" TEXT;
+ALTER TABLE "areas" ADD COLUMN IF NOT EXISTS "nameAr" TEXT;

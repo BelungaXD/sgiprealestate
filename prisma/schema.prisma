@@ -13,52 +13,54 @@ datasource db {
 }
 
 model Property {
-  id          String   @id @default(cuid())
+  id              String           @id @default(cuid())
   /// Default / English (site fallback locale)
-  title       String   @default("")
-  description String?
-  titleRu     String?
-  titleAr     String?
-  descriptionRu String? @db.Text
-  descriptionAr String? @db.Text
-  price       Float    @default(0)
-  currency    String   @default("AED")
-  type        PropertyType
+  title           String           @default("")
+  description     String?
+  titleRu         String?
+  titleAr         String?
+  descriptionRu   String?          @db.Text
+  descriptionAr   String?          @db.Text
+  price           Float            @default(0)
+  currency        String           @default("AED")
+  type            PropertyType
   /// Primary (off-plan) vs secondary (resale) — distinct from `type` (APARTMENT, VILLA, …)
-  listingMarket ListingMarket @default(PRIMARY)
-  status      PropertyStatus @default(AVAILABLE)
-  areaSqm     Float    @default(0)
-  bedrooms    Int      @default(0)
-  bathrooms   Int      @default(0)
-  parking     Int?
-  floor       Int?
-  totalFloors Int?
-  yearBuilt   Int?
-  completionDate DateTime?
+  listingMarket   ListingMarket    @default(PRIMARY)
+  status          PropertyStatus   @default(AVAILABLE)
+  areaSqm         Float            @default(0)
+  bedrooms        Int              @default(0)
+  bathrooms       Int              @default(0)
+  parking         Int?
+  floor           Int?
+  totalFloors     Int?
+  yearBuilt       Int?
+  completionDate  DateTime?
   /// Payment plan / handover terms (primary listings)
-  paymentPlan String? @db.Text
+  paymentPlan     String?          @db.Text
+  paymentPlanRu   String?          @db.Text
+  paymentPlanAr   String?          @db.Text
   /// Vacant / tenanted (secondary listings)
   occupancyStatus OccupancyStatus?
-  
+
   // Location
-  address     String   @default("")
-  city        String   @default("")
-  district    String   @default("")
-  coordinates Json? // { lat: number, lng: number }
+  address       String  @default("")
+  city          String  @default("")
+  district      String  @default("")
+  coordinates   Json? // { lat: number, lng: number }
   /// Share or embed link from Google Maps (admin pastes URL)
   googleMapsUrl String? @db.Text
 
   // Relations
   areaId      String?
-  area        Area? @relation(fields: [areaId], references: [id])
+  area        Area?      @relation(fields: [areaId], references: [id])
   developerId String?
   developer   Developer? @relation(fields: [developerId], references: [id])
-  
+
   // Media
-  images      PropertyImage[]
-  floorPlans  FloorPlan[]
-  files       PropertyFile[]
-  
+  images     PropertyImage[]
+  floorPlans FloorPlan[]
+  files      PropertyFile[]
+
   // Features
   features    String[]
   featuresRu  String[] @default([])
@@ -66,22 +68,26 @@ model Property {
   amenities   String[]
   amenitiesRu String[] @default([])
   amenitiesAr String[] @default([])
-  
+
+  // Admin ownership (managers see only assigned listings)
+  assignedAdminId String?
+  assignedAdmin   Admin?  @relation("PropertyAssignee", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+
   // Relations
-  leads       Lead[]
-  
+  leads Lead[]
+
   // SEO
-  slug        String @unique
-  metaTitle   String?
-  metaDescription String?
+  slug              String  @unique
+  metaTitle         String?
+  metaDescription   String?
   metaTitleRu       String?
   metaTitleAr       String?
   metaDescriptionRu String? @db.Text
   metaDescriptionAr String? @db.Text
 
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Admin
   isPublished Boolean @default(false)
@@ -91,21 +97,21 @@ model Property {
 }
 
 model PropertyImage {
-  id         String @id @default(cuid())
+  id         String   @id @default(cuid())
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   url        String
   alt        String?
-  order      Int @default(0)
-  isMain     Boolean @default(false)
-  
-  createdAt  DateTime @default(now())
-  
+  order      Int      @default(0)
+  isMain     Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
   @@map("property_images")
 }
 
 model FloorPlan {
-  id         String @id @default(cuid())
+  id         String   @id @default(cuid())
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   url        String
@@ -113,15 +119,15 @@ model FloorPlan {
   area       Float?
   bedrooms   Int?
   bathrooms  Int?
-  order      Int @default(0)
-  
-  createdAt  DateTime @default(now())
-  
+  order      Int      @default(0)
+
+  createdAt DateTime @default(now())
+
   @@map("floor_plans")
 }
 
 model PropertyFile {
-  id         String @id @default(cuid())
+  id         String   @id @default(cuid())
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   url        String
@@ -129,140 +135,233 @@ model PropertyFile {
   filename   String
   size       Int? // Размер файла в байтах
   mimeType   String? // MIME тип файла
-  order      Int @default(0)
-  
-  createdAt  DateTime @default(now())
-  
+  order      Int      @default(0)
+
+  createdAt DateTime @default(now())
+
   @@map("property_files")
 }
 
 model Area {
-  id          String @id @default(cuid())
-  name        String
-  nameEn      String?
-  description String?
-  descriptionEn String?
-  isActive    Boolean @default(true)
-  image       String?
-  sortOrder   Int?
-  tags        String[] @default([])
-  
+  id            String   @id @default(cuid())
+  name          String
+  nameEn        String?
+  nameRu        String?
+  nameAr        String?
+  description   String?  @db.Text
+  descriptionEn String?  @db.Text
+  descriptionRu String?  @db.Text
+  descriptionAr String?  @db.Text
+  isActive      Boolean  @default(true)
+  image         String?
+  sortOrder     Int?
+  tags          String[] @default([])
+  tagsRu        String[] @default([])
+  tagsAr        String[] @default([])
+
+  // Hierarchy: City -> District -> Sub-district / Community (max 3 levels)
+  parentId String?
+  parent   Area?   @relation("AreaHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Area[]  @relation("AreaHierarchy")
+
   // Location
   city        String
   coordinates Json? // { lat: number, lng: number }
-  
+  /// Google Maps share/embed URL shown on the public area page
+  mapEmbed    String? @db.Text
+
   // SEO
-  slug        String @unique
-  metaTitle   String?
+  slug            String  @unique
+  metaTitle       String?
   metaDescription String?
-  
+
   // Relations
-  properties  Property[]
-  
+  properties Property[]
+  images     AreaImage[]
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
   @@map("areas")
 }
 
+model AreaImage {
+  id        String   @id @default(cuid())
+  areaId    String
+  area      Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  order     Int      @default(0)
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([areaId])
+  @@map("area_images")
+}
+
 model Developer {
-  id          String @id @default(cuid())
-  name        String
-  nameEn      String?
-  description String?
-  descriptionEn String?
-  specialties String[] @default([])
-  notableProjects String[] @default([])
-  isActive    Boolean @default(true)
-  logo        String?
-  website     String?
-  email       String?
-  phone       String?
-  
+  id              String   @id @default(cuid())
+  name            String
+  nameEn          String?
+  nameRu          String?
+  nameAr          String?
+  description         String?  @db.Text
+  descriptionEn       String?  @db.Text
+  descriptionRu       String?  @db.Text
+  descriptionAr       String?  @db.Text
+  specialties         String[] @default([])
+  specialtiesRu       String[] @default([])
+  specialtiesAr       String[] @default([])
+  notableProjects     String[] @default([])
+  notableProjectsRu   String[] @default([])
+  notableProjectsAr   String[] @default([])
+  founded         Int?
+  isActive        Boolean  @default(true)
+  logo            String?
+  website         String?
+  email           String?
+  phone           String?
+
   // Location
-  address     String?
-  city        String?
-  
+  address String?
+  city    String?
+
   // SEO
-  slug        String @unique
-  metaTitle   String?
+  slug            String  @unique
+  metaTitle       String?
   metaDescription String?
-  
+
   // Relations
-  properties  Property[]
-  
+  properties Property[]
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("developers")
 }
 
 model Lead {
-  id          String @id @default(cuid())
-  name        String
-  email       String
-  phone       String?
-  message     String?
-  
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  phone   String?
+  message String?
+
   // Property interest
-  propertyId  String?
-  property    Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
-  
+  propertyId String?
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
   // Lead source
-  source      String? // website, whatsapp, phone, etc.
-  page        String? // which page the lead came from
-  
+  source String? // website, whatsapp, phone, etc.
+  page   String? // which page the lead came from
+
   // Status
-  status      LeadStatus @default(NEW)
-  notes       String?
-  
+  status LeadStatus @default(NEW)
+  notes  String?
+
+  assignedAdminId String?
+  assignedAdmin   Admin?  @relation("LeadAssignee", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+
   // CRM
-  crmId       String? // ID in external CRM
-  
+  crmId String? // ID in external CRM
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("leads")
 }
 
 model Partner {
-  id          String @id @default(cuid())
-  name        String
-  nameEn      String?
-  type        PartnerType
-  logo        String?
-  website     String?
-  description String?
+  id            String      @id @default(cuid())
+  name          String
+  nameEn        String?
+  type          PartnerType
+  logo          String?
+  website       String?
+  description   String?
   descriptionEn String?
-  
+
   // Contact
-  email       String?
-  phone       String?
-  
+  email String?
+  phone String?
+
   // SEO
-  slug        String @unique
-  
+  slug String @unique
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("partners")
 }
 
 model Admin {
-  id        String @id @default(cuid())
-  email     String @unique
-  password  String
-  name      String?
-  
+  id              String    @id @default(cuid())
+  email           String    @unique
+  password        String
+  name            String?
+  role            AdminRole @default(MANAGER)
+  isActive        Boolean   @default(true)
+  lastLoginAt     DateTime?
+  avatarUrl       String?
+  passwordSetAt   DateTime?
+  inviteTokenHash String?
+  inviteExpiresAt DateTime?
+
+  assignedProperties Property[] @relation("PropertyAssignee")
+  assignedLeads      Lead[]     @relation("LeadAssignee")
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("admins")
+}
+
+model MediaFolder {
+  id        String       @id @default(cuid())
+  slug      String       @unique
+  name      String
+  isSystem  Boolean      @default(false)
+  sortOrder Int          @default(0)
+  viewRoles AdminRole[]  @default([SUPER_ADMIN, MANAGER, CONTENT_EDITOR])
+  editRoles AdminRole[]  @default([SUPER_ADMIN])
+  assets    MediaAsset[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("media_folders")
+}
+
+model MediaAsset {
+  id                String      @id @default(cuid())
+  folderId          String
+  folder            MediaFolder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  filename          String
+  originalName      String
+  url               String
+  sizeBytes         Int         @default(0)
+  mimeType          String?
+  uploadedByAdminId String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@index([folderId])
+  @@map("media_assets")
+}
+
+model IntegrationSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  valueEnc  String   @db.Text
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@map("integration_settings")
 }
 
 model CmsPage {
@@ -305,6 +404,12 @@ enum PropertyStatus {
   RENTED
   RESERVED
   UNAVAILABLE
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  MANAGER
+  CONTENT_EDITOR
 }
 
 enum LeadStatus {

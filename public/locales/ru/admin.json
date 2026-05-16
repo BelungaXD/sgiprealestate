@@ -41,15 +41,36 @@
     "price": "Цена",
     "status": "Статус",
     "views": "Просмотры",
-    "actions": "Действия"
+    "actions": "Действия",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "importFolder": "Импорт папки в этот объект"
   },
   "pages": {
     "title": "Контент страниц",
     "comingSoon": "Управление контентом страниц скоро будет доступно..."
   },
   "inquiries": {
-    "title": "Управление заявками",
-    "comingSoon": "Функции управления заявками скоро будут доступны..."
+    "title": "Заявки",
+    "refresh": "Обновить",
+    "loading": "Загрузка заявок…",
+    "empty": "В этом статусе нет заявок.",
+    "delete": "Удалить",
+    "statusLabel": "Статус",
+    "assignedTo": "Ответственный",
+    "unassigned": "Не назначен",
+    "notesLabel": "Заметки",
+    "notesPlaceholder": "Внутренние заметки",
+    "statuses": {
+      "ALL": "Все",
+      "NEW": "Новая",
+      "CONTACTED": "Связались",
+      "QUALIFIED": "Квалифицирован",
+      "PROPOSAL": "Отправлено предложение",
+      "NEGOTIATION": "Переговоры",
+      "CLOSED_WON": "Закрыта — сделка",
+      "CLOSED_LOST": "Закрыта — отказ"
+    }
   },
   "settings": {
     "title": "Настройки",
@@ -72,7 +93,195 @@
     "createError": "Не удалось создать пользователя.",
     "deleteError": "Не удалось удалить пользователя.",
     "emailExists": "Пользователь с таким email уже существует.",
-    "lastUserError": "Нельзя удалить последнего администратора."
+    "lastUserError": "Нельзя удалить последнего администратора.",
+    "errors": {
+      "cannot_deactivate_last_super_admin": "Нужен хотя бы один активный супер-админ. Назначьте роль другому сотруднику или добавьте нового, прежде чем деактивировать эту учётную запись.",
+      "cannot_remove_last_super_admin": "Нужен хотя бы один активный супер-админ. Сначала назначьте роль другому сотруднику.",
+      "cannot_deactivate_self": "Нельзя деактивировать свою учётную запись, пока вы вошли в систему.",
+      "cannot_delete_self": "Нельзя удалить свою учётную запись.",
+      "cannot_delete_last_super_admin": "Нельзя удалить последнего активного супер-админа.",
+      "cannot_delete_last_user": "Нельзя удалить последнего администратора.",
+      "user_not_found": "Сотрудник не найден.",
+      "user_already_activated": "Сотрудник уже принял приглашение.",
+      "email_already_exists": "Пользователь с таким email уже существует.",
+      "invalid_payload": "Некорректные данные. Проверьте поля и попробуйте снова.",
+      "failed_to_load_users": "Не удалось загрузить список сотрудников.",
+      "failed_to_create_user": "Не удалось создать пользователя.",
+      "failed_to_update_user": "Не удалось обновить пользователя.",
+      "failed_to_delete_user": "Не удалось удалить пользователя."
+    },
+    "roleLabel": "Роль",
+    "member": "Сотрудник",
+    "statusLabel": "Статус",
+    "statusActive": "Активен",
+    "statusInactive": "Неактивен",
+    "lastLogin": "Последний вход",
+    "lastLoginNever": "Никогда",
+    "edit": "Изменить",
+    "editMember": "Редактировать сотрудника",
+    "deactivate": "Деактивировать",
+    "removeInvite": "Удалить приглашение",
+    "removeInviteConfirm": "Удалить непринятое приглашение для {{email}}? Ссылка перестанет работать.",
+    "removeInviteError": "Не удалось удалить приглашение.",
+    "activate": "Активировать",
+    "deactivateConfirm": "Деактивировать {{email}}? Вход в систему будет заблокирован.",
+    "deactivateError": "Не удалось деактивировать пользователя.",
+    "updateError": "Не удалось обновить пользователя.",
+    "resetPassword": "Сбросить пароль",
+    "resetPasswordConfirm": "Сгенерировать новый временный пароль для {{email}}?",
+    "resetPasswordError": "Не удалось сбросить пароль.",
+    "resetPasswordDone": "Временный пароль",
+    "resetPasswordHint": "Скопируйте пароль и передайте сотруднику безопасным способом. Повторно он не отобразится.",
+    "forbidden": "Нет прав на управление командой.",
+    "roles": {
+      "SUPER_ADMIN": "Супер-админ",
+      "MANAGER": "Менеджер / Агент",
+      "CONTENT_EDITOR": "Контент-менеджер"
+    },
+    "inviteHelp": "Укажите email и роль. Сотрудник получит ссылку и сам задаст пароль.",
+    "sendInvite": "Отправить приглашение",
+    "statusInvitePending": "Ожидает активации",
+    "resendInvite": "Повторить приглашение",
+    "inviteResendError": "Не удалось отправить приглашение.",
+    "inviteSentTitle": "Приглашение отправлено",
+    "inviteSentBody": "На {{email}} отправлено письмо со ссылкой для активации.",
+    "inviteLinkTitle": "Ссылка приглашения",
+    "inviteLinkBody": "Почта на сервере не настроена. Передайте эту ссылку сотруднику {{email}} вручную:",
+    "copyInviteLink": "Копировать ссылку",
+    "descriptionExtended": "Команда, общая медиатека и интеграции.",
+    "tabs": {
+      "label": "Разделы настроек",
+      "team": "Команда",
+      "media": "Медиа и диск",
+      "integrations": "Интеграции"
+    }
+  },
+  "media": {
+    "title": "Медиа и диск",
+    "description": "Общее хранилище брошюр и презентаций. Прикрепляйте файлы к объектам без повторной загрузки.",
+    "folders": "Папки",
+    "loading": "Загрузка…",
+    "loadError": "Не удалось загрузить медиатеку.",
+    "noFolders": "Нет доступных папок.",
+    "noFiles": "В папке нет файлов.",
+    "selectFolder": "Выберите папку.",
+    "system": "Системная",
+    "addFolder": "Добавить папку",
+    "folderNamePlaceholder": "Название папки",
+    "createFolderError": "Не удалось создать папку.",
+    "upload": "Загрузить",
+    "uploading": "Загрузка…",
+    "uploadError": "Ошибка загрузки.",
+    "delete": "Удалить",
+    "deleteConfirm": "Удалить файл из библиотеки?",
+    "deleteError": "Не удалось удалить файл.",
+    "download": "Скачать",
+    "canEdit": "Можно загружать и удалять файлы.",
+    "viewOnly": "Только просмотр и скачивание.",
+    "permissions": "Права доступа",
+    "permissionsTitle": "Папка: {{name}}",
+    "permissionsHelp": "Просмотр: открыть и скачать. Редактирование: загрузка и удаление.",
+    "viewRoles": "Просмотр / скачивание",
+    "editRoles": "Загрузка / редактирование",
+    "permissionsSaveError": "Не удалось сохранить права.",
+    "storageUsed": "Использовано {{used}} из {{limit}}",
+    "storageLimitExceeded": "Лимит хранилища исчерпан. Удалите старые файлы или увеличьте MEDIA_STORAGE_LIMIT_GB.",
+    "chooseFromLibrary": "Выбрать из медиатеки",
+    "pickerTitle": "Медиатека",
+    "pickerAttach": "Прикрепить выбранные",
+    "pickerSelected": "Выбрано {{count}} / {{max}}"
+  },
+  "invite": {
+    "title": "Активация аккаунта админки",
+    "loading": "Проверка ссылки…",
+    "invalidToken": "Ссылка недействительна или истекла.",
+    "serverError": "Ошибка сервера. Попробуйте снова.",
+    "passwordLabel": "Пароль",
+    "confirmPasswordLabel": "Подтвердите пароль",
+    "passwordMismatch": "Пароли не совпадают.",
+    "acceptFailed": "Не удалось сохранить пароль. Возможно, ссылка истекла.",
+    "generatePassword": "Сгенерировать надёжный пароль",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль",
+    "submit": "Активировать аккаунт",
+    "saving": "Сохранение…",
+    "success": "Пароль установлен. Можно войти в админку.",
+    "goToLogin": "Перейти ко входу"
+  },
+  "integrations": {
+    "title": "Интеграции и API-ключи",
+    "description": "CRM, WhatsApp, SMS о новых лидах, парсеры объявлений и др. Значения хранятся в БД в зашифрованном виде; .env — запасной вариант.",
+    "loading": "Загрузка интеграций…",
+    "loadError": "Не удалось загрузить интеграции.",
+    "save": "Сохранить",
+    "saving": "Сохранение…",
+    "saveError": "Не удалось сохранить.",
+    "saveSuccess": "Настройки интеграций сохранены.",
+    "noChanges": "Введите значение хотя бы в одно поле.",
+    "saveHint": "Пустое поле при сохранении — оставить текущее значение. Очистите поле и сохраните, чтобы удалить ключ.",
+    "configured": "Активно ({{masked}})",
+    "configuredInEnv": "Активно через .env ({{var}})",
+    "placeholderKeep": "Оставьте пустым, чтобы сохранить {{masked}}",
+    "placeholderEmpty": "Не задано",
+    "showValue": "Показать",
+    "hideValue": "Скрыть",
+    "categories": {
+      "crm": "CRM",
+      "messaging": "WhatsApp и SMS",
+      "parsers": "Парсеры недвижимости",
+      "ai": "AI (переводы)",
+      "email": "Email (приглашения)"
+    },
+    "items": {
+      "crm_api_url": {
+        "label": "URL API CRM",
+        "description": "Базовый URL REST API вашей CRM."
+      },
+      "crm_api_key": {
+        "label": "API-ключ CRM",
+        "description": "Приватный ключ или bearer-токен для синхронизации с CRM."
+      },
+      "whatsapp_bot_token": {
+        "label": "Токен WhatsApp-бота",
+        "description": "Постоянный токен Meta Cloud API для бизнес-бота."
+      },
+      "whatsapp_phone_number_id": {
+        "label": "ID номера WhatsApp",
+        "description": "Phone number ID из Meta Business Manager (необязательно)."
+      },
+      "sms_gateway_url": {
+        "label": "URL SMS-шлюза",
+        "description": "HTTP endpoint SMS-провайдера для уведомлений о лидах."
+      },
+      "sms_gateway_api_key": {
+        "label": "API-ключ SMS",
+        "description": "Ключ для отправки SMS при новой заявке."
+      },
+      "sms_lead_notify_enabled": {
+        "label": "SMS при новом лиде",
+        "description": "true или 1 — включить SMS-уведомления о новых заявках."
+      },
+      "property_parser_api_url": {
+        "label": "URL API парсера",
+        "description": "Endpoint парсера объявлений или импорта фидов."
+      },
+      "property_parser_api_key": {
+        "label": "API-ключ парсера",
+        "description": "Ключ авторизации сервиса парсера."
+      },
+      "gemini_api_key": {
+        "label": "Ключ Gemini API",
+        "description": "Ключ Google AI Studio для автоперевода в админке."
+      },
+      "resend_api_key": {
+        "label": "Ключ Resend API",
+        "description": "Ключ Resend.com для писем-приглашений в команду."
+      },
+      "email_from": {
+        "label": "Адрес отправителя",
+        "description": "Отправитель писем, например SGIP <noreply@yourdomain.com>."
+      }
+    }
   },
   "form": {
     "basicInfo": "Основная информация",

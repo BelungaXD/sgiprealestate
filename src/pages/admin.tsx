@@ -6,33 +6,71 @@ import Head from 'next/head'
 import AdminLogin from '@/components/admin/AdminLogin'
 import AdminDashboard from '@/components/admin/AdminDashboard'
 
+type AdminRole = 'SUPER_ADMIN' | 'MANAGER' | 'CONTENT_EDITOR'
+
+interface SessionUser {
+  id: string | null
+  email: string | null
+  name: string | null
+  role: AdminRole
+  isEnvBootstrap?: boolean
+}
+
 export default function Admin() {
   const { t } = useTranslation('admin')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isHydrated, setIsHydrated] = useState(false)
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null)
+  const [visibleTabs, setVisibleTabs] = useState<string[]>([
+    'properties',
+    'areas',
+    'developers',
+    'inquiries',
+    'settings',
+  ])
+
+  const loadSession = async () => {
+    try {
+      const res = await fetch('/api/admin/session', { credentials: 'same-origin' })
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean
+        user?: SessionUser
+        tabs?: string[]
+      }
+      if (res.ok && data.ok && data.user) {
+        setIsAuthenticated(true)
+        setSessionUser(data.user)
+        setVisibleTabs(data.tabs || ['properties', 'areas'])
+        return true
+      }
+      setIsAuthenticated(false)
+      setSessionUser(null)
+      return false
+    } catch {
+      setIsAuthenticated(false)
+      setSessionUser(null)
+      return false
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
-      try {
-        const res = await fetch('/api/admin/session', { credentials: 'same-origin' })
-        const data = (await res.json().catch(() => ({}))) as { ok?: boolean }
-        if (!cancelled && res.ok && data.ok) {
-          setIsAuthenticated(true)
-        }
-      } catch {
-        /* session check failed — stay logged out */
-      } finally {
-        if (!cancelled) setIsHydrated(true)
-      }
+      await loadSession()
+      if (!cancelled) setIsHydrated(true)
     })()
     return () => {
       cancelled = true
     }
   }, [])
 
-  const handleLogin = (success: boolean) => {
-    setIsAuthenticated(success)
+  const handleLogin = async (success: boolean) => {
+    if (success) {
+      await loadSession()
+    } else {
+      setIsAuthenticated(false)
+      setSessionUser(null)
+    }
   }
 
   const handleLogout = async () => {
@@ -42,9 +80,9 @@ export default function Admin() {
       /* still clear UI */
     }
     setIsAuthenticated(false)
+    setSessionUser(null)
   }
 
-  // Avoid flash of login form before hydration
   if (!isHydrated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -71,7 +109,11 @@ export default function Admin() {
         <title>{`${t('dashboard.title')} | SGIP Real Estate`}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
-      <AdminDashboard onLogout={handleLogout} />
+      <AdminDashboard
+        onLogout={handleLogout}
+        sessionUser={sessionUser}
+        visibleTabs={visibleTabs}
+      />
     </>
   )
 }

@@ -1,13 +1,17 @@
 import { useState, useRef } from 'react'
 import NextImage from 'next/image'
-import { PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from 'next-i18next/pages'
+import { PhotoIcon, XMarkIcon, FolderOpenIcon } from '@heroicons/react/24/outline'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
+import MediaLibraryPicker from './MediaLibraryPicker'
+import type { FileWithLabel } from './FileUpload'
 
 interface ImageUploadProps {
   images: string[]
   onImagesChange: (images: string[]) => void
   maxImages?: number
   label?: string
+  enableMediaLibrary?: boolean
 }
 
 // Function to convert image to WebP format
@@ -82,9 +86,23 @@ export default function ImageUpload({
   onImagesChange,
   maxImages = 30,
   label = 'Images',
+  enableMediaLibrary = true,
 }: ImageUploadProps) {
+  const { t } = useTranslation('admin')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  const handleLibrarySelect = (picked: FileWithLabel[]) => {
+    const room = maxImages - images.length
+    if (room <= 0) return
+    const urls = picked
+      .map((p) => p.url)
+      .filter((u): u is string => Boolean(u))
+      .slice(0, room)
+    if (urls.length === 0) return
+    onImagesChange([...images, ...urls])
+  }
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -213,8 +231,20 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-      
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        {enableMediaLibrary && images.length < maxImages && (
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="inline-flex items-center gap-1 text-sm text-champagne hover:text-champagne/80 font-medium"
+          >
+            <FolderOpenIcon className="h-4 w-4" />
+            {t('media.chooseFromLibrary')}
+          </button>
+        )}
+      </div>
+
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -235,9 +265,6 @@ export default function ImageUpload({
           <span className="text-sm font-medium text-champagne">
             {uploading ? 'Uploading...' : 'Click to upload or drag and drop'}
           </span>
-          <p className="text-xs text-gray-500 mt-1">
-            Images (PNG, JPG, GIF) and Videos (MP4, MOV) up to 50MB each - images automatically converted to WebP ({images.length}/{maxImages} items)
-          </p>
         </div>
       </div>
 
@@ -290,6 +317,15 @@ export default function ImageUpload({
             )
           })}
         </div>
+      )}
+
+      {enableMediaLibrary && (
+        <MediaLibraryPicker
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          onSelect={handleLibrarySelect}
+          maxSelect={Math.max(1, maxImages - images.length)}
+        />
       )}
     </div>
   )

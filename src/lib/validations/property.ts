@@ -127,6 +127,8 @@ export const propertySchema = z
     yearBuilt: optionalYear,
     completionDate: z.string().optional(),
     paymentPlan: z.string().max(20000).optional().nullable(),
+    paymentPlanRu: z.string().max(20000).optional().nullable(),
+    paymentPlanAr: z.string().max(20000).optional().nullable(),
     occupancyStatus: z
       .union([OccupancyStatusEnum, z.literal('')])
       .optional()

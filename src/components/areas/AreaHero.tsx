@@ -3,6 +3,7 @@ import { MapPinIcon, HomeIcon, CurrencyDollarIcon, StarIcon } from '@heroicons/r
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { localizedAreaContent } from '@/lib/areaLocaleContent'
 
 interface Area {
   id: string
@@ -33,10 +34,10 @@ interface AreaHeroProps {
 
 export default function AreaHero({ area }: AreaHeroProps) {
   const { t, i18n } = useTranslation('areas')
-  const isRussian = i18n.language === 'ru'
-
-  const displayName = isRussian ? area.name : area.nameEn
-  const displayDescription = isRussian ? area.description : area.descriptionEn
+  const locale = i18n.language === 'ru' || i18n.language === 'ar' ? i18n.language : 'en'
+  const localized = localizedAreaContent(area, locale)
+  const displayName = localized.name
+  const displayDescription = localized.description
   const [imageSrc, setImageSrc] = useState(area.image || '/images/hero.jpg')
 
   const formatPrice = (price: number, currency: string) => {

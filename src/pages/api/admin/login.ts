@@ -27,13 +27,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const password = typeof body.password === 'string' ? body.password : ''
 
   try {
-    const isValid = await verifyAdminCredentials(username, password)
-    if (!isValid) {
+    const auth = await verifyAdminCredentials(username, password)
+    if (!auth.ok) {
       log.warn('Invalid admin credentials', { username })
       return res.status(401).json({ ok: false, error: 'invalid_credentials' })
     }
 
-    const token = createAdminSessionToken()
+    const token = auth.envBootstrap
+      ? createAdminSessionToken({
+          role: 'SUPER_ADMIN',
+          email: username.trim().toLowerCase() || null,
+          envBootstrap: true,
+        })
+      : createAdminSessionToken({
+          adminId: auth.admin.id,
+          role: auth.admin.role,
+          email: auth.admin.email,
+        })
+
     if (!token) {
       log.error('Failed to create admin session token', { username })
       return res.status(500).json({ ok: false, error: 'session_error' })
@@ -47,7 +58,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     )
 
     log.info('Admin login successful', { username })
-    return res.status(200).json({ ok: true })
+    const user = auth.envBootstrap
+      ? { role: 'SUPER_ADMIN' as const, email: username, name: null, isEnvBootstrap: true }
+      : {
+          id: auth.admin.id,
+          role: auth.admin.role,
+          email: auth.admin.email,
+          name: auth.admin.name,
+          isEnvBootstrap: false,
+        }
+
+    return res.status(200).json({ ok: true, user })
   } catch (error) {
     log.errorWithException('Admin login error', error, { username })
     return res.status(500).json({ ok: false, error: 'server_error' })

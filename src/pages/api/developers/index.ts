@@ -1,9 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { isDatabaseUnavailableError, prisma } from '@/lib/prisma'
+import { collectErrorSignals, isDatabaseUnavailableError, prisma } from '@/lib/prisma'
 import { normalizeImageUrl } from '@/lib/utils/imageUrl'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { createScopedLogger } from '@/lib/logger'
-import { isAdminSessionValid } from '@/lib/adminSession'
+import { getAdminSessionFromRequest } from '@/lib/adminSession'
+import { adminHasPermission } from '@/lib/adminAuth'
+import {
+  isMissingDeveloperFounded,
+  isMissingDeveloperIsActive,
+  isMissingDeveloperLocaleContent,
+  isMissingDeveloperLocaleContentColumn,
+  isStaleDeveloperLocalePrismaClient,
+} from '@/lib/developerPrismaCompat'
 import { z } from 'zod'
 
 const emaarNoiseFilter = {
@@ -30,12 +38,20 @@ const emaarNoiseFilter = {
 }
 
 const createDeveloperSchema = z.object({
-  nameEn: z.string().min(1, 'Name (EN) is required'),
+  name: z.string().optional().nullable(),
   nameRu: z.string().optional().nullable(),
+  nameAr: z.string().optional().nullable(),
   description: z.string().max(20000).optional().nullable(),
+  descriptionRu: z.string().max(20000).optional().nullable(),
+  descriptionAr: z.string().max(20000).optional().nullable(),
   website: z.string().optional().nullable(),
   specialties: z.array(z.string()).optional().default([]),
+  specialtiesRu: z.array(z.string()).optional().default([]),
+  specialtiesAr: z.array(z.string()).optional().default([]),
   notableProjects: z.array(z.string()).optional().default([]),
+  notableProjectsRu: z.array(z.string()).optional().default([]),
+  notableProjectsAr: z.array(z.string()).optional().default([]),
+  founded: z.number().int().min(1000).max(9999).optional().nullable(),
   logo: z.string().optional().nullable(),
   isActive: z.boolean().optional().default(true),
 })
@@ -49,10 +65,13 @@ type DeveloperListRow = {
   logo: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   city: string | null
   website: string | null
   specialties?: string[]
   notableProjects?: string[]
+  founded?: number | null
   isActive?: boolean
   _count: { properties: number }
 }
@@ -63,20 +82,48 @@ type PropertyGroupByRow = {
   _avg: { price: unknown }
 }
 
-const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
-  if (!error || typeof error !== 'object') return false
+const developerListSelect = (options: {
+  admin: boolean
+  includeIsActive: boolean
+  includeFounded: boolean
+  includeLocaleContent: boolean
+}) => {
+  const propertiesCountSelect = options.admin
+    ? true
+    : { where: { isPublished: true } }
 
-  const prismaError = error as {
-    code?: string
-    meta?: { column?: string }
-    message?: string
-  }
-
-  return (
-    prismaError.code === 'P2022' &&
-    (prismaError.meta?.column === 'developers.isActive' ||
-      prismaError.message?.includes('developers.isActive'))
-  )
+  return {
+    id: true,
+    name: true,
+    nameEn: true,
+    slug: true,
+    logo: true,
+    description: true,
+    descriptionEn: true,
+    ...(options.includeLocaleContent
+      ? {
+          nameRu: true,
+          nameAr: true,
+          descriptionRu: true,
+          descriptionAr: true,
+          specialtiesRu: true,
+          specialtiesAr: true,
+          notableProjectsRu: true,
+          notableProjectsAr: true,
+        }
+      : {}),
+    city: true,
+    website: true,
+    specialties: true,
+    notableProjects: true,
+    ...(options.includeFounded ? { founded: true } : {}),
+    ...(options.includeIsActive ? { isActive: true } : {}),
+    _count: {
+      select: {
+        properties: propertiesCountSelect,
+      },
+    },
+  } as const
 }
 
 const log = createScopedLogger('api/developers')
@@ -102,6 +149,8 @@ export default async function handler(
           OR: [
             { name: { contains: search, mode: 'insensitive' } },
             { nameEn: { contains: search, mode: 'insensitive' } },
+            { nameRu: { contains: search, mode: 'insensitive' } },
+            { nameAr: { contains: search, mode: 'insensitive' } },
           ],
         })
       }
@@ -114,71 +163,78 @@ export default async function handler(
             }
 
       let includesIsActive = true
-      const developers = (await prisma.developer
-        .findMany({
-          where: {
-            AND: admin
-              ? baseAndClauses
-              : [...baseAndClauses, { isActive: true }],
-          },
-          select: {
-            id: true,
-            name: true,
-            nameEn: true,
-            slug: true,
-            logo: true,
-            description: true,
-            descriptionEn: true,
-            city: true,
-            website: true,
-            specialties: true,
-            notableProjects: true,
-            isActive: true,
-            _count: {
-              select: {
-                properties: admin
-                  ? true
-                  : {
-                      where: { isPublished: true },
-                    },
-              },
-            },
-          },
+      let includesFounded = true
+      let includesLocaleContent = true
+
+      const listWhere = (filterActive: boolean) => ({
+        AND: admin
+          ? baseAndClauses
+          : filterActive
+            ? [...baseAndClauses, { isActive: true }]
+            : baseAndClauses,
+      })
+
+      const fetchDevelopers = (
+        includeIsActive: boolean,
+        includeFounded: boolean,
+        includeLocaleContent: boolean,
+        filterActive: boolean
+      ) =>
+        prisma.developer.findMany({
+          where: listWhere(filterActive),
+          select: developerListSelect({
+            admin,
+            includeIsActive,
+            includeFounded,
+            includeLocaleContent,
+          }),
           orderBy,
         })
-        .catch(async (error: unknown) => {
-          if (!hasMissingDeveloperIsActiveColumn(error)) {
-            throw error
-          }
 
-          includesIsActive = false
-          return prisma.developer.findMany({
-            where: { AND: baseAndClauses },
-            select: {
-              id: true,
-              name: true,
-              nameEn: true,
-              slug: true,
-              logo: true,
-              description: true,
-              descriptionEn: true,
-              city: true,
-              website: true,
-              specialties: true,
-              notableProjects: true,
-              _count: {
-                select: {
-                  properties: admin
-                    ? true
-                    : {
-                        where: { isPublished: true },
-                      },
-                },
-              },
-            },
-            orderBy,
-          })
-        })) as DeveloperListRow[]
+      let developers: DeveloperListRow[] = []
+      let filterActive = true
+      let fetchOk = false
+      for (let attempt = 0; attempt < 6; attempt++) {
+        try {
+          developers = (await fetchDevelopers(
+            includesIsActive,
+            includesFounded,
+            includesLocaleContent,
+            filterActive
+          )) as DeveloperListRow[]
+          fetchOk = true
+          break
+        } catch (error: unknown) {
+          const missingFounded = isMissingDeveloperFounded(error)
+          const missingIsActive = isMissingDeveloperIsActive(error)
+          const missingLocale = isMissingDeveloperLocaleContent(error)
+
+          if (missingLocale && includesLocaleContent) {
+            includesLocaleContent = false
+            continue
+          }
+          if (missingFounded && includesFounded) {
+            includesFounded = false
+            continue
+          }
+          if (missingIsActive && includesIsActive) {
+            includesIsActive = false
+            filterActive = false
+            continue
+          }
+          if (missingFounded || missingIsActive || missingLocale) {
+            includesFounded = false
+            includesIsActive = false
+            includesLocaleContent = false
+            filterActive = false
+            continue
+          }
+          throw error
+        }
+      }
+      if (!fetchOk) {
+        developers = []
+      }
 
       const developerIds = developers.map((dev) => dev.id)
       const propertyWhere = admin ? {} : { isPublished: true }
@@ -216,7 +272,21 @@ export default async function handler(
           : true,
         logo: normalizeImageUrl(dev.logo),
         specialties: Array.isArray(dev.specialties) ? dev.specialties : [],
+        specialtiesRu: includesLocaleContent && Array.isArray(dev.specialtiesRu) ? dev.specialtiesRu : [],
+        specialtiesAr: includesLocaleContent && Array.isArray(dev.specialtiesAr) ? dev.specialtiesAr : [],
         notableProjects: Array.isArray(dev.notableProjects) ? dev.notableProjects : [],
+        notableProjectsRu:
+          includesLocaleContent && Array.isArray(dev.notableProjectsRu) ? dev.notableProjectsRu : [],
+        notableProjectsAr:
+          includesLocaleContent && Array.isArray(dev.notableProjectsAr) ? dev.notableProjectsAr : [],
+        nameRu:
+          includesLocaleContent && 'nameRu' in dev
+            ? (dev as { nameRu?: string | null }).nameRu
+            : null,
+        nameAr:
+          includesLocaleContent && 'nameAr' in dev
+            ? (dev as { nameAr?: string | null }).nameAr
+            : null,
         propertiesCount: statsByDeveloperId.get(dev.id)?.count ?? dev._count.properties,
         averagePrice: statsByDeveloperId.get(dev.id)?.avgPrice ?? 0,
         marketShare:
@@ -251,16 +321,23 @@ export default async function handler(
   }
 
   if (req.method === 'POST') {
-    if (!isAdminSessionValid(req)) {
+    const session = getAdminSessionFromRequest(req)
+    if (!session || !adminHasPermission(session.role, 'manage_developers')) {
       return res.status(401).json({ success: false, message: 'Unauthorized' })
     }
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const parsed = createDeveloperSchema.parse(body)
-      const nameEn = parsed.nameEn.trim()
+      const name = parsed.name?.trim() || ''
       const nameRu = parsed.nameRu?.trim() || ''
-      const name = nameRu || nameEn
-      let slug = generateSlug(nameEn)
+      const nameAr = parsed.nameAr?.trim() || ''
+      const primaryName = name || nameRu || nameAr
+      if (!primaryName) {
+        return res.status(400).json({ success: false, message: 'Name is required' })
+      }
+      const storedName = name || primaryName
+      const nameEn = storedName
+      let slug = generateSlug(name || nameRu || nameAr)
       if (!slug) {
         slug = `developer-${Date.now()}`
       }
@@ -275,40 +352,85 @@ export default async function handler(
       const website =
         parsed.website && parsed.website.trim() !== '' ? parsed.website.trim() : null
 
-      const developer = await prisma.developer
-        .create({
-          data: {
-            name,
-            nameEn,
-            description: parsed.description?.trim() || null,
-            specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
-            notableProjects: parsed.notableProjects.map((v) => v.trim()).filter(Boolean),
-            logo: parsed.logo || null,
-            website,
-            isActive: parsed.isActive ?? true,
-            slug,
-          },
-        })
-        .catch(async (error: unknown) => {
-          if (!hasMissingDeveloperIsActiveColumn(error)) {
-            throw error
-          }
+      const baseCreateData = {
+        name: storedName,
+        nameEn,
+        description: parsed.description?.trim() || null,
+        descriptionEn: parsed.description?.trim() || null,
+        specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
+        notableProjects: parsed.notableProjects.map((v) => v.trim()).filter(Boolean),
+        logo: parsed.logo || null,
+        website,
+        slug,
+      }
 
-          return prisma.developer.create({
+      const localeCreateData = {
+        nameRu: nameRu || null,
+        nameAr: nameAr || null,
+        descriptionRu: parsed.descriptionRu?.trim() || null,
+        descriptionAr: parsed.descriptionAr?.trim() || null,
+        specialtiesRu: parsed.specialtiesRu.map((v) => v.trim()).filter(Boolean),
+        specialtiesAr: parsed.specialtiesAr.map((v) => v.trim()).filter(Boolean),
+        notableProjectsRu: parsed.notableProjectsRu.map((v) => v.trim()).filter(Boolean),
+        notableProjectsAr: parsed.notableProjectsAr.map((v) => v.trim()).filter(Boolean),
+      }
+
+      let includeFounded = true
+      let includeIsActive = true
+      let includeLocaleContent = true
+      let localeContentSaved = true
+      let developer: Awaited<ReturnType<typeof prisma.developer.create>> | undefined
+
+      for (let attempt = 0; attempt < 6; attempt++) {
+        try {
+          developer = await prisma.developer.create({
             data: {
-              name,
-              nameEn,
-              description: parsed.description?.trim() || null,
-              specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
-              notableProjects: parsed.notableProjects.map((v) => v.trim()).filter(Boolean),
-              logo: parsed.logo || null,
-              website,
-              slug,
+              ...baseCreateData,
+              ...(includeLocaleContent ? localeCreateData : {}),
+              ...(includeFounded && { founded: parsed.founded ?? null }),
+              ...(includeIsActive && { isActive: parsed.isActive ?? true }),
             },
           })
-        })
+          break
+        } catch (error: unknown) {
+          if (isStaleDeveloperLocalePrismaClient(error)) {
+            return res.status(503).json({
+              message:
+                'Prisma client is out of date. Run npm run db:generate and restart the application.',
+            })
+          }
+          const missingFounded = isMissingDeveloperFounded(error)
+          const missingIsActive = isMissingDeveloperIsActive(error)
+          const missingLocale = isMissingDeveloperLocaleContentColumn(error)
+          if (missingLocale && includeLocaleContent) {
+            includeLocaleContent = false
+            localeContentSaved = false
+            continue
+          }
+          if (missingFounded && includeFounded) {
+            includeFounded = false
+            continue
+          }
+          if (missingIsActive && includeIsActive) {
+            includeIsActive = false
+            continue
+          }
+          if (missingFounded || missingIsActive || missingLocale) {
+            includeFounded = false
+            includeIsActive = false
+            if (missingLocale) localeContentSaved = false
+            includeLocaleContent = false
+            continue
+          }
+          throw error
+        }
+      }
 
-      return res.status(201).json({ success: true, developer })
+      if (!developer) {
+        return res.status(500).json({ message: 'Failed to create developer' })
+      }
+
+      return res.status(201).json({ success: true, developer, localeContentSaved })
     } catch (error: unknown) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ success: false, errors: error.issues })

@@ -4,7 +4,7 @@ const log = createScopedLogger('lib/geminiTranslate')
 
 export type ContentLocale = 'en' | 'ru' | 'ar'
 
-export type TranslateTextKind = 'listing' | 'tag'
+export type TranslateTextKind = 'listing' | 'tag' | 'developer' | 'area'
 
 export type TranslateTextsInput = {
   texts: string[]
@@ -160,14 +160,16 @@ async function callGeminiModel(
   return { ok: true, text: extractGeminiText(data) }
 }
 
-export function isGeminiTranslateConfigured(): boolean {
-  return Boolean(process.env.GEMINI_API_KEY?.trim())
+export async function isGeminiTranslateConfigured(): Promise<boolean> {
+  const { getIntegrationSecret } = await import('@/lib/integrations/secrets')
+  return Boolean(await getIntegrationSecret('gemini_api_key'))
 }
 
 export async function translateTexts(
   input: TranslateTextsInput
 ): Promise<TranslateTextsResult> {
-  const apiKey = process.env.GEMINI_API_KEY?.trim()
+  const { getIntegrationSecret } = await import('@/lib/integrations/secrets')
+  const apiKey = await getIntegrationSecret('gemini_api_key')
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not configured')
   }
@@ -201,9 +203,20 @@ export async function translateTexts(
   const tagHint =
     textKind === 'tag'
       ? 'Each input is a short property feature or amenity label (a few words). Keep translations concise, suitable for UI tags.'
-      : 'Preserve line breaks and list formatting for longer listing text.'
+      : textKind === 'developer'
+        ? 'Each input is a short developer specialty or notable project name. Keep translations concise and suitable for UI tags.'
+        : textKind === 'area'
+          ? 'Each input is a short Dubai area tag or highlight label. Keep translations concise and suitable for UI tags.'
+          : 'Preserve line breaks and list formatting for longer listing text.'
 
-  const systemInstruction = `You are a professional real estate copy translator for luxury properties in Dubai, UAE.
+  const roleHint =
+    textKind === 'developer'
+      ? 'developer company profiles in Dubai, UAE'
+      : textKind === 'area'
+        ? 'Dubai area and district pages'
+        : 'luxury properties in Dubai, UAE'
+
+  const systemInstruction = `You are a professional real estate copy translator for ${roleHint}.
 Translate each input string from ${LOCALE_NAMES[sourceLocale]} into the requested languages.
 ${tagHint}
 Use natural, marketing-appropriate tone.

@@ -9,6 +9,7 @@ import AreaProperties from '@/components/areas/AreaProperties'
 import AreaAmenities from '@/components/areas/AreaAmenities'
 import AreaMap from '@/components/areas/AreaMap'
 import RelatedAreas from '@/components/areas/RelatedAreas'
+import { localizedAreaContent } from '@/lib/areaLocaleContent'
 
 interface Area {
   id: string
@@ -58,10 +59,11 @@ interface AreaDetailProps {
 
 export default function AreaDetail({ area }: AreaDetailProps) {
   const { i18n } = useTranslation('areas')
-  const isRussian = i18n.language === 'ru'
+  const locale = i18n.language === 'ru' || i18n.language === 'ar' ? i18n.language : 'en'
+  const localized = localizedAreaContent(area, locale)
 
-  const displayName = isRussian ? area.name : area.nameEn
-  const displayDescription = isRussian ? area.description : area.descriptionEn
+  const displayName = localized.name
+  const displayDescription = localized.description
   return (
     <>
       <Head>

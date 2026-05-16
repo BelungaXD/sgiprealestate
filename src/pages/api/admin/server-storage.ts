@@ -1,14 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { execFileSync } from 'node:child_process'
-import { ADMIN_SESSION_COOKIE, readCookie, verifyAdminSessionToken } from '@/lib/adminSession'
+import { requireAdminSession } from '@/lib/adminAuth'
 import { createScopedLogger } from '@/lib/logger'
 
 const log = createScopedLogger('api/admin/server-storage')
-
-function isAuthorized(req: NextApiRequest): boolean {
-  const token = readCookie(req, ADMIN_SESSION_COOKIE)
-  return verifyAdminSessionToken(token)
-}
 
 function readServerStoragePercent(): number {
   const output = execFileSync('df', ['-Pk', '/'], { encoding: 'utf8' })
@@ -32,8 +27,8 @@ function readServerStoragePercent(): number {
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!isAuthorized(req)) {
-    return res.status(401).json({ ok: false, error: 'unauthorized' })
+  if (!requireAdminSession(req, res, { permission: 'system_settings' })) {
+    return
   }
 
   if (req.method !== 'GET') {

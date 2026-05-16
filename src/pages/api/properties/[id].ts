@@ -307,6 +307,14 @@ export default async function handler(
           listingMarket === 'PRIMARY'
             ? validatedData.paymentPlan?.trim() || null
             : null,
+        paymentPlanRu:
+          listingMarket === 'PRIMARY'
+            ? validatedData.paymentPlanRu?.trim() || null
+            : null,
+        paymentPlanAr:
+          listingMarket === 'PRIMARY'
+            ? validatedData.paymentPlanAr?.trim() || null
+            : null,
         occupancyStatus:
           listingMarket === 'SECONDARY'
             ? validatedData.occupancyStatus || null

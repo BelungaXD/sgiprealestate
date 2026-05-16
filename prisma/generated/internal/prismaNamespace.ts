@@ -389,10 +389,14 @@ export const ModelName = {
   FloorPlan: 'FloorPlan',
   PropertyFile: 'PropertyFile',
   Area: 'Area',
+  AreaImage: 'AreaImage',
   Developer: 'Developer',
   Lead: 'Lead',
   Partner: 'Partner',
   Admin: 'Admin',
+  MediaFolder: 'MediaFolder',
+  MediaAsset: 'MediaAsset',
+  IntegrationSetting: 'IntegrationSetting',
   CmsPage: 'CmsPage'
 } as const
 
@@ -409,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "property" | "propertyImage" | "floorPlan" | "propertyFile" | "area" | "developer" | "lead" | "partner" | "admin" | "cmsPage"
+    modelProps: "property" | "propertyImage" | "floorPlan" | "propertyFile" | "area" | "areaImage" | "developer" | "lead" | "partner" | "admin" | "mediaFolder" | "mediaAsset" | "integrationSetting" | "cmsPage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -783,6 +787,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AreaImage: {
+      payload: Prisma.$AreaImagePayload<ExtArgs>
+      fields: Prisma.AreaImageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AreaImageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AreaImageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>
+        }
+        findFirst: {
+          args: Prisma.AreaImageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AreaImageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>
+        }
+        findMany: {
+          args: Prisma.AreaImageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>[]
+        }
+        create: {
+          args: Prisma.AreaImageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>
+        }
+        createMany: {
+          args: Prisma.AreaImageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AreaImageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>[]
+        }
+        delete: {
+          args: Prisma.AreaImageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>
+        }
+        update: {
+          args: Prisma.AreaImageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>
+        }
+        deleteMany: {
+          args: Prisma.AreaImageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AreaImageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AreaImageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>[]
+        }
+        upsert: {
+          args: Prisma.AreaImageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AreaImagePayload>
+        }
+        aggregate: {
+          args: Prisma.AreaImageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAreaImage>
+        }
+        groupBy: {
+          args: Prisma.AreaImageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AreaImageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AreaImageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AreaImageCountAggregateOutputType> | number
+        }
+      }
+    }
     Developer: {
       payload: Prisma.$DeveloperPayload<ExtArgs>
       fields: Prisma.DeveloperFieldRefs
@@ -1079,6 +1157,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MediaFolder: {
+      payload: Prisma.$MediaFolderPayload<ExtArgs>
+      fields: Prisma.MediaFolderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MediaFolderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MediaFolderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>
+        }
+        findFirst: {
+          args: Prisma.MediaFolderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MediaFolderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>
+        }
+        findMany: {
+          args: Prisma.MediaFolderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>[]
+        }
+        create: {
+          args: Prisma.MediaFolderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>
+        }
+        createMany: {
+          args: Prisma.MediaFolderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MediaFolderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>[]
+        }
+        delete: {
+          args: Prisma.MediaFolderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>
+        }
+        update: {
+          args: Prisma.MediaFolderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>
+        }
+        deleteMany: {
+          args: Prisma.MediaFolderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MediaFolderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MediaFolderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>[]
+        }
+        upsert: {
+          args: Prisma.MediaFolderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaFolderPayload>
+        }
+        aggregate: {
+          args: Prisma.MediaFolderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMediaFolder>
+        }
+        groupBy: {
+          args: Prisma.MediaFolderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaFolderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MediaFolderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaFolderCountAggregateOutputType> | number
+        }
+      }
+    }
+    MediaAsset: {
+      payload: Prisma.$MediaAssetPayload<ExtArgs>
+      fields: Prisma.MediaAssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MediaAssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MediaAssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>
+        }
+        findFirst: {
+          args: Prisma.MediaAssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MediaAssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>
+        }
+        findMany: {
+          args: Prisma.MediaAssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>[]
+        }
+        create: {
+          args: Prisma.MediaAssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>
+        }
+        createMany: {
+          args: Prisma.MediaAssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MediaAssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>[]
+        }
+        delete: {
+          args: Prisma.MediaAssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>
+        }
+        update: {
+          args: Prisma.MediaAssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.MediaAssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MediaAssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MediaAssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.MediaAssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaAssetPayload>
+        }
+        aggregate: {
+          args: Prisma.MediaAssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMediaAsset>
+        }
+        groupBy: {
+          args: Prisma.MediaAssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaAssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MediaAssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MediaAssetCountAggregateOutputType> | number
+        }
+      }
+    }
+    IntegrationSetting: {
+      payload: Prisma.$IntegrationSettingPayload<ExtArgs>
+      fields: Prisma.IntegrationSettingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IntegrationSettingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IntegrationSettingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        findFirst: {
+          args: Prisma.IntegrationSettingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IntegrationSettingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        findMany: {
+          args: Prisma.IntegrationSettingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>[]
+        }
+        create: {
+          args: Prisma.IntegrationSettingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        createMany: {
+          args: Prisma.IntegrationSettingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IntegrationSettingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>[]
+        }
+        delete: {
+          args: Prisma.IntegrationSettingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        update: {
+          args: Prisma.IntegrationSettingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        deleteMany: {
+          args: Prisma.IntegrationSettingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IntegrationSettingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IntegrationSettingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>[]
+        }
+        upsert: {
+          args: Prisma.IntegrationSettingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        aggregate: {
+          args: Prisma.IntegrationSettingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIntegrationSetting>
+        }
+        groupBy: {
+          args: Prisma.IntegrationSettingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntegrationSettingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IntegrationSettingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntegrationSettingCountAggregateOutputType> | number
+        }
+      }
+    }
     CmsPage: {
       payload: Prisma.$CmsPagePayload<ExtArgs>
       fields: Prisma.CmsPageFieldRefs
@@ -1214,6 +1514,8 @@ export const PropertyScalarFieldEnum = {
   yearBuilt: 'yearBuilt',
   completionDate: 'completionDate',
   paymentPlan: 'paymentPlan',
+  paymentPlanRu: 'paymentPlanRu',
+  paymentPlanAr: 'paymentPlanAr',
   occupancyStatus: 'occupancyStatus',
   address: 'address',
   city: 'city',
@@ -1228,6 +1530,7 @@ export const PropertyScalarFieldEnum = {
   amenities: 'amenities',
   amenitiesRu: 'amenitiesRu',
   amenitiesAr: 'amenitiesAr',
+  assignedAdminId: 'assignedAdminId',
   slug: 'slug',
   metaTitle: 'metaTitle',
   metaDescription: 'metaDescription',
@@ -1291,14 +1594,22 @@ export const AreaScalarFieldEnum = {
   id: 'id',
   name: 'name',
   nameEn: 'nameEn',
+  nameRu: 'nameRu',
+  nameAr: 'nameAr',
   description: 'description',
   descriptionEn: 'descriptionEn',
+  descriptionRu: 'descriptionRu',
+  descriptionAr: 'descriptionAr',
   isActive: 'isActive',
   image: 'image',
   sortOrder: 'sortOrder',
   tags: 'tags',
+  tagsRu: 'tagsRu',
+  tagsAr: 'tagsAr',
+  parentId: 'parentId',
   city: 'city',
   coordinates: 'coordinates',
+  mapEmbed: 'mapEmbed',
   slug: 'slug',
   metaTitle: 'metaTitle',
   metaDescription: 'metaDescription',
@@ -1309,14 +1620,36 @@ export const AreaScalarFieldEnum = {
 export type AreaScalarFieldEnum = (typeof AreaScalarFieldEnum)[keyof typeof AreaScalarFieldEnum]
 
 
+export const AreaImageScalarFieldEnum = {
+  id: 'id',
+  areaId: 'areaId',
+  url: 'url',
+  alt: 'alt',
+  order: 'order',
+  isMain: 'isMain',
+  createdAt: 'createdAt'
+} as const
+
+export type AreaImageScalarFieldEnum = (typeof AreaImageScalarFieldEnum)[keyof typeof AreaImageScalarFieldEnum]
+
+
 export const DeveloperScalarFieldEnum = {
   id: 'id',
   name: 'name',
   nameEn: 'nameEn',
+  nameRu: 'nameRu',
+  nameAr: 'nameAr',
   description: 'description',
   descriptionEn: 'descriptionEn',
+  descriptionRu: 'descriptionRu',
+  descriptionAr: 'descriptionAr',
   specialties: 'specialties',
+  specialtiesRu: 'specialtiesRu',
+  specialtiesAr: 'specialtiesAr',
   notableProjects: 'notableProjects',
+  notableProjectsRu: 'notableProjectsRu',
+  notableProjectsAr: 'notableProjectsAr',
+  founded: 'founded',
   isActive: 'isActive',
   logo: 'logo',
   website: 'website',
@@ -1345,6 +1678,7 @@ export const LeadScalarFieldEnum = {
   page: 'page',
   status: 'status',
   notes: 'notes',
+  assignedAdminId: 'assignedAdminId',
   crmId: 'crmId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1377,11 +1711,60 @@ export const AdminScalarFieldEnum = {
   email: 'email',
   password: 'password',
   name: 'name',
+  role: 'role',
+  isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
+  avatarUrl: 'avatarUrl',
+  passwordSetAt: 'passwordSetAt',
+  inviteTokenHash: 'inviteTokenHash',
+  inviteExpiresAt: 'inviteExpiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
+
+
+export const MediaFolderScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  isSystem: 'isSystem',
+  sortOrder: 'sortOrder',
+  viewRoles: 'viewRoles',
+  editRoles: 'editRoles',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaFolderScalarFieldEnum = (typeof MediaFolderScalarFieldEnum)[keyof typeof MediaFolderScalarFieldEnum]
+
+
+export const MediaAssetScalarFieldEnum = {
+  id: 'id',
+  folderId: 'folderId',
+  filename: 'filename',
+  originalName: 'originalName',
+  url: 'url',
+  sizeBytes: 'sizeBytes',
+  mimeType: 'mimeType',
+  uploadedByAdminId: 'uploadedByAdminId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaAssetScalarFieldEnum = (typeof MediaAssetScalarFieldEnum)[keyof typeof MediaAssetScalarFieldEnum]
+
+
+export const IntegrationSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  valueEnc: 'valueEnc',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type IntegrationSettingScalarFieldEnum = (typeof IntegrationSettingScalarFieldEnum)[keyof typeof IntegrationSettingScalarFieldEnum]
 
 
 export const CmsPageScalarFieldEnum = {
@@ -1604,6 +1987,20 @@ export type EnumPartnerTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
 export type ListEnumPartnerTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PartnerType[]'>
     
 
+
+/**
+ * Reference to a field of type 'AdminRole'
+ */
+export type EnumAdminRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminRole'>
+    
+
+
+/**
+ * Reference to a field of type 'AdminRole[]'
+ */
+export type ListEnumAdminRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminRole[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -1719,10 +2116,14 @@ export type GlobalOmitConfig = {
   floorPlan?: Prisma.FloorPlanOmit
   propertyFile?: Prisma.PropertyFileOmit
   area?: Prisma.AreaOmit
+  areaImage?: Prisma.AreaImageOmit
   developer?: Prisma.DeveloperOmit
   lead?: Prisma.LeadOmit
   partner?: Prisma.PartnerOmit
   admin?: Prisma.AdminOmit
+  mediaFolder?: Prisma.MediaFolderOmit
+  mediaAsset?: Prisma.MediaAssetOmit
+  integrationSetting?: Prisma.IntegrationSettingOmit
   cmsPage?: Prisma.CmsPageOmit
 }
 

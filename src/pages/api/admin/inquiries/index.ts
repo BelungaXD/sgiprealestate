@@ -1,26 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
-import { ADMIN_SESSION_COOKIE, readCookie, verifyAdminSessionToken } from '@/lib/adminSession'
 import { createScopedLogger } from '@/lib/logger'
+import { managerLeadScope, requireAdminSession } from '@/lib/adminAuth'
 
 const log = createScopedLogger('api/admin/inquiries')
 
-function isAuthorized(req: NextApiRequest): boolean {
-  const token = readCookie(req, ADMIN_SESSION_COOKIE)
-  return verifyAdminSessionToken(token)
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!isAuthorized(req)) {
-    return res.status(401).json({ ok: false, error: 'unauthorized' })
-  }
+  const session = requireAdminSession(req, res, { permission: 'view_inquiries' })
+  if (!session) return
 
   if (req.method !== 'GET') {
     return res.status(405).json({ ok: false, error: 'method_not_allowed' })
   }
 
   try {
+    const leadScope = managerLeadScope(session)
     const inquiries = await prisma.lead.findMany({
+      where: leadScope ? { assignedAdminId: leadScope.assignedAdminId } : undefined,
       orderBy: { createdAt: 'desc' },
       take: 200,
       select: {
@@ -33,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         page: true,
         status: true,
         notes: true,
+        assignedAdminId: true,
         createdAt: true,
       },
     })

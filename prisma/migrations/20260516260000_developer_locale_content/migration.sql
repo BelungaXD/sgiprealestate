@@ -1,0 +1,6 @@
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "descriptionRu" TEXT;
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "descriptionAr" TEXT;
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "specialtiesRu" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "specialtiesAr" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "notableProjectsRu" TEXT[] DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "notableProjectsAr" TEXT[] DEFAULT ARRAY[]::TEXT[];

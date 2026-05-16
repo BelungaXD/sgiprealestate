@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react'
-import { DocumentIcon, XMarkIcon, PaperClipIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from 'next-i18next/pages'
+import { DocumentIcon, XMarkIcon, PaperClipIcon, FolderOpenIcon } from '@heroicons/react/24/outline'
+import MediaLibraryPicker from './MediaLibraryPicker'
 
 export interface FileWithLabel {
   id: string
@@ -16,6 +18,7 @@ interface FileUploadProps {
   onFilesChange: (files: FileWithLabel[]) => void
   maxFiles?: number
   label?: string
+  enableMediaLibrary?: boolean
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -31,9 +34,12 @@ export default function FileUpload({
   onFilesChange,
   maxFiles = 20,
   label = 'Files for Download',
+  enableMediaLibrary = true,
 }: FileUploadProps) {
+  const { t } = useTranslation('admin')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploading] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files
@@ -100,10 +106,28 @@ export default function FileUpload({
     onFilesChange([...files, ...newFiles])
   }
 
+  const handleLibrarySelect = (picked: FileWithLabel[]) => {
+    const room = maxFiles - files.length
+    if (room <= 0) return
+    onFilesChange([...files, ...picked.slice(0, room)])
+  }
+
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-      
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        {enableMediaLibrary && files.length < maxFiles && (
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="inline-flex items-center gap-1 text-sm text-champagne hover:text-champagne/80 font-medium"
+          >
+            <FolderOpenIcon className="h-4 w-4" />
+            {t('media.chooseFromLibrary')}
+          </button>
+        )}
+      </div>
+
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -123,9 +147,6 @@ export default function FileUpload({
           <span className="text-sm font-medium text-champagne">
             {uploading ? 'Uploading...' : 'Click to upload or drag and drop'}
           </span>
-          <p className="text-xs text-gray-500 mt-1">
-            PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX and other files ({files.length}/{maxFiles} files)
-          </p>
         </div>
       </div>
 
@@ -176,6 +197,15 @@ export default function FileUpload({
             </div>
           ))}
         </div>
+      )}
+
+      {enableMediaLibrary && (
+        <MediaLibraryPicker
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          onSelect={handleLibrarySelect}
+          maxSelect={Math.max(1, maxFiles - files.length)}
+        />
       )}
     </div>
   )

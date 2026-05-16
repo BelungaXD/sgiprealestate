@@ -42,6 +42,9 @@
     "status": "Status",
     "views": "Views",
     "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "importFolder": "Import folder into this property",
     "noProperties": "No properties found"
   },
   "pages": {
@@ -49,8 +52,26 @@
     "comingSoon": "Page content management is coming soon..."
   },
   "inquiries": {
-    "title": "Inquiry Management",
-    "comingSoon": "Inquiry management features are coming soon..."
+    "title": "Inquiries",
+    "refresh": "Refresh",
+    "loading": "Loading inquiries…",
+    "empty": "No inquiries in this status.",
+    "delete": "Delete",
+    "statusLabel": "Status",
+    "assignedTo": "Assigned to",
+    "unassigned": "Unassigned",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Internal notes",
+    "statuses": {
+      "ALL": "All",
+      "NEW": "New",
+      "CONTACTED": "Contacted",
+      "QUALIFIED": "Qualified",
+      "PROPOSAL": "Proposal sent",
+      "NEGOTIATION": "Negotiation",
+      "CLOSED_WON": "Closed — won",
+      "CLOSED_LOST": "Closed — lost"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -73,7 +94,195 @@
     "createError": "Failed to create user.",
     "deleteError": "Failed to delete user.",
     "emailExists": "User with this email already exists.",
-    "lastUserError": "Cannot delete the last admin user."
+    "lastUserError": "Cannot delete the last admin user.",
+    "errors": {
+      "cannot_deactivate_last_super_admin": "At least one active Super Admin is required. Promote another member or add one before deactivating this account.",
+      "cannot_remove_last_super_admin": "At least one active Super Admin is required. Assign the Super Admin role to another member before changing this one.",
+      "cannot_deactivate_self": "You cannot deactivate your own account while signed in.",
+      "cannot_delete_self": "You cannot delete your own account.",
+      "cannot_delete_last_super_admin": "Cannot remove the last active Super Admin.",
+      "cannot_delete_last_user": "Cannot remove the last admin user.",
+      "user_not_found": "Team member not found.",
+      "user_already_activated": "This member has already accepted the invite.",
+      "email_already_exists": "A user with this email already exists.",
+      "invalid_payload": "Invalid request. Check the fields and try again.",
+      "failed_to_load_users": "Failed to load team members.",
+      "failed_to_create_user": "Failed to create user.",
+      "failed_to_update_user": "Failed to update user.",
+      "failed_to_delete_user": "Failed to delete user."
+    },
+    "roleLabel": "Role",
+    "member": "Member",
+    "statusLabel": "Status",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "lastLogin": "Last login",
+    "lastLoginNever": "Never",
+    "edit": "Edit",
+    "editMember": "Edit team member",
+    "deactivate": "Deactivate",
+    "removeInvite": "Remove invite",
+    "removeInviteConfirm": "Remove pending invite for {{email}}? The invite link will stop working.",
+    "removeInviteError": "Failed to remove invite.",
+    "activate": "Activate",
+    "deactivateConfirm": "Deactivate {{email}}? They will not be able to sign in.",
+    "deactivateError": "Failed to deactivate user.",
+    "updateError": "Failed to update user.",
+    "resetPassword": "Reset password",
+    "resetPasswordConfirm": "Generate a new temporary password for {{email}}?",
+    "resetPasswordError": "Failed to reset password.",
+    "resetPasswordDone": "Temporary password",
+    "resetPasswordHint": "Copy this password and send it to the user securely. It will not be shown again.",
+    "forbidden": "You do not have permission to manage team members.",
+    "roles": {
+      "SUPER_ADMIN": "Super Admin",
+      "MANAGER": "Manager / Agent",
+      "CONTENT_EDITOR": "Content Manager"
+    },
+    "inviteHelp": "Enter email and role. The teammate receives an invite link to set their own password.",
+    "sendInvite": "Send invite",
+    "statusInvitePending": "Invite pending",
+    "resendInvite": "Resend invite",
+    "inviteResendError": "Failed to resend invite.",
+    "inviteSentTitle": "Invite sent",
+    "inviteSentBody": "An email was sent to {{email}} with a link to activate the account.",
+    "inviteLinkTitle": "Copy invite link",
+    "inviteLinkBody": "Email is not configured on the server. Send this link to {{email}} manually:",
+    "copyInviteLink": "Copy link",
+    "descriptionExtended": "Team access, shared media library, and third-party integrations.",
+    "tabs": {
+      "label": "Settings sections",
+      "team": "Team members",
+      "media": "Media & Drive",
+      "integrations": "Integrations"
+    }
+  },
+  "media": {
+    "title": "Media & Drive",
+    "description": "Central library for brochures, presentations, and shared files. Attach items to properties without re-uploading.",
+    "folders": "Folders",
+    "loading": "Loading…",
+    "loadError": "Failed to load media library.",
+    "noFolders": "No folders available.",
+    "noFiles": "No files in this folder.",
+    "selectFolder": "Select a folder.",
+    "system": "System",
+    "addFolder": "Add folder",
+    "folderNamePlaceholder": "Folder name",
+    "createFolderError": "Could not create folder.",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "uploadError": "Upload failed.",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this file from the library?",
+    "deleteError": "Could not delete file.",
+    "download": "Download",
+    "canEdit": "You can upload and manage files here.",
+    "viewOnly": "View and download only.",
+    "permissions": "Permissions",
+    "permissionsTitle": "Folder: {{name}}",
+    "permissionsHelp": "View: browse and download. Edit: upload and delete files.",
+    "viewRoles": "Can view / download",
+    "editRoles": "Can upload / edit",
+    "permissionsSaveError": "Could not save permissions.",
+    "storageUsed": "Used {{used}} of {{limit}}",
+    "storageLimitExceeded": "Storage limit reached. Remove old files or increase MEDIA_STORAGE_LIMIT_GB.",
+    "chooseFromLibrary": "Choose from Media Library",
+    "pickerTitle": "Media Library",
+    "pickerAttach": "Attach selected",
+    "pickerSelected": "{{count}} / {{max}} selected"
+  },
+  "invite": {
+    "title": "Activate your admin account",
+    "loading": "Checking invite…",
+    "invalidToken": "This invite link is invalid or has expired.",
+    "serverError": "Something went wrong. Please try again.",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm password",
+    "passwordMismatch": "Passwords do not match.",
+    "acceptFailed": "Could not set password. The link may have expired.",
+    "generatePassword": "Generate strong password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Activate account",
+    "saving": "Saving…",
+    "success": "Your password is set. You can sign in now.",
+    "goToLogin": "Go to admin login"
+  },
+  "integrations": {
+    "title": "Integrations & API keys",
+    "description": "Connect CRM, WhatsApp, SMS alerts for new leads, property parsers, and other services. Values are stored encrypted in the database; .env is used as fallback.",
+    "loading": "Loading integrations…",
+    "loadError": "Failed to load integrations.",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saveError": "Failed to save integrations.",
+    "saveSuccess": "Integration settings saved.",
+    "noChanges": "Enter a new value in at least one field to save.",
+    "saveHint": "Leave a field empty to keep the current value. Clear a field and save to remove the stored key.",
+    "configured": "Active ({{masked}})",
+    "configuredInEnv": "Active via .env ({{var}})",
+    "placeholderKeep": "Leave blank to keep {{masked}}",
+    "placeholderEmpty": "Not set",
+    "showValue": "Show",
+    "hideValue": "Hide",
+    "categories": {
+      "crm": "CRM",
+      "messaging": "WhatsApp & SMS",
+      "parsers": "Property parsers",
+      "ai": "AI (translations)",
+      "email": "Email (invites)"
+    },
+    "items": {
+      "crm_api_url": {
+        "label": "CRM API URL",
+        "description": "Base URL of your CRM REST API (HubSpot, amoCRM, custom)."
+      },
+      "crm_api_key": {
+        "label": "CRM API key",
+        "description": "Private API key or bearer token for CRM sync."
+      },
+      "whatsapp_bot_token": {
+        "label": "WhatsApp Bot token",
+        "description": "Meta Cloud API permanent token for the business WhatsApp bot."
+      },
+      "whatsapp_phone_number_id": {
+        "label": "WhatsApp Phone number ID",
+        "description": "Phone number ID from Meta Business Manager (optional)."
+      },
+      "sms_gateway_url": {
+        "label": "SMS gateway URL",
+        "description": "HTTP endpoint of your SMS provider for lead alerts."
+      },
+      "sms_gateway_api_key": {
+        "label": "SMS gateway API key",
+        "description": "API key for sending SMS when a new lead arrives."
+      },
+      "sms_lead_notify_enabled": {
+        "label": "SMS on new lead",
+        "description": "Set to true or 1 to enable SMS notifications for new inquiries."
+      },
+      "property_parser_api_url": {
+        "label": "Parser API URL",
+        "description": "Endpoint of your property listing parser or feed importer."
+      },
+      "property_parser_api_key": {
+        "label": "Parser API key",
+        "description": "Authentication key for the parser service."
+      },
+      "gemini_api_key": {
+        "label": "Gemini API key",
+        "description": "Google AI Studio key for admin auto-translation of listings."
+      },
+      "resend_api_key": {
+        "label": "Resend API key",
+        "description": "Resend.com key for team invite emails."
+      },
+      "email_from": {
+        "label": "Email From address",
+        "description": "Sender for transactional email, e.g. SGIP <noreply@yourdomain.com>."
+      }
+    }
   },
   "form": {
     "basicInfo": "Basic Information",

@@ -20,16 +20,31 @@ export type DeveloperModel = runtime.Types.Result.DefaultSelection<Prisma.$Devel
 
 export type AggregateDeveloper = {
   _count: DeveloperCountAggregateOutputType | null
+  _avg: DeveloperAvgAggregateOutputType | null
+  _sum: DeveloperSumAggregateOutputType | null
   _min: DeveloperMinAggregateOutputType | null
   _max: DeveloperMaxAggregateOutputType | null
+}
+
+export type DeveloperAvgAggregateOutputType = {
+  founded: number | null
+}
+
+export type DeveloperSumAggregateOutputType = {
+  founded: number | null
 }
 
 export type DeveloperMinAggregateOutputType = {
   id: string | null
   name: string | null
   nameEn: string | null
+  nameRu: string | null
+  nameAr: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
+  founded: number | null
   isActive: boolean | null
   logo: string | null
   website: string | null
@@ -48,8 +63,13 @@ export type DeveloperMaxAggregateOutputType = {
   id: string | null
   name: string | null
   nameEn: string | null
+  nameRu: string | null
+  nameAr: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
+  founded: number | null
   isActive: boolean | null
   logo: string | null
   website: string | null
@@ -68,10 +88,19 @@ export type DeveloperCountAggregateOutputType = {
   id: number
   name: number
   nameEn: number
+  nameRu: number
+  nameAr: number
   description: number
   descriptionEn: number
+  descriptionRu: number
+  descriptionAr: number
   specialties: number
+  specialtiesRu: number
+  specialtiesAr: number
   notableProjects: number
+  notableProjectsRu: number
+  notableProjectsAr: number
+  founded: number
   isActive: number
   logo: number
   website: number
@@ -88,12 +117,25 @@ export type DeveloperCountAggregateOutputType = {
 }
 
 
+export type DeveloperAvgAggregateInputType = {
+  founded?: true
+}
+
+export type DeveloperSumAggregateInputType = {
+  founded?: true
+}
+
 export type DeveloperMinAggregateInputType = {
   id?: true
   name?: true
   nameEn?: true
+  nameRu?: true
+  nameAr?: true
   description?: true
   descriptionEn?: true
+  descriptionRu?: true
+  descriptionAr?: true
+  founded?: true
   isActive?: true
   logo?: true
   website?: true
@@ -112,8 +154,13 @@ export type DeveloperMaxAggregateInputType = {
   id?: true
   name?: true
   nameEn?: true
+  nameRu?: true
+  nameAr?: true
   description?: true
   descriptionEn?: true
+  descriptionRu?: true
+  descriptionAr?: true
+  founded?: true
   isActive?: true
   logo?: true
   website?: true
@@ -132,10 +179,19 @@ export type DeveloperCountAggregateInputType = {
   id?: true
   name?: true
   nameEn?: true
+  nameRu?: true
+  nameAr?: true
   description?: true
   descriptionEn?: true
+  descriptionRu?: true
+  descriptionAr?: true
   specialties?: true
+  specialtiesRu?: true
+  specialtiesAr?: true
   notableProjects?: true
+  notableProjectsRu?: true
+  notableProjectsAr?: true
+  founded?: true
   isActive?: true
   logo?: true
   website?: true
@@ -189,6 +245,18 @@ export type DeveloperAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: DeveloperAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: DeveloperSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: DeveloperMinAggregateInputType
@@ -219,6 +287,8 @@ export type DeveloperGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   _count?: DeveloperCountAggregateInputType | true
+  _avg?: DeveloperAvgAggregateInputType
+  _sum?: DeveloperSumAggregateInputType
   _min?: DeveloperMinAggregateInputType
   _max?: DeveloperMaxAggregateInputType
 }
@@ -227,10 +297,19 @@ export type DeveloperGroupByOutputType = {
   id: string
   name: string
   nameEn: string | null
+  nameRu: string | null
+  nameAr: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   specialties: string[]
+  specialtiesRu: string[]
+  specialtiesAr: string[]
   notableProjects: string[]
+  notableProjectsRu: string[]
+  notableProjectsAr: string[]
+  founded: number | null
   isActive: boolean
   logo: string | null
   website: string | null
@@ -244,6 +323,8 @@ export type DeveloperGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   _count: DeveloperCountAggregateOutputType | null
+  _avg: DeveloperAvgAggregateOutputType | null
+  _sum: DeveloperSumAggregateOutputType | null
   _min: DeveloperMinAggregateOutputType | null
   _max: DeveloperMaxAggregateOutputType | null
 }
@@ -270,10 +351,19 @@ export type DeveloperWhereInput = {
   id?: Prisma.StringFilter<"Developer"> | string
   name?: Prisma.StringFilter<"Developer"> | string
   nameEn?: Prisma.StringNullableFilter<"Developer"> | string | null
+  nameRu?: Prisma.StringNullableFilter<"Developer"> | string | null
+  nameAr?: Prisma.StringNullableFilter<"Developer"> | string | null
   description?: Prisma.StringNullableFilter<"Developer"> | string | null
   descriptionEn?: Prisma.StringNullableFilter<"Developer"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Developer"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Developer"> | string | null
   specialties?: Prisma.StringNullableListFilter<"Developer">
+  specialtiesRu?: Prisma.StringNullableListFilter<"Developer">
+  specialtiesAr?: Prisma.StringNullableListFilter<"Developer">
   notableProjects?: Prisma.StringNullableListFilter<"Developer">
+  notableProjectsRu?: Prisma.StringNullableListFilter<"Developer">
+  notableProjectsAr?: Prisma.StringNullableListFilter<"Developer">
+  founded?: Prisma.IntNullableFilter<"Developer"> | number | null
   isActive?: Prisma.BoolFilter<"Developer"> | boolean
   logo?: Prisma.StringNullableFilter<"Developer"> | string | null
   website?: Prisma.StringNullableFilter<"Developer"> | string | null
@@ -293,10 +383,19 @@ export type DeveloperOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameAr?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   descriptionEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   specialties?: Prisma.SortOrder
+  specialtiesRu?: Prisma.SortOrder
+  specialtiesAr?: Prisma.SortOrder
   notableProjects?: Prisma.SortOrder
+  notableProjectsRu?: Prisma.SortOrder
+  notableProjectsAr?: Prisma.SortOrder
+  founded?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   logo?: Prisma.SortOrderInput | Prisma.SortOrder
   website?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -320,10 +419,19 @@ export type DeveloperWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DeveloperWhereInput | Prisma.DeveloperWhereInput[]
   name?: Prisma.StringFilter<"Developer"> | string
   nameEn?: Prisma.StringNullableFilter<"Developer"> | string | null
+  nameRu?: Prisma.StringNullableFilter<"Developer"> | string | null
+  nameAr?: Prisma.StringNullableFilter<"Developer"> | string | null
   description?: Prisma.StringNullableFilter<"Developer"> | string | null
   descriptionEn?: Prisma.StringNullableFilter<"Developer"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Developer"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Developer"> | string | null
   specialties?: Prisma.StringNullableListFilter<"Developer">
+  specialtiesRu?: Prisma.StringNullableListFilter<"Developer">
+  specialtiesAr?: Prisma.StringNullableListFilter<"Developer">
   notableProjects?: Prisma.StringNullableListFilter<"Developer">
+  notableProjectsRu?: Prisma.StringNullableListFilter<"Developer">
+  notableProjectsAr?: Prisma.StringNullableListFilter<"Developer">
+  founded?: Prisma.IntNullableFilter<"Developer"> | number | null
   isActive?: Prisma.BoolFilter<"Developer"> | boolean
   logo?: Prisma.StringNullableFilter<"Developer"> | string | null
   website?: Prisma.StringNullableFilter<"Developer"> | string | null
@@ -342,10 +450,19 @@ export type DeveloperOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameAr?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   descriptionEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   specialties?: Prisma.SortOrder
+  specialtiesRu?: Prisma.SortOrder
+  specialtiesAr?: Prisma.SortOrder
   notableProjects?: Prisma.SortOrder
+  notableProjectsRu?: Prisma.SortOrder
+  notableProjectsAr?: Prisma.SortOrder
+  founded?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   logo?: Prisma.SortOrderInput | Prisma.SortOrder
   website?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -359,8 +476,10 @@ export type DeveloperOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DeveloperCountOrderByAggregateInput
+  _avg?: Prisma.DeveloperAvgOrderByAggregateInput
   _max?: Prisma.DeveloperMaxOrderByAggregateInput
   _min?: Prisma.DeveloperMinOrderByAggregateInput
+  _sum?: Prisma.DeveloperSumOrderByAggregateInput
 }
 
 export type DeveloperScalarWhereWithAggregatesInput = {
@@ -370,10 +489,19 @@ export type DeveloperScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Developer"> | string
   name?: Prisma.StringWithAggregatesFilter<"Developer"> | string
   nameEn?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
+  nameRu?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
+  nameAr?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
   descriptionEn?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
+  descriptionRu?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
+  descriptionAr?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
   specialties?: Prisma.StringNullableListFilter<"Developer">
+  specialtiesRu?: Prisma.StringNullableListFilter<"Developer">
+  specialtiesAr?: Prisma.StringNullableListFilter<"Developer">
   notableProjects?: Prisma.StringNullableListFilter<"Developer">
+  notableProjectsRu?: Prisma.StringNullableListFilter<"Developer">
+  notableProjectsAr?: Prisma.StringNullableListFilter<"Developer">
+  founded?: Prisma.IntNullableWithAggregatesFilter<"Developer"> | number | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Developer"> | boolean
   logo?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
   website?: Prisma.StringNullableWithAggregatesFilter<"Developer"> | string | null
@@ -392,10 +520,19 @@ export type DeveloperCreateInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   specialties?: Prisma.DeveloperCreatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperCreatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperCreatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperCreatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperCreatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperCreatenotableProjectsArInput | string[]
+  founded?: number | null
   isActive?: boolean
   logo?: string | null
   website?: string | null
@@ -415,10 +552,19 @@ export type DeveloperUncheckedCreateInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   specialties?: Prisma.DeveloperCreatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperCreatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperCreatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperCreatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperCreatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperCreatenotableProjectsArInput | string[]
+  founded?: number | null
   isActive?: boolean
   logo?: string | null
   website?: string | null
@@ -438,10 +584,19 @@ export type DeveloperUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialties?: Prisma.DeveloperUpdatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperUpdatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperUpdatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperUpdatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperUpdatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperUpdatenotableProjectsArInput | string[]
+  founded?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -461,10 +616,19 @@ export type DeveloperUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialties?: Prisma.DeveloperUpdatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperUpdatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperUpdatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperUpdatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperUpdatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperUpdatenotableProjectsArInput | string[]
+  founded?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -484,10 +648,19 @@ export type DeveloperCreateManyInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   specialties?: Prisma.DeveloperCreatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperCreatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperCreatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperCreatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperCreatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperCreatenotableProjectsArInput | string[]
+  founded?: number | null
   isActive?: boolean
   logo?: string | null
   website?: string | null
@@ -506,10 +679,19 @@ export type DeveloperUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialties?: Prisma.DeveloperUpdatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperUpdatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperUpdatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperUpdatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperUpdatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperUpdatenotableProjectsArInput | string[]
+  founded?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -528,10 +710,19 @@ export type DeveloperUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialties?: Prisma.DeveloperUpdatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperUpdatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperUpdatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperUpdatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperUpdatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperUpdatenotableProjectsArInput | string[]
+  founded?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -555,10 +746,19 @@ export type DeveloperCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrder
+  nameRu?: Prisma.SortOrder
+  nameAr?: Prisma.SortOrder
   description?: Prisma.SortOrder
   descriptionEn?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   specialties?: Prisma.SortOrder
+  specialtiesRu?: Prisma.SortOrder
+  specialtiesAr?: Prisma.SortOrder
   notableProjects?: Prisma.SortOrder
+  notableProjectsRu?: Prisma.SortOrder
+  notableProjectsAr?: Prisma.SortOrder
+  founded?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   logo?: Prisma.SortOrder
   website?: Prisma.SortOrder
@@ -573,12 +773,21 @@ export type DeveloperCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type DeveloperAvgOrderByAggregateInput = {
+  founded?: Prisma.SortOrder
+}
+
 export type DeveloperMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrder
+  nameRu?: Prisma.SortOrder
+  nameAr?: Prisma.SortOrder
   description?: Prisma.SortOrder
   descriptionEn?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
+  founded?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   logo?: Prisma.SortOrder
   website?: Prisma.SortOrder
@@ -597,8 +806,13 @@ export type DeveloperMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrder
+  nameRu?: Prisma.SortOrder
+  nameAr?: Prisma.SortOrder
   description?: Prisma.SortOrder
   descriptionEn?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
+  founded?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   logo?: Prisma.SortOrder
   website?: Prisma.SortOrder
@@ -611,6 +825,10 @@ export type DeveloperMinOrderByAggregateInput = {
   metaDescription?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type DeveloperSumOrderByAggregateInput = {
+  founded?: Prisma.SortOrder
 }
 
 export type DeveloperCreateNestedOneWithoutPropertiesInput = {
@@ -633,11 +851,37 @@ export type DeveloperCreatespecialtiesInput = {
   set: string[]
 }
 
+export type DeveloperCreatespecialtiesRuInput = {
+  set: string[]
+}
+
+export type DeveloperCreatespecialtiesArInput = {
+  set: string[]
+}
+
 export type DeveloperCreatenotableProjectsInput = {
   set: string[]
 }
 
+export type DeveloperCreatenotableProjectsRuInput = {
+  set: string[]
+}
+
+export type DeveloperCreatenotableProjectsArInput = {
+  set: string[]
+}
+
 export type DeveloperUpdatespecialtiesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type DeveloperUpdatespecialtiesRuInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type DeveloperUpdatespecialtiesArInput = {
   set?: string[]
   push?: string | string[]
 }
@@ -647,14 +891,33 @@ export type DeveloperUpdatenotableProjectsInput = {
   push?: string | string[]
 }
 
+export type DeveloperUpdatenotableProjectsRuInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type DeveloperUpdatenotableProjectsArInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type DeveloperCreateWithoutPropertiesInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   specialties?: Prisma.DeveloperCreatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperCreatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperCreatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperCreatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperCreatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperCreatenotableProjectsArInput | string[]
+  founded?: number | null
   isActive?: boolean
   logo?: string | null
   website?: string | null
@@ -673,10 +936,19 @@ export type DeveloperUncheckedCreateWithoutPropertiesInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   specialties?: Prisma.DeveloperCreatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperCreatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperCreatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperCreatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperCreatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperCreatenotableProjectsArInput | string[]
+  founded?: number | null
   isActive?: boolean
   logo?: string | null
   website?: string | null
@@ -711,10 +983,19 @@ export type DeveloperUpdateWithoutPropertiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialties?: Prisma.DeveloperUpdatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperUpdatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperUpdatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperUpdatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperUpdatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperUpdatenotableProjectsArInput | string[]
+  founded?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -733,10 +1014,19 @@ export type DeveloperUncheckedUpdateWithoutPropertiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   specialties?: Prisma.DeveloperUpdatespecialtiesInput | string[]
+  specialtiesRu?: Prisma.DeveloperUpdatespecialtiesRuInput | string[]
+  specialtiesAr?: Prisma.DeveloperUpdatespecialtiesArInput | string[]
   notableProjects?: Prisma.DeveloperUpdatenotableProjectsInput | string[]
+  notableProjectsRu?: Prisma.DeveloperUpdatenotableProjectsRuInput | string[]
+  notableProjectsAr?: Prisma.DeveloperUpdatenotableProjectsArInput | string[]
+  founded?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -786,10 +1076,19 @@ export type DeveloperSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   specialties?: boolean
+  specialtiesRu?: boolean
+  specialtiesAr?: boolean
   notableProjects?: boolean
+  notableProjectsRu?: boolean
+  notableProjectsAr?: boolean
+  founded?: boolean
   isActive?: boolean
   logo?: boolean
   website?: boolean
@@ -810,10 +1109,19 @@ export type DeveloperSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   specialties?: boolean
+  specialtiesRu?: boolean
+  specialtiesAr?: boolean
   notableProjects?: boolean
+  notableProjectsRu?: boolean
+  notableProjectsAr?: boolean
+  founded?: boolean
   isActive?: boolean
   logo?: boolean
   website?: boolean
@@ -832,10 +1140,19 @@ export type DeveloperSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   specialties?: boolean
+  specialtiesRu?: boolean
+  specialtiesAr?: boolean
   notableProjects?: boolean
+  notableProjectsRu?: boolean
+  notableProjectsAr?: boolean
+  founded?: boolean
   isActive?: boolean
   logo?: boolean
   website?: boolean
@@ -854,10 +1171,19 @@ export type DeveloperSelectScalar = {
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   specialties?: boolean
+  specialtiesRu?: boolean
+  specialtiesAr?: boolean
   notableProjects?: boolean
+  notableProjectsRu?: boolean
+  notableProjectsAr?: boolean
+  founded?: boolean
   isActive?: boolean
   logo?: boolean
   website?: boolean
@@ -872,7 +1198,7 @@ export type DeveloperSelectScalar = {
   updatedAt?: boolean
 }
 
-export type DeveloperOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nameEn" | "description" | "descriptionEn" | "specialties" | "notableProjects" | "isActive" | "logo" | "website" | "email" | "phone" | "address" | "city" | "slug" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt", ExtArgs["result"]["developer"]>
+export type DeveloperOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nameEn" | "nameRu" | "nameAr" | "description" | "descriptionEn" | "descriptionRu" | "descriptionAr" | "specialties" | "specialtiesRu" | "specialtiesAr" | "notableProjects" | "notableProjectsRu" | "notableProjectsAr" | "founded" | "isActive" | "logo" | "website" | "email" | "phone" | "address" | "city" | "slug" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt", ExtArgs["result"]["developer"]>
 export type DeveloperInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   properties?: boolean | Prisma.Developer$propertiesArgs<ExtArgs>
   _count?: boolean | Prisma.DeveloperCountOutputTypeDefaultArgs<ExtArgs>
@@ -889,10 +1215,19 @@ export type $DeveloperPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: string
     name: string
     nameEn: string | null
+    nameRu: string | null
+    nameAr: string | null
     description: string | null
     descriptionEn: string | null
+    descriptionRu: string | null
+    descriptionAr: string | null
     specialties: string[]
+    specialtiesRu: string[]
+    specialtiesAr: string[]
     notableProjects: string[]
+    notableProjectsRu: string[]
+    notableProjectsAr: string[]
+    founded: number | null
     isActive: boolean
     logo: string | null
     website: string | null
@@ -1332,10 +1667,19 @@ export interface DeveloperFieldRefs {
   readonly id: Prisma.FieldRef<"Developer", 'String'>
   readonly name: Prisma.FieldRef<"Developer", 'String'>
   readonly nameEn: Prisma.FieldRef<"Developer", 'String'>
+  readonly nameRu: Prisma.FieldRef<"Developer", 'String'>
+  readonly nameAr: Prisma.FieldRef<"Developer", 'String'>
   readonly description: Prisma.FieldRef<"Developer", 'String'>
   readonly descriptionEn: Prisma.FieldRef<"Developer", 'String'>
+  readonly descriptionRu: Prisma.FieldRef<"Developer", 'String'>
+  readonly descriptionAr: Prisma.FieldRef<"Developer", 'String'>
   readonly specialties: Prisma.FieldRef<"Developer", 'String[]'>
+  readonly specialtiesRu: Prisma.FieldRef<"Developer", 'String[]'>
+  readonly specialtiesAr: Prisma.FieldRef<"Developer", 'String[]'>
   readonly notableProjects: Prisma.FieldRef<"Developer", 'String[]'>
+  readonly notableProjectsRu: Prisma.FieldRef<"Developer", 'String[]'>
+  readonly notableProjectsAr: Prisma.FieldRef<"Developer", 'String[]'>
+  readonly founded: Prisma.FieldRef<"Developer", 'Int'>
   readonly isActive: Prisma.FieldRef<"Developer", 'Boolean'>
   readonly logo: Prisma.FieldRef<"Developer", 'String'>
   readonly website: Prisma.FieldRef<"Developer", 'String'>

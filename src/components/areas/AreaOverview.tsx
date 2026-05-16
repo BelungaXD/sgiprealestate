@@ -8,6 +8,7 @@ import {
   StarIcon,
   BuildingOfficeIcon
 } from '@heroicons/react/24/outline'
+import { localizedAreaContent } from '@/lib/areaLocaleContent'
 
 interface Area {
   id: string
@@ -32,7 +33,8 @@ interface AreaOverviewProps {
 
 export default function AreaOverview({ area }: AreaOverviewProps) {
   const { t, i18n } = useTranslation('areas')
-  const isRussian = i18n.language === 'ru'
+  const locale = i18n.language === 'ru' || i18n.language === 'ar' ? i18n.language : 'en'
+  const localized = localizedAreaContent(area, locale)
   const [imageSrc, setImageSrc] = useState(area.image || '/images/hero.jpg')
 
   const formatPrice = (price: number, currency: string) => {
@@ -49,7 +51,7 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
       <div className="relative h-64 md:h-80">
         <Image
           src={imageSrc}
-          alt={isRussian ? area.name : area.nameEn}
+          alt={localized.name}
           fill
           sizes="100vw"
           className="w-full h-full object-cover"
@@ -62,7 +64,7 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-6 left-6 text-white">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {isRussian ? area.name : area.nameEn}
+            {localized.name}
           </h1>
           <p className="text-lg text-gray-200">
             {area.city}
@@ -78,7 +80,7 @@ export default function AreaOverview({ area }: AreaOverviewProps) {
             {t('overview.title', 'Area Overview')}
           </h2>
           <p className="text-gray-600 leading-relaxed">
-            {isRussian ? area.description : area.descriptionEn}
+            {localized.description}
           </p>
         </div>
 

@@ -56,10 +56,14 @@ export const ModelName = {
   FloorPlan: 'FloorPlan',
   PropertyFile: 'PropertyFile',
   Area: 'Area',
+  AreaImage: 'AreaImage',
   Developer: 'Developer',
   Lead: 'Lead',
   Partner: 'Partner',
   Admin: 'Admin',
+  MediaFolder: 'MediaFolder',
+  MediaAsset: 'MediaAsset',
+  IntegrationSetting: 'IntegrationSetting',
   CmsPage: 'CmsPage'
 } as const
 
@@ -101,6 +105,8 @@ export const PropertyScalarFieldEnum = {
   yearBuilt: 'yearBuilt',
   completionDate: 'completionDate',
   paymentPlan: 'paymentPlan',
+  paymentPlanRu: 'paymentPlanRu',
+  paymentPlanAr: 'paymentPlanAr',
   occupancyStatus: 'occupancyStatus',
   address: 'address',
   city: 'city',
@@ -115,6 +121,7 @@ export const PropertyScalarFieldEnum = {
   amenities: 'amenities',
   amenitiesRu: 'amenitiesRu',
   amenitiesAr: 'amenitiesAr',
+  assignedAdminId: 'assignedAdminId',
   slug: 'slug',
   metaTitle: 'metaTitle',
   metaDescription: 'metaDescription',
@@ -178,14 +185,22 @@ export const AreaScalarFieldEnum = {
   id: 'id',
   name: 'name',
   nameEn: 'nameEn',
+  nameRu: 'nameRu',
+  nameAr: 'nameAr',
   description: 'description',
   descriptionEn: 'descriptionEn',
+  descriptionRu: 'descriptionRu',
+  descriptionAr: 'descriptionAr',
   isActive: 'isActive',
   image: 'image',
   sortOrder: 'sortOrder',
   tags: 'tags',
+  tagsRu: 'tagsRu',
+  tagsAr: 'tagsAr',
+  parentId: 'parentId',
   city: 'city',
   coordinates: 'coordinates',
+  mapEmbed: 'mapEmbed',
   slug: 'slug',
   metaTitle: 'metaTitle',
   metaDescription: 'metaDescription',
@@ -196,14 +211,36 @@ export const AreaScalarFieldEnum = {
 export type AreaScalarFieldEnum = (typeof AreaScalarFieldEnum)[keyof typeof AreaScalarFieldEnum]
 
 
+export const AreaImageScalarFieldEnum = {
+  id: 'id',
+  areaId: 'areaId',
+  url: 'url',
+  alt: 'alt',
+  order: 'order',
+  isMain: 'isMain',
+  createdAt: 'createdAt'
+} as const
+
+export type AreaImageScalarFieldEnum = (typeof AreaImageScalarFieldEnum)[keyof typeof AreaImageScalarFieldEnum]
+
+
 export const DeveloperScalarFieldEnum = {
   id: 'id',
   name: 'name',
   nameEn: 'nameEn',
+  nameRu: 'nameRu',
+  nameAr: 'nameAr',
   description: 'description',
   descriptionEn: 'descriptionEn',
+  descriptionRu: 'descriptionRu',
+  descriptionAr: 'descriptionAr',
   specialties: 'specialties',
+  specialtiesRu: 'specialtiesRu',
+  specialtiesAr: 'specialtiesAr',
   notableProjects: 'notableProjects',
+  notableProjectsRu: 'notableProjectsRu',
+  notableProjectsAr: 'notableProjectsAr',
+  founded: 'founded',
   isActive: 'isActive',
   logo: 'logo',
   website: 'website',
@@ -232,6 +269,7 @@ export const LeadScalarFieldEnum = {
   page: 'page',
   status: 'status',
   notes: 'notes',
+  assignedAdminId: 'assignedAdminId',
   crmId: 'crmId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -264,11 +302,60 @@ export const AdminScalarFieldEnum = {
   email: 'email',
   password: 'password',
   name: 'name',
+  role: 'role',
+  isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
+  avatarUrl: 'avatarUrl',
+  passwordSetAt: 'passwordSetAt',
+  inviteTokenHash: 'inviteTokenHash',
+  inviteExpiresAt: 'inviteExpiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type AdminScalarFieldEnum = (typeof AdminScalarFieldEnum)[keyof typeof AdminScalarFieldEnum]
+
+
+export const MediaFolderScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  isSystem: 'isSystem',
+  sortOrder: 'sortOrder',
+  viewRoles: 'viewRoles',
+  editRoles: 'editRoles',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaFolderScalarFieldEnum = (typeof MediaFolderScalarFieldEnum)[keyof typeof MediaFolderScalarFieldEnum]
+
+
+export const MediaAssetScalarFieldEnum = {
+  id: 'id',
+  folderId: 'folderId',
+  filename: 'filename',
+  originalName: 'originalName',
+  url: 'url',
+  sizeBytes: 'sizeBytes',
+  mimeType: 'mimeType',
+  uploadedByAdminId: 'uploadedByAdminId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaAssetScalarFieldEnum = (typeof MediaAssetScalarFieldEnum)[keyof typeof MediaAssetScalarFieldEnum]
+
+
+export const IntegrationSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  valueEnc: 'valueEnc',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type IntegrationSettingScalarFieldEnum = (typeof IntegrationSettingScalarFieldEnum)[keyof typeof IntegrationSettingScalarFieldEnum]
 
 
 export const CmsPageScalarFieldEnum = {

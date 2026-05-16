@@ -363,6 +363,26 @@
 @utility container-custom {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
+@utility admin-shell {
+  & button:not(:disabled),
+  & a[href],
+  & [role='button']:not([aria-disabled='true']),
+  & label[for],
+  & select:not(:disabled),
+  & input[type='checkbox']:not(:disabled),
+  & input[type='radio']:not(:disabled),
+  & input[type='file']:not(:disabled),
+  & summary {
+    cursor: pointer;
+  }
+
+  & button:not(:disabled):not([class*='hover:bg']):not([class*='btn-']):hover,
+  & a[href]:not([class*='hover:bg']):not([class*='btn-']):hover,
+  & [role='button']:not([aria-disabled='true']):not([class*='hover:bg']):hover,
+  & .cursor-pointer:not([class*='hover:bg']):hover {
+    @apply bg-champagne/10 transition-colors;
+  }
+}
 @utility hero-bg {
   background: linear-gradient(135deg, var(--color-graphite) 0%, #2a2b30 100%);
 }

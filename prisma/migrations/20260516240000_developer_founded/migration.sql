@@ -1,0 +1,1 @@
+ALTER TABLE "developers" ADD COLUMN IF NOT EXISTS "founded" INTEGER;

@@ -1,7 +1,27 @@
 import crypto from 'crypto'
 import type { NextApiRequest } from 'next'
+import type { AdminRole } from '../../prisma/generated/client'
 import { prisma } from '@/lib/prisma'
 import { createScopedLogger } from '@/lib/logger'
+
+export type { AdminRole }
+
+export type AdminSessionPayload = {
+  adminId: string | null
+  role: AdminRole
+  email: string | null
+  isEnvBootstrap: boolean
+}
+
+export type AdminAuthSuccess =
+  | { ok: true; envBootstrap: true }
+  | {
+      ok: true
+      envBootstrap: false
+      admin: { id: string; email: string; role: AdminRole; name: string | null }
+    }
+
+export type AdminAuthResult = AdminAuthSuccess | { ok: false }
 
 export const ADMIN_SESSION_COOKIE = 'sgip_admin_session'
 const MAX_AGE_SEC = 60 * 60 * 24 * 7
@@ -54,40 +74,90 @@ export function adminSessionConfigured(): boolean {
   return Boolean(sessionSecret())
 }
 
-export function createAdminSessionToken(): string | null {
+type SessionTokenBody = {
+  exp: number
+  adminId?: string
+  role?: AdminRole
+  email?: string
+  envBootstrap?: boolean
+}
+
+function signSessionPayload(body: SessionTokenBody): string | null {
   const secret = sessionSecret()
   if (!secret) return null
-  const exp = Math.floor(Date.now() / 1000) + MAX_AGE_SEC
-  const payload = Buffer.from(JSON.stringify({ exp }), 'utf8').toString('base64url')
+  const payload = Buffer.from(JSON.stringify(body), 'utf8').toString('base64url')
   const sig = crypto.createHmac('sha256', secret).update(payload).digest('base64url')
   return `${payload}.${sig}`
 }
 
-export function verifyAdminSessionToken(token: string | undefined): boolean {
-  if (!token) return false
+export function createAdminSessionToken(session: {
+  adminId?: string | null
+  role: AdminRole
+  email?: string | null
+  envBootstrap?: boolean
+}): string | null {
+  const exp = Math.floor(Date.now() / 1000) + MAX_AGE_SEC
+  return signSessionPayload({
+    exp,
+    adminId: session.adminId ?? undefined,
+    role: session.role,
+    email: session.email ?? undefined,
+    envBootstrap: session.envBootstrap ?? false,
+  })
+}
+
+function parseVerifiedSessionToken(token: string | undefined): SessionTokenBody | null {
+  if (!token) return null
   const secret = sessionSecret()
-  if (!secret) return false
+  if (!secret) return null
   const dot = token.indexOf('.')
-  if (dot <= 0) return false
+  if (dot <= 0) return null
   const payload = token.slice(0, dot)
   const sig = token.slice(dot + 1)
-  if (!payload || !sig) return false
+  if (!payload || !sig) return null
   const expected = crypto.createHmac('sha256', secret).update(payload).digest('base64url')
   const sigBuf = Buffer.from(sig, 'utf8')
   const expBuf = Buffer.from(expected, 'utf8')
-  if (sigBuf.length !== expBuf.length) return false
+  if (sigBuf.length !== expBuf.length) return null
   try {
-    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return false
+    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return null
   } catch {
-    return false
+    return null
   }
   try {
-    const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
-      exp?: number
+    const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as SessionTokenBody
+    if (typeof parsed.exp !== 'number' || parsed.exp <= Math.floor(Date.now() / 1000)) {
+      return null
     }
-    return typeof parsed.exp === 'number' && parsed.exp > Math.floor(Date.now() / 1000)
+    return parsed
   } catch {
-    return false
+    return null
+  }
+}
+
+export function verifyAdminSessionToken(token: string | undefined): boolean {
+  return parseVerifiedSessionToken(token) !== null
+}
+
+export function getAdminSessionFromRequest(req: NextApiRequest): AdminSessionPayload | null {
+  const token = readCookie(req, ADMIN_SESSION_COOKIE)
+  const parsed = parseVerifiedSessionToken(token)
+  if (!parsed) return null
+
+  if (parsed.envBootstrap || (!parsed.adminId && !parsed.role)) {
+    return {
+      adminId: null,
+      role: 'SUPER_ADMIN',
+      email: parsed.email ?? null,
+      isEnvBootstrap: true,
+    }
+  }
+
+  return {
+    adminId: parsed.adminId ?? null,
+    role: parsed.role ?? 'SUPER_ADMIN',
+    email: parsed.email ?? null,
+    isEnvBootstrap: Boolean(parsed.envBootstrap),
   }
 }
 
@@ -140,48 +210,85 @@ function verifyPasswordHash(plainPassword: string, storedPassword: string): bool
   }
 }
 
-export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
+export async function verifyAdminCredentials(
+  username: string,
+  password: string
+): Promise<AdminAuthResult> {
   if (verifyEnvAdminCredentials(username, password)) {
-    return true
+    return { ok: true, envBootstrap: true }
   }
 
   const normalizedUsername = username.trim().toLowerCase()
   if (!normalizedUsername || !password) {
-    return false
+    return { ok: false }
   }
 
   try {
     const admin = await prisma.admin.findUnique({
       where: { email: normalizedUsername },
-      select: { id: true, password: true },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true,
+        role: true,
+        isActive: true,
+        passwordSetAt: true,
+      },
     })
 
     if (!admin) {
-      return false
+      return { ok: false }
     }
 
-    if (verifyPasswordHash(password, admin.password)) {
-      return true
+    if (!admin.isActive) {
+      return { ok: false }
     }
 
-    // Backward compatibility for legacy plain-text passwords.
-    const legacyMatch =
-      admin.password.length === password.length &&
-      crypto.timingSafeEqual(Buffer.from(admin.password, 'utf8'), Buffer.from(password, 'utf8'))
+    if (!admin.passwordSetAt) {
+      return { ok: false }
+    }
 
-    if (!legacyMatch) {
-      return false
+    let passwordValid = verifyPasswordHash(password, admin.password)
+
+    if (!passwordValid) {
+      const legacyMatch =
+        admin.password.length === password.length &&
+        crypto.timingSafeEqual(Buffer.from(admin.password, 'utf8'), Buffer.from(password, 'utf8'))
+
+      if (!legacyMatch) {
+        return { ok: false }
+      }
+
+      await prisma.admin.update({
+        where: { id: admin.id },
+        data: { password: hashAdminPassword(password) },
+      })
+      passwordValid = true
+    }
+
+    if (!passwordValid) {
+      return { ok: false }
     }
 
     await prisma.admin.update({
       where: { id: admin.id },
-      data: { password: hashAdminPassword(password) },
+      data: { lastLoginAt: new Date() },
     })
 
-    return true
+    return {
+      ok: true,
+      envBootstrap: false,
+      admin: {
+        id: admin.id,
+        email: admin.email,
+        name: admin.name,
+        role: admin.role,
+      },
+    }
   } catch (error) {
     log.errorWithException('Admin DB auth error', error, { username: normalizedUsername })
-    return false
+    return { ok: false }
   }
 }
 
@@ -200,5 +307,5 @@ export function readCookie(req: NextApiRequest, name: string): string | undefine
 
 /** True when the request carries a valid HttpOnly admin session cookie (mutating API routes). */
 export function isAdminSessionValid(req: NextApiRequest): boolean {
-  return verifyAdminSessionToken(readCookie(req, ADMIN_SESSION_COOKIE))
+  return getAdminSessionFromRequest(req) !== null
 }

@@ -476,7 +476,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, locale })
             : apiProperty.amenities || [],
       yearBuilt: apiProperty.yearBuilt || 0,
       completionDate: apiProperty.completionDate || '',
-      paymentPlan: apiProperty.paymentPlan || '',
+      paymentPlan: loc.paymentPlan,
       occupancyStatus: apiProperty.occupancyStatus || '',
       developer: apiProperty.developer?.name || '',
       developerSlug: apiProperty.developer?.slug || '',

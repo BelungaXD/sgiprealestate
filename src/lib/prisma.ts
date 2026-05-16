@@ -80,15 +80,6 @@ function initializePrisma(): PrismaClientLike | null {
       })
     }
 
-    // #region agent log
-    try {
-      const parsed = new URL(databaseUrl)
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b58f84'},body:JSON.stringify({sessionId:'b58f84',hypothesisId:'H2',location:'lib/prisma.ts:initializePrisma',message:'prisma init target',data:{hostname:parsed.hostname,port:parsed.port||'5432',database:parsed.pathname.replace(/^\//,'')},timestamp:Date.now()})}).catch(()=>{});
-    } catch {
-      fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b58f84'},body:JSON.stringify({sessionId:'b58f84',hypothesisId:'H2',location:'lib/prisma.ts:initializePrisma',message:'DATABASE_URL parse failed',data:{},timestamp:Date.now()})}).catch(()=>{});
-    }
-    // #endregion
-
     const adapter = new PrismaPgCtor({ connectionString: databaseUrl })
 
     prismaInstance =
@@ -116,7 +107,7 @@ type ErrorWithCause = {
   errors?: unknown[]
 }
 
-const collectErrorSignals = (error: unknown): { codes: Set<string>; messages: Set<string> } => {
+export const collectErrorSignals = (error: unknown): { codes: Set<string>; messages: Set<string> } => {
   const codes = new Set<string>()
   const messages = new Set<string>()
   const queue: unknown[] = [error]

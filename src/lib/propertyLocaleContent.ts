@@ -10,6 +10,9 @@ export type PropertyLocaleSource = {
   description?: string | null
   descriptionRu?: string | null
   descriptionAr?: string | null
+  paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   metaTitle?: string | null
   metaTitleRu?: string | null
   metaTitleAr?: string | null
@@ -29,12 +32,14 @@ export function localizedPropertyContent(
 ): {
   title: string
   description: string
+  paymentPlan: string
   metaTitle: string | null
   metaDescription: string | null
 } {
   const loc = locale === 'ru' || locale === 'ar' ? locale : 'en'
   const fallbackTitle = (p.title ?? '').trim()
   const fallbackDesc = (p.description ?? '').trim()
+  const fallbackPaymentPlan = (p.paymentPlan ?? '').trim()
   const fallbackMetaTitle = pick(p.metaTitle)
   const fallbackMetaDesc = pick(p.metaDescription)
 
@@ -42,6 +47,7 @@ export function localizedPropertyContent(
     return {
       title: pick(p.titleRu) ?? fallbackTitle,
       description: pick(p.descriptionRu) ?? fallbackDesc,
+      paymentPlan: pick(p.paymentPlanRu) ?? fallbackPaymentPlan,
       metaTitle: pick(p.metaTitleRu) ?? fallbackMetaTitle,
       metaDescription: pick(p.metaDescriptionRu) ?? fallbackMetaDesc,
     }
@@ -50,6 +56,7 @@ export function localizedPropertyContent(
     return {
       title: pick(p.titleAr) ?? fallbackTitle,
       description: pick(p.descriptionAr) ?? fallbackDesc,
+      paymentPlan: pick(p.paymentPlanAr) ?? fallbackPaymentPlan,
       metaTitle: pick(p.metaTitleAr) ?? fallbackMetaTitle,
       metaDescription: pick(p.metaDescriptionAr) ?? fallbackMetaDesc,
     }
@@ -57,6 +64,7 @@ export function localizedPropertyContent(
   return {
     title: fallbackTitle,
     description: fallbackDesc,
+    paymentPlan: fallbackPaymentPlan,
     metaTitle: fallbackMetaTitle,
     metaDescription: fallbackMetaDesc,
   }

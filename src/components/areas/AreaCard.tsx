@@ -2,13 +2,19 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslation } from 'next-i18next/pages'
 import { HomeIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline'
+import { localizedAreaContent } from '@/lib/areaLocaleContent'
 
 interface Area {
   id: string
   name: string
   nameEn: string
   description: string
-  descriptionEn: string
+  descriptionEn?: string
+  descriptionRu?: string
+  descriptionAr?: string
+  tags?: string[]
+  tagsRu?: string[]
+  tagsAr?: string[]
   city: string
   image: string
   propertiesCount: number
@@ -36,11 +42,14 @@ export default function AreaCard({ area }: AreaCardProps) {
     }).format(price)
   }
 
-  const displayName = currentLocale === 'ru' || currentLocale === 'ar' ? area.name : area.nameEn
-  const displayDescription = currentLocale === 'ru' || currentLocale === 'ar' ? area.description : area.descriptionEn
+  const locale = currentLocale === 'ru' || currentLocale === 'ar' ? currentLocale : 'en'
+  const localized = localizedAreaContent(area, locale)
+  const displayName = localized.name
+  const displayDescription = localized.description
+  const displayHighlights = localized.tags
 
   const imageSrc = area.image || '/images/hero.jpg'
-  const areaPropertiesHref = `/properties?area=${encodeURIComponent(area.nameEn)}`
+  const areaPropertiesHref = `/properties?area=${encodeURIComponent(localized.name || area.nameEn || area.name)}`
 
   return (
     <div className="card-hover group">
@@ -97,23 +106,17 @@ export default function AreaCard({ area }: AreaCardProps) {
         {/* Highlights */}
         <div className="mb-4">
           <div className="flex flex-wrap gap-1">
-            {area.highlights.slice(0, 3).map((highlight, index) => {
-              // Translate highlights based on current locale
-              const translatedHighlight = currentLocale === 'ru' || currentLocale === 'ar' 
-                ? highlight 
-                : highlight
-              return (
+            {displayHighlights.slice(0, 3).map((highlight, index) => (
                 <span
                   key={index}
                   className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
                 >
-                  {translatedHighlight}
+                  {highlight}
                 </span>
-              )
-            })}
-            {area.highlights.length > 3 && (
+              ))}
+            {displayHighlights.length > 3 && (
               <span className="text-xs text-gray-500">
-                +{area.highlights.length - 3} {t('more')}
+                +{displayHighlights.length - 3} {t('more')}
               </span>
             )}
           </div>

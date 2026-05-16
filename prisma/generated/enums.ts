@@ -51,6 +51,15 @@ export const PropertyStatus = {
 export type PropertyStatus = (typeof PropertyStatus)[keyof typeof PropertyStatus]
 
 
+export const AdminRole = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  MANAGER: 'MANAGER',
+  CONTENT_EDITOR: 'CONTENT_EDITOR'
+} as const
+
+export type AdminRole = (typeof AdminRole)[keyof typeof AdminRole]
+
+
 export const LeadStatus = {
   NEW: 'NEW',
   CONTACTED: 'CONTACTED',

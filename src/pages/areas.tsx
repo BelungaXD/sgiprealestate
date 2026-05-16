@@ -8,6 +8,7 @@ import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import Layout from '@/components/layout/Layout'
 import AreaFilter from '@/components/areas/AreaFilter'
+import { localizedAreaContent } from '@/lib/areaLocaleContent'
 // import AreaStats from '@/components/areas/AreaStats'
 
 // Lazy load AreaCard component
@@ -38,6 +39,11 @@ interface ApiArea {
   nameEn?: string
   description?: string
   descriptionEn?: string
+  descriptionRu?: string
+  descriptionAr?: string
+  tags?: string[]
+  tagsRu?: string[]
+  tagsAr?: string[]
   city?: string
   image?: string
   slug: string
@@ -64,12 +70,20 @@ export default function Areas() {
         const data = await response.json()
         
         // Transform API data to match Area interface
-        const transformedAreas: Area[] = ((data.areas || []) as ApiArea[]).map((area) => ({
+        const transformedAreas: Area[] = ((data.areas || []) as ApiArea[]).map((area) => {
+          const localized = localizedAreaContent(area, currentLocale)
+          const tags = localized.tags
+          const localizedName = localized.name
+          return {
           id: area.id,
-          name: area.name,
-          nameEn: area.nameEn || area.name,
+          name: localizedName,
+          nameEn: localizedName,
+          nameRu: area.nameRu || '',
+          nameAr: area.nameAr || '',
           description: area.description || '',
           descriptionEn: area.descriptionEn || area.description || '',
+          descriptionRu: area.descriptionRu || '',
+          descriptionAr: area.descriptionAr || '',
           city: area.city || 'Dubai',
           image: area.image || '/images/hero.jpg',
           propertiesCount: 0,
@@ -77,9 +91,13 @@ export default function Areas() {
           currency: 'AED',
           slug: area.slug,
           coordinates: { lat: 25.2048, lng: 55.2708 },
-          highlights: [],
-          amenities: [],
-        }))
+          highlights: tags,
+          amenities: tags,
+          tags,
+          tagsRu: area.tagsRu || [],
+          tagsAr: area.tagsAr || [],
+        }
+        })
         
         // Merge hardcoded areas with API areas (hardcoded first, avoid duplicates)
         const allAreas = [

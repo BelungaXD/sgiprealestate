@@ -70,6 +70,8 @@ export type PropertyMinAggregateOutputType = {
   yearBuilt: number | null
   completionDate: Date | null
   paymentPlan: string | null
+  paymentPlanRu: string | null
+  paymentPlanAr: string | null
   occupancyStatus: $Enums.OccupancyStatus | null
   address: string | null
   city: string | null
@@ -77,6 +79,7 @@ export type PropertyMinAggregateOutputType = {
   googleMapsUrl: string | null
   areaId: string | null
   developerId: string | null
+  assignedAdminId: string | null
   slug: string | null
   metaTitle: string | null
   metaDescription: string | null
@@ -112,6 +115,8 @@ export type PropertyMaxAggregateOutputType = {
   yearBuilt: number | null
   completionDate: Date | null
   paymentPlan: string | null
+  paymentPlanRu: string | null
+  paymentPlanAr: string | null
   occupancyStatus: $Enums.OccupancyStatus | null
   address: string | null
   city: string | null
@@ -119,6 +124,7 @@ export type PropertyMaxAggregateOutputType = {
   googleMapsUrl: string | null
   areaId: string | null
   developerId: string | null
+  assignedAdminId: string | null
   slug: string | null
   metaTitle: string | null
   metaDescription: string | null
@@ -154,6 +160,8 @@ export type PropertyCountAggregateOutputType = {
   yearBuilt: number
   completionDate: number
   paymentPlan: number
+  paymentPlanRu: number
+  paymentPlanAr: number
   occupancyStatus: number
   address: number
   city: number
@@ -168,6 +176,7 @@ export type PropertyCountAggregateOutputType = {
   amenities: number
   amenitiesRu: number
   amenitiesAr: number
+  assignedAdminId: number
   slug: number
   metaTitle: number
   metaDescription: number
@@ -227,6 +236,8 @@ export type PropertyMinAggregateInputType = {
   yearBuilt?: true
   completionDate?: true
   paymentPlan?: true
+  paymentPlanRu?: true
+  paymentPlanAr?: true
   occupancyStatus?: true
   address?: true
   city?: true
@@ -234,6 +245,7 @@ export type PropertyMinAggregateInputType = {
   googleMapsUrl?: true
   areaId?: true
   developerId?: true
+  assignedAdminId?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -269,6 +281,8 @@ export type PropertyMaxAggregateInputType = {
   yearBuilt?: true
   completionDate?: true
   paymentPlan?: true
+  paymentPlanRu?: true
+  paymentPlanAr?: true
   occupancyStatus?: true
   address?: true
   city?: true
@@ -276,6 +290,7 @@ export type PropertyMaxAggregateInputType = {
   googleMapsUrl?: true
   areaId?: true
   developerId?: true
+  assignedAdminId?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -311,6 +326,8 @@ export type PropertyCountAggregateInputType = {
   yearBuilt?: true
   completionDate?: true
   paymentPlan?: true
+  paymentPlanRu?: true
+  paymentPlanAr?: true
   occupancyStatus?: true
   address?: true
   city?: true
@@ -325,6 +342,7 @@ export type PropertyCountAggregateInputType = {
   amenities?: true
   amenitiesRu?: true
   amenitiesAr?: true
+  assignedAdminId?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -447,6 +465,8 @@ export type PropertyGroupByOutputType = {
   yearBuilt: number | null
   completionDate: Date | null
   paymentPlan: string | null
+  paymentPlanRu: string | null
+  paymentPlanAr: string | null
   occupancyStatus: $Enums.OccupancyStatus | null
   address: string
   city: string
@@ -461,6 +481,7 @@ export type PropertyGroupByOutputType = {
   amenities: string[]
   amenitiesRu: string[]
   amenitiesAr: string[]
+  assignedAdminId: string | null
   slug: string
   metaTitle: string | null
   metaDescription: string | null
@@ -519,6 +540,8 @@ export type PropertyWhereInput = {
   yearBuilt?: Prisma.IntNullableFilter<"Property"> | number | null
   completionDate?: Prisma.DateTimeNullableFilter<"Property"> | Date | string | null
   paymentPlan?: Prisma.StringNullableFilter<"Property"> | string | null
+  paymentPlanRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  paymentPlanAr?: Prisma.StringNullableFilter<"Property"> | string | null
   occupancyStatus?: Prisma.EnumOccupancyStatusNullableFilter<"Property"> | $Enums.OccupancyStatus | null
   address?: Prisma.StringFilter<"Property"> | string
   city?: Prisma.StringFilter<"Property"> | string
@@ -533,6 +556,7 @@ export type PropertyWhereInput = {
   amenities?: Prisma.StringNullableListFilter<"Property">
   amenitiesRu?: Prisma.StringNullableListFilter<"Property">
   amenitiesAr?: Prisma.StringNullableListFilter<"Property">
+  assignedAdminId?: Prisma.StringNullableFilter<"Property"> | string | null
   slug?: Prisma.StringFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
@@ -549,6 +573,7 @@ export type PropertyWhereInput = {
   images?: Prisma.PropertyImageListRelationFilter
   floorPlans?: Prisma.FloorPlanListRelationFilter
   files?: Prisma.PropertyFileListRelationFilter
+  assignedAdmin?: Prisma.XOR<Prisma.AdminNullableScalarRelationFilter, Prisma.AdminWhereInput> | null
   leads?: Prisma.LeadListRelationFilter
 }
 
@@ -574,6 +599,8 @@ export type PropertyOrderByWithRelationInput = {
   yearBuilt?: Prisma.SortOrderInput | Prisma.SortOrder
   completionDate?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentPlan?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentPlanRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentPlanAr?: Prisma.SortOrderInput | Prisma.SortOrder
   occupancyStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -588,6 +615,7 @@ export type PropertyOrderByWithRelationInput = {
   amenities?: Prisma.SortOrder
   amenitiesRu?: Prisma.SortOrder
   amenitiesAr?: Prisma.SortOrder
+  assignedAdminId?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -604,6 +632,7 @@ export type PropertyOrderByWithRelationInput = {
   images?: Prisma.PropertyImageOrderByRelationAggregateInput
   floorPlans?: Prisma.FloorPlanOrderByRelationAggregateInput
   files?: Prisma.PropertyFileOrderByRelationAggregateInput
+  assignedAdmin?: Prisma.AdminOrderByWithRelationInput
   leads?: Prisma.LeadOrderByRelationAggregateInput
 }
 
@@ -633,6 +662,8 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   yearBuilt?: Prisma.IntNullableFilter<"Property"> | number | null
   completionDate?: Prisma.DateTimeNullableFilter<"Property"> | Date | string | null
   paymentPlan?: Prisma.StringNullableFilter<"Property"> | string | null
+  paymentPlanRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  paymentPlanAr?: Prisma.StringNullableFilter<"Property"> | string | null
   occupancyStatus?: Prisma.EnumOccupancyStatusNullableFilter<"Property"> | $Enums.OccupancyStatus | null
   address?: Prisma.StringFilter<"Property"> | string
   city?: Prisma.StringFilter<"Property"> | string
@@ -647,6 +678,7 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   amenities?: Prisma.StringNullableListFilter<"Property">
   amenitiesRu?: Prisma.StringNullableListFilter<"Property">
   amenitiesAr?: Prisma.StringNullableListFilter<"Property">
+  assignedAdminId?: Prisma.StringNullableFilter<"Property"> | string | null
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
   metaTitleRu?: Prisma.StringNullableFilter<"Property"> | string | null
@@ -662,6 +694,7 @@ export type PropertyWhereUniqueInput = Prisma.AtLeast<{
   images?: Prisma.PropertyImageListRelationFilter
   floorPlans?: Prisma.FloorPlanListRelationFilter
   files?: Prisma.PropertyFileListRelationFilter
+  assignedAdmin?: Prisma.XOR<Prisma.AdminNullableScalarRelationFilter, Prisma.AdminWhereInput> | null
   leads?: Prisma.LeadListRelationFilter
 }, "id" | "slug">
 
@@ -687,6 +720,8 @@ export type PropertyOrderByWithAggregationInput = {
   yearBuilt?: Prisma.SortOrderInput | Prisma.SortOrder
   completionDate?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentPlan?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentPlanRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentPlanAr?: Prisma.SortOrderInput | Prisma.SortOrder
   occupancyStatus?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -701,6 +736,7 @@ export type PropertyOrderByWithAggregationInput = {
   amenities?: Prisma.SortOrder
   amenitiesRu?: Prisma.SortOrder
   amenitiesAr?: Prisma.SortOrder
+  assignedAdminId?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -744,6 +780,8 @@ export type PropertyScalarWhereWithAggregatesInput = {
   yearBuilt?: Prisma.IntNullableWithAggregatesFilter<"Property"> | number | null
   completionDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Property"> | Date | string | null
   paymentPlan?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  paymentPlanRu?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
+  paymentPlanAr?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   occupancyStatus?: Prisma.EnumOccupancyStatusNullableWithAggregatesFilter<"Property"> | $Enums.OccupancyStatus | null
   address?: Prisma.StringWithAggregatesFilter<"Property"> | string
   city?: Prisma.StringWithAggregatesFilter<"Property"> | string
@@ -758,6 +796,7 @@ export type PropertyScalarWhereWithAggregatesInput = {
   amenities?: Prisma.StringNullableListFilter<"Property">
   amenitiesRu?: Prisma.StringNullableListFilter<"Property">
   amenitiesAr?: Prisma.StringNullableListFilter<"Property">
+  assignedAdminId?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableWithAggregatesFilter<"Property"> | string | null
@@ -793,6 +832,8 @@ export type PropertyCreateInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -821,6 +862,7 @@ export type PropertyCreateInput = {
   images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
   floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
   files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
   leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
 }
 
@@ -846,6 +888,8 @@ export type PropertyUncheckedCreateInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -860,6 +904,7 @@ export type PropertyUncheckedCreateInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -899,6 +944,8 @@ export type PropertyUpdateInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -927,6 +974,7 @@ export type PropertyUpdateInput = {
   images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
   floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
   leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
 }
 
@@ -952,6 +1000,8 @@ export type PropertyUncheckedUpdateInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -966,6 +1016,7 @@ export type PropertyUncheckedUpdateInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1005,6 +1056,8 @@ export type PropertyCreateManyInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -1019,6 +1072,7 @@ export type PropertyCreateManyInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1054,6 +1108,8 @@ export type PropertyUpdateManyMutationInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1101,6 +1157,8 @@ export type PropertyUncheckedUpdateManyInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1115,6 +1173,7 @@ export type PropertyUncheckedUpdateManyInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1158,6 +1217,8 @@ export type PropertyCountOrderByAggregateInput = {
   yearBuilt?: Prisma.SortOrder
   completionDate?: Prisma.SortOrder
   paymentPlan?: Prisma.SortOrder
+  paymentPlanRu?: Prisma.SortOrder
+  paymentPlanAr?: Prisma.SortOrder
   occupancyStatus?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -1172,6 +1233,7 @@ export type PropertyCountOrderByAggregateInput = {
   amenities?: Prisma.SortOrder
   amenitiesRu?: Prisma.SortOrder
   amenitiesAr?: Prisma.SortOrder
+  assignedAdminId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -1218,6 +1280,8 @@ export type PropertyMaxOrderByAggregateInput = {
   yearBuilt?: Prisma.SortOrder
   completionDate?: Prisma.SortOrder
   paymentPlan?: Prisma.SortOrder
+  paymentPlanRu?: Prisma.SortOrder
+  paymentPlanAr?: Prisma.SortOrder
   occupancyStatus?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -1225,6 +1289,7 @@ export type PropertyMaxOrderByAggregateInput = {
   googleMapsUrl?: Prisma.SortOrder
   areaId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
+  assignedAdminId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -1260,6 +1325,8 @@ export type PropertyMinOrderByAggregateInput = {
   yearBuilt?: Prisma.SortOrder
   completionDate?: Prisma.SortOrder
   paymentPlan?: Prisma.SortOrder
+  paymentPlanRu?: Prisma.SortOrder
+  paymentPlanAr?: Prisma.SortOrder
   occupancyStatus?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -1267,6 +1334,7 @@ export type PropertyMinOrderByAggregateInput = {
   googleMapsUrl?: Prisma.SortOrder
   areaId?: Prisma.SortOrder
   developerId?: Prisma.SortOrder
+  assignedAdminId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -1567,6 +1635,48 @@ export type PropertyUpdateOneWithoutLeadsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PropertyUpdateToOneWithWhereWithoutLeadsInput, Prisma.PropertyUpdateWithoutLeadsInput>, Prisma.PropertyUncheckedUpdateWithoutLeadsInput>
 }
 
+export type PropertyCreateNestedManyWithoutAssignedAdminInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAssignedAdminInput, Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput> | Prisma.PropertyCreateWithoutAssignedAdminInput[] | Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput | Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput[]
+  createMany?: Prisma.PropertyCreateManyAssignedAdminInputEnvelope
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+}
+
+export type PropertyUncheckedCreateNestedManyWithoutAssignedAdminInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAssignedAdminInput, Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput> | Prisma.PropertyCreateWithoutAssignedAdminInput[] | Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput | Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput[]
+  createMany?: Prisma.PropertyCreateManyAssignedAdminInputEnvelope
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+}
+
+export type PropertyUpdateManyWithoutAssignedAdminNestedInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAssignedAdminInput, Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput> | Prisma.PropertyCreateWithoutAssignedAdminInput[] | Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput | Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput[]
+  upsert?: Prisma.PropertyUpsertWithWhereUniqueWithoutAssignedAdminInput | Prisma.PropertyUpsertWithWhereUniqueWithoutAssignedAdminInput[]
+  createMany?: Prisma.PropertyCreateManyAssignedAdminInputEnvelope
+  set?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  disconnect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  delete?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  update?: Prisma.PropertyUpdateWithWhereUniqueWithoutAssignedAdminInput | Prisma.PropertyUpdateWithWhereUniqueWithoutAssignedAdminInput[]
+  updateMany?: Prisma.PropertyUpdateManyWithWhereWithoutAssignedAdminInput | Prisma.PropertyUpdateManyWithWhereWithoutAssignedAdminInput[]
+  deleteMany?: Prisma.PropertyScalarWhereInput | Prisma.PropertyScalarWhereInput[]
+}
+
+export type PropertyUncheckedUpdateManyWithoutAssignedAdminNestedInput = {
+  create?: Prisma.XOR<Prisma.PropertyCreateWithoutAssignedAdminInput, Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput> | Prisma.PropertyCreateWithoutAssignedAdminInput[] | Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput[]
+  connectOrCreate?: Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput | Prisma.PropertyCreateOrConnectWithoutAssignedAdminInput[]
+  upsert?: Prisma.PropertyUpsertWithWhereUniqueWithoutAssignedAdminInput | Prisma.PropertyUpsertWithWhereUniqueWithoutAssignedAdminInput[]
+  createMany?: Prisma.PropertyCreateManyAssignedAdminInputEnvelope
+  set?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  disconnect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  delete?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  connect?: Prisma.PropertyWhereUniqueInput | Prisma.PropertyWhereUniqueInput[]
+  update?: Prisma.PropertyUpdateWithWhereUniqueWithoutAssignedAdminInput | Prisma.PropertyUpdateWithWhereUniqueWithoutAssignedAdminInput[]
+  updateMany?: Prisma.PropertyUpdateManyWithWhereWithoutAssignedAdminInput | Prisma.PropertyUpdateManyWithWhereWithoutAssignedAdminInput[]
+  deleteMany?: Prisma.PropertyScalarWhereInput | Prisma.PropertyScalarWhereInput[]
+}
+
 export type PropertyCreateWithoutImagesInput = {
   id?: string
   title?: string
@@ -1589,6 +1699,8 @@ export type PropertyCreateWithoutImagesInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -1616,6 +1728,7 @@ export type PropertyCreateWithoutImagesInput = {
   developer?: Prisma.DeveloperCreateNestedOneWithoutPropertiesInput
   floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
   files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
   leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
 }
 
@@ -1641,6 +1754,8 @@ export type PropertyUncheckedCreateWithoutImagesInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -1655,6 +1770,7 @@ export type PropertyUncheckedCreateWithoutImagesInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1709,6 +1825,8 @@ export type PropertyUpdateWithoutImagesInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1736,6 +1854,7 @@ export type PropertyUpdateWithoutImagesInput = {
   developer?: Prisma.DeveloperUpdateOneWithoutPropertiesNestedInput
   floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
   leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
 }
 
@@ -1761,6 +1880,8 @@ export type PropertyUncheckedUpdateWithoutImagesInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1775,6 +1896,7 @@ export type PropertyUncheckedUpdateWithoutImagesInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1813,6 +1935,8 @@ export type PropertyCreateWithoutFloorPlansInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -1840,6 +1964,7 @@ export type PropertyCreateWithoutFloorPlansInput = {
   developer?: Prisma.DeveloperCreateNestedOneWithoutPropertiesInput
   images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
   files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
   leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
 }
 
@@ -1865,6 +1990,8 @@ export type PropertyUncheckedCreateWithoutFloorPlansInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -1879,6 +2006,7 @@ export type PropertyUncheckedCreateWithoutFloorPlansInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -1933,6 +2061,8 @@ export type PropertyUpdateWithoutFloorPlansInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1960,6 +2090,7 @@ export type PropertyUpdateWithoutFloorPlansInput = {
   developer?: Prisma.DeveloperUpdateOneWithoutPropertiesNestedInput
   images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
   leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
 }
 
@@ -1985,6 +2116,8 @@ export type PropertyUncheckedUpdateWithoutFloorPlansInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1999,6 +2132,7 @@ export type PropertyUncheckedUpdateWithoutFloorPlansInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2037,6 +2171,8 @@ export type PropertyCreateWithoutFilesInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2064,6 +2200,7 @@ export type PropertyCreateWithoutFilesInput = {
   developer?: Prisma.DeveloperCreateNestedOneWithoutPropertiesInput
   images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
   floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
   leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
 }
 
@@ -2089,6 +2226,8 @@ export type PropertyUncheckedCreateWithoutFilesInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2103,6 +2242,7 @@ export type PropertyUncheckedCreateWithoutFilesInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2157,6 +2297,8 @@ export type PropertyUpdateWithoutFilesInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2184,6 +2326,7 @@ export type PropertyUpdateWithoutFilesInput = {
   developer?: Prisma.DeveloperUpdateOneWithoutPropertiesNestedInput
   images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
   floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
   leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
 }
 
@@ -2209,6 +2352,8 @@ export type PropertyUncheckedUpdateWithoutFilesInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2223,6 +2368,7 @@ export type PropertyUncheckedUpdateWithoutFilesInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2261,6 +2407,8 @@ export type PropertyCreateWithoutAreaInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2288,6 +2436,7 @@ export type PropertyCreateWithoutAreaInput = {
   images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
   floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
   files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
   leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
 }
 
@@ -2313,6 +2462,8 @@ export type PropertyUncheckedCreateWithoutAreaInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2326,6 +2477,7 @@ export type PropertyUncheckedCreateWithoutAreaInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2394,6 +2546,8 @@ export type PropertyScalarWhereInput = {
   yearBuilt?: Prisma.IntNullableFilter<"Property"> | number | null
   completionDate?: Prisma.DateTimeNullableFilter<"Property"> | Date | string | null
   paymentPlan?: Prisma.StringNullableFilter<"Property"> | string | null
+  paymentPlanRu?: Prisma.StringNullableFilter<"Property"> | string | null
+  paymentPlanAr?: Prisma.StringNullableFilter<"Property"> | string | null
   occupancyStatus?: Prisma.EnumOccupancyStatusNullableFilter<"Property"> | $Enums.OccupancyStatus | null
   address?: Prisma.StringFilter<"Property"> | string
   city?: Prisma.StringFilter<"Property"> | string
@@ -2408,6 +2562,7 @@ export type PropertyScalarWhereInput = {
   amenities?: Prisma.StringNullableListFilter<"Property">
   amenitiesRu?: Prisma.StringNullableListFilter<"Property">
   amenitiesAr?: Prisma.StringNullableListFilter<"Property">
+  assignedAdminId?: Prisma.StringNullableFilter<"Property"> | string | null
   slug?: Prisma.StringFilter<"Property"> | string
   metaTitle?: Prisma.StringNullableFilter<"Property"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Property"> | string | null
@@ -2443,6 +2598,8 @@ export type PropertyCreateWithoutDeveloperInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2470,6 +2627,7 @@ export type PropertyCreateWithoutDeveloperInput = {
   images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
   floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
   files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
   leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
 }
 
@@ -2495,6 +2653,8 @@ export type PropertyUncheckedCreateWithoutDeveloperInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2508,6 +2668,7 @@ export type PropertyUncheckedCreateWithoutDeveloperInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2573,6 +2734,8 @@ export type PropertyCreateWithoutLeadsInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2601,6 +2764,7 @@ export type PropertyCreateWithoutLeadsInput = {
   images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
   floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
   files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  assignedAdmin?: Prisma.AdminCreateNestedOneWithoutAssignedPropertiesInput
 }
 
 export type PropertyUncheckedCreateWithoutLeadsInput = {
@@ -2625,6 +2789,8 @@ export type PropertyUncheckedCreateWithoutLeadsInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2639,6 +2805,7 @@ export type PropertyUncheckedCreateWithoutLeadsInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2693,6 +2860,8 @@ export type PropertyUpdateWithoutLeadsInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2721,6 +2890,7 @@ export type PropertyUpdateWithoutLeadsInput = {
   images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
   floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
 }
 
 export type PropertyUncheckedUpdateWithoutLeadsInput = {
@@ -2745,6 +2915,8 @@ export type PropertyUncheckedUpdateWithoutLeadsInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2759,6 +2931,7 @@ export type PropertyUncheckedUpdateWithoutLeadsInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2773,6 +2946,142 @@ export type PropertyUncheckedUpdateWithoutLeadsInput = {
   images?: Prisma.PropertyImageUncheckedUpdateManyWithoutPropertyNestedInput
   floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUncheckedUpdateManyWithoutPropertyNestedInput
+}
+
+export type PropertyCreateWithoutAssignedAdminInput = {
+  id?: string
+  title?: string
+  description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  price?: number
+  currency?: string
+  type: $Enums.PropertyType
+  listingMarket?: $Enums.ListingMarket
+  status?: $Enums.PropertyStatus
+  areaSqm?: number
+  bedrooms?: number
+  bathrooms?: number
+  parking?: number | null
+  floor?: number | null
+  totalFloors?: number | null
+  yearBuilt?: number | null
+  completionDate?: Date | string | null
+  paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
+  occupancyStatus?: $Enums.OccupancyStatus | null
+  address?: string
+  city?: string
+  district?: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  googleMapsUrl?: string | null
+  features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
+  amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isPublished?: boolean
+  isFeatured?: boolean
+  area?: Prisma.AreaCreateNestedOneWithoutPropertiesInput
+  developer?: Prisma.DeveloperCreateNestedOneWithoutPropertiesInput
+  images?: Prisma.PropertyImageCreateNestedManyWithoutPropertyInput
+  floorPlans?: Prisma.FloorPlanCreateNestedManyWithoutPropertyInput
+  files?: Prisma.PropertyFileCreateNestedManyWithoutPropertyInput
+  leads?: Prisma.LeadCreateNestedManyWithoutPropertyInput
+}
+
+export type PropertyUncheckedCreateWithoutAssignedAdminInput = {
+  id?: string
+  title?: string
+  description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  price?: number
+  currency?: string
+  type: $Enums.PropertyType
+  listingMarket?: $Enums.ListingMarket
+  status?: $Enums.PropertyStatus
+  areaSqm?: number
+  bedrooms?: number
+  bathrooms?: number
+  parking?: number | null
+  floor?: number | null
+  totalFloors?: number | null
+  yearBuilt?: number | null
+  completionDate?: Date | string | null
+  paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
+  occupancyStatus?: $Enums.OccupancyStatus | null
+  address?: string
+  city?: string
+  district?: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  googleMapsUrl?: string | null
+  areaId?: string | null
+  developerId?: string | null
+  features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
+  amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isPublished?: boolean
+  isFeatured?: boolean
+  images?: Prisma.PropertyImageUncheckedCreateNestedManyWithoutPropertyInput
+  floorPlans?: Prisma.FloorPlanUncheckedCreateNestedManyWithoutPropertyInput
+  files?: Prisma.PropertyFileUncheckedCreateNestedManyWithoutPropertyInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutPropertyInput
+}
+
+export type PropertyCreateOrConnectWithoutAssignedAdminInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  create: Prisma.XOR<Prisma.PropertyCreateWithoutAssignedAdminInput, Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput>
+}
+
+export type PropertyCreateManyAssignedAdminInputEnvelope = {
+  data: Prisma.PropertyCreateManyAssignedAdminInput | Prisma.PropertyCreateManyAssignedAdminInput[]
+  skipDuplicates?: boolean
+}
+
+export type PropertyUpsertWithWhereUniqueWithoutAssignedAdminInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  update: Prisma.XOR<Prisma.PropertyUpdateWithoutAssignedAdminInput, Prisma.PropertyUncheckedUpdateWithoutAssignedAdminInput>
+  create: Prisma.XOR<Prisma.PropertyCreateWithoutAssignedAdminInput, Prisma.PropertyUncheckedCreateWithoutAssignedAdminInput>
+}
+
+export type PropertyUpdateWithWhereUniqueWithoutAssignedAdminInput = {
+  where: Prisma.PropertyWhereUniqueInput
+  data: Prisma.XOR<Prisma.PropertyUpdateWithoutAssignedAdminInput, Prisma.PropertyUncheckedUpdateWithoutAssignedAdminInput>
+}
+
+export type PropertyUpdateManyWithWhereWithoutAssignedAdminInput = {
+  where: Prisma.PropertyScalarWhereInput
+  data: Prisma.XOR<Prisma.PropertyUpdateManyMutationInput, Prisma.PropertyUncheckedUpdateManyWithoutAssignedAdminInput>
 }
 
 export type PropertyCreateManyAreaInput = {
@@ -2797,6 +3106,8 @@ export type PropertyCreateManyAreaInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -2810,6 +3121,7 @@ export type PropertyCreateManyAreaInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -2845,6 +3157,8 @@ export type PropertyUpdateWithoutAreaInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2872,6 +3186,7 @@ export type PropertyUpdateWithoutAreaInput = {
   images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
   floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
   leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
 }
 
@@ -2897,6 +3212,8 @@ export type PropertyUncheckedUpdateWithoutAreaInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2910,6 +3227,7 @@ export type PropertyUncheckedUpdateWithoutAreaInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2949,6 +3267,8 @@ export type PropertyUncheckedUpdateManyWithoutAreaInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2962,6 +3282,7 @@ export type PropertyUncheckedUpdateManyWithoutAreaInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2997,6 +3318,8 @@ export type PropertyCreateManyDeveloperInput = {
   yearBuilt?: number | null
   completionDate?: Date | string | null
   paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
   occupancyStatus?: $Enums.OccupancyStatus | null
   address?: string
   city?: string
@@ -3010,6 +3333,7 @@ export type PropertyCreateManyDeveloperInput = {
   amenities?: Prisma.PropertyCreateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  assignedAdminId?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -3045,6 +3369,8 @@ export type PropertyUpdateWithoutDeveloperInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3072,6 +3398,7 @@ export type PropertyUpdateWithoutDeveloperInput = {
   images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
   floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
   files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  assignedAdmin?: Prisma.AdminUpdateOneWithoutAssignedPropertiesNestedInput
   leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
 }
 
@@ -3097,6 +3424,8 @@ export type PropertyUncheckedUpdateWithoutDeveloperInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3110,6 +3439,7 @@ export type PropertyUncheckedUpdateWithoutDeveloperInput = {
   amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
   amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
   amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3149,6 +3479,8 @@ export type PropertyUncheckedUpdateManyWithoutDeveloperInput = {
   yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
   address?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3156,6 +3488,219 @@ export type PropertyUncheckedUpdateManyWithoutDeveloperInput = {
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
+  amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  assignedAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type PropertyCreateManyAssignedAdminInput = {
+  id?: string
+  title?: string
+  description?: string | null
+  titleRu?: string | null
+  titleAr?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  price?: number
+  currency?: string
+  type: $Enums.PropertyType
+  listingMarket?: $Enums.ListingMarket
+  status?: $Enums.PropertyStatus
+  areaSqm?: number
+  bedrooms?: number
+  bathrooms?: number
+  parking?: number | null
+  floor?: number | null
+  totalFloors?: number | null
+  yearBuilt?: number | null
+  completionDate?: Date | string | null
+  paymentPlan?: string | null
+  paymentPlanRu?: string | null
+  paymentPlanAr?: string | null
+  occupancyStatus?: $Enums.OccupancyStatus | null
+  address?: string
+  city?: string
+  district?: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  googleMapsUrl?: string | null
+  areaId?: string | null
+  developerId?: string | null
+  features?: Prisma.PropertyCreatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyCreatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyCreatefeaturesArInput | string[]
+  amenities?: Prisma.PropertyCreateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyCreateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyCreateamenitiesArInput | string[]
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  metaTitleRu?: string | null
+  metaTitleAr?: string | null
+  metaDescriptionRu?: string | null
+  metaDescriptionAr?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isPublished?: boolean
+  isFeatured?: boolean
+}
+
+export type PropertyUpdateWithoutAssignedAdminInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+  listingMarket?: Prisma.EnumListingMarketFieldUpdateOperationsInput | $Enums.ListingMarket
+  status?: Prisma.EnumPropertyStatusFieldUpdateOperationsInput | $Enums.PropertyStatus
+  areaSqm?: Prisma.FloatFieldUpdateOperationsInput | number
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  parking?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  floor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  totalFloors?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  district?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
+  amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  area?: Prisma.AreaUpdateOneWithoutPropertiesNestedInput
+  developer?: Prisma.DeveloperUpdateOneWithoutPropertiesNestedInput
+  images?: Prisma.PropertyImageUpdateManyWithoutPropertyNestedInput
+  floorPlans?: Prisma.FloorPlanUpdateManyWithoutPropertyNestedInput
+  files?: Prisma.PropertyFileUpdateManyWithoutPropertyNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutPropertyNestedInput
+}
+
+export type PropertyUncheckedUpdateWithoutAssignedAdminInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+  listingMarket?: Prisma.EnumListingMarketFieldUpdateOperationsInput | $Enums.ListingMarket
+  status?: Prisma.EnumPropertyStatusFieldUpdateOperationsInput | $Enums.PropertyStatus
+  areaSqm?: Prisma.FloatFieldUpdateOperationsInput | number
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  parking?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  floor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  totalFloors?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  district?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  features?: Prisma.PropertyUpdatefeaturesInput | string[]
+  featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
+  featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
+  amenities?: Prisma.PropertyUpdateamenitiesInput | string[]
+  amenitiesRu?: Prisma.PropertyUpdateamenitiesRuInput | string[]
+  amenitiesAr?: Prisma.PropertyUpdateamenitiesArInput | string[]
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  images?: Prisma.PropertyImageUncheckedUpdateManyWithoutPropertyNestedInput
+  floorPlans?: Prisma.FloorPlanUncheckedUpdateManyWithoutPropertyNestedInput
+  files?: Prisma.PropertyFileUncheckedUpdateManyWithoutPropertyNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutPropertyNestedInput
+}
+
+export type PropertyUncheckedUpdateManyWithoutAssignedAdminInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  titleAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPropertyTypeFieldUpdateOperationsInput | $Enums.PropertyType
+  listingMarket?: Prisma.EnumListingMarketFieldUpdateOperationsInput | $Enums.ListingMarket
+  status?: Prisma.EnumPropertyStatusFieldUpdateOperationsInput | $Enums.PropertyStatus
+  areaSqm?: Prisma.FloatFieldUpdateOperationsInput | number
+  bedrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms?: Prisma.IntFieldUpdateOperationsInput | number
+  parking?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  floor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  totalFloors?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  yearBuilt?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  completionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paymentPlan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentPlanAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occupancyStatus?: Prisma.NullableEnumOccupancyStatusFieldUpdateOperationsInput | $Enums.OccupancyStatus | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  district?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  googleMapsUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  developerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   features?: Prisma.PropertyUpdatefeaturesInput | string[]
   featuresRu?: Prisma.PropertyUpdatefeaturesRuInput | string[]
   featuresAr?: Prisma.PropertyUpdatefeaturesArInput | string[]
@@ -3255,6 +3800,8 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   yearBuilt?: boolean
   completionDate?: boolean
   paymentPlan?: boolean
+  paymentPlanRu?: boolean
+  paymentPlanAr?: boolean
   occupancyStatus?: boolean
   address?: boolean
   city?: boolean
@@ -3269,6 +3816,7 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   amenities?: boolean
   amenitiesRu?: boolean
   amenitiesAr?: boolean
+  assignedAdminId?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3285,6 +3833,7 @@ export type PropertySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   images?: boolean | Prisma.Property$imagesArgs<ExtArgs>
   floorPlans?: boolean | Prisma.Property$floorPlansArgs<ExtArgs>
   files?: boolean | Prisma.Property$filesArgs<ExtArgs>
+  assignedAdmin?: boolean | Prisma.Property$assignedAdminArgs<ExtArgs>
   leads?: boolean | Prisma.Property$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.PropertyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
@@ -3311,6 +3860,8 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   yearBuilt?: boolean
   completionDate?: boolean
   paymentPlan?: boolean
+  paymentPlanRu?: boolean
+  paymentPlanAr?: boolean
   occupancyStatus?: boolean
   address?: boolean
   city?: boolean
@@ -3325,6 +3876,7 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   amenities?: boolean
   amenitiesRu?: boolean
   amenitiesAr?: boolean
+  assignedAdminId?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3338,6 +3890,7 @@ export type PropertySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   isFeatured?: boolean
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
+  assignedAdmin?: boolean | Prisma.Property$assignedAdminArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
 
 export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -3362,6 +3915,8 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   yearBuilt?: boolean
   completionDate?: boolean
   paymentPlan?: boolean
+  paymentPlanRu?: boolean
+  paymentPlanAr?: boolean
   occupancyStatus?: boolean
   address?: boolean
   city?: boolean
@@ -3376,6 +3931,7 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   amenities?: boolean
   amenitiesRu?: boolean
   amenitiesAr?: boolean
+  assignedAdminId?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3389,6 +3945,7 @@ export type PropertySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   isFeatured?: boolean
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
+  assignedAdmin?: boolean | Prisma.Property$assignedAdminArgs<ExtArgs>
 }, ExtArgs["result"]["property"]>
 
 export type PropertySelectScalar = {
@@ -3413,6 +3970,8 @@ export type PropertySelectScalar = {
   yearBuilt?: boolean
   completionDate?: boolean
   paymentPlan?: boolean
+  paymentPlanRu?: boolean
+  paymentPlanAr?: boolean
   occupancyStatus?: boolean
   address?: boolean
   city?: boolean
@@ -3427,6 +3986,7 @@ export type PropertySelectScalar = {
   amenities?: boolean
   amenitiesRu?: boolean
   amenitiesAr?: boolean
+  assignedAdminId?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -3440,23 +4000,26 @@ export type PropertySelectScalar = {
   isFeatured?: boolean
 }
 
-export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "titleRu" | "titleAr" | "descriptionRu" | "descriptionAr" | "price" | "currency" | "type" | "listingMarket" | "status" | "areaSqm" | "bedrooms" | "bathrooms" | "parking" | "floor" | "totalFloors" | "yearBuilt" | "completionDate" | "paymentPlan" | "occupancyStatus" | "address" | "city" | "district" | "coordinates" | "googleMapsUrl" | "areaId" | "developerId" | "features" | "featuresRu" | "featuresAr" | "amenities" | "amenitiesRu" | "amenitiesAr" | "slug" | "metaTitle" | "metaDescription" | "metaTitleRu" | "metaTitleAr" | "metaDescriptionRu" | "metaDescriptionAr" | "createdAt" | "updatedAt" | "isPublished" | "isFeatured", ExtArgs["result"]["property"]>
+export type PropertyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "titleRu" | "titleAr" | "descriptionRu" | "descriptionAr" | "price" | "currency" | "type" | "listingMarket" | "status" | "areaSqm" | "bedrooms" | "bathrooms" | "parking" | "floor" | "totalFloors" | "yearBuilt" | "completionDate" | "paymentPlan" | "paymentPlanRu" | "paymentPlanAr" | "occupancyStatus" | "address" | "city" | "district" | "coordinates" | "googleMapsUrl" | "areaId" | "developerId" | "features" | "featuresRu" | "featuresAr" | "amenities" | "amenitiesRu" | "amenitiesAr" | "assignedAdminId" | "slug" | "metaTitle" | "metaDescription" | "metaTitleRu" | "metaTitleAr" | "metaDescriptionRu" | "metaDescriptionAr" | "createdAt" | "updatedAt" | "isPublished" | "isFeatured", ExtArgs["result"]["property"]>
 export type PropertyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
   images?: boolean | Prisma.Property$imagesArgs<ExtArgs>
   floorPlans?: boolean | Prisma.Property$floorPlansArgs<ExtArgs>
   files?: boolean | Prisma.Property$filesArgs<ExtArgs>
+  assignedAdmin?: boolean | Prisma.Property$assignedAdminArgs<ExtArgs>
   leads?: boolean | Prisma.Property$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.PropertyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PropertyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
+  assignedAdmin?: boolean | Prisma.Property$assignedAdminArgs<ExtArgs>
 }
 export type PropertyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   area?: boolean | Prisma.Property$areaArgs<ExtArgs>
   developer?: boolean | Prisma.Property$developerArgs<ExtArgs>
+  assignedAdmin?: boolean | Prisma.Property$assignedAdminArgs<ExtArgs>
 }
 
 export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3467,6 +4030,7 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     images: Prisma.$PropertyImagePayload<ExtArgs>[]
     floorPlans: Prisma.$FloorPlanPayload<ExtArgs>[]
     files: Prisma.$PropertyFilePayload<ExtArgs>[]
+    assignedAdmin: Prisma.$AdminPayload<ExtArgs> | null
     leads: Prisma.$LeadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -3500,6 +4064,8 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
      * Payment plan / handover terms (primary listings)
      */
     paymentPlan: string | null
+    paymentPlanRu: string | null
+    paymentPlanAr: string | null
     /**
      * Vacant / tenanted (secondary listings)
      */
@@ -3520,6 +4086,7 @@ export type $PropertyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     amenities: string[]
     amenitiesRu: string[]
     amenitiesAr: string[]
+    assignedAdminId: string | null
     slug: string
     metaTitle: string | null
     metaDescription: string | null
@@ -3930,6 +4497,7 @@ export interface Prisma__PropertyClient<T, Null = never, ExtArgs extends runtime
   images<T extends Prisma.Property$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   floorPlans<T extends Prisma.Property$floorPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$floorPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FloorPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.Property$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignedAdmin<T extends Prisma.Property$assignedAdminArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$assignedAdminArgs<ExtArgs>>): Prisma.Prisma__AdminClient<runtime.Types.Result.GetResult<Prisma.$AdminPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   leads<T extends Prisma.Property$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Property$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3981,6 +4549,8 @@ export interface PropertyFieldRefs {
   readonly yearBuilt: Prisma.FieldRef<"Property", 'Int'>
   readonly completionDate: Prisma.FieldRef<"Property", 'DateTime'>
   readonly paymentPlan: Prisma.FieldRef<"Property", 'String'>
+  readonly paymentPlanRu: Prisma.FieldRef<"Property", 'String'>
+  readonly paymentPlanAr: Prisma.FieldRef<"Property", 'String'>
   readonly occupancyStatus: Prisma.FieldRef<"Property", 'OccupancyStatus'>
   readonly address: Prisma.FieldRef<"Property", 'String'>
   readonly city: Prisma.FieldRef<"Property", 'String'>
@@ -3995,6 +4565,7 @@ export interface PropertyFieldRefs {
   readonly amenities: Prisma.FieldRef<"Property", 'String[]'>
   readonly amenitiesRu: Prisma.FieldRef<"Property", 'String[]'>
   readonly amenitiesAr: Prisma.FieldRef<"Property", 'String[]'>
+  readonly assignedAdminId: Prisma.FieldRef<"Property", 'String'>
   readonly slug: Prisma.FieldRef<"Property", 'String'>
   readonly metaTitle: Prisma.FieldRef<"Property", 'String'>
   readonly metaDescription: Prisma.FieldRef<"Property", 'String'>
@@ -4514,6 +5085,25 @@ export type Property$filesArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.PropertyFileScalarFieldEnum | Prisma.PropertyFileScalarFieldEnum[]
+}
+
+/**
+ * Property.assignedAdmin
+ */
+export type Property$assignedAdminArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Admin
+   */
+  select?: Prisma.AdminSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Admin
+   */
+  omit?: Prisma.AdminOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminInclude<ExtArgs> | null
+  where?: Prisma.AdminWhereInput
 }
 
 /**

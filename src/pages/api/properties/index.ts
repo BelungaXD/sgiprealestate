@@ -12,7 +12,8 @@ import {
   omitUndefinedShallow,
   parseIsoDateForPrisma,
 } from '@/lib/utils/isoDateForPrisma'
-import { isAdminSessionValid } from '@/lib/adminSession'
+import { getAdminSessionFromRequest, isAdminSessionValid } from '@/lib/adminSession'
+import { adminHasPermission, managerPropertyScope } from '@/lib/adminAuth'
 
 export const config = {
   api: {
@@ -78,6 +79,12 @@ export default async function handler(
       }
       if (areaId) where.areaId = areaId
       if (developerId) where.developerId = developerId
+
+      const adminSession = getAdminSessionFromRequest(req)
+      const propertyScope = adminSession ? managerPropertyScope(adminSession) : null
+      if (propertyScope) {
+        where.assignedAdminId = propertyScope.assignedAdminId
+      }
 
       let orderBy: Record<string, 'asc' | 'desc'> | Record<string, 'asc' | 'desc'>[] = {
         createdAt: 'desc',
@@ -187,7 +194,8 @@ export default async function handler(
 
   // POST - Create property
   if (req.method === 'POST') {
-    if (!isAdminSessionValid(req)) {
+    const adminSession = getAdminSessionFromRequest(req)
+    if (!adminSession || !adminHasPermission(adminSession.role, 'manage_properties')) {
       return res.status(401).json({ success: false, message: 'Unauthorized' })
     }
     try {
@@ -212,9 +220,6 @@ export default async function handler(
         await prisma.$connect()
       } catch (dbError: unknown) {
         const err = asErrorWithMessage(dbError)
-        // #region agent log
-        fetch('http://127.0.0.1:7934/ingest/9cd6050e-5c73-4f29-afde-23295d7c65a1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b58f84'},body:JSON.stringify({sessionId:'b58f84',hypothesisId:'H1',location:'api/properties/index.ts:POST:$connect',message:'property create db connect failed',data:{code:err.code,message:err.message,hasDatabaseUrl:Boolean(process.env.DATABASE_URL),dbHost:process.env.DB_HOST||null,dbPort:process.env.DB_PORT||null},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         log.errorWithException('Database connection error', dbError)
         return res.status(503).json({
           success: false,
@@ -382,6 +387,14 @@ export default async function handler(
             listingMarket === 'PRIMARY'
               ? validatedData.paymentPlan?.trim() || null
               : null,
+          paymentPlanRu:
+            listingMarket === 'PRIMARY'
+              ? validatedData.paymentPlanRu?.trim() || null
+              : null,
+          paymentPlanAr:
+            listingMarket === 'PRIMARY'
+              ? validatedData.paymentPlanAr?.trim() || null
+              : null,
           occupancyStatus:
             listingMarket === 'SECONDARY'
               ? validatedData.occupancyStatus || null
@@ -408,6 +421,10 @@ export default async function handler(
           metaDescriptionAr: generatedMeta.metaDescriptionAr || null,
           isPublished: true,
           isFeatured: false,
+          assignedAdminId:
+            adminSession.role === 'MANAGER' && adminSession.adminId
+              ? adminSession.adminId
+              : null,
         })
         property = await prisma.property.create({
           data: propertyCreateData as Prisma.PropertyUncheckedCreateInput,

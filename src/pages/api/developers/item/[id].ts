@@ -2,35 +2,56 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
 import { createScopedLogger } from '@/lib/logger'
-import { isAdminSessionValid } from '@/lib/adminSession'
+import { getAdminSessionFromRequest } from '@/lib/adminSession'
+import { adminHasPermission } from '@/lib/adminAuth'
 import { z } from 'zod'
+import {
+  isMissingDeveloperFounded,
+  isMissingDeveloperIsActive,
+  isMissingDeveloperLocaleContentColumn,
+  isMissingDeveloperNameLocales,
+  isStaleDeveloperLocalePrismaClient,
+} from '@/lib/developerPrismaCompat'
+
+async function findDeveloperForUpdate(id: string) {
+  const fullSelect = {
+    id: true,
+    name: true,
+    nameEn: true,
+    nameRu: true,
+    nameAr: true,
+    slug: true,
+  } as const
+  const minimalSelect = { id: true, name: true, slug: true } as const
+
+  try {
+    return await prisma.developer.findUnique({ where: { id }, select: fullSelect })
+  } catch (error: unknown) {
+    if (!isMissingDeveloperNameLocales(error)) throw error
+    const row = await prisma.developer.findUnique({ where: { id }, select: minimalSelect })
+    if (!row) return null
+    return { ...row, nameEn: row.name, nameRu: null, nameAr: null }
+  }
+}
 
 const updateDeveloperSchema = z.object({
-  nameEn: z.string().min(1).optional(),
+  name: z.string().optional().nullable(),
   nameRu: z.string().optional().nullable(),
+  nameAr: z.string().optional().nullable(),
   description: z.string().max(20000).optional().nullable(),
+  descriptionRu: z.string().max(20000).optional().nullable(),
+  descriptionAr: z.string().max(20000).optional().nullable(),
   website: z.string().optional().nullable(),
   specialties: z.array(z.string()).optional(),
+  specialtiesRu: z.array(z.string()).optional(),
+  specialtiesAr: z.array(z.string()).optional(),
   notableProjects: z.array(z.string()).optional(),
+  notableProjectsRu: z.array(z.string()).optional(),
+  notableProjectsAr: z.array(z.string()).optional(),
+  founded: z.number().int().min(1000).max(9999).optional().nullable(),
   logo: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
 })
-
-const hasMissingDeveloperIsActiveColumn = (error: unknown) => {
-  if (!error || typeof error !== 'object') return false
-
-  const prismaError = error as {
-    code?: string
-    meta?: { column?: string }
-    message?: string
-  }
-
-  return (
-    prismaError.code === 'P2022' &&
-    (prismaError.meta?.column === 'developers.isActive' ||
-      prismaError.message?.includes('developers.isActive'))
-  )
-}
 
 const log = createScopedLogger('api/developers/item/[id]')
 type ErrorLike = { code?: string; message?: string; name?: string; issues?: unknown }
@@ -50,42 +71,54 @@ export default async function handler(
     return res.status(503).json({ message: 'Database not configured' })
   }
 
-  if (!isAdminSessionValid(req)) {
+  const session = getAdminSessionFromRequest(req)
+  if (!session || !adminHasPermission(session.role, 'manage_developers')) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
   if (req.method === 'PUT') {
     try {
-      const existing = await prisma.developer.findUnique({
-        where: { id },
-        select: { id: true, name: true, nameEn: true, slug: true },
-      })
+      const existing = await findDeveloperForUpdate(id)
       if (!existing) return res.status(404).json({ message: 'Developer not found' })
 
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body
       const parsed = updateDeveloperSchema.parse(body)
 
-      let nameEn = existing.nameEn || existing.name
       let name = existing.name
+      let nameEn = existing.nameEn || existing.name
+      let nameRu: string | null = existing.nameRu ?? null
+      let nameAr: string | null = existing.nameAr ?? null
 
-      if (parsed.nameEn !== undefined) {
-        nameEn = parsed.nameEn.trim()
-      }
-      if (parsed.nameRu !== undefined) {
-        name = (parsed.nameRu?.trim() || '') || nameEn
-      } else if (parsed.nameEn !== undefined) {
-        const hadDistinctRu =
-          !!existing.name &&
-          !!existing.nameEn &&
-          existing.name !== existing.nameEn
-        name = hadDistinctRu ? existing.name : nameEn
+      if (
+        parsed.name !== undefined ||
+        parsed.nameRu !== undefined ||
+        parsed.nameAr !== undefined
+      ) {
+        const nextName = parsed.name !== undefined ? parsed.name?.trim() || '' : name
+        const nextRu =
+          parsed.nameRu !== undefined ? parsed.nameRu?.trim() || '' : (nameRu ?? '').trim()
+        const nextAr =
+          parsed.nameAr !== undefined ? parsed.nameAr?.trim() || '' : (nameAr ?? '').trim()
+        const primary = nextName || nextRu || nextAr
+        if (!primary) {
+          return res.status(400).json({ success: false, message: 'Name is required' })
+        }
+        name = nextName || primary
+        nameEn = name
+        nameRu = nextRu || null
+        nameAr = nextAr || null
       }
 
       let slug = existing.slug
-      if (parsed.nameEn !== undefined) {
-        const prevEn = (existing.nameEn || existing.name).trim()
-        if (nameEn !== prevEn) {
-          const base = generateSlug(nameEn)
+      if (
+        parsed.name !== undefined ||
+        parsed.nameRu !== undefined ||
+        parsed.nameAr !== undefined
+      ) {
+        const prevSlugSource = (existing.nameEn || existing.name).trim()
+        const nextSlugSource = (name || nameRu || nameAr || '').trim()
+        if (nextSlugSource && nextSlugSource !== prevSlugSource) {
+          const base = generateSlug(nextSlugSource)
           slug = await generateUniqueSlug(base, async (s) => {
             const ex = await prisma.developer.findFirst({
               where: { slug: s, NOT: { id } },
@@ -105,9 +138,10 @@ export default async function handler(
       const baseData = {
         name,
         nameEn,
-        ...(parsed.description !== undefined && {
-          description: parsed.description?.trim() || null,
-        }),
+        ...(parsed.description !== undefined && (() => {
+          const text = parsed.description?.trim() || null
+          return { description: text, descriptionEn: text }
+        })()),
         ...(parsed.specialties !== undefined && {
           specialties: parsed.specialties.map((v) => v.trim()).filter(Boolean),
         }),
@@ -119,31 +153,88 @@ export default async function handler(
         slug,
       }
 
-      const developer = await prisma.developer
-        .update({
-          where: { id },
-          data: {
-            ...baseData,
-            ...(parsed.isActive !== undefined && { isActive: parsed.isActive }),
-          },
-        })
-        .catch(async (error: unknown) => {
-          if (
-            !(
-              parsed.isActive !== undefined &&
-              hasMissingDeveloperIsActiveColumn(error)
-            )
-          ) {
-            throw error
-          }
+      let includeFounded = true
+      let includeIsActive = true
+      let includeLocaleContent = true
+      let localeContentSaved = true
+      let developer: Awaited<ReturnType<typeof prisma.developer.update>> | undefined
 
-          return prisma.developer.update({
+      const localeData = {
+        ...(parsed.nameRu !== undefined && { nameRu }),
+        ...(parsed.nameAr !== undefined && { nameAr }),
+        ...(parsed.descriptionRu !== undefined && {
+          descriptionRu: parsed.descriptionRu?.trim() || null,
+        }),
+        ...(parsed.descriptionAr !== undefined && {
+          descriptionAr: parsed.descriptionAr?.trim() || null,
+        }),
+        ...(parsed.specialtiesRu !== undefined && {
+          specialtiesRu: parsed.specialtiesRu.map((v) => v.trim()).filter(Boolean),
+        }),
+        ...(parsed.specialtiesAr !== undefined && {
+          specialtiesAr: parsed.specialtiesAr.map((v) => v.trim()).filter(Boolean),
+        }),
+        ...(parsed.notableProjectsRu !== undefined && {
+          notableProjectsRu: parsed.notableProjectsRu.map((v) => v.trim()).filter(Boolean),
+        }),
+        ...(parsed.notableProjectsAr !== undefined && {
+          notableProjectsAr: parsed.notableProjectsAr.map((v) => v.trim()).filter(Boolean),
+        }),
+      }
+
+      for (let attempt = 0; attempt < 6; attempt++) {
+        try {
+          developer = await prisma.developer.update({
             where: { id },
-            data: baseData,
+            data: {
+              ...baseData,
+              ...(includeLocaleContent ? localeData : {}),
+              ...(includeFounded &&
+                parsed.founded !== undefined && { founded: parsed.founded }),
+              ...(includeIsActive &&
+                parsed.isActive !== undefined && { isActive: parsed.isActive }),
+            },
           })
-        })
+          break
+        } catch (error: unknown) {
+          if (isStaleDeveloperLocalePrismaClient(error)) {
+            return res.status(503).json({
+              message:
+                'Prisma client is out of date. Run npm run db:generate and restart the application.',
+            })
+          }
+          const missingFounded = isMissingDeveloperFounded(error)
+          const missingIsActive = isMissingDeveloperIsActive(error)
+          const missingLocale = isMissingDeveloperLocaleContentColumn(error)
+          if (missingLocale && includeLocaleContent) {
+            includeLocaleContent = false
+            localeContentSaved = false
+            continue
+          }
+          if (missingFounded && includeFounded) {
+            includeFounded = false
+            continue
+          }
+          if (missingIsActive && includeIsActive) {
+            includeIsActive = false
+            continue
+          }
+          if (missingFounded || missingIsActive || missingLocale) {
+            includeFounded = false
+            includeIsActive = false
+            if (missingLocale) localeContentSaved = false
+            includeLocaleContent = false
+            continue
+          }
+          throw error
+        }
+      }
 
-      return res.status(200).json({ success: true, developer })
+      if (!developer) {
+        return res.status(500).json({ message: 'Failed to update developer' })
+      }
+
+      return res.status(200).json({ success: true, developer, localeContentSaved })
     } catch (error: unknown) {
       const err = asErrorLike(error)
       if (err.name === 'ZodError') {

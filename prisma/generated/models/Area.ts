@@ -38,12 +38,18 @@ export type AreaMinAggregateOutputType = {
   id: string | null
   name: string | null
   nameEn: string | null
+  nameRu: string | null
+  nameAr: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   isActive: boolean | null
   image: string | null
   sortOrder: number | null
+  parentId: string | null
   city: string | null
+  mapEmbed: string | null
   slug: string | null
   metaTitle: string | null
   metaDescription: string | null
@@ -55,12 +61,18 @@ export type AreaMaxAggregateOutputType = {
   id: string | null
   name: string | null
   nameEn: string | null
+  nameRu: string | null
+  nameAr: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   isActive: boolean | null
   image: string | null
   sortOrder: number | null
+  parentId: string | null
   city: string | null
+  mapEmbed: string | null
   slug: string | null
   metaTitle: string | null
   metaDescription: string | null
@@ -72,14 +84,22 @@ export type AreaCountAggregateOutputType = {
   id: number
   name: number
   nameEn: number
+  nameRu: number
+  nameAr: number
   description: number
   descriptionEn: number
+  descriptionRu: number
+  descriptionAr: number
   isActive: number
   image: number
   sortOrder: number
   tags: number
+  tagsRu: number
+  tagsAr: number
+  parentId: number
   city: number
   coordinates: number
+  mapEmbed: number
   slug: number
   metaTitle: number
   metaDescription: number
@@ -101,12 +121,18 @@ export type AreaMinAggregateInputType = {
   id?: true
   name?: true
   nameEn?: true
+  nameRu?: true
+  nameAr?: true
   description?: true
   descriptionEn?: true
+  descriptionRu?: true
+  descriptionAr?: true
   isActive?: true
   image?: true
   sortOrder?: true
+  parentId?: true
   city?: true
+  mapEmbed?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -118,12 +144,18 @@ export type AreaMaxAggregateInputType = {
   id?: true
   name?: true
   nameEn?: true
+  nameRu?: true
+  nameAr?: true
   description?: true
   descriptionEn?: true
+  descriptionRu?: true
+  descriptionAr?: true
   isActive?: true
   image?: true
   sortOrder?: true
+  parentId?: true
   city?: true
+  mapEmbed?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -135,14 +167,22 @@ export type AreaCountAggregateInputType = {
   id?: true
   name?: true
   nameEn?: true
+  nameRu?: true
+  nameAr?: true
   description?: true
   descriptionEn?: true
+  descriptionRu?: true
+  descriptionAr?: true
   isActive?: true
   image?: true
   sortOrder?: true
   tags?: true
+  tagsRu?: true
+  tagsAr?: true
+  parentId?: true
   city?: true
   coordinates?: true
+  mapEmbed?: true
   slug?: true
   metaTitle?: true
   metaDescription?: true
@@ -241,14 +281,22 @@ export type AreaGroupByOutputType = {
   id: string
   name: string
   nameEn: string | null
+  nameRu: string | null
+  nameAr: string | null
   description: string | null
   descriptionEn: string | null
+  descriptionRu: string | null
+  descriptionAr: string | null
   isActive: boolean
   image: string | null
   sortOrder: number | null
   tags: string[]
+  tagsRu: string[]
+  tagsAr: string[]
+  parentId: string | null
   city: string
   coordinates: runtime.JsonValue | null
+  mapEmbed: string | null
   slug: string
   metaTitle: string | null
   metaDescription: string | null
@@ -283,40 +331,62 @@ export type AreaWhereInput = {
   id?: Prisma.StringFilter<"Area"> | string
   name?: Prisma.StringFilter<"Area"> | string
   nameEn?: Prisma.StringNullableFilter<"Area"> | string | null
+  nameRu?: Prisma.StringNullableFilter<"Area"> | string | null
+  nameAr?: Prisma.StringNullableFilter<"Area"> | string | null
   description?: Prisma.StringNullableFilter<"Area"> | string | null
   descriptionEn?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Area"> | string | null
   isActive?: Prisma.BoolFilter<"Area"> | boolean
   image?: Prisma.StringNullableFilter<"Area"> | string | null
   sortOrder?: Prisma.IntNullableFilter<"Area"> | number | null
   tags?: Prisma.StringNullableListFilter<"Area">
+  tagsRu?: Prisma.StringNullableListFilter<"Area">
+  tagsAr?: Prisma.StringNullableListFilter<"Area">
+  parentId?: Prisma.StringNullableFilter<"Area"> | string | null
   city?: Prisma.StringFilter<"Area"> | string
   coordinates?: Prisma.JsonNullableFilter<"Area">
+  mapEmbed?: Prisma.StringNullableFilter<"Area"> | string | null
   slug?: Prisma.StringFilter<"Area"> | string
   metaTitle?: Prisma.StringNullableFilter<"Area"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Area"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Area"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Area"> | Date | string
+  parent?: Prisma.XOR<Prisma.AreaNullableScalarRelationFilter, Prisma.AreaWhereInput> | null
+  children?: Prisma.AreaListRelationFilter
   properties?: Prisma.PropertyListRelationFilter
+  images?: Prisma.AreaImageListRelationFilter
 }
 
 export type AreaOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameAr?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   descriptionEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrder
+  tagsRu?: Prisma.SortOrder
+  tagsAr?: Prisma.SortOrder
+  parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrder
   coordinates?: Prisma.SortOrderInput | Prisma.SortOrder
+  mapEmbed?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  parent?: Prisma.AreaOrderByWithRelationInput
+  children?: Prisma.AreaOrderByRelationAggregateInput
   properties?: Prisma.PropertyOrderByRelationAggregateInput
+  images?: Prisma.AreaImageOrderByRelationAggregateInput
 }
 
 export type AreaWhereUniqueInput = Prisma.AtLeast<{
@@ -327,33 +397,52 @@ export type AreaWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AreaWhereInput | Prisma.AreaWhereInput[]
   name?: Prisma.StringFilter<"Area"> | string
   nameEn?: Prisma.StringNullableFilter<"Area"> | string | null
+  nameRu?: Prisma.StringNullableFilter<"Area"> | string | null
+  nameAr?: Prisma.StringNullableFilter<"Area"> | string | null
   description?: Prisma.StringNullableFilter<"Area"> | string | null
   descriptionEn?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Area"> | string | null
   isActive?: Prisma.BoolFilter<"Area"> | boolean
   image?: Prisma.StringNullableFilter<"Area"> | string | null
   sortOrder?: Prisma.IntNullableFilter<"Area"> | number | null
   tags?: Prisma.StringNullableListFilter<"Area">
+  tagsRu?: Prisma.StringNullableListFilter<"Area">
+  tagsAr?: Prisma.StringNullableListFilter<"Area">
+  parentId?: Prisma.StringNullableFilter<"Area"> | string | null
   city?: Prisma.StringFilter<"Area"> | string
   coordinates?: Prisma.JsonNullableFilter<"Area">
+  mapEmbed?: Prisma.StringNullableFilter<"Area"> | string | null
   metaTitle?: Prisma.StringNullableFilter<"Area"> | string | null
   metaDescription?: Prisma.StringNullableFilter<"Area"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Area"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Area"> | Date | string
+  parent?: Prisma.XOR<Prisma.AreaNullableScalarRelationFilter, Prisma.AreaWhereInput> | null
+  children?: Prisma.AreaListRelationFilter
   properties?: Prisma.PropertyListRelationFilter
+  images?: Prisma.AreaImageListRelationFilter
 }, "id" | "slug">
 
 export type AreaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  nameAr?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   descriptionEn?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrderInput | Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrder
+  tagsRu?: Prisma.SortOrder
+  tagsAr?: Prisma.SortOrder
+  parentId?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrder
   coordinates?: Prisma.SortOrderInput | Prisma.SortOrder
+  mapEmbed?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
   metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -373,14 +462,22 @@ export type AreaScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Area"> | string
   name?: Prisma.StringWithAggregatesFilter<"Area"> | string
   nameEn?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
+  nameRu?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
+  nameAr?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   descriptionEn?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
+  descriptionRu?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
+  descriptionAr?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Area"> | boolean
   image?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   sortOrder?: Prisma.IntNullableWithAggregatesFilter<"Area"> | number | null
   tags?: Prisma.StringNullableListFilter<"Area">
+  tagsRu?: Prisma.StringNullableListFilter<"Area">
+  tagsAr?: Prisma.StringNullableListFilter<"Area">
+  parentId?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   city?: Prisma.StringWithAggregatesFilter<"Area"> | string
   coordinates?: Prisma.JsonNullableWithAggregatesFilter<"Area">
+  mapEmbed?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"Area"> | string
   metaTitle?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
   metaDescription?: Prisma.StringNullableWithAggregatesFilter<"Area"> | string | null
@@ -392,94 +489,142 @@ export type AreaCreateInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   isActive?: boolean
   image?: string | null
   sortOrder?: number | null
   tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
   city: string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  parent?: Prisma.AreaCreateNestedOneWithoutChildrenInput
+  children?: Prisma.AreaCreateNestedManyWithoutParentInput
   properties?: Prisma.PropertyCreateNestedManyWithoutAreaInput
+  images?: Prisma.AreaImageCreateNestedManyWithoutAreaInput
 }
 
 export type AreaUncheckedCreateInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   isActive?: boolean
   image?: string | null
   sortOrder?: number | null
   tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  parentId?: string | null
   city: string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  children?: Prisma.AreaUncheckedCreateNestedManyWithoutParentInput
   properties?: Prisma.PropertyUncheckedCreateNestedManyWithoutAreaInput
+  images?: Prisma.AreaImageUncheckedCreateNestedManyWithoutAreaInput
 }
 
 export type AreaUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
   city?: Prisma.StringFieldUpdateOperationsInput | string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.AreaUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.AreaUpdateManyWithoutParentNestedInput
   properties?: Prisma.PropertyUpdateManyWithoutAreaNestedInput
+  images?: Prisma.AreaImageUpdateManyWithoutAreaNestedInput
 }
 
 export type AreaUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.StringFieldUpdateOperationsInput | string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.AreaUncheckedUpdateManyWithoutParentNestedInput
   properties?: Prisma.PropertyUncheckedUpdateManyWithoutAreaNestedInput
+  images?: Prisma.AreaImageUncheckedUpdateManyWithoutAreaNestedInput
 }
 
 export type AreaCreateManyInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   isActive?: boolean
   image?: string | null
   sortOrder?: number | null
   tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  parentId?: string | null
   city: string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
@@ -491,14 +636,21 @@ export type AreaUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
   city?: Prisma.StringFieldUpdateOperationsInput | string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -510,14 +662,22 @@ export type AreaUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.StringFieldUpdateOperationsInput | string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -530,18 +690,36 @@ export type AreaNullableScalarRelationFilter = {
   isNot?: Prisma.AreaWhereInput | null
 }
 
+export type AreaListRelationFilter = {
+  every?: Prisma.AreaWhereInput
+  some?: Prisma.AreaWhereInput
+  none?: Prisma.AreaWhereInput
+}
+
+export type AreaOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type AreaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrder
+  nameRu?: Prisma.SortOrder
+  nameAr?: Prisma.SortOrder
   description?: Prisma.SortOrder
   descriptionEn?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   image?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   tags?: Prisma.SortOrder
+  tagsRu?: Prisma.SortOrder
+  tagsAr?: Prisma.SortOrder
+  parentId?: Prisma.SortOrder
   city?: Prisma.SortOrder
   coordinates?: Prisma.SortOrder
+  mapEmbed?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -557,12 +735,18 @@ export type AreaMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrder
+  nameRu?: Prisma.SortOrder
+  nameAr?: Prisma.SortOrder
   description?: Prisma.SortOrder
   descriptionEn?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   image?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
+  parentId?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  mapEmbed?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -574,12 +758,18 @@ export type AreaMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   nameEn?: Prisma.SortOrder
+  nameRu?: Prisma.SortOrder
+  nameAr?: Prisma.SortOrder
   description?: Prisma.SortOrder
   descriptionEn?: Prisma.SortOrder
+  descriptionRu?: Prisma.SortOrder
+  descriptionAr?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   image?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
+  parentId?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  mapEmbed?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   metaTitle?: Prisma.SortOrder
   metaDescription?: Prisma.SortOrder
@@ -589,6 +779,11 @@ export type AreaMinOrderByAggregateInput = {
 
 export type AreaSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
+}
+
+export type AreaScalarRelationFilter = {
+  is?: Prisma.AreaWhereInput
+  isNot?: Prisma.AreaWhereInput
 }
 
 export type AreaCreateNestedOneWithoutPropertiesInput = {
@@ -611,47 +806,157 @@ export type AreaCreatetagsInput = {
   set: string[]
 }
 
+export type AreaCreatetagsRuInput = {
+  set: string[]
+}
+
+export type AreaCreatetagsArInput = {
+  set: string[]
+}
+
+export type AreaCreateNestedOneWithoutChildrenInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutChildrenInput, Prisma.AreaUncheckedCreateWithoutChildrenInput>
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutChildrenInput
+  connect?: Prisma.AreaWhereUniqueInput
+}
+
+export type AreaCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutParentInput, Prisma.AreaUncheckedCreateWithoutParentInput> | Prisma.AreaCreateWithoutParentInput[] | Prisma.AreaUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutParentInput | Prisma.AreaCreateOrConnectWithoutParentInput[]
+  createMany?: Prisma.AreaCreateManyParentInputEnvelope
+  connect?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+}
+
+export type AreaUncheckedCreateNestedManyWithoutParentInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutParentInput, Prisma.AreaUncheckedCreateWithoutParentInput> | Prisma.AreaCreateWithoutParentInput[] | Prisma.AreaUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutParentInput | Prisma.AreaCreateOrConnectWithoutParentInput[]
+  createMany?: Prisma.AreaCreateManyParentInputEnvelope
+  connect?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+}
+
 export type AreaUpdatetagsInput = {
   set?: string[]
   push?: string | string[]
+}
+
+export type AreaUpdatetagsRuInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type AreaUpdatetagsArInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type AreaUpdateOneWithoutChildrenNestedInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutChildrenInput, Prisma.AreaUncheckedCreateWithoutChildrenInput>
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutChildrenInput
+  upsert?: Prisma.AreaUpsertWithoutChildrenInput
+  disconnect?: Prisma.AreaWhereInput | boolean
+  delete?: Prisma.AreaWhereInput | boolean
+  connect?: Prisma.AreaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AreaUpdateToOneWithWhereWithoutChildrenInput, Prisma.AreaUpdateWithoutChildrenInput>, Prisma.AreaUncheckedUpdateWithoutChildrenInput>
+}
+
+export type AreaUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutParentInput, Prisma.AreaUncheckedCreateWithoutParentInput> | Prisma.AreaCreateWithoutParentInput[] | Prisma.AreaUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutParentInput | Prisma.AreaCreateOrConnectWithoutParentInput[]
+  upsert?: Prisma.AreaUpsertWithWhereUniqueWithoutParentInput | Prisma.AreaUpsertWithWhereUniqueWithoutParentInput[]
+  createMany?: Prisma.AreaCreateManyParentInputEnvelope
+  set?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  disconnect?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  delete?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  connect?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  update?: Prisma.AreaUpdateWithWhereUniqueWithoutParentInput | Prisma.AreaUpdateWithWhereUniqueWithoutParentInput[]
+  updateMany?: Prisma.AreaUpdateManyWithWhereWithoutParentInput | Prisma.AreaUpdateManyWithWhereWithoutParentInput[]
+  deleteMany?: Prisma.AreaScalarWhereInput | Prisma.AreaScalarWhereInput[]
+}
+
+export type AreaUncheckedUpdateManyWithoutParentNestedInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutParentInput, Prisma.AreaUncheckedCreateWithoutParentInput> | Prisma.AreaCreateWithoutParentInput[] | Prisma.AreaUncheckedCreateWithoutParentInput[]
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutParentInput | Prisma.AreaCreateOrConnectWithoutParentInput[]
+  upsert?: Prisma.AreaUpsertWithWhereUniqueWithoutParentInput | Prisma.AreaUpsertWithWhereUniqueWithoutParentInput[]
+  createMany?: Prisma.AreaCreateManyParentInputEnvelope
+  set?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  disconnect?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  delete?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  connect?: Prisma.AreaWhereUniqueInput | Prisma.AreaWhereUniqueInput[]
+  update?: Prisma.AreaUpdateWithWhereUniqueWithoutParentInput | Prisma.AreaUpdateWithWhereUniqueWithoutParentInput[]
+  updateMany?: Prisma.AreaUpdateManyWithWhereWithoutParentInput | Prisma.AreaUpdateManyWithWhereWithoutParentInput[]
+  deleteMany?: Prisma.AreaScalarWhereInput | Prisma.AreaScalarWhereInput[]
+}
+
+export type AreaCreateNestedOneWithoutImagesInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutImagesInput, Prisma.AreaUncheckedCreateWithoutImagesInput>
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutImagesInput
+  connect?: Prisma.AreaWhereUniqueInput
+}
+
+export type AreaUpdateOneRequiredWithoutImagesNestedInput = {
+  create?: Prisma.XOR<Prisma.AreaCreateWithoutImagesInput, Prisma.AreaUncheckedCreateWithoutImagesInput>
+  connectOrCreate?: Prisma.AreaCreateOrConnectWithoutImagesInput
+  upsert?: Prisma.AreaUpsertWithoutImagesInput
+  connect?: Prisma.AreaWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AreaUpdateToOneWithWhereWithoutImagesInput, Prisma.AreaUpdateWithoutImagesInput>, Prisma.AreaUncheckedUpdateWithoutImagesInput>
 }
 
 export type AreaCreateWithoutPropertiesInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   isActive?: boolean
   image?: string | null
   sortOrder?: number | null
   tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
   city: string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  parent?: Prisma.AreaCreateNestedOneWithoutChildrenInput
+  children?: Prisma.AreaCreateNestedManyWithoutParentInput
+  images?: Prisma.AreaImageCreateNestedManyWithoutAreaInput
 }
 
 export type AreaUncheckedCreateWithoutPropertiesInput = {
   id?: string
   name: string
   nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
   description?: string | null
   descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
   isActive?: boolean
   image?: string | null
   sortOrder?: number | null
   tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  parentId?: string | null
   city: string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
   slug: string
   metaTitle?: string | null
   metaDescription?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  children?: Prisma.AreaUncheckedCreateNestedManyWithoutParentInput
+  images?: Prisma.AreaImageUncheckedCreateNestedManyWithoutAreaInput
 }
 
 export type AreaCreateOrConnectWithoutPropertiesInput = {
@@ -674,33 +979,541 @@ export type AreaUpdateWithoutPropertiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
   city?: Prisma.StringFieldUpdateOperationsInput | string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.AreaUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.AreaUpdateManyWithoutParentNestedInput
+  images?: Prisma.AreaImageUpdateManyWithoutAreaNestedInput
 }
 
 export type AreaUncheckedUpdateWithoutPropertiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.StringFieldUpdateOperationsInput | string
   coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.AreaUncheckedUpdateManyWithoutParentNestedInput
+  images?: Prisma.AreaImageUncheckedUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaCreateWithoutChildrenInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.AreaCreateNestedOneWithoutChildrenInput
+  properties?: Prisma.PropertyCreateNestedManyWithoutAreaInput
+  images?: Prisma.AreaImageCreateNestedManyWithoutAreaInput
+}
+
+export type AreaUncheckedCreateWithoutChildrenInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  parentId?: string | null
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  properties?: Prisma.PropertyUncheckedCreateNestedManyWithoutAreaInput
+  images?: Prisma.AreaImageUncheckedCreateNestedManyWithoutAreaInput
+}
+
+export type AreaCreateOrConnectWithoutChildrenInput = {
+  where: Prisma.AreaWhereUniqueInput
+  create: Prisma.XOR<Prisma.AreaCreateWithoutChildrenInput, Prisma.AreaUncheckedCreateWithoutChildrenInput>
+}
+
+export type AreaCreateWithoutParentInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.AreaCreateNestedManyWithoutParentInput
+  properties?: Prisma.PropertyCreateNestedManyWithoutAreaInput
+  images?: Prisma.AreaImageCreateNestedManyWithoutAreaInput
+}
+
+export type AreaUncheckedCreateWithoutParentInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.AreaUncheckedCreateNestedManyWithoutParentInput
+  properties?: Prisma.PropertyUncheckedCreateNestedManyWithoutAreaInput
+  images?: Prisma.AreaImageUncheckedCreateNestedManyWithoutAreaInput
+}
+
+export type AreaCreateOrConnectWithoutParentInput = {
+  where: Prisma.AreaWhereUniqueInput
+  create: Prisma.XOR<Prisma.AreaCreateWithoutParentInput, Prisma.AreaUncheckedCreateWithoutParentInput>
+}
+
+export type AreaCreateManyParentInputEnvelope = {
+  data: Prisma.AreaCreateManyParentInput | Prisma.AreaCreateManyParentInput[]
+  skipDuplicates?: boolean
+}
+
+export type AreaUpsertWithoutChildrenInput = {
+  update: Prisma.XOR<Prisma.AreaUpdateWithoutChildrenInput, Prisma.AreaUncheckedUpdateWithoutChildrenInput>
+  create: Prisma.XOR<Prisma.AreaCreateWithoutChildrenInput, Prisma.AreaUncheckedCreateWithoutChildrenInput>
+  where?: Prisma.AreaWhereInput
+}
+
+export type AreaUpdateToOneWithWhereWithoutChildrenInput = {
+  where?: Prisma.AreaWhereInput
+  data: Prisma.XOR<Prisma.AreaUpdateWithoutChildrenInput, Prisma.AreaUncheckedUpdateWithoutChildrenInput>
+}
+
+export type AreaUpdateWithoutChildrenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.AreaUpdateOneWithoutChildrenNestedInput
+  properties?: Prisma.PropertyUpdateManyWithoutAreaNestedInput
+  images?: Prisma.AreaImageUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaUncheckedUpdateWithoutChildrenInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  properties?: Prisma.PropertyUncheckedUpdateManyWithoutAreaNestedInput
+  images?: Prisma.AreaImageUncheckedUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaUpsertWithWhereUniqueWithoutParentInput = {
+  where: Prisma.AreaWhereUniqueInput
+  update: Prisma.XOR<Prisma.AreaUpdateWithoutParentInput, Prisma.AreaUncheckedUpdateWithoutParentInput>
+  create: Prisma.XOR<Prisma.AreaCreateWithoutParentInput, Prisma.AreaUncheckedCreateWithoutParentInput>
+}
+
+export type AreaUpdateWithWhereUniqueWithoutParentInput = {
+  where: Prisma.AreaWhereUniqueInput
+  data: Prisma.XOR<Prisma.AreaUpdateWithoutParentInput, Prisma.AreaUncheckedUpdateWithoutParentInput>
+}
+
+export type AreaUpdateManyWithWhereWithoutParentInput = {
+  where: Prisma.AreaScalarWhereInput
+  data: Prisma.XOR<Prisma.AreaUpdateManyMutationInput, Prisma.AreaUncheckedUpdateManyWithoutParentInput>
+}
+
+export type AreaScalarWhereInput = {
+  AND?: Prisma.AreaScalarWhereInput | Prisma.AreaScalarWhereInput[]
+  OR?: Prisma.AreaScalarWhereInput[]
+  NOT?: Prisma.AreaScalarWhereInput | Prisma.AreaScalarWhereInput[]
+  id?: Prisma.StringFilter<"Area"> | string
+  name?: Prisma.StringFilter<"Area"> | string
+  nameEn?: Prisma.StringNullableFilter<"Area"> | string | null
+  nameRu?: Prisma.StringNullableFilter<"Area"> | string | null
+  nameAr?: Prisma.StringNullableFilter<"Area"> | string | null
+  description?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionEn?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionRu?: Prisma.StringNullableFilter<"Area"> | string | null
+  descriptionAr?: Prisma.StringNullableFilter<"Area"> | string | null
+  isActive?: Prisma.BoolFilter<"Area"> | boolean
+  image?: Prisma.StringNullableFilter<"Area"> | string | null
+  sortOrder?: Prisma.IntNullableFilter<"Area"> | number | null
+  tags?: Prisma.StringNullableListFilter<"Area">
+  tagsRu?: Prisma.StringNullableListFilter<"Area">
+  tagsAr?: Prisma.StringNullableListFilter<"Area">
+  parentId?: Prisma.StringNullableFilter<"Area"> | string | null
+  city?: Prisma.StringFilter<"Area"> | string
+  coordinates?: Prisma.JsonNullableFilter<"Area">
+  mapEmbed?: Prisma.StringNullableFilter<"Area"> | string | null
+  slug?: Prisma.StringFilter<"Area"> | string
+  metaTitle?: Prisma.StringNullableFilter<"Area"> | string | null
+  metaDescription?: Prisma.StringNullableFilter<"Area"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Area"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Area"> | Date | string
+}
+
+export type AreaCreateWithoutImagesInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.AreaCreateNestedOneWithoutChildrenInput
+  children?: Prisma.AreaCreateNestedManyWithoutParentInput
+  properties?: Prisma.PropertyCreateNestedManyWithoutAreaInput
+}
+
+export type AreaUncheckedCreateWithoutImagesInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  parentId?: string | null
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.AreaUncheckedCreateNestedManyWithoutParentInput
+  properties?: Prisma.PropertyUncheckedCreateNestedManyWithoutAreaInput
+}
+
+export type AreaCreateOrConnectWithoutImagesInput = {
+  where: Prisma.AreaWhereUniqueInput
+  create: Prisma.XOR<Prisma.AreaCreateWithoutImagesInput, Prisma.AreaUncheckedCreateWithoutImagesInput>
+}
+
+export type AreaUpsertWithoutImagesInput = {
+  update: Prisma.XOR<Prisma.AreaUpdateWithoutImagesInput, Prisma.AreaUncheckedUpdateWithoutImagesInput>
+  create: Prisma.XOR<Prisma.AreaCreateWithoutImagesInput, Prisma.AreaUncheckedCreateWithoutImagesInput>
+  where?: Prisma.AreaWhereInput
+}
+
+export type AreaUpdateToOneWithWhereWithoutImagesInput = {
+  where?: Prisma.AreaWhereInput
+  data: Prisma.XOR<Prisma.AreaUpdateWithoutImagesInput, Prisma.AreaUncheckedUpdateWithoutImagesInput>
+}
+
+export type AreaUpdateWithoutImagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.AreaUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.AreaUpdateManyWithoutParentNestedInput
+  properties?: Prisma.PropertyUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaUncheckedUpdateWithoutImagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.AreaUncheckedUpdateManyWithoutParentNestedInput
+  properties?: Prisma.PropertyUncheckedUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaCreateManyParentInput = {
+  id?: string
+  name: string
+  nameEn?: string | null
+  nameRu?: string | null
+  nameAr?: string | null
+  description?: string | null
+  descriptionEn?: string | null
+  descriptionRu?: string | null
+  descriptionAr?: string | null
+  isActive?: boolean
+  image?: string | null
+  sortOrder?: number | null
+  tags?: Prisma.AreaCreatetagsInput | string[]
+  tagsRu?: Prisma.AreaCreatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaCreatetagsArInput | string[]
+  city: string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: string | null
+  slug: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AreaUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.AreaUpdateManyWithoutParentNestedInput
+  properties?: Prisma.PropertyUpdateManyWithoutAreaNestedInput
+  images?: Prisma.AreaImageUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaUncheckedUpdateWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.AreaUncheckedUpdateManyWithoutParentNestedInput
+  properties?: Prisma.PropertyUncheckedUpdateManyWithoutAreaNestedInput
+  images?: Prisma.AreaImageUncheckedUpdateManyWithoutAreaNestedInput
+}
+
+export type AreaUncheckedUpdateManyWithoutParentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nameEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nameAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionEn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionRu?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  descriptionAr?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tags?: Prisma.AreaUpdatetagsInput | string[]
+  tagsRu?: Prisma.AreaUpdatetagsRuInput | string[]
+  tagsAr?: Prisma.AreaUpdatetagsArInput | string[]
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  coordinates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  mapEmbed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -714,11 +1527,15 @@ export type AreaUncheckedUpdateWithoutPropertiesInput = {
  */
 
 export type AreaCountOutputType = {
+  children: number
   properties: number
+  images: number
 }
 
 export type AreaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  children?: boolean | AreaCountOutputTypeCountChildrenArgs
   properties?: boolean | AreaCountOutputTypeCountPropertiesArgs
+  images?: boolean | AreaCountOutputTypeCountImagesArgs
 }
 
 /**
@@ -734,8 +1551,22 @@ export type AreaCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
 /**
  * AreaCountOutputType without action
  */
+export type AreaCountOutputTypeCountChildrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AreaWhereInput
+}
+
+/**
+ * AreaCountOutputType without action
+ */
 export type AreaCountOutputTypeCountPropertiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PropertyWhereInput
+}
+
+/**
+ * AreaCountOutputType without action
+ */
+export type AreaCountOutputTypeCountImagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AreaImageWhereInput
 }
 
 
@@ -743,20 +1574,31 @@ export type AreaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   isActive?: boolean
   image?: boolean
   sortOrder?: boolean
   tags?: boolean
+  tagsRu?: boolean
+  tagsAr?: boolean
+  parentId?: boolean
   city?: boolean
   coordinates?: boolean
+  mapEmbed?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  parent?: boolean | Prisma.Area$parentArgs<ExtArgs>
+  children?: boolean | Prisma.Area$childrenArgs<ExtArgs>
   properties?: boolean | Prisma.Area$propertiesArgs<ExtArgs>
+  images?: boolean | Prisma.Area$imagesArgs<ExtArgs>
   _count?: boolean | Prisma.AreaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["area"]>
 
@@ -764,52 +1606,78 @@ export type AreaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   isActive?: boolean
   image?: boolean
   sortOrder?: boolean
   tags?: boolean
+  tagsRu?: boolean
+  tagsAr?: boolean
+  parentId?: boolean
   city?: boolean
   coordinates?: boolean
+  mapEmbed?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  parent?: boolean | Prisma.Area$parentArgs<ExtArgs>
 }, ExtArgs["result"]["area"]>
 
 export type AreaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   isActive?: boolean
   image?: boolean
   sortOrder?: boolean
   tags?: boolean
+  tagsRu?: boolean
+  tagsAr?: boolean
+  parentId?: boolean
   city?: boolean
   coordinates?: boolean
+  mapEmbed?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  parent?: boolean | Prisma.Area$parentArgs<ExtArgs>
 }, ExtArgs["result"]["area"]>
 
 export type AreaSelectScalar = {
   id?: boolean
   name?: boolean
   nameEn?: boolean
+  nameRu?: boolean
+  nameAr?: boolean
   description?: boolean
   descriptionEn?: boolean
+  descriptionRu?: boolean
+  descriptionAr?: boolean
   isActive?: boolean
   image?: boolean
   sortOrder?: boolean
   tags?: boolean
+  tagsRu?: boolean
+  tagsAr?: boolean
+  parentId?: boolean
   city?: boolean
   coordinates?: boolean
+  mapEmbed?: boolean
   slug?: boolean
   metaTitle?: boolean
   metaDescription?: boolean
@@ -817,31 +1685,52 @@ export type AreaSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AreaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nameEn" | "description" | "descriptionEn" | "isActive" | "image" | "sortOrder" | "tags" | "city" | "coordinates" | "slug" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt", ExtArgs["result"]["area"]>
+export type AreaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nameEn" | "nameRu" | "nameAr" | "description" | "descriptionEn" | "descriptionRu" | "descriptionAr" | "isActive" | "image" | "sortOrder" | "tags" | "tagsRu" | "tagsAr" | "parentId" | "city" | "coordinates" | "mapEmbed" | "slug" | "metaTitle" | "metaDescription" | "createdAt" | "updatedAt", ExtArgs["result"]["area"]>
 export type AreaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.Area$parentArgs<ExtArgs>
+  children?: boolean | Prisma.Area$childrenArgs<ExtArgs>
   properties?: boolean | Prisma.Area$propertiesArgs<ExtArgs>
+  images?: boolean | Prisma.Area$imagesArgs<ExtArgs>
   _count?: boolean | Prisma.AreaCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type AreaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type AreaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type AreaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.Area$parentArgs<ExtArgs>
+}
+export type AreaIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  parent?: boolean | Prisma.Area$parentArgs<ExtArgs>
+}
 
 export type $AreaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Area"
   objects: {
+    parent: Prisma.$AreaPayload<ExtArgs> | null
+    children: Prisma.$AreaPayload<ExtArgs>[]
     properties: Prisma.$PropertyPayload<ExtArgs>[]
+    images: Prisma.$AreaImagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     nameEn: string | null
+    nameRu: string | null
+    nameAr: string | null
     description: string | null
     descriptionEn: string | null
+    descriptionRu: string | null
+    descriptionAr: string | null
     isActive: boolean
     image: string | null
     sortOrder: number | null
     tags: string[]
+    tagsRu: string[]
+    tagsAr: string[]
+    parentId: string | null
     city: string
     coordinates: runtime.JsonValue | null
+    /**
+     * Google Maps share/embed URL shown on the public area page
+     */
+    mapEmbed: string | null
     slug: string
     metaTitle: string | null
     metaDescription: string | null
@@ -1241,7 +2130,10 @@ readonly fields: AreaFieldRefs;
  */
 export interface Prisma__AreaClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  parent<T extends Prisma.Area$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Area$parentArgs<ExtArgs>>): Prisma.Prisma__AreaClient<runtime.Types.Result.GetResult<Prisma.$AreaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  children<T extends Prisma.Area$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Area$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AreaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   properties<T extends Prisma.Area$propertiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Area$propertiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PropertyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  images<T extends Prisma.Area$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Area$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AreaImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1274,14 +2166,22 @@ export interface AreaFieldRefs {
   readonly id: Prisma.FieldRef<"Area", 'String'>
   readonly name: Prisma.FieldRef<"Area", 'String'>
   readonly nameEn: Prisma.FieldRef<"Area", 'String'>
+  readonly nameRu: Prisma.FieldRef<"Area", 'String'>
+  readonly nameAr: Prisma.FieldRef<"Area", 'String'>
   readonly description: Prisma.FieldRef<"Area", 'String'>
   readonly descriptionEn: Prisma.FieldRef<"Area", 'String'>
+  readonly descriptionRu: Prisma.FieldRef<"Area", 'String'>
+  readonly descriptionAr: Prisma.FieldRef<"Area", 'String'>
   readonly isActive: Prisma.FieldRef<"Area", 'Boolean'>
   readonly image: Prisma.FieldRef<"Area", 'String'>
   readonly sortOrder: Prisma.FieldRef<"Area", 'Int'>
   readonly tags: Prisma.FieldRef<"Area", 'String[]'>
+  readonly tagsRu: Prisma.FieldRef<"Area", 'String[]'>
+  readonly tagsAr: Prisma.FieldRef<"Area", 'String[]'>
+  readonly parentId: Prisma.FieldRef<"Area", 'String'>
   readonly city: Prisma.FieldRef<"Area", 'String'>
   readonly coordinates: Prisma.FieldRef<"Area", 'Json'>
+  readonly mapEmbed: Prisma.FieldRef<"Area", 'String'>
   readonly slug: Prisma.FieldRef<"Area", 'String'>
   readonly metaTitle: Prisma.FieldRef<"Area", 'String'>
   readonly metaDescription: Prisma.FieldRef<"Area", 'String'>
@@ -1541,6 +2441,10 @@ export type AreaCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    */
   data: Prisma.AreaCreateManyInput | Prisma.AreaCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AreaIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1611,6 +2515,10 @@ export type AreaUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Areas to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AreaIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1680,6 +2588,49 @@ export type AreaDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Area.parent
+ */
+export type Area$parentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Area
+   */
+  select?: Prisma.AreaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Area
+   */
+  omit?: Prisma.AreaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AreaInclude<ExtArgs> | null
+  where?: Prisma.AreaWhereInput
+}
+
+/**
+ * Area.children
+ */
+export type Area$childrenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Area
+   */
+  select?: Prisma.AreaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Area
+   */
+  omit?: Prisma.AreaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AreaInclude<ExtArgs> | null
+  where?: Prisma.AreaWhereInput
+  orderBy?: Prisma.AreaOrderByWithRelationInput | Prisma.AreaOrderByWithRelationInput[]
+  cursor?: Prisma.AreaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AreaScalarFieldEnum | Prisma.AreaScalarFieldEnum[]
+}
+
+/**
  * Area.properties
  */
 export type Area$propertiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1701,6 +2652,30 @@ export type Area$propertiesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.PropertyScalarFieldEnum | Prisma.PropertyScalarFieldEnum[]
+}
+
+/**
+ * Area.images
+ */
+export type Area$imagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AreaImage
+   */
+  select?: Prisma.AreaImageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AreaImage
+   */
+  omit?: Prisma.AreaImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AreaImageInclude<ExtArgs> | null
+  where?: Prisma.AreaImageWhereInput
+  orderBy?: Prisma.AreaImageOrderByWithRelationInput | Prisma.AreaImageOrderByWithRelationInput[]
+  cursor?: Prisma.AreaImageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AreaImageScalarFieldEnum | Prisma.AreaImageScalarFieldEnum[]
 }
 
 /**

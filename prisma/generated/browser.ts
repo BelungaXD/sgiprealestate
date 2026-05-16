@@ -43,6 +43,11 @@ export type PropertyFile = Prisma.PropertyFileModel
  */
 export type Area = Prisma.AreaModel
 /**
+ * Model AreaImage
+ * 
+ */
+export type AreaImage = Prisma.AreaImageModel
+/**
  * Model Developer
  * 
  */
@@ -62,6 +67,21 @@ export type Partner = Prisma.PartnerModel
  * 
  */
 export type Admin = Prisma.AdminModel
+/**
+ * Model MediaFolder
+ * 
+ */
+export type MediaFolder = Prisma.MediaFolderModel
+/**
+ * Model MediaAsset
+ * 
+ */
+export type MediaAsset = Prisma.MediaAssetModel
+/**
+ * Model IntegrationSetting
+ * 
+ */
+export type IntegrationSetting = Prisma.IntegrationSettingModel
 /**
  * Model CmsPage
  * 
